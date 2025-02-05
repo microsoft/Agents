@@ -12,14 +12,17 @@ const myBot = new EchoBot()
 
 
 const server = express()
+server.use(express.static('public'))
 server.use(authorizeJWT(config))
-server.use(json())
 
-server.post('/api/messages', 
+server.use(json())
+server.post('/api/messages',
     async (req, res) => {
         await adapter.process(req, res, (context) => myBot.run(context));
     }
 )
+
+
 
 const port = process.env.PORT || 3978
 

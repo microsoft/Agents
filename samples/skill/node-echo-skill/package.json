@@ -9,7 +9,7 @@
     "prebundle": "npm run lint",
     "bundle": "esbuild src/index.js --bundle --platform=node --metafile=dist/meta.json --outfile=dist/bundle.cjs --tree-shaking=true --keep-names",
     "predocker": "npm run bundle",
-    "docker": "docker build -t node-echo-bot:latest ."
+    "docker": "docker build -t node-echo-skill:latest ."
   },
   "keywords": [],
   "author": "",
