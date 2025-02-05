@@ -1,3 +1,5 @@
+// @ts-check
+
 import { Client } from '@microsoft/microsoft-graph-client'
 
 class CachedAuthProvider {
@@ -5,11 +7,6 @@ class CachedAuthProvider {
   async getAccessToken () { return this.token }
 }
 
-/**
- * 
- * @param {*} token 
- * @returns 
- */
 export const getUserInfo = async (token, userid) => {
   const client = Client.initWithMiddleware({ authProvider: new CachedAuthProvider(token) })
   const meResponse = await client.api(`/users/${userid}`).get()
