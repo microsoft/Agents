@@ -19,6 +19,11 @@ export class EchoBot extends ActivityHandler {
                 const token = await msalClient.getAccessToken(context.adapter.authConfig, 'https://graph.microsoft.com/')
                 const userInfo = await getUserInfo(token, context.activity.from?.aadObjectId)
                 await context.sendActivity(MessageFactory.text(`User: ${ userInfo.$root.givenName } ${ userInfo.$root.surname } ${ userInfo.$root.mail }`))
+                await context.sendActivity(MessageFactory.attachment({
+                    contentType: 'image/png',
+                    contentUrl: userInfo.$root.imageUri,
+                    name: 'User photo'
+                }))
             }
             await next()
         });
