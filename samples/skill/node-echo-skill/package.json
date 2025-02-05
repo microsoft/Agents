@@ -17,6 +17,7 @@
   "description": "",
   "dependencies": {
     "@microsoft/agents-bot-hosting": "^0.1.20-g870d3e5c48",
+    "@microsoft/microsoft-graph-client": "^3.0.7",
     "express": "^5.0.1"
   },
   "devDependencies": {

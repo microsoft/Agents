@@ -22,8 +22,6 @@ server.post('/api/messages',
     }
 )
 
-
-
 const port = process.env.PORT || 3978
 
 server.listen(port, () => {
