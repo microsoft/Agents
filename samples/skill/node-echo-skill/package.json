@@ -16,7 +16,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@microsoft/agents-bot-hosting": "0.1.20-g870d3e5c48",
+    "@microsoft/agents-bot-hosting": "0.1.23-g0d130f8332",
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "express": "^5.0.1"
   },
