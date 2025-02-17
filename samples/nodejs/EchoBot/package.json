@@ -1,0 +1,32 @@
+{
+  "name": "echobot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Agents echo bot sample",
+  "author": "Microsoft",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "scripts": {
+    "prebuild": "npm i",
+    "build": "tsc --build",
+    "prestart": "npm run build",
+    "start": "node --env-file .env ./dist/index.js",
+    "prebundle": "npm run build",
+    "bundle": "esbuild dist/index.js --bundle --platform=node --metafile=dist/meta.json --outfile=dist/bundle.js --tree-shaking=true --keep-names",
+    "docker": "docker build -t botimages.azurecr.io/node-echo-bot:latest ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com"
+  },
+  "dependencies": {
+    "@microsoft/agents-bot-hosting": "file:../../packages/agents-bot-hosting",
+    "express": "^5.0.1",
+    "express-rate-limit": "^7.5.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "typescript": "^5.7.2"
+  },
+  "keywords": []
+}
