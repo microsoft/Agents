@@ -101,7 +101,7 @@ As an example, let's implement the `AuthProvider` using `@azure/identity`:
 
 ```ts
 import { EnvironmentCredential } from "@azure/identity"
-import { AuthProvider, AuthConfiguration } from "@mcs/microsoft-bot-hosting"
+import { AuthProvider, AuthConfiguration } from "@microsoft/agents-bot-hosting"
 class DevTokenProvider implements AuthProvider {
   async getAccessToken(authConfig: AuthConfiguration): Promise<string> {
     const id = new EnvironmentCredential()
