@@ -20,12 +20,12 @@
     "url": "https://github.com"
   },
   "dependencies": {
-    "@microsoft/agents-bot-hosting": "file:../../packages/agents-bot-hosting",
+    "@microsoft/agents-bot-hosting": "0.1.15",
     "express": "^5.0.1",
     "express-rate-limit": "^7.5.0"
   },
   "devDependencies": {
-    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.4",
     "typescript": "^5.7.2"
   },
   "keywords": []
