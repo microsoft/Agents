@@ -1,0 +1,29 @@
+{
+  "name": "copilotstudio-client",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Agents Copilot Studio Client sample",
+  "author": "Microsoft",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "type": "module",
+  "scripts": {
+    "prebuild": "npm i",
+    "build": "tsc --build",
+    "prestart": "npm run build",
+    "start": "node --env-file .env ./dist/index.js",
+    "prebundle": "npm run build",
+    "bundle": "esbuild dist/index.js --bundle --platform=node --metafile=dist/meta.json --outfile=dist/bundle.js --tree-shaking=true --keep-names"
+  },
+  "dependencies": {
+    "@azure/msal-node": "^3.2.1",
+    "@microsoft/agents-copilotstudio-client": "0.1.15",
+    "open": "^10.1.0"
+  },
+  "devDependencies": {
+    "@types/debug": "^4.1.12",
+    "@types/node": "^22.13.4",
+    "typescript": "^5.7.2"
+  },
+  "keywords": []
+}
