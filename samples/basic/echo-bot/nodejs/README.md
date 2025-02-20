@@ -26,6 +26,11 @@ npm install
 ### Run in localhost, anonymous mode
 
 1. Create the `.env` file (or rename env.TEMPLATE)
+
+```bash
+cp env.TEMPLATE .env
+```
+
 1. Start the application
 
 ```bash
@@ -52,12 +57,16 @@ npm run test-tool
 
 The tool will open a web browser showing the Teams App Test Tool, ready to send messages to your bot.
 
-
 Alternatively you can run the next command to start the bot and the test tool with a single command (make sure you stop the bot started previously):
 
 ```bash
 npm test
 ```
+
+Refresh the browser to start a new conversation with the Echo bot.
+
+You should see a message from the bot like: `Echo bot running on Agents SDK version: 0.1.20`
+
 
 ### Interact with the bot from WebChat using Azure Bot Service
 

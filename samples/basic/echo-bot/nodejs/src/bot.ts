@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import { ActivityHandler, MessageFactory } from '@microsoft/agents-bot-hosting'
+import { version } from '@microsoft/agents-bot-hosting/package.json'
 
 export class EchoBot extends ActivityHandler {
   constructor() {
@@ -14,13 +15,12 @@ export class EchoBot extends ActivityHandler {
 
     this.onMembersAdded(async (context, next) => {
       const membersAdded = context.activity.membersAdded ?? []
-      const welcomeText = 'Hello and welcome!'
+      const welcomeText = '🚀 Echo bot running on Agents SDK version: ' + version
       for (const member of membersAdded) {
         if (member.id !== (context.activity.recipient?.id ?? '')) {
           await context.sendActivity(MessageFactory.text(welcomeText, welcomeText))
         }
       }
-      // By calling next() you ensure that the next BotHandler is run.
       await next()
     })
   }
