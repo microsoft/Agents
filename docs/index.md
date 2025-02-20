@@ -28,6 +28,7 @@ There is a core set of documentation available that provides more details on the
 - [Creating an Azure Bot - Managed Identity](./HowTo/azurebot-create-msi.md) 
 - [DotNet Agents SDK - MSAL Configuration](./HowTo/MSALAuthConfigurationOptions.md)
 - [Agents in SharePoint Embedded SDK - with React Sample App](https://aka.ms/start-spe-copilot)
+- [Configure authentication in JavaScript](./HowTo/azurebot-auth-for-js.md)
 
 ## Samples
 

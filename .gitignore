@@ -396,3 +396,10 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+#Ignore env files
+*.env
+
+dist/
+devTools/
+node_modules/

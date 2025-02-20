@@ -1,6 +1,6 @@
 # Activity Protocol -- Activity
 
-Version: Provisional 3.2
+Version: Provisional 3.2.1
 
 ## Abstract
 
@@ -309,6 +309,29 @@ Activities are frequently sent asynchronously, with separate transport connectio
 
 `A2304`: Channels SHOULD use stable values for the `serviceUrl` field as bots may persist them for long periods.
 
+### Delivery mode
+
+The `deliveryMode` field contains any one of an enumerated set of values to signal to the recipient alternate delivery paths for the activity or response. The value of the `deliveryMode` field is of type string, with defined values of `normal` and `expectReplies`. The default value is `normal`.
+
+Activities with a `deliveryMode` of `expectReplies` differ only in their requirement to return a response payload back to the caller synchronously, as a direct response to the initial request.
+ 
+`A3110`: If a sender includes the `deliveryMode` field, it SHOULD only send defined values.
+
+`A3111`: Receivers SHOULD interpret undefined values as `normal`.
+
+`A3112`: Receivers SHOULD reject activities with `deliveryMode` of `expectReplies` if they do not support synchronous responses.
+
+`A3113`: Receivers SHOULD NOT reply with asynchronous responses to activities with `deliveryMode` of `expectReplies`.
+
+`A3114`: Senders MUST NOT include `deliveryMode` of `expectReplies` on Invoke activities unless the Invoke profile explicitly allows and describes its behavior.
+
+`A3115`: Senders MUST establish whether a receiver understands `deliveryMode` of `expectReplies` prior to sending activities with that value.
+
+`A3116`: Bots SHOULD NOT send activities with `deliveryMode` of `expectReplies` to channels.  
+
+Delivery mode `notification` has been deprecated and will be handled as `normal`.
+
+
 ## Message activity
 
 Message activities represent content intended to be shown within a conversational interface. Message activities may contain text, speech, interactive cards, and binary or unknown attachments; typically channels require at most one of these for the message activity to be well-formed.
@@ -409,6 +432,10 @@ The `summary` field contains text used to replace [`attachments`](#attachments) 
 
 The `suggestedActions` field contains a payload of interactive actions that may be displayed to the user. Support for `suggestedActions` and their manifestation depends heavily on the channel. The value of the `suggestedActions` field is a complex object of the [Suggested actions](#suggested-actions-2) type.
 
+### ValueType
+
+The `valueType` field is a string type which contains a unique value which identifies the shape of the `value` object.
+
 ### Value
 
 The `value` field contains a programmatic payload specific to the activity being sent. Its meaning and format are defined in other sections of this document that describe its use.
@@ -428,26 +455,6 @@ The `importance` field contains an enumerated set of values to signal to the rec
 `A3100`: If a sender includes the `importance` field, it SHOULD only send defined values.
 
 `A3101`: Receivers SHOULD interpret undefined values as `normal`.
-
-### Delivery mode
-
-The `deliveryMode` field contains any one of an enumerated set of values to signal to the recipient alternate delivery paths for the activity or response. The value of the `deliveryMode` field is of type string, with defined values of `normal`, `notification` and `expectReplies`. The default value is `normal`.
-
-Activities with a `deliveryMode` of `expectReplies` differ only in their requirement to return a response payload back to the caller synchronously, as a direct response to the initial request.
- 
-`A3110`: If a sender includes the `deliveryMode` field, it SHOULD only send defined values.
-
-`A3111`: Receivers SHOULD interpret undefined values as `normal`.
-
-`A3112`: Receivers SHOULD reject activities with `deliveryMode` of `expectReplies` if they do not support synchronous responses.
-
-`A3113`: Receivers SHOULD NOT reply with asynchronous responses to activities with `deliveryMode` of `expectReplies`.
-
-`A3114`: Senders MUST NOT include `deliveryMode` of `expectReplies` on Invoke activities unless the Invoke profile explicitly allows and describes its behavior.
-
-`A3115`: Senders MUST establish whether a receiver understands `deliveryMode` of `expectReplies` prior to sending activities with that value.
-
-`A3116`: Bots SHOULD NOT send activities with `deliveryMode` of `expectReplies` to channels.  
 
 ### Listen for
 
@@ -535,9 +542,26 @@ Both the `code` and the `text` fields are optional.
 
 The `code` field contains a programmatic value describing why or how the conversation was ended. The value of the `code` field is of type string and its meaning is defined by the channel sending the activity.
 
+### Locale
+
+The `locale` field communicates the language code of the [`text`](#text) field. The value of the `locale` field is an [IETF BCP-47](https://tools.ietf.org/html/bcp47) [[18](#references)] language tag within a string.
+
+`A3020`: Receivers SHOULD treat missing and unknown values of the `locale` field as unknown.
+
+`A3021`: Receivers SHOULD NOT reject activities with unknown locale.
+
 ### Text
 
 The `text` field contains optional text content to be communicated to a user. The value of the `text` field is of type string, and its format is plain text.
+
+### ValueType
+
+The `valueType` field is a string type which contains a unique value which identifies the shape of the `value` object.
+
+### Value
+
+The `value` field contains parameters specific to this event, as defined by the event name. The value of the `value` field is a complex type.
+
 
 ## Event activity
 
@@ -556,6 +580,10 @@ The `name` field controls the meaning of the event and the schema of the `value`
 `A5001`: Event activities MUST contain a `name` field.
 
 `A5002`: Receivers MUST ignore event activities with `name` fields they do not understand.
+
+### ValueType
+
+The `valueType` field is a string type which contains a unique value which identifies the shape of the `value` object.
 
 ### Value
 
@@ -591,9 +619,13 @@ The `name` field controls the meaning of the invocation and the schema of the `v
 
 `A5402`: Receivers MUST ignore event activities with `name` fields they do not understand.
 
+### ValueType
+
+The `valueType` field is a string type which contains a unique value which identifies the shape of the `value` object.
+
 ### Value
 
-The `value` field contains parameters specific to this event, as defined by the event name. The value of the `value` field is a complex type.
+The `value` field contains parameters specific to this event, as defined by the Invoke name. The value of the `value` field is a complex type.
 
 `A5500`: The `value` field MAY be missing or empty, if defined by the event name.
 
@@ -711,7 +743,7 @@ The `label` field contains optional a label which can provide contextual informa
 
 ### ValueType
 
-The `valueType` field is a string type which contains a unique value which identifies the shape of the `value` object for this trace.
+The `valueType` field is a string type which contains a unique value which identifies the shape of the `value` object.
 
 `A6154`: The `valueType` field MAY be missing or empty, if the `name` property is sufficient to understand the shape of the `value` property.
 
@@ -787,6 +819,13 @@ The `value` field contains the command metadata and parameters specific to a com
 
 `A6322`: Receivers MUST ignore command activities with missing or invalid `value` field.
 
+### ValueType
+
+The `valueType` field is a string type which contains a unique value which identifies the shape of the `value` object.
+
+`A6330`: The `valueType` field MAY be missing or empty, if the `name` property is sufficient to understand the shape of the `value` property.
+
+
 ## Command result activity
 
 Command result activities communicate the result of a [command activity](#command-activity). 
@@ -812,6 +851,12 @@ The `value` field contains the command metadata and additional information speci
 `A6421`: Command result activities MUST contain a `value` field. 
 
 `A6422`: Receivers MUST reject command result activities with missing or invalid `value` field.
+
+### ValueType
+
+The `valueType` field is a string type which contains a unique value which identifies the shape of the `value` object.
+
+`A6430`: The `valueType` field MAY be missing or empty, if the `name` property is sufficient to understand the shape of the `value` property.
 
 ## Complex types
 
@@ -1482,6 +1527,14 @@ The `error` field contains the reason the original [command activity](#command-a
 18. [IETF BCP-47](https://tools.ietf.org/html/bcp47) -- *Language tag*
 
 # Appendix I - Changes
+
+# 2025-02-05 - trboehre@microsoft.com
+* Marked Delivery Mode `notification` as deprecated.
+
+# 2025-01-15 - trboehre@microsoft.com
+* Added Value and Locale to EndOfConversation
+* Added ValueType to Activity containing Value
+* Moved DeliveryMode to general Activity properties
 
 ## 2024-11-06 - trboehre@microsoft.com
 * Added missing ChannelData field in Card Action
