@@ -1,11 +1,7 @@
 # Copilot Studio Client
 
-This is a sample of a simple conversational Agent that can be used from the Microsoft Copilot Studio Skills feature.
+This is a sample to show how to use the `@microsoft/agents-copilotstudio-client` package to talk to an Agent hosted in CopilotStudio.
 
-This sample is intended to introduce you to:
-
-- The basic operation of the Microsoft 365 Agents SDK messaging handling.
-- How to use this Agent from Microsoft Copilot Studio.
 
 ## Prerequisite
 
