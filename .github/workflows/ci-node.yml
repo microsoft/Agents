@@ -24,3 +24,9 @@ jobs:
         run: |
           npm install
           npm run build
+
+      - name: Build Copilot Studio client sample
+        working-directory: ./samples/basic/copilotstudio-client/nodejs/
+        run: |
+          npm install
+          npm run build
