@@ -1,0 +1,22 @@
+{
+  "name": "node-echo-skill",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint src",
+    "start": "node --env-file .env src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@microsoft/agents-bot-hosting": "0.1.20",
+    "@microsoft/microsoft-graph-client": "^3.0.7",
+    "express": "^5.0.1"
+  },
+  "devDependencies": {
+    "globals": "^15.14.0"
+  }
+}
