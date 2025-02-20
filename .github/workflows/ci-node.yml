@@ -1,0 +1,27 @@
+name: ci-node
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+  
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      
+      - name: Build sample projects
+        run: |
+          for dir in ./samples/**/nodejs/; do
+            echo "Building $dir"
+             (cd "$dir" && npm i && npm run build)
+          done
