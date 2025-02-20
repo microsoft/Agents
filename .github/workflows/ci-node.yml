@@ -19,9 +19,8 @@ jobs:
         with:
           node-version: 22
       
-      - name: Build sample projects
+      - name: Build echo bot
+        working-directory: ./samples/basic/echo-bot/nodejs/
         run: |
-          for dir in ./samples/**/nodejs/; do
-            echo "Building $dir"
-             (cd "$dir" && npm i && npm run build)
-          done
+          npm install
+          npm run build
