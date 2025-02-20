@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 import express, { Response } from 'express'
-
 import rateLimit from 'express-rate-limit'
 import { Request, CloudAdapter, authorizeJWT, AuthConfiguration, loadAuthConfigFromEnv } from '@microsoft/agents-bot-hosting'
 import { EchoBot } from './bot'
