@@ -8,4 +8,4 @@ sudo DEBIAN_FRONTEND=noninteractive \
     install openssh-server -y
 
 sudo apt upgrade -y
-sudp apt install xdg-utils -y
+sudo apt install xdg-utils -y
