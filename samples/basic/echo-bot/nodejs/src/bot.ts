@@ -5,7 +5,7 @@ import { ActivityHandler, MessageFactory } from '@microsoft/agents-bot-hosting'
 import { version } from '@microsoft/agents-bot-hosting/package.json'
 
 export class EchoBot extends ActivityHandler {
-  constructor() {
+  constructor () {
     super()
     this.onMessage(async (context, next) => {
       const replyText = `Echo: ${context.activity.text}`
