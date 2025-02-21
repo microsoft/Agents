@@ -2,7 +2,7 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/dotnet
 {
 	"name": "universal",
-	"image": "mcr.microsoft.com/devcontainers/universal:focal",
+	"image": "mcr.microsoft.com/devcontainers/universal:2.0-focal",
 	"features": {
 		"ghcr.io/devcontainers/features/azure-cli:1": {},
 		"ghcr.io/devcontainers/features/powershell:1": {},
@@ -13,7 +13,9 @@
 		"vscode": {
 			"extensions": [
 				"GitHub.copilot-chat",
-				"TeamsDevApp.vscode-adaptive-cards"
+				"TeamsDevApp.vscode-adaptive-cards",
+				"ms-dotnettools.csdevkit",
+				"github.vscode-github-actions"
 			]
 		}
 	},
