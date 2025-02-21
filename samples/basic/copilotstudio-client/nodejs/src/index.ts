@@ -14,7 +14,7 @@ import path from 'path'
 
 import { MsalCachePlugin } from './msalCachePlugin.js'
 
-async function acquireToken(settings: ConnectionSettings): Promise<string> {
+async function acquireToken (settings: ConnectionSettings): Promise<string> {
   const msalConfig = {
     auth: {
       clientId: settings.appClientId,
@@ -25,8 +25,10 @@ async function acquireToken(settings: ConnectionSettings): Promise<string> {
     },
     system: {
       loggerOptions: {
-        loggerCallback(loglevel: msal.LogLevel, message: string, containsPii: boolean) {
-          console.log(message)
+        loggerCallback (loglevel: msal.LogLevel, message: string, containsPii: boolean) {
+          if (!containsPii) {
+            console.log(loglevel, message)
+          }
         },
         piiLoggingEnabled: false,
         logLevel: msal.LogLevel.Verbose,

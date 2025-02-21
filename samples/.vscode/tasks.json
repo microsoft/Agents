@@ -1,0 +1,27 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "build",
+			"path": "basic/echo-bot/nodejs",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": [],
+			"label": "npm: build echo-bot"
+		},
+		{
+			"type": "npm",
+			"script": "build",
+			"path": "basic/copilotstudio-client/nodejs",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": [],
+			"label": "npm: build copilotstudio-client"
+		}
+	]
+}

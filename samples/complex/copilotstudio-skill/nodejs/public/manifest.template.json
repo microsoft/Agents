@@ -18,7 +18,7 @@
         "name": "default",
         "protocol": "BotFrameworkV3",
         "description": "Default endpoint for the bot",
-        "endpointUrl": "https://{baseUrl}/api/messages",
+        "endpointUrl": "{baseUrl}/api/messages",
         "msAppId": "{clientId}"
       }
     ],

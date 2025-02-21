@@ -6,15 +6,20 @@
 	"features": {
 		"ghcr.io/devcontainers/features/azure-cli:1": {},
 		"ghcr.io/devcontainers/features/powershell:1": {},
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
-		"ghcr.io/stuartleeks/dev-container-features/dev-tunnels:0": {}
+		"ghcr.io/stuartleeks/dev-container-features/dev-tunnels:0": {},
+		"ghcr.io/devcontainers-community/npm-features/typescript:1": {},
+		"ghcr.io/devcontainers-extra/features/deno:1": {}
 	},
 	"customizations": {
 		"vscode": {
 			"extensions": [
 				"GitHub.copilot-chat",
-				"TeamsDevApp.vscode-adaptive-cards"
+				"TeamsDevApp.vscode-adaptive-cards",
+				"ms-dotnettools.csdevkit",
+				"github.vscode-github-actions",
+				"dbaeumer.vscode-eslint"
 			]
 		}
-	}
+	},
+	"postCreateCommand": "bash .devcontainer/postCreateCommand.sh"
 }

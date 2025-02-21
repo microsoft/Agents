@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "dbaeumer.vscode-eslint",
+        "github.copilot-chat",
+        "github.codespaces",
+        "ms-dotnettools.csdevkit",
+        "teamsdevapp.vscode-adaptive-cards"
+    ]
+}
