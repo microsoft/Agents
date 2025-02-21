@@ -14,9 +14,8 @@ export class CardMessages {
       { type: ActionTypes.ImBack, title: '3. Audio Card', value: '3. Audio Card' },
       { type: ActionTypes.ImBack, title: '4. Hero Card', value: '4. Hero Card' },
       { type: ActionTypes.ImBack, title: '5. Receipt Card', value: '5. Receipt Card' },
-      { type: ActionTypes.ImBack, title: '6. o365Connector Card', value: '6. o365Connector Card' },
-      { type: ActionTypes.ImBack, title: '7. Thumbnail Card', value: '7. Thumbnail Card' },
-      { type: ActionTypes.ImBack, title: '8. Video Card', value: '8. Video Card' },
+      { type: ActionTypes.ImBack, title: '6. Thumbnail Card', value: '6. Thumbnail Card' },
+      { type: ActionTypes.ImBack, title: '7. Video Card', value: '7. Video Card' },
     ]
 
     const card = CardFactory.heroCard('', undefined,
@@ -119,52 +118,6 @@ export class CardMessages {
           value: 'https://azure.microsoft.com/en-us/pricing/details/bot-service/'
         }
       ])
-    })
-
-    await CardMessages.sendActivity(context, card)
-  }
-
-  static async sendO365ConnectorCard(context: TurnContext): Promise<void> {
-    const card = CardFactory.o365ConnectorCard({
-      title: 'card title',
-      text: 'card text',
-      summary: 'O365 card summary',
-      themeColor: '#E67A9E',
-      sections: [
-        {
-          text: 'This is some <strong>bold</strong> text'
-        },
-        {
-          text: 'This is some <em>italic</em> text'
-        },
-        {
-          text: 'This is some <strike>strikethrough</strike> text'
-        },
-        {
-          text: '<h1>Header 1</h1>\r<h2>Header 2</h2>\r <h3>Header 3</h3>'
-        },
-        {
-          text: 'bullet list <ul><li>text</li><li>text</li></ul>'
-        },
-        {
-          text: 'ordered list <ol><li>text</li><li>text</li></ol>'
-        },
-        {
-          text: 'hyperlink <a href="https://www.bing.com/">Bing</a>'
-        },
-        {
-          text: 'embedded image <img src="https://aka.ms/Fo983c" alt="Duck on a rock"></img>'
-        },
-        {
-          text: 'preformatted text <pre>text</pre>'
-        },
-        {
-          text: 'Paragraphs <p>Line a</p><p>Line b</p>'
-        },
-        {
-          text: '<blockquote>Blockquote text</blockquote>'
-        }
-      ]
     })
 
     await CardMessages.sendActivity(context, card)

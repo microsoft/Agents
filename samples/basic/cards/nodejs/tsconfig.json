@@ -16,5 +16,9 @@
       "rootDir": "src",
       "outDir": "dist",
       "tsBuildInfoFile": "dist/.tsbuildinfo"
-  }
+  },
+  "include": [
+    "src",
+    "src/resources/*.json"
+  ]
 }

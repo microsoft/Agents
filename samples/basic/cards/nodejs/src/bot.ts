@@ -3,7 +3,7 @@
 
 import { ActivityHandler, Activity, ActivityTypes } from '@microsoft/agents-bot-hosting'
 import { CardMessages } from './cardMessages'
-const AdaptiveCard = require('../resources/adaptiveCard.json')
+import AdaptiveCard from './resources/adaptiveCard.json'
 
 export class CardFactoryBot extends ActivityHandler {
   constructor() {
@@ -42,12 +42,9 @@ export class CardFactoryBot extends ActivityHandler {
             await CardMessages.sendReceiptCard(context)
             break
           case '6':
-            await CardMessages.sendO365ConnectorCard(context)
-            break
-          case '7':
             await CardMessages.sendThumbnailCard(context)
             break
-          case '8':
+          case '7':
             await CardMessages.sendVideoCard(context)
             break
           default: {
