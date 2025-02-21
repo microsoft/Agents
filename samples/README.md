@@ -11,6 +11,6 @@ To enable debugging, open this folder using Visual Studio Code (VSCode). Follow 
 
 |Category | Sample Name | Description | NodeJS | dotnet | python |
 |---------|-------------|-------------|--------|--------|--------|
-| Basic   | Echo Bot | Simplest bot | `basic/echo-bot/nodejs` | TBD | TBD |
-| Basic   | Copilot Studio Client | Consume CopilotStudio Agent | `basic/copilotstudio-client/nodejs` | TBD | TBD |
-| Complex | Copilot Studio Skill | Call the echo bot from a Copilot Studio skill | `complex/copilotstudio-skill/nodejs` | TBD | TBD |
+| Basic   | Echo Bot | Simplest bot | [basic/echo-bot/nodejs](./basic/echo-bot/nodejs) | TBD | TBD |
+| Basic   | Copilot Studio Client | Consume CopilotStudio Agent | [basic/copilotstudio-client/nodejs](./basic/copilotstudio-client/nodejs) | TBD | TBD |
+| Complex | Copilot Studio Skill | Call the echo bot from a Copilot Studio skill | [complex/copilotstudio-skill/nodejs](./complex/copilotstudio-skill/nodejs) | TBD | TBD |
