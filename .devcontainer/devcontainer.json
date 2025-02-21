@@ -16,5 +16,6 @@
 				"TeamsDevApp.vscode-adaptive-cards"
 			]
 		}
-	}
+	},
+	"postCreateCommand": "bash .devcontainer/postCreateCommand.sh"
 }
