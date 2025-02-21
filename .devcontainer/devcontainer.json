@@ -16,7 +16,8 @@
 				"GitHub.copilot-chat",
 				"TeamsDevApp.vscode-adaptive-cards",
 				"ms-dotnettools.csdevkit",
-				"github.vscode-github-actions"
+				"github.vscode-github-actions",
+				"dbaeumer.vscode-eslint"
 			]
 		}
 	},
