@@ -15,24 +15,13 @@
 		{
 			"type": "npm",
 			"script": "build",
-			"path": "basic/copiloststudio-client/nodejs",
+			"path": "basic/copilotstudio-client/nodejs",
 			"group": {
 				"kind": "build",
 				"isDefault": true
 			},
 			"problemMatcher": [],
 			"label": "npm: build copilotstudio-client"
-		},
-		{
-			"type": "npm",
-			"script": "build",
-			"path": "complex/copilotstudio-skill/nodejs",
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
-			"problemMatcher": [],
-			"label": "npm: build copilotstudio-skill"
 		}
 	]
 }
