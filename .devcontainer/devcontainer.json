@@ -2,12 +2,13 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/dotnet
 {
 	"name": "universal",
-	"image": "mcr.microsoft.com/devcontainers/universal:2.0-focal",
+	"image": "mcr.microsoft.com/devcontainers/universal:focal",
 	"features": {
 		"ghcr.io/devcontainers/features/azure-cli:1": {},
 		"ghcr.io/devcontainers/features/powershell:1": {},
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
-		"ghcr.io/stuartleeks/dev-container-features/dev-tunnels:0": {}
+		"ghcr.io/stuartleeks/dev-container-features/dev-tunnels:0": {},
+		"ghcr.io/devcontainers-community/npm-features/typescript:1": {},
+		"ghcr.io/devcontainers-extra/features/deno:1": {}
 	},
 	"customizations": {
 		"vscode": {
