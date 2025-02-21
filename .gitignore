@@ -399,7 +399,7 @@ FodyWeavers.xsd
 
 #Ignore env files
 *.env
-
 dist/
 devTools/
 node_modules/
+
