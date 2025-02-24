@@ -27,14 +27,26 @@ jobs:
         run: npm run lint
         working-directory: ./samples
 
-      - name: Build echo bot
+      - name: Build Echo bot
         working-directory: ./samples/basic/echo-bot/nodejs/
+        run: |
+          npm install
+          npm run build
+
+      - name: Build Cards bot
+        working-directory: ./samples/basic/cards/nodejs/
         run: |
           npm install
           npm run build
 
       - name: Build Copilot Studio client sample
         working-directory: ./samples/basic/copilotstudio-client/nodejs/
+        run: |
+          npm install
+          npm run build
+
+      - name: Build Skill bot
+        working-directory: ./samples/complex/copilotstudio-skill/nodejs/
         run: |
           npm install
           npm run build
