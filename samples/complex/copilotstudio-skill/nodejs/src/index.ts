@@ -1,8 +1,7 @@
-// @ts-check
 import express, { json } from 'express'
 
 import { CloudAdapter, loadAuthConfigFromEnv, authorizeJWT } from '@microsoft/agents-bot-hosting'
-import pjson from '@microsoft/agents-bot-hosting/package.json' with { type: 'json' }
+import pjson from '@microsoft/agents-bot-hosting/package.json'
 
 import { EchoBot } from './bot.js'
 

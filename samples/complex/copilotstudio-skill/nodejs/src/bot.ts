@@ -1,7 +1,5 @@
-// @ts-check
-
 import { ActivityHandler, MessageFactory } from '@microsoft/agents-bot-hosting'
-import pjson from '@microsoft/agents-bot-hosting/package.json' with { type: 'json' }
+import pjson from '@microsoft/agents-bot-hosting/package.json'
 
 export class EchoBot extends ActivityHandler {
   constructor () {

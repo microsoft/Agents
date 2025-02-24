@@ -2,10 +2,10 @@
   "name": "node-echo-skill",
   "version": "1.0.0",
   "main": "index.js",
-  "type": "module",
   "scripts": {
-    "lint": "eslint src",
-    "start": "node --env-file .env src/index.js"
+    "prebuild": "npm install",
+    "build": "tsc --build",
+    "start": "node --env-file .env dist/index.js"
   },
   "keywords": [],
   "author": "",
