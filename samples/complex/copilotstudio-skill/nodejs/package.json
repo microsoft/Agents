@@ -5,6 +5,7 @@
   "scripts": {
     "prebuild": "npm install",
     "build": "tsc --build",
+    "prestart" : "npm run build",
     "start": "node --env-file .env dist/index.js"
   },
   "keywords": [],
