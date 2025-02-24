@@ -4,38 +4,5 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "node-echo-bot",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "program": "${workspaceFolder}/basic/echo-bot/nodejs/dist/index.js",
-            "outFiles": [ "${workspaceFolder}/**/dist/**/*.js" ],
-            "envFile": "${workspaceFolder}//basic/echo-bot/nodejs/.env",
-            "preLaunchTask": "npm: build echo-bot"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "node-copilotstudio-client",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "program": "${workspaceFolder}/basic/copilotstudio-client/nodejs/dist/index.js",
-            "outFiles": [ "${workspaceFolder}/**/dist/**/*.js" ],
-            "envFile": "${workspaceFolder}/basic/copilotstudio-client/nodejs/.env",
-            "preLaunchTask": "npm: build copilotstudio-client"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "node-skill",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "program": "${workspaceFolder}/complex/copilotstudio-skill/nodejs/src/index.js",
-        }
     ]
 }

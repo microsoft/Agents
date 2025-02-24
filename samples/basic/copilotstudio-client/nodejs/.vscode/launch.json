@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "node-copilotstudio-client",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/dist/index.js",
+            "outFiles": [ "${workspaceFolder}/**/dist/**/*.js" ],
+            "envFile": "${workspaceFolder}/.env",
+            "preLaunchTask": "npm: build copilotstudio-client"
+        }
+    ]
+}
