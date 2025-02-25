@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "samples/basic/echo-bot/nodejs",
+			"name" : "echo bot"
+		},
+		{
+			"path": "samples/basic/cards/nodejs",
+			"name": "cards"
+		},
+		{
+			"path": "samples/basic/copilotstudio-client/nodejs",
+			"name": "copilotstudio-client"
+		},
+		{
+			"path" : "samples/complex/copilotstudio-skill/nodejs",
+			"name": "copilotstudio-skill"
+		}
+	]
+}
