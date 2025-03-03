@@ -395,3 +395,4 @@ dist/
 devTools/
 node_modules/
 
+launchSettings.json
