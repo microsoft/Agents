@@ -16,8 +16,7 @@
   },
   "dependencies": {
     "@microsoft/agents-bot-hosting": "0.1.25-gcaee57b821",
-    "express": "^5.0.1",
-    "express-rate-limit": "^7.5.0"
+    "express": "^5.0.1"
   },
   "devDependencies": {
     "@microsoft/teams-app-test-tool": "^0.2.6",
