@@ -8,7 +8,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/src/index.js",
+            "program": "${workspaceFolder}/dist/index.js",
             "preLaunchTask": "npm: build echo-bot-skill"
         }
     ]

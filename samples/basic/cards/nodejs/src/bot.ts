@@ -6,7 +6,7 @@ import { CardMessages } from './cardMessages'
 import AdaptiveCard from './resources/adaptiveCard.json'
 
 export class CardFactoryBot extends ActivityHandler {
-  constructor() {
+  constructor () {
     super()
 
     this.onMembersAdded(async (context, next) => {

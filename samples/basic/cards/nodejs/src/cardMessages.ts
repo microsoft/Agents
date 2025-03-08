@@ -4,7 +4,7 @@
 import { CardFactory, TurnContext, ActionTypes, Activity, ActivityTypes, Attachment } from '@microsoft/agents-bot-hosting'
 
 export class CardMessages {
-  static async sendIntroCard(context: TurnContext): Promise<void> {
+  static async sendIntroCard (context: TurnContext): Promise<void> {
     // Note that some channels require different values to be used in order to get buttons to display text.
     // In this code the web chat is accounted for with the 'title' parameter, but in other channels you may
     // need to provide a value for other parameters like 'text' or 'displayText'.
@@ -24,13 +24,13 @@ export class CardMessages {
     await CardMessages.sendActivity(context, card)
   }
 
-  static async sendAdaptiveCard(context: TurnContext, adaptiveCard: any): Promise<void> {
+  static async sendAdaptiveCard (context: TurnContext, adaptiveCard: any): Promise<void> {
     const card = CardFactory.adaptiveCard(adaptiveCard)
 
     await CardMessages.sendActivity(context, card)
   }
 
-  static async sendAnimationCard(context: TurnContext): Promise<void> {
+  static async sendAnimationCard (context: TurnContext): Promise<void> {
     const card = CardFactory.animationCard(
       'Microsoft Bot Framework',
       [
@@ -45,7 +45,7 @@ export class CardMessages {
     await CardMessages.sendActivity(context, card)
   }
 
-  static async sendAudioCard(context: TurnContext): Promise<void> {
+  static async sendAudioCard (context: TurnContext): Promise<void> {
     const card = CardFactory.audioCard(
       'I am your father',
       ['https://www.mediacollege.com/downloads/sound-effects/star-wars/darthvader/darthvader_yourfather.wav'],
@@ -66,7 +66,7 @@ export class CardMessages {
     await CardMessages.sendActivity(context, card)
   }
 
-  static async sendHeroCard(context: TurnContext): Promise<void> {
+  static async sendHeroCard (context: TurnContext): Promise<void> {
     const card = CardFactory.heroCard(
       'Copilot Hero Card',
       CardFactory.images(['https://blogs.microsoft.com/wp-content/uploads/prod/2023/09/Press-Image_FINAL_16x9-4.jpg']),
@@ -82,7 +82,7 @@ export class CardMessages {
     await CardMessages.sendActivity(context, card)
   }
 
-  static async sendReceiptCard(context: TurnContext): Promise<void> {
+  static async sendReceiptCard (context: TurnContext): Promise<void> {
     const card = CardFactory.receiptCard({
       title: 'John Doe',
       facts: [
@@ -123,7 +123,7 @@ export class CardMessages {
     await CardMessages.sendActivity(context, card)
   }
 
-  static async sendThumbnailCard(context: TurnContext) {
+  static async sendThumbnailCard (context: TurnContext) {
     const card = CardFactory.thumbnailCard(
       'Copilot Thumbnail Card',
       [{ url: 'https://blogs.microsoft.com/wp-content/uploads/prod/2023/09/Press-Image_FINAL_16x9-4.jpg' }],
@@ -141,7 +141,7 @@ export class CardMessages {
     await CardMessages.sendActivity(context, card)
   }
 
-  static async sendVideoCard(context: TurnContext) {
+  static async sendVideoCard (context: TurnContext) {
     const card = CardFactory.videoCard(
       '2018 Imagine Cup World Championship Intro',
       [{ url: 'https://sec.ch9.ms/ch9/783d/d57287a5-185f-4df9-aa08-fcab699a783d/IC18WorldChampionshipIntro2.mp4' }],
@@ -159,7 +159,7 @@ export class CardMessages {
     await CardMessages.sendActivity(context, card)
   }
 
-  private static async sendActivity(context: TurnContext, card: Attachment): Promise<void> {
+  private static async sendActivity (context: TurnContext, card: Attachment): Promise<void> {
     await context.sendActivity(Activity.fromObject(
       {
         type: ActivityTypes.Message,
