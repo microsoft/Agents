@@ -90,7 +90,7 @@ namespace Microsoft.Agents.Samples
                 string tenantId = tokenValidationSection["TenantId"];
                 if (!string.IsNullOrEmpty(tenantId))
                 {
-                    validTokenIssuers.Add(string.Format(CultureInfo.InvariantCulture, AuthenticationConstants.Valid TokenIssuerUrlTemplateV1, tenantId));
+                    validTokenIssuers.Add(string.Format(CultureInfo.InvariantCulture, AuthenticationConstants.ValidTokenIssuerUrlTemplateV1, tenantId));
                     validTokenIssuers.Add(string.Format(CultureInfo.InvariantCulture, AuthenticationConstants.ValidTokenIssuerUrlTemplateV2, tenantId));
                 }
             }
