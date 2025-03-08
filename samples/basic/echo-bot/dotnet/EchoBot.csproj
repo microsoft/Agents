@@ -4,6 +4,9 @@
 		<LangVersion>latest</LangVersion>
 	</PropertyGroup>
 	<ItemGroup>
+	  <Content Remove="Properties\launchSettings.TEMPLATE.json" />
+	</ItemGroup>
+	<ItemGroup>
 		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="0.2.137-alpha" />
 		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="0.2.137-alpha" />
 	</ItemGroup>

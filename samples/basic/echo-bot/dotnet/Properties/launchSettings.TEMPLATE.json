@@ -1,0 +1,18 @@
+{
+  "profiles": {
+    "EchoBot": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "TokenValidation__Audiences__0": "{clientId}",
+        "TokenValidation__TenantId": "{tenantId}",
+        "Connections__BotServiceConnection__Settings__AuthType": "ClientSecret",
+        "Connections__BotServiceConnection__Settings__AuthorityEndpoint": "https://login.microsoftonline.com/{tenantId}",
+        "Connections__BotServiceConnection__Settings__ClientId": "{clientId}",
+        "Connections__BotServiceConnection__Settings__ClientSecret": "{clientSecret}"
+      },
+      "applicationUrl": "http://localhost:3978"
+    }
+  }
+}

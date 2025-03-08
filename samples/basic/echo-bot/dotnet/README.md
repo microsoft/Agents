@@ -6,9 +6,9 @@ This Agent Sample is intended to introduce you the basic operation of the Micros
 
 ## Prerequisites
 
-- [.Net](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) version 8.0
-- [dev tunnel](https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/get-started?tabs=windows)
-- [Bot Framework Emulator](https://github.com/Microsoft/BotFramework-Emulator/releases) for Testing Web Chat.
+- [.NET](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) version 8.0.
+- [dev tunnel](https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/get-started?tabs=windows) for testing with ABS/Teams.
+- [Bot Framework Emulator](https://github.com/Microsoft/BotFramework-Emulator/releases) for Testing in localhost.
 
 ## Running this sample
 
