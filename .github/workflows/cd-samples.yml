@@ -44,6 +44,11 @@ jobs:
         working-directory: ./samples/basic/echo-bot/dotnet/
         run: |
           dotnet publish /t:PublishContainer /p:ContainerRepository=dotnet-echo-bot --os linux --arch x64
+
+      - name: Push image dotnet Echo bot
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: ./samples/basic/echo-bot/dotnet/
+        run: |
           docker tag dotnet-echo-bot:latest botagents.azurecr.io/dotnet-echo-bot:latest
           docker push botagents.azurecr.io/dotnet-echo-bot:latest
 
@@ -52,6 +57,11 @@ jobs:
         run: |
           npm install
           npm run docker
+
+      - name: Push image Node Echo bot
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: ./samples/basic/echo-bot/nodejs/
+        run: |
           docker tag node-echo-bot:1.0.0 botagents.azurecr.io/node-echo-bot:latest
           docker push botagents.azurecr.io/node-echo-bot:latest
 
@@ -60,6 +70,11 @@ jobs:
         run: |
           npm install
           npm run docker
+
+      - name: Push image Node Cards bot
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: ./samples/basic/cards/nodejs/
+        run: |
           docker tag node-cards-bot:1.0.0 botagents.azurecr.io/node-cards-bot:latest
           docker push botagents.azurecr.io/node-cards-bot:latest
 
@@ -68,5 +83,10 @@ jobs:
         run: |
           npm install
           npm run docker
+
+      - name: Push image Node Skill bot
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: ./samples/complex/copilotstudio-skill/nodejs/
+        run: |
           docker tag node-echo-skill:1.0.0 botagents.azurecr.io/node-echo-skill:latest
           docker push botagents.azurecr.io/node-echo-skill:latest
