@@ -1,12 +1,12 @@
 # Activity Protocol -- Activity
 
-Version: Provisional 3.2.1
+Version: Provisional 3.2.2
 
 ## Abstract
 
 The Activity Protocol schema is an application-level representation of conversational actions made by humans and automated software. The schema includes provisions for communicating text, multimedia, and non-content actions like social interactions and typing indicators.
 
-This schema is used within the Azure Bot Service and is implemented by Microsoft chat systems and by interoperable bots and clients from many sources.
+This schema is used within the Azure Bot Service and is implemented by Microsoft chat systems and by interoperable Agents and clients from many sources.
 
 ## Table of Contents
 
@@ -45,7 +45,7 @@ The Activity Protocol schema represents conversational behaviors made by humans 
 
 This document provides meanings for each type of activity, and describes the required and optional fields that may be included. It also defines the roles of the client and server, and provides guidance on which fields are mastered by each participant, and which may be ignored.
 
-There are three roles of consequence in this specification: clients, which send and receive activities on behalf of users; bots, which send and receive activities and are typically automated; and the channel, which stores and forwards activities between clients and bots.
+There are three roles of consequence in this specification: clients, which send and receive activities on behalf of users; Agents, which send and receive activities and are typically automated; and the channel, which stores and forwards activities between clients and Agents.
 
 Although this specification requires activities to be transmitted between roles, the exact nature of that transmission is not described here.
 
@@ -74,13 +74,13 @@ Lines beginning with markers of the form `AXXXX` are specific requirements desig
 ### Terminology
 
 activity
-> An action expressed by a bot, a channel, or a client that conforms to the Activity schema.
+> An action expressed by an Agent, a channel, or a client that conforms to the Activity schema.
 
 channel
 > Software that sends and receives activities, and transforms them to and from chat or application behaviors. Channels are the authoritative store for activity data.
 
-bot
-> Software that sends and receives activities, and generates automated, semi-automated, or entirely manual responses. Bots have endpoints that are registered with channels.
+Agent
+> Software that sends and receives activities, and generates automated, semi-automated, or entirely manual responses. Agents have endpoints that are registered with channels.
 
 client
 > Software that sends and receives activities, typically on behalf of human users. Clients do not have endpoints.
@@ -92,10 +92,10 @@ receiver
 > Software accepting an activity.
 
 endpoint
-> A programmatically addressable location where a bot or channel can receive activities.
+> A programmatically addressable location where an Agent or channel can receive activities.
 
 address
-> An identifier or address where a user or bot can be contacted.
+> An identifier or address where a user or Agent can be contacted.
 
 field
 > A named value within an activity or nested object.
@@ -104,13 +104,13 @@ field
 
 The activity object is a flat list of name/value pairs, some of which are primitive objects, and some of which are complex (nested). The activity object is commonly expressed in the JSON format, but can also be projected into in-memory data structures in .Net or JavaScript.
 
-The activity `type` field controls the meaning of the activity and the fields contained within it. Depending on the role that a participant is playing (client, bot, or channel), each field is mandatory, optional, or ignored. For example, the `id` field is mastered by the channel, and is mandatory in some circumstances, but ignored if it is sent by a bot.
+The activity `type` field controls the meaning of the activity and the fields contained within it. Depending on the role that a participant is playing (client, Agent, or channel), each field is mandatory, optional, or ignored. For example, the `id` field is mastered by the channel, and is mandatory in some circumstances, but ignored if it is sent by an Agent.
 
 Fields that describe the identity of the activity and any participants, such as the `type` and `from` fields, are shared across all activities. In many programming languages, it is convenient to organize these fields on a core base type from which other, more specific, activity types derive.
 
 When storing or transmitting activities, some fields may be duplicated within the transport mechanism. For example, if an activity is transmitted via HTTP POST to a URL that includes the conversation ID, the receiver may infer its value without requiring it to be present within the activity body. This document merely describes the abstract requirements for these fields, and it is up to the controlling protocol to establish whether the values must be explicitly declared or if implicit or inferred values are allowed.
 
-When a bot or client sends an activity to a channel, it is typically a request for the activity to be recorded. When a channel sends an activity to a bot or client, it is typically a notification that the activity has already been recorded.
+When an Agent or client sends an activity to a channel, it is typically a request for the activity to be recorded. When a channel sends an activity to an Agent or client, it is typically a notification that the activity has already been recorded.
 
 ## Basic activity structure
 
@@ -146,7 +146,7 @@ The `type` field controls the meaning of each activity, and are by convention sh
 
 `A2013`: A channel SHOULD reject activities of type it does not understand.
 
-`A2014`: A bot or client SHOULD ignore activities of type it does not understand.
+`A2014`: an Agent or client SHOULD ignore activities of type it does not understand.
 
 ### Channel ID
 
@@ -164,7 +164,7 @@ The `id` field establishes the identity for the activity once it has been record
 
 `A2030`: Channels SHOULD include an `id` field if it is available for that activity.
 
-`A2031`: Clients and bots SHOULD NOT include an `id` field in activities they generate.
+`A2031`: Clients and Agents SHOULD NOT include an `id` field in activities they generate.
 
 For ease of implementation, it should be assumed that other participants do not have sophisticated knowledge of activity IDs, and that they will use only ordinal comparison to establish equivalency.
 
@@ -178,13 +178,13 @@ The `id` field is designed to allow de-duplication, but this is prohibitive in m
 
 ### Timestamp
 
-The `timestamp` field records the exact UTC time when the activity occurred. Due to the distributed nature of computing systems, the important time is when the channel (the authoritative store) records the activity. The time when a client or bot initiated an activity may be transmitted separately in the `localTimestamp` field. The value of the `timestamp` field is an [ISO 8601 date time format](https://www.iso.org/iso-8601-date-and-time-format.html) [[2](#references)] encoded datetime within a string.
+The `timestamp` field records the exact UTC time when the activity occurred. Due to the distributed nature of computing systems, the important time is when the channel (the authoritative store) records the activity. The time when a client or Agent initiated an activity may be transmitted separately in the `localTimestamp` field. The value of the `timestamp` field is an [ISO 8601 date time format](https://www.iso.org/iso-8601-date-and-time-format.html) [[2](#references)] encoded datetime within a string.
 
 `A2040`: Channels SHOULD include a `timestamp` field if it is available for that activity.
 
-`A2041`: Clients and bots SHOULD NOT include a `timestamp` field in activities they generate.
+`A2041`: Clients and Agents SHOULD NOT include a `timestamp` field in activities they generate.
 
-`A2042`: Clients and bots SHOULD NOT use `timestamp` to reject activities, as they may appear out-of-order. However, they MAY use `timestamp` to order activities within a UI or for downstream processing.
+`A2042`: Clients and Agents SHOULD NOT use `timestamp` to reject activities, as they may appear out-of-order. However, they MAY use `timestamp` to order activities within a UI or for downstream processing.
 
 `A2043`: Senders SHOULD always use encode the value of `timestamp` fields as UTC, and they SHOULD always include Z as an explicit UTC mark within the value.
 
@@ -203,35 +203,35 @@ The `localTimestamp` field expresses the datetime and timezone offset where the 
 
 When both the `localTimezone` and `localTimestamp` fields are included in an activity, the interpretation is to first convert the value of the localTimestamp to UTC and then apply a conversion to the local timezone.
 
-`A2050`: Clients and bots MAY include the `localTimestamp` field in their activities. They SHOULD explicitly list the timezone offset within the encoded value.
+`A2050`: Clients and Agents MAY include the `localTimestamp` field in their activities. They SHOULD explicitly list the timezone offset within the encoded value.
 
 `A2051`: Channels SHOULD preserve `localTimestamp` when forwarding activities from a sender to recipient(s).
 
 ### From
 
-The `from` field describes which client, bot, or channel generated an activity. The value of the `from` field is a complex object of the [Channel account](#channel-account) type.
+The `from` field describes which client, Agent, or channel generated an activity. The value of the `from` field is a complex object of the [Channel account](#channel-account) type.
 
-The `from.id` field identifies who generated an activity. Most commonly, this is another user or bot within the system. In some cases, the `from` field identifies the channel itself.
+The `from.id` field identifies who generated an activity. Most commonly, this is another user or Agent within the system. In some cases, the `from` field identifies the channel itself.
 
 `A2060`: Channels MUST include the `from` and `from.id` fields when generating an activity.
 
-`A2061`: Bots and clients SHOULD include the `from` and `from.id` fields when generating an activity. A channel MAY reject an activity due to missing `from` and `from.id` fields.
+`A2061`: Agents and clients SHOULD include the `from` and `from.id` fields when generating an activity. A channel MAY reject an activity due to missing `from` and `from.id` fields.
 
-The `from.name` field is optional and represents the display name for the account within the channel. Channels SHOULD include this value so clients and bots can populate their UIs and backend systems. Bots and clients SHOULD NOT send this value to channels that have a central record of this store, but they MAY send this value to channels that populate the value on every activity (e.g. an email channel).
+The `from.name` field is optional and represents the display name for the account within the channel. Channels SHOULD include this value so clients and Agents can populate their UIs and backend systems. Agents and clients SHOULD NOT send this value to channels that have a central record of this store, but they MAY send this value to channels that populate the value on every activity (e.g. an email channel).
 
 `A2062`: Channels SHOULD include the `from.name` field if the `from` field is present and `from.name` is available.
 
-`A2063`: Bots and clients SHOULD NOT include the `from.name` field unless it is semantically valuable within the channel.
+`A2063`: Agents and clients SHOULD NOT include the `from.name` field unless it is semantically valuable within the channel.
 
 ### Recipient
 
-The `recipient` field describes which client or bot is receiving this activity. This field is only meaningful when an activity is transmitted to exactly one recipient; it is not meaningful when it is broadcast to multiple recipients (as happens when an activity is sent to a channel). The purpose of the field is to allow the recipient to identify themselves. This is helpful when a client or bot has more than one identity within the channel. The value of the `recipient` field is a complex object of the [Channel account](#channel-account) type.
+The `recipient` field describes which client or Agent is receiving this activity. This field is only meaningful when an activity is transmitted to exactly one recipient; it is not meaningful when it is broadcast to multiple recipients (as happens when an activity is sent to a channel). The purpose of the field is to allow the recipient to identify themselves. This is helpful when a client or Agent has more than one identity within the channel. The value of the `recipient` field is a complex object of the [Channel account](#channel-account) type.
 
 `A2070`: Channels MUST include the `recipient` and `recipient.id` fields when transmitting an activity to a single recipient.
 
-`A2071`: Bots and clients SHOULD NOT include the `recipient` field when generating an activity. The exception to this is when sending a [Suggestion activity](#suggestion-activity), in which case the recipient MUST identify the user that should receive the suggestion.
+`A2071`: Agents and clients SHOULD NOT include the `recipient` field when generating an activity. The exception to this is when sending a [Suggestion activity](#suggestion-activity), in which case the recipient MUST identify the user that should receive the suggestion.
 
-The `recipient.name` field is optional and represents the display name for the account within the channel. Channels SHOULD include this value so clients and bots can populate their UIs and backend systems.
+The `recipient.name` field is optional and represents the display name for the account within the channel. Channels SHOULD include this value so clients and Agents can populate their UIs and backend systems.
 
 `A2072`: Channels SHOULD include the `recipient.name` field if the `recipient` field is present and `recipient.name` is available.
 
@@ -239,15 +239,15 @@ The `recipient.name` field is optional and represents the display name for the a
 
 The `conversation` field describes the conversation in which the activity exists. The value of the `conversation` field is a complex object of the [Conversation account](#conversation-account) type.
 
-`A2080`: Channels, bots, and clients MUST include the `conversation` and `conversation.id` fields when generating an activity.
+`A2080`: Channels, Agents, and clients MUST include the `conversation` and `conversation.id` fields when generating an activity.
 
 The `conversation.name` field is optional and represents the display name for the conversation if it exists and is available.
 
 `A2081`: Channels SHOULD include the `conversation.name` and `conversation.isGroup` fields if they are available.
 
-`A2082`: Bots and clients SHOULD NOT include the `conversation.name` field unless it is semantically valuable within the channel.
+`A2082`: Agents and clients SHOULD NOT include the `conversation.name` field unless it is semantically valuable within the channel.
 
-`A2083`: Bots and clients SHOULD NOT include the `conversation.isGroup` and `conversation.converationType` fields in activities they generate.
+`A2083`: Agents and clients SHOULD NOT include the `conversation.isGroup` and `conversation.converationType` fields in activities they generate.
 
 `A2084`: Channels SHOULD include the `conversation.conversationType` field if more than one value is defined for the channel. Channels SHOULD NOT include the field if there is only one possible value.
 
@@ -259,7 +259,7 @@ The `replyToId` field identifies the prior activity to which the current activit
 
 `A2091`: A channel MAY reject an activity if its `replyToId` does not reference a valid activity within the conversation.
 
-`A2092`: Bots and clients MAY omit `replyToId` if it knows the channel does not make use of the field, even if the activity being sent is a reply to another activity.
+`A2092`: Agents and clients MAY omit `replyToId` if it knows the channel does not make use of the field, even if the activity being sent is a reply to another activity.
 
 ### Entities
 
@@ -287,27 +287,27 @@ Extensibility data in the activity schema is organized principally within the `c
 
 ### Caller ID
 
-In some cases, it's important to record where an activity was sent. The `callerId` field is a string containing an [IRI](https://tools.ietf.org/html/rfc3987) [[3](#references)] identifying the caller of a bot, described in more detail in [Appendix V](#appendix-v---caller-id-values). This field is not intended to be transmitted over the wire, but is instead populated by bots and clients based on cryptographically verifiable data that asserts the identity of the callers (e.g. tokens).
+In some cases, it's important to record where an activity was sent. The `callerId` field is a string containing an [IRI](https://tools.ietf.org/html/rfc3987) [[3](#references)] identifying the caller of an Agent, described in more detail in [Appendix V](#appendix-v---caller-id-values). This field is not intended to be transmitted over the wire, but is instead populated by Agents and clients based on cryptographically verifiable data that asserts the identity of the callers (e.g. tokens).
 
 `A2250`: Senders SHOULD NOT populate the `callerId` field.
 
 `A2251`: Receivers SHOULD discard any data included in the `callerId` field on the wire.
 
-`A2252`: Bots SHOULD, after receiving an Activity, populate its `callerId` field with an identifier described in [Appendix V](#appendix-v---caller-id-values)
+`A2252`: Agents SHOULD, after receiving an Activity, populate its `callerId` field with an identifier described in [Appendix V](#appendix-v---caller-id-values)
 
 ### Service URL
 
 Activities are frequently sent asynchronously, with separate transport connections for sending and receiving traffic. The `serviceUrl` field is used by channels to denote the URL where replies to the current activity may be sent. The value of the `serviceUrl` field is of type string.
 
-`A2300`: Channels MUST include the `serviceUrl` field in all activities they send to bots.
+`A2300`: Channels MUST include the `serviceUrl` field in all activities they send to Agents.
 
 `A2301`: Channels SHOULD NOT include the `serviceUrl` field to clients who demonstrate they already know the channel's endpoint.
 
-`A2302`: Bots and clients SHOULD NOT populate the `serviceUrl` field in activities they generate.
+`A2302`: Agents and clients SHOULD NOT populate the `serviceUrl` field in activities they generate.
 
-`A2302`: Channels MUST ignore the value of `serviceUrl` in activities sent by bots and clients.
+`A2302`: Channels MUST ignore the value of `serviceUrl` in activities sent by Agents and clients.
 
-`A2304`: Channels SHOULD use stable values for the `serviceUrl` field as bots may persist them for long periods.
+`A2304`: Channels SHOULD use stable values for the `serviceUrl` field as Agents may persist them for long periods.
 
 ### Delivery mode
 
@@ -327,7 +327,7 @@ Activities with a `deliveryMode` of `expectReplies` differ only in their require
 
 `A3115`: Senders MUST establish whether a receiver understands `deliveryMode` of `expectReplies` prior to sending activities with that value.
 
-`A3116`: Bots SHOULD NOT send activities with `deliveryMode` of `expectReplies` to channels.  
+`A3116`: Agents SHOULD NOT send activities with `deliveryMode` of `expectReplies` to channels.  
 
 Delivery mode `notification` has been deprecated and will be handled as `normal`.
 
@@ -358,9 +358,9 @@ The `textFormat` field controls additional fields within attachments etc. This r
 
 `A3012`: Receivers SHOULD interpret undefined values as `plain`.
 
-`A3013`: Bots and clients SHOULD NOT send the value `xml` unless they have prior knowledge that the channel supports it, and the characteristics of the supported XML dialect.
+`A3013`: Agents and clients SHOULD NOT send the value `xml` unless they have prior knowledge that the channel supports it, and the characteristics of the supported XML dialect.
 
-`A3014`: Channels SHOULD NOT send `markdown` or `xml` contents to bots.
+`A3014`: Channels SHOULD NOT send `markdown` or `xml` contents to Agents.
 
 `A3015`: Channels SHOULD accept `textformat` values of at least `plain` and `markdown`.
 
@@ -384,7 +384,7 @@ The `speak` field indicates how the activity should be spoken via a text-to-spee
 
 `A3033`: Receivers SHOULD NOT use XML DTD or schema resolution to include remote resources from outside the communicated XML fragment.
 
-`A3034`: Channels SHOULD NOT send the `speak` field to bots.
+`A3034`: Channels SHOULD NOT send the `speak` field to Agents.
 
 `A3035`: Receivers generating speech from an Activity with a missing or null `speak` field SHOULD render message contents such as [`text`](#text) and [`summary`](#summary) instead.
 
@@ -394,7 +394,7 @@ The `inputHint` field indicates whether or not the generator of the activity is 
 
 `A3040`: If a sender includes the `inputHint` field, it SHOULD only send defined values.
 
-`A3041`: If sending an activity to a channel where `inputHint` is used, bots SHOULD include the field, even when the value is `accepting`.
+`A3041`: If sending an activity to a channel where `inputHint` is used, Agents SHOULD include the field, even when the value is `accepting`.
 
 `A3042`: Receivers SHOULD interpret undefined values as `accepting`.
 
@@ -424,7 +424,7 @@ The `summary` field contains text used to replace [`attachments`](#attachments) 
 
 `A3070`: Receivers SHOULD consider the `summary` field to logically follow the `text` field.
 
-`A3071`: Channels SHOULD NOT send the `summary` field to bots.
+`A3071`: Channels SHOULD NOT send the `summary` field to Agents.
 
 `A3072`: Channels able to process all attachments within an activity SHOULD ignore the `summary` field.
 
@@ -460,19 +460,19 @@ The `importance` field contains an enumerated set of values to signal to the rec
 
 The `listenFor` field contains a list of terms or references to term sources that speech and language processing systems can listen for. The value of the `listenFor` field is an array of strings whose format is defined in [Appendix IV](#appendix-iv---priming-format).
 
-A missing `listenFor` field indicates default priming behavior should be used. The default is defined by the channel and may depend on variables such as the identity of the user and the bot.
+A missing `listenFor` field indicates default priming behavior should be used. The default is defined by the channel and may depend on variables such as the identity of the user and the Agent.
 
 `A3120`: Channels SHOULD NOT populate the `listenFor` field.
 
-`A3121`: Bots SHOULD send `listenFor` contents that reflect the complete set of utterances expected from users, not just the utterances in response to the content in the message in which the `listenFor` is included.
+`A3121`: Agents SHOULD send `listenFor` contents that reflect the complete set of utterances expected from users, not just the utterances in response to the content in the message in which the `listenFor` is included.
 
 ### Semantic action
 
-The `semanticAction` field contains an optional programmatic action accompanying the user request. The semantic action field is populated by the channel and bot based on some understanding of what the user is trying to accomplish; this understanding may be achieved with natural language processing, additional user interface elements tied specifically to these actions, through a process of conversational refinement, or contextually via other means. The meaning and structure of the semantic action is agreed ahead of time between the channel and the bot.
+The `semanticAction` field contains an optional programmatic action accompanying the user request. The semantic action field is populated by the channel and Agent based on some understanding of what the user is trying to accomplish; this understanding may be achieved with natural language processing, additional user interface elements tied specifically to these actions, through a process of conversational refinement, or contextually via other means. The meaning and structure of the semantic action is agreed ahead of time between the channel and the Agent.
 
 The value of the `semanticAction` field is a complex object of the [semantic action](#semantic-action-type) type.
 
-`A3130`: Channels and bots MAY populate the `semanticAction` field. Other senders SHOULD NOT populate the `semanticAction` field.
+`A3130`: Channels and Agents MAY populate the `semanticAction` field. Other senders SHOULD NOT populate the `semanticAction` field.
 
 Information within the semantic action field is meant to augment, not replace, existing content within the activity. A well-formed semantic action has a defined name, corresponding well-formed entities, and matches the user's intent in generating the activity.
 
@@ -486,17 +486,17 @@ Semantic actions are sometimes used to indicate a change in which participant co
 
 `A3135`: Channels MAY define the use of [handoff activity](#handoff-activity) in conjunction with semantic actions.
 
-`A3136`: Bots MAY use semantic action and [handoff activity](#handoff-activity) internally to coordinate conversational focus between components of the bot.
+`A3136`: Agents MAY use semantic action and [handoff activity](#handoff-activity) internally to coordinate conversational focus between components of the Agent.
 
 ## Contact relation update activity
 
-Contact relation update activities signal a change in the relationship between the recipient and a user within the channel. Contact relation update activities generally do not contain user-generated content. The relationship update described by a contact relation update activity exists between the user in the `from` field (often, but not always, the user initiating the update) and the user or bot in the `recipient` field.
+Contact relation update activities signal a change in the relationship between the recipient and a user within the channel. Contact relation update activities generally do not contain user-generated content. The relationship update described by a contact relation update activity exists between the user in the `from` field (often, but not always, the user initiating the update) and the user or Agent in the `recipient` field.
 
 Contact relation update activities are identified by a `type` value of `contactRelationUpdate`.
 
 ### Action
 
-The `action` field describes the meaning of the contact relation update activity. The value of the `action` field is a string. Only values of `add` and `remove` are defined, which denote a relationship between the users/bots in the `from` and `recipient` fields.
+The `action` field describes the meaning of the contact relation update activity. The value of the `action` field is a string. Only values of `add` and `remove` are defined, which denote a relationship between the users/Agents in the `from` and `recipient` fields.
 
 ## Conversation update activity
 
@@ -514,11 +514,11 @@ Conversation update activities are identified by a `type` value of `conversation
 
 ### Members added
 
-The `membersAdded` field contains a list of channel participants (bots or users) added to the conversation. The value of the `membersAdded` field is an array of type [`channelAccount`](#channel-account).
+The `membersAdded` field contains a list of channel participants (Agents or users) added to the conversation. The value of the `membersAdded` field is an array of type [`channelAccount`](#channel-account).
 
 ### Members removed
 
-The `membersRemoved` field contains a list of channel participants (bots or users) removed from the conversation. The value of the `membersRemoved` field is an array of type [`channelAccount`](#channel-account).
+The `membersRemoved` field contains a list of channel participants (Agents or users) removed from the conversation. The value of the `membersRemoved` field is an array of type [`channelAccount`](#channel-account).
 
 ### Topic name
 
@@ -565,13 +565,13 @@ The `value` field contains parameters specific to this event, as defined by the 
 
 ## Event activity
 
-Event activities communicate programmatic information from a client or channel to a bot. The meaning of an event activity is defined by the `name` field, which is meaningful within the scope of a channel. Event activities are designed to carry both interactive information (such as button clicks) and non-interactive information (such as a notification of a client automatically updating an embedded speech model).
+Event activities communicate programmatic information from a client or channel to an Agent. The meaning of an event activity is defined by the `name` field, which is meaningful within the scope of a channel. Event activities are designed to carry both interactive information (such as button clicks) and non-interactive information (such as a notification of a client automatically updating an embedded speech model).
 
 Event activities are the asynchronous counterpart to [invoke activities](#invoke-activity). Unlike invoke, event is designed to be extended by client application extensions.
 
 Event activities are identified by a `type` value of `event` and specific values of the `name` field.
 
-`A5000`: Channels MAY allow application-defined event messages between clients and bots, if the clients allow application customization.
+`A5000`: Channels MAY allow application-defined event messages between clients and Agents, if the clients allow application customization.
 
 ### Name
 
@@ -601,7 +601,7 @@ The `relatesTo` field references another conversation, and optionally a specific
 
 ## Invoke activity
 
-Invoke activities communicate programmatic information from a client or channel to a bot, and have a corresponding return payload for use within the channel. The meaning of an invoke activity is defined by the `name` field, which is meaningful within the scope of a channel.
+Invoke activities communicate programmatic information from a client or channel to an Agent, and have a corresponding return payload for use within the channel. The meaning of an invoke activity is defined by the `name` field, which is meaningful within the scope of a channel.
 
 Invoke activities are the synchronous counterpart to [event activities](#event-activity). Event activities are designed to be extensible. Invoke activities differ only in their ability to return response payloads back to the channel; because the channel must decide where and how to process these response payloads, Invoke is useful only in cases where explicit support for each invoke name has been added to the channel. Thus, Invoke is not designed to be a generic application extensibility mechanism.
 
@@ -609,7 +609,7 @@ Invoke activities are identified by a `type` value of `invoke` and specific valu
 
 The list of defined Invoke activities is included in [Appendix III](#appendix-iii---protocols-using-the-invoke-activity).
 
-`A5301`: Channels SHOULD NOT allow application-defined invoke messages between clients and bots.
+`A5301`: Channels SHOULD NOT allow application-defined invoke messages between clients and Agents.
 
 ### Name
 
@@ -639,13 +639,13 @@ The `relatesTo` field references another conversation, and optionally a specific
 
 ## Installation update activity
 
-Installation update activities represent an installation or uninstallation of a bot within an organizational unit (such as a customer tenant or "team") of a channel. Installation update activities generally do not represent adding or removing a channel.
+Installation update activities represent an installation or uninstallation of an Agent within an organizational unit (such as a customer tenant or "team") of a channel. Installation update activities generally do not represent adding or removing a channel.
 
 Installation update activities are identified by a `type` value of `installationUpdate`.
 
-`A5700`: Channels MAY send installation activities when a bot is added to or removed from a tenant, team, or other organization unit within the channel.
+`A5700`: Channels MAY send installation activities when an Agent is added to or removed from a tenant, team, or other organization unit within the channel.
 
-`A5701`: Channels SHOULD NOT send installation activities when the bot is installed into or removed from a channel.
+`A5701`: Channels SHOULD NOT send installation activities when the Agent is installed into or removed from a channel.
 
 ### Action
 
@@ -659,9 +659,9 @@ Message delete activities are identified by a `type` value of `messageDelete`.
 
 `A5800`: Channels MAY elect to send message delete activities for all deletions within a conversation, a subset of deletions within a conversation (e.g. only deletions by certain users), or no activities within the conversation.
 
-`A5801`: Channels SHOULD NOT send message delete activities for conversations or activities that the bot did not observe.
+`A5801`: Channels SHOULD NOT send message delete activities for conversations or activities that the Agent did not observe.
 
-`A5802`: If a bot triggers a delete, the channel SHOULD NOT send a message delete activity back to that bot.
+`A5802`: If an Agent triggers a delete, the channel SHOULD NOT send a message delete activity back to that Agent.
 
 `A5803`: Channels SHOULD NOT send message delete activities corresponding to activities whose type is not `message`.
 
@@ -673,7 +673,7 @@ Message update activities are identified by a `type` value of `messageUpdate`.
 
 `A5900`: Channels MAY elect to send messageUpdate  activities for all updates within a conversation, a subset of updates within a conversation (e.g. only updates by certain users), or no activities within the conversation.
 
-`A5901`: If a bot triggers an update, the channel SHOULD NOT send a message update activity back to that bot.
+`A5901`: If an Agent triggers an update, the channel SHOULD NOT send a message update activity back to that Agent.
 
 `A5902`: Channels SHOULD NOT send message update activities corresponding to activities whose type is not `message`.
 
@@ -693,9 +693,9 @@ The `reactionsRemoved` field contains a list of reactions removed from this acti
 
 ## Suggestion activity
 
-Suggestion activities allow a bot to send content targeting a single user in the conversation which refers to a previous activity and suggests content that augments it. The suggested content is a superset of the [message activity](#message-activity), and fields present on the message activity are schematically valid on the suggestion activity. The channel in which the suggestion activity is sent defines limitations on text or attachment content, and these limitations may differ from the channel's limitations on message activities. The suggestion activity includes the `textHighlights` property so that the suggestions can be surfaced as annotations to the original content in the source activity.
+Suggestion activities allow an Agent to send content targeting a single user in the conversation which refers to a previous activity and suggests content that augments it. The suggested content is a superset of the [message activity](#message-activity), and fields present on the message activity are schematically valid on the suggestion activity. The channel in which the suggestion activity is sent defines limitations on text or attachment content, and these limitations may differ from the channel's limitations on message activities. The suggestion activity includes the `textHighlights` property so that the suggestions can be surfaced as annotations to the original content in the source activity.
 
-For example: an message activity with the text "...we should meet on Monday to review this plan..." could cause a bot to send a suggestion activity which refers to that section of text and offers the user an affordance to create a meeting on their calendar. Some channels use this information to highlight and turn into a hot link the snippet of text to show the suggestion in context.
+For example: an message activity with the text "...we should meet on Monday to review this plan..." could cause an Agent to send a suggestion activity which refers to that section of text and offers the user an affordance to create a meeting on their calendar. Some channels use this information to highlight and turn into a hot link the snippet of text to show the suggestion in context.
 
 Suggestion activities are identified by a `type` value of `suggestion`. Suggestion activities refer to another activity by using the [`replyToId`](#reply-to-ID) property.
 
@@ -705,13 +705,13 @@ Suggestion activity uses the [`recipient`](#recipient) field to signal which use
 
 All `textHighlight` objects are relative to the activity specified by the `replyToId` property.  There can be multiple `textHighlight` provided, allowing a client the option to turn different sections of the text into links which would show the suggestion content.
 
-`A6101`: Bots MAY use `replyToId` and `textHighlights` to associate the suggestion with an activity.
+`A6101`: Agents MAY use `replyToId` and `textHighlights` to associate the suggestion with an activity.
 
 `A6102`: Channels MAY use `replyToId` and `textHighlights` to show the suggestion activity contextually to the recipient.
 
 `A6103`: Channels MUST only show the suggestion activity to the recipient. If unable to identify the intended recipient or show the content only to them, the channel MUST drop the activity.
 
-`A6104`: Channels SHOULD NOT send suggestion activities to bots.
+`A6104`: Channels SHOULD NOT send suggestion activities to Agents.
 
 ### Suggestion activity text highlights
 
@@ -719,7 +719,7 @@ The `textHighlights` field contains a list of text to highlight in the `text` fi
 
 ## Trace activity
 
-The Trace activity is an activity which the developer inserts in to the stream of activities to represent a point in the developers bot logic. The trace activity typically is logged by transcript history components to become part of a [Transcript-format](../transcript/transcript.md) history file.  In remote debugging scenarios the Trace activity can be sent to the client so that the activity can be inspected as part of the debug flow.
+The Trace activity is an activity which the developer inserts in to the stream of activities to represent a point in the developers Agent logic. The trace activity typically is logged by transcript history components to become part of a [Transcript-format](../transcript/transcript.md) history file.  In remote debugging scenarios the Trace activity can be sent to the client so that the activity can be inspected as part of the debug flow.
 
 Trace activities are normally not shown to the user, and are internal to transcript logging and developer debugging.
 
@@ -763,7 +763,7 @@ The `relatesTo` field references another conversation, and optionally a specific
 
 ## Typing activity
 
-Typing activities represent ongoing input from a user or a bot. This activity is often sent when keystrokes are being entered by a user, although it's also used by bots to indicate they're "thinking," and could also be used to indicate e.g. collecting audio from users.
+Typing activities represent ongoing input from a user or an Agent. This activity is often sent when keystrokes are being entered by a user, although it's also used by Agents to indicate they're "thinking," and could also be used to indicate e.g. collecting audio from users.
 
 Typing activities are intended to persist within UIs for three seconds.
 
@@ -773,13 +773,13 @@ Typing activities are identified by a `type` value of `typing`.
 
 `A6001`: Unless otherwise known for the channel, senders SHOULD NOT send typing activities more frequently than one every three seconds. (Senders MAY send typing activities every two seconds to prevent gaps from appearing.)
 
-`A6002`: If a channel assigns an [`id`](#id) to a typing activity, it MAY allow bots and clients to delete the typing activity before its expiration.
+`A6002`: If a channel assigns an [`id`](#id) to a typing activity, it MAY allow Agents and clients to delete the typing activity before its expiration.
 
-`A6003`: If able, channels SHOULD send typing activities to bots.
+`A6003`: If able, channels SHOULD send typing activities to Agents.
 
 ## Handoff activity
 
-Handoff activities are used to request or signal a change in focus between elements inside a bot. They are not intended to be used in wire communication (besides internal communication that occurs between services in a distributed bot).
+Handoff activities are used to request or signal a change in focus between elements inside an Agent. They are not intended to be used in wire communication (besides internal communication that occurs between services in a distributed Agent).
 
 Handoff activities are identified by a `type` value of `handoff`.
 
@@ -791,7 +791,7 @@ Command activities communicate a request to perform a specific action. They are 
 
 Commands look similar in structure to events but have different semantics. Commands are requests to perform an action and receivers typically respond with one or more commandResult activities. Receivers are also expected to explicitly reject unsupported command activities.
 
-`A6300`: Channels MAY allow application-defined command activities between clients and bots, if the clients allow application customization.
+`A6300`: Channels MAY allow application-defined command activities between clients and Agents, if the clients allow application customization.
 
 `A6301`: Application-defined command activities MUST be declared in the `application/*` namespace.
 
@@ -888,7 +888,7 @@ When present, the `contentUrl` field contains a URL to the content in the attach
 
 `A7122`: Channels SHOULD accept data URIs.
 
-`A7123`: Channels SHOULD NOT send data URIs to clients or bots.
+`A7123`: Channels SHOULD NOT send data URIs to clients or Agents.
 
 #### Name
 
@@ -904,7 +904,7 @@ Some clients have the ability to display custom thumbnails for non-interactive a
 
 `A7142`: Channels SHOULD accept data URIs.
 
-`A7143`: Channels SHOULD NOT send `thumbnailUrl` fields to bots.
+`A7143`: Channels SHOULD NOT send `thumbnailUrl` fields to Agents.
 
 ### Card action
 
@@ -960,7 +960,7 @@ The `imageAltText` field contains alternate image text to be used in place of th
 
 #### Text
 
-The `text` field contains text content to be sent to a bot and included in the chat feed when the button is clicked. The contents of the `text` field may or may not be displayed, depending on the button type. The `text` field may contain markup, controlled by the [`textFormat`](#text-format) field in the activity root. The value of the `text` field is of type string.
+The `text` field contains text content to be sent to an Agent and included in the chat feed when the button is clicked. The contents of the `text` field may or may not be displayed, depending on the button type. The `text` field may contain markup, controlled by the [`textFormat`](#text-format) field in the activity root. The value of the `text` field is of type string.
 
 This field is only used on actions of select types. Details on each type of action are included later in this document.
 
@@ -980,7 +980,7 @@ This field is only used on actions of select types. Details on each type of acti
 
 #### Value
 
-The `value` field contains programmatic content to be sent to a bot when the button is clicked. The contents of the `value` field are of any primitive or complex type, although certain activity types constrain this field.
+The `value` field contains programmatic content to be sent to an Agent when the button is clicked. The contents of the `value` field are of any primitive or complex type, although certain activity types constrain this field.
 
 This field is only used on actions of select types. Details on each type of action are included later in this document.
 
@@ -1008,7 +1008,7 @@ A `messageBack` action represents a text response to be sent via the chat system
 
 `A7355`: If the channel supports storing and transmitting additional programmatic values, the contents of the `value` field MUST be preserved and transmitted in the `value` field of the generated message activity.
 
-`A7356`: If the channel supports preserving a different value in the chat feed than is sent to bots, it MUST include the `displayText` field in the chat history.
+`A7356`: If the channel supports preserving a different value in the chat feed than is sent to Agents, it MUST include the `displayText` field in the chat history.
 
 `A7354`: If the channel does not support `A7353` but does support recording text within the chat feed, it MUST include the `text` field in the chat history.
 
@@ -1050,7 +1050,7 @@ A `postBack` action represents a text response that is not added to the chat fee
 
 `A7373`: If the channel supports storing and transmitting text, the contents of the `value` field MUST be preserved and transmitted in the `text` field of the generated message activity.
 
-`A7374`: If the channel is unable to support transmitting to the bot without including history in the chat feed, it SHOULD use the `title` field as the display text.
+`A7374`: If the channel is unable to support transmitting to the Agent without including history in the chat feed, it SHOULD use the `title` field as the display text.
 
 #### Open URL actions
 
@@ -1162,7 +1162,7 @@ Channel accounts represent identities within a channel. The channel account incl
 
 The `id` field is the identifier and address within the channel. The value of the `id` field is a string. An example `id` within a channel that uses email addresses is "name@example.com"
 
-`A7510`: Channels SHOULD use the same values and conventions for account IDs regardless of their position within the schema (`from.id`, `recipient.id`, `membersAdded`, etc.). This allows bots and clients to use ordinal string comparisons to know when e.g. they are described in the `membersAdded` field of a `conversationUpdate` activity.
+`A7510`: Channels SHOULD use the same values and conventions for account IDs regardless of their position within the schema (`from.id`, `recipient.id`, `membersAdded`, etc.). This allows Agents and clients to use ordinal string comparisons to know when e.g. they are described in the `membersAdded` field of a `conversationUpdate` activity.
 
 #### Channel account name
 
@@ -1174,7 +1174,7 @@ The `aadObjectId` field is an optional ID corresponding to the account's object 
 
 #### Channel account role
 
-The `role` field indicates whether entity behind the account is a user or bot. This field is intended for use in the [Transcript format](../transcript/transcript.md) [[15](#references)] to distinguish between activities sent by users and activities sent by bots. The value of the `role` field is a string.
+The `role` field indicates whether entity behind the account is a user or Agent. This field is intended for use in the [Transcript format](../transcript/transcript.md) [[15](#references)] to distinguish between activities sent by users and activities sent by Agents. The value of the `role` field is a string.
 
 `A7511`: Senders SHOULD NOT include this field. Receivers SHOULD ignore this field.
 
@@ -1206,7 +1206,7 @@ If the channel distinguishes between types of conversations (e.g. group vs. pers
 
 #### Conversation account role
 
-The `role` field indicates whether entity behind the account is a user or bot. This field is intended for use in the [Transcript format](../transcript/transcript.md) [[15](#references)] to distinguish between activities sent by users and activities sent by bots. The value of the `role` field is a string.
+The `role` field indicates whether entity behind the account is a user or Agent. This field is intended for use in the [Transcript format](../transcript/transcript.md) [[15](#references)] to distinguish between activities sent by users and activities sent by Agents. The value of the `role` field is a string.
 
 `A7512`:Senders SHOULD NOT include this field. Receivers SHOULD ignore this field.
 
@@ -1240,7 +1240,7 @@ The `user` field contains an optional reference to the user's identity within th
 
 #### Conversation reference bot
 
-The `bot` field contains an optional reference to the bot's identity within the conversation. The value of the `bot` field is of type [Channel account](#channel-account).
+The `bot` field contains an optional reference to the Agent's identity within the conversation. The value of the `bot` field is of type [Channel account](#channel-account).
 
 #### Conversation reference serviceUrl
 
@@ -1256,7 +1256,7 @@ The `locale` field contains an optional copy of the [`locale`](#locale) that app
 
 Entities carry metadata about an activity or conversation. Each entity's meaning and shape is defined by the `type` field. Additional type-specific fields sit as peers to the `type` field.
 
-Some non-Bot-Framework entities may have a preexisting field called `type`. Parties integrating these entities into the activity entity format are advised to define field-level mapping to resolve conflicts with the `type` field name and other incompatibilities with serialization requirement `A2001` as part of the IRI defining the entity type.
+Some non-Activity Protocol entities may have a preexisting field called `type`. Parties integrating these entities into the activity entity format are advised to define field-level mapping to resolve conflicts with the `type` field name and other incompatibilities with serialization requirement `A2001` as part of the IRI defining the entity type.
 
 Frequently, entities used within Activity Protocol are also expressed elsewhere using [JSON-LD](https://www.w3.org/TR/json-ld/) [[17](#references)]. The entity format is designed to be compatible with JSON-LD contexts, but does not require senders or receivers to implement JSON-LD to successfully process an entity.
 
@@ -1324,40 +1324,40 @@ The `occurrence` field is optional. It gives the sender the ability to specify w
 
 ### Semantic action type
 
-The semantic action type represents a programmatic reference. It is used within the [`semanticAction`](#semantic-action) field in [message activities](#message-activity). Actions are defined and registered externally to this protocol, typically as part of the [Bot Manifest](../manifestdefinition/bot-manifest.md) [[13](#references)]. The action definition declares the ID for the action and associates it with named entities, each of which has a corresponding type. Senders are receivers of actions use these names and types to create and parse actions that conform to the action definition.
+The semantic action type represents a programmatic reference. It is used within the [`semanticAction`](#semantic-action) field in [message activities](#message-activity). Actions are defined and registered externally to this protocol, typically as part of the [Agent Manifest](../manifestdefinition/bot-manifest.md) [[13](#references)]. The action definition declares the ID for the action and associates it with named entities, each of which has a corresponding type. Senders are receivers of actions use these names and types to create and parse actions that conform to the action definition.
 
 Actions proceed through a lifecycle, described by the [`state`](#semantic-action-state) and [`id`](#semantic-action-id) fields.
 
 At the beginning of the lifecycle, the channel indicates the `id` of the action it wishes to invoke, and sends a `state` of `start`.
 
-The bot then sends and receives subsequent activities. During this time, both the bot and the channel may send additional metadata in the form of actions with `state` of `continue`. If the bot detects the user changing topic, it reflects this in a revised value of `id`.
+The Agent then sends and receives subsequent activities. During this time, both the Agent and the channel may send additional metadata in the form of actions with `state` of `continue`. If the Agent detects the user changing topic, it reflects this in a revised value of `id`.
 
-When complete, the bot may send `state` of `done`. Just like earlier steps, the bot can update the `id` field to reflect what was actually in the conversation.
+When complete, the Agent may send `state` of `done`. Just like earlier steps, the Agent can update the `id` field to reflect what was actually in the conversation.
 
 Example data flow for `semanticAction`. (Note that [entities](#semantic-action-entities) are abbreviated).
 ```
 User: Book a flight from SeaTac to NYC
     Semantic action: state="start", id="bookFlight", entities="SeaTac", "NYC"
 
-Bot: Would you like to arrive at LaGuardia Airport or JFK International Airport?
+Agent: Would you like to arrive at LaGuardia Airport or JFK International Airport?
     Semantic action: state="continue", id="bookFlight", entities="KLGA", "KJFK"
 
 User: Hold on a second
     Semantic action empty
 
-Bot: No problem, please reply when you'd like to continue.
+Agent: No problem, please reply when you'd like to continue.
     Semantic action empty
 
 User: LaGuardia
     Semantic action: state="continue", id="bookFlight", entities="KLGA"
 
-Bot: OK, would you like to book your flight?
+Agent: OK, would you like to book your flight?
     Semantic action: state="continue", id="bookFlight"
 
 User: Yes
     Semantic action empty
 
-Bot: OK, your flight has been booked for November 10 at 8:05am.
+Agent: OK, your flight has been booked for November 10 at 8:05am.
     Semantic action: state="done", id="flightBooked", entities="Flight 81, KSEA to KLGA"
 ```
 
@@ -1365,9 +1365,9 @@ Bot: OK, your flight has been booked for November 10 at 8:05am.
 
 The `state` field describes whether the action is beginning, continuing, or ending. The value of the `state` field is of type string with defined values of `start`, `continue`, and `done`. This field is not extensible.
 
-**Note: the `state` field is not a mechanism to control a bot's state machine. Instead, it may be used to *request* that an action be started, or it may be used by bots to *inform* that the current action has changed or completed.**
+**Note: the `state` field is not a mechanism to control an Agent's state machine. Instead, it may be used to *request* that an action be started, or it may be used by Agents to *inform* that the current action has changed or completed.**
 
-Because `semanticAction` is optional and the topic of a conversation may drift over time, receivers are cautioned to be flexible in accepting `semanticAction` contents, especially with states of `continue` and `done`. Specifically, channels and bots are cautioned not to create a state machine requiring specific values of `semanticAction` fields `state` and `id`. Instead, treat `semanticAction` as additional metadata that can be used to optionally enrich data sharing between actors. Receivers may always discard unexpected `semanticAction` values in accordance with `A3133`.
+Because `semanticAction` is optional and the topic of a conversation may drift over time, receivers are cautioned to be flexible in accepting `semanticAction` contents, especially with states of `continue` and `done`. Specifically, channels and Agents are cautioned not to create a state machine requiring specific values of `semanticAction` fields `state` and `id`. Instead, treat `semanticAction` as additional metadata that can be used to optionally enrich data sharing between actors. Receivers may always discard unexpected `semanticAction` values in accordance with `A3133`.
 
 The `start` state indicates an action is being started. Subsequent `start` actions indicate the sender wishes to start this action or another action (depending on the value of the `id` field).
 
@@ -1375,13 +1375,13 @@ The `start` state indicates an action is being started. Subsequent `start` actio
 
 The `continue` state indicates processing of an action is ongoing, and this activity contains new information within the `semanticAction` field.
 
-`A7761`: Channels and bots MAY send `state` of `continue` when they populate the `semanticAction` field. Other senders MUST NOT send `state` of `continue`.
+`A7761`: Channels and Agents MAY send `state` of `continue` when they populate the `semanticAction` field. Other senders MUST NOT send `state` of `continue`.
 
 The `done` state indicates an action was successfully completed.
 
-`A7762`: Bots SHOULD send `state` of `done` when an action has been completed, even if `semanticAction` contains no entities. Other senders MUST NOT send `state` of `done`.
+`A7762`: Agents SHOULD send `state` of `done` when an action has been completed, even if `semanticAction` contains no entities. Other senders MUST NOT send `state` of `done`.
 
-Channels are expected to provide continuity when issuing actions to bots, but should expect changes in the `state` or `id` values received from bots.
+Channels are expected to provide continuity when issuing actions to Agents, but should expect changes in the `state` or `id` values received from Agents.
 
 `A7763`: Channels SHOULD NOT send `state` of `continue` without a preceding `state` of `start`.
 
@@ -1395,9 +1395,9 @@ The `id` field establishes the identity for the action, and is associated with a
 
 `A7731`: Two `id` values are equivalent only if they are ordinally identical.
 
-`A7732`: Channels SHOULD only change the value of the `id` field within a conversation when a new action with `state` of `start` is sent, or when the bot sends a `state` of `continue` with a new `id` value.
+`A7732`: Channels SHOULD only change the value of the `id` field within a conversation when a new action with `state` of `start` is sent, or when the Agent sends a `state` of `continue` with a new `id` value.
 
-`A7733`: Bots SHOULD make best-effort attempts to update the `id` field to reflect the topic of the conversation. Channels SHOULD make best-effort attempts to honor the bot's stated `id` values.
+`A7733`: Agents SHOULD make best-effort attempts to update the `id` field to reflect the topic of the conversation. Channels SHOULD make best-effort attempts to honor the Agent's stated `id` values.
 
 #### Semantic action entities
 
@@ -1405,7 +1405,7 @@ The `entities` field contains entities associated with this action. The value of
 
 `A7740`: Unless otherwise specified, senders MAY omit some or all entities associated with an action definition.
 
-`A7742`: Senders MAY add entities with unknown keys if they have special knowledge that the bot supports them.
+`A7742`: Senders MAY add entities with unknown keys if they have special knowledge that the Agent supports them.
 
 Actions support dynamic typing. An implementer of an action expresses a list of types it prefers, and callers of that action can match the desired types with known entities of varying fidelity. For example, assume an action prefers to receive a destination in the form of a *city* entity. The caller may not have a city available, but is able to supply either a *string* or *geocoordinates* based on what it was able to extract from the conversation. The caller can examine the action's preferred types and send the *string* or *geocoordinates* if the action can handle it.
 
@@ -1519,7 +1519,7 @@ The `error` field contains the reason the original [command activity](#command-a
 10. [ISO 3166-1](https://www.iso.org/iso-3166-country-codes.html) -- *Country codes*
 11. [Activity Protocol Cards](protocol-cards.md)
 12. [Adaptive Cards](https://adaptivecards.io)
-13. [Bot Manifest](../manifest/bot-manifest.md)
+13. [Agent Manifest](../manifest/bot-manifest.md)
 14. [RFC 4627](http://www.ietf.org/rfc/rfc4627.txt) -- *The application/json Media Type for JavaScript Object Notation (JSON)*
 15. [Transcript](../transcript/transcript.md)
 16. [RFC 6557](https://tools.ietf.org/html/rfc6557)
@@ -1527,6 +1527,9 @@ The `error` field contains the reason the original [command activity](#command-a
 18. [IETF BCP-47](https://tools.ietf.org/html/bcp47) -- *Language tag*
 
 # Appendix I - Changes
+
+# 2025-03-19 - trboehre@microsoft.com
+* Replaced "bot" with "agent" except in relation to Azure Bot and payload fields/values.
 
 # 2025-02-05 - trboehre@microsoft.com
 * Marked Delivery Mode `notification` as deprecated.
@@ -1655,7 +1658,7 @@ Example:
 
 The `clientInfo` entity type contains extended information about the client software used to send a user's message. It contains three properties, all of which are optional.
 
-`A9201`: Bots SHOULD NOT send the `clientInfo` entity.
+`A9201`: Agents SHOULD NOT send the `clientInfo` entity.
 
 `A9202`: Senders SHOULD include the `clientInfo` entity only when one or more fields are populated.
 
@@ -1679,9 +1682,9 @@ The `country` field contains the user's detected location. This value may differ
 
 The `platform` field describes the messaging client platform used to generate the activity. The value of the `platform` field is a string and the list of possible values and their meaning is defined by the channel sending them.
 
-Note that on channels with a persistent chat feed, `platform` is typically useful only in deciding which content to include, not the format of that content. For instance, if a user on a mobile device asks for product support help, a bot could generate help specific to their mobile device. However, the user may then re-open the chat feed on their PC so they can read it on that screen while making changes to their mobile device. In this situation, the `platform` field is intended to inform the content, but the content should be viewable on other devices.
+Note that on channels with a persistent chat feed, `platform` is typically useful only in deciding which content to include, not the format of that content. For instance, if a user on a mobile device asks for product support help, an Agent could generate help specific to their mobile device. However, the user may then re-open the chat feed on their PC so they can read it on that screen while making changes to their mobile device. In this situation, the `platform` field is intended to inform the content, but the content should be viewable on other devices.
 
-`A9230`: Bots SHOULD NOT use the `platform` field to control how response data is formatted unless they have specific knowledge that the content they are sending may only ever be seen on the device in question.
+`A9230`: Agents SHOULD NOT use the `platform` field to control how response data is formatted unless they have specific knowledge that the content they are sending may only ever be seen on the device in question.
 
 # Appendix III - Protocols using the Invoke activity
 
@@ -1737,29 +1740,29 @@ The short form for these IDs is:
 
 # Appendix V - Caller ID Values
 
-The Activity schema includes a ['callerId'](#caller-Id) field that identifies the caller sending an activity. The field is not populated on the wire but is used for internal routing within a bot, and for tracking this data when an Activity is committed to storage (in e.g. the [Transcript](../transcript/transcript.md) [[#15](#references)] format).
+The Activity schema includes a ['callerId'](#caller-Id) field that identifies the caller sending an activity. The field is not populated on the wire but is used for internal routing within an Agent, and for tracking this data when an Activity is committed to storage (in e.g. the [Transcript](../transcript/transcript.md) [[#15](#references)] format).
 
 This specification defines three IRI schemes for caller IDs.
 
 It is important that implementers follow the verification rules in this appendix to ensure a caller ID is set only when the caller is successfully authenticated.
 
-## Bot Framework
+## Azure Bot
 
-Bot Framework services call registered bots to transmit messages sent over Bot Framework channels. The caller ID for any Bot Framework channel service is `urn:botframework:azure`.
+Azure Bot services call registered bots to transmit messages sent over Azure Bot Service channels. The caller ID for any Azure Bot channel service is `urn:botframework:azure`.
 
 The authenticity of a call from Bot Framework can be established by inspecting its JSON Web Token and ensuring it is both correctly formed and is signed with a key listed in the Bot Framework Open ID Metadata Document.
 
-## Bot Framework (US Government Cloud)
+## Azure Bot (US Government Cloud)
 
-Bot Framework services running in the US Government Cloud are in a distinct security domain from traditional Bot Framework serivces. The caller ID for any Bot Framework channel service is `urn:botframework:azureusgov`.
+Azure Bot services running in the US Government Cloud are in a distinct security domain from traditional serivces. The caller ID for any Azure Bot channel service is `urn:botframework:azureusgov`.
 
-The authenticity of a call from Bot Framework US Government Cloud can be established by inspecting its JSON Web Token and ensuring it is both correctly formed and is signed with a key listed in the Bot Framework US Government Cloud Open ID Metadata Document.
+The authenticity of a call from Azure Bot US Government Cloud can be established by inspecting its JSON Web Token and ensuring it is both correctly formed and is signed with a key listed in the Azure Bot US Government Cloud Open ID Metadata Document.
 
-## Bot calling bot
+## Agent calling Agent
 
-The Activity schema can be used when a bot initiates a request to another bot. The caller ID for these calls is the prefix `urn:botframework:aadappid:` followed by the Azure Active Directory App ID used by the bot initiating the call.
+The Activity schema can be used when an Agent initiates a request to another Agent. The caller ID for these calls is the prefix `urn:botframework:aadappid:` followed by the Azure Active Directory App ID used by the Agent initiating the call.
 
-The authenticity of a call from a bot can be established by inspecting its JSON Web Token and ensuring it is both correctly formed and is signed with a key listed in the Azure Active Directory Open ID Metadata Document.
+The authenticity of a call from an Agent can be established by inspecting its JSON Web Token and ensuring it is both correctly formed and is signed with a key listed in the Azure Active Directory Open ID Metadata Document.
 
 # Appendix VI - Protocols using the Command activity
 [Command activities](#command-activity) communicate a request to perform a specific action. Command activities outside the `application` are considered reserved for Activity Protocol. This appendix contains a list of command activities used in Activity Protocol and recommended patterns for defining and using command activities.
