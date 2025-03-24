@@ -41,9 +41,8 @@ const sysMessage = new SystemMessage(`
             "content": "{The content of the response, may be plain text, or JSON based adaptive card}"
         }`
     )
-    
+
 WeatherAgent.activity(ActivityTypes.Message, async (context, state) => {
-  // const chatHistory = state.getValue('conversation.chatHistory')
   const llmResponse = await agent.invoke({
     messages: [
       sysMessage,
