@@ -1,22 +1,22 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { ActivityHandler, BotState, BotStatePropertyAccessor, ConversationState, TurnContext, UserState } from '@microsoft/agents-bot-hosting'
-import { Dialog, DialogState } from '@microsoft/agents-bot-hosting-dialogs'
+import { ActivityHandler, AgentState, AgentStatePropertyAccessor, ConversationState, TurnContext, UserState } from '@microsoft/agents-hosting'
+import { Dialog, DialogState } from '@microsoft/agents-hosting-dialogs'
 import { UserProfileDialog } from '../dialogs/userProfileDialog'
 
 export class DialogBot extends ActivityHandler {
-  private conversationState: BotState
-  private userState: BotState
+  private conversationState: AgentState
+  private userState: AgentState
   private dialog: Dialog
-  private dialogState: BotStatePropertyAccessor<DialogState>
+  private dialogState: AgentStatePropertyAccessor<DialogState>
   /**
      *
      * @param {ConversationState} conversationState
      * @param {UserState} userState
      * @param {Dialog} dialog
      */
-  constructor (conversationState: BotState, userState: BotState, dialog: Dialog) {
+  constructor (conversationState: AgentState, userState: AgentState, dialog: Dialog) {
     super()
     if (!conversationState) throw new Error('[DialogBot]: Missing parameter. conversationState is required')
     if (!userState) throw new Error('[DialogBot]: Missing parameter. userState is required')
