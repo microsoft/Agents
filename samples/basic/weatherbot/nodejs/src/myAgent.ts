@@ -14,11 +14,11 @@ interface WeatherForecastAgentResponse {
 }
 
 const agentModel = new AzureChatOpenAI({
-    azureOpenAIApiKey: process.env.AZURE_OPENAI_API_KEY,
-    azureOpenAIApiInstanceName: process.env.AZURE_OPENAI_API_INSTANCE_NAME,
-    azureOpenAIApiDeploymentName: process.env.AZURE_OPENAI_API_DEPLOYMENT_NAME,
-    azureOpenAIApiVersion: process.env.AZURE_OPENAI_API_VERSION,
-    temperature: 0
+  azureOpenAIApiKey: process.env.AZURE_OPENAI_API_KEY,
+  azureOpenAIApiInstanceName: process.env.AZURE_OPENAI_API_INSTANCE_NAME,
+  azureOpenAIApiDeploymentName: process.env.AZURE_OPENAI_API_DEPLOYMENT_NAME,
+  azureOpenAIApiVersion: process.env.AZURE_OPENAI_API_VERSION,
+  temperature: 0
 })
 
 const agentTools = [GetWeatherTool, dateTool]
@@ -34,13 +34,13 @@ const sysMessage = new SystemMessage(`
         You may ask follow up questions until you have enough informatioon to answer the customers question,
         but once you have a forecast forecast, make sure to format it nicely using an adaptive card.
 
-        Respond in JSON format with the following JSON schema:
+        Respond in JSON format with the following JSON schema, and do not use markdown in the response:
 
         {
             "contentType": "'Text' or 'AdaptiveCard' only",
             "content": "{The content of the response, may be plain text, or JSON based adaptive card}"
         }`
-    )
+)
 
 WeatherAgent.activity(ActivityTypes.Message, async (context, state) => {
   const llmResponse = await agent.invoke({
@@ -48,15 +48,13 @@ WeatherAgent.activity(ActivityTypes.Message, async (context, state) => {
       sysMessage,
       new HumanMessage(context.activity.text!)
     ]
-    },
-    { configurable: { thread_id: '42' } 
-  })
-  console.log('llmResponse:', llmResponse)
+  },
+  { configurable: { thread_id: context.activity.conversation!.id } })
+
   const llmResponseContent: WeatherForecastAgentResponse = JSON.parse(llmResponse.messages[llmResponse.messages.length - 1].content as string)
-  
+
   if (llmResponseContent.contentType === 'Text') {
     await context.sendActivity(llmResponseContent.content)
-    return
   } else if (llmResponseContent.contentType === 'AdaptiveCard') {
     const response = MessageFactory.attachment({
       contentType: 'application/vnd.microsoft.card.adaptive',
