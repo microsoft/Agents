@@ -1,8 +1,8 @@
 {
-    "name": "multiturn-prompts-bot",
+    "name": "multiturn-prompts-agent",
     "version": "1.0.0",
     "private": true,
-    "description": "Agents multiturn-prompts bot",
+    "description": "Agents multiturn-prompts",
     "author": "Microsoft",
     "license": "MIT",
     "main": "./dist/index.js",

@@ -1,6 +1,6 @@
 # Multi-turn prompt
 
-This bot has been created with Agents SDK to show how to use the prompts classes included in `agents-bot-hosting-dialogs`.  This bot will ask for the user's name and age, then store the responses. It demonstrates a multi-turn dialog flow using a text prompt, a number prompt, and state accessors to store and retrieve values.
+This agent has been created with Agents SDK to show how to use the prompts classes included in `agents-bot-hosting-dialogs`.  It will ask for the user's name and age, then store the responses. It demonstrates a multi-turn dialog flow using a text prompt, a number prompt, and state accessors to store and retrieve values.
 
 ## Prerequisites
 
@@ -41,11 +41,11 @@ At this point you should see the message
 Server listening to port 3978 for appId  debug undefined
 ```
 
-The bot is ready to accept messages.
+The agent is ready to accept messages.
 
-### Interact with the bot from the Teams App Test Tool
+### Interact with the agent from the Teams App Test Tool
 
-To interact with the bot you need a chat client, during the install phase we have acquired the `teams-test-app-tool` than can be used to interact with your bot running in `localhost:3978`
+To interact with the agent you need a chat client, during the install phase we have acquired the `teams-test-app-tool` than can be used to interact with your agent running in `localhost:3978`
 
 1. Start the test tool with 
 
@@ -53,17 +53,17 @@ To interact with the bot you need a chat client, during the install phase we hav
 npm run test-tool
 ```
 
-The tool will open a web browser showing the Teams App Test Tool, ready to send messages to your bot.
+The tool will open a web browser showing the Teams App Test Tool, ready to send messages to your agent.
 
-Alternatively you can run the next command to start the bot and the test tool with a single command (make sure you stop the bot started previously):
+Alternatively you can run the next command to start the agent and the test tool with a single command (make sure you stop the agent started previously):
 
 ```bash
 npm test
 ```
 
-Refresh the browser to start a new conversation with the Multi-turn-prompt bot.
+Refresh the browser to start a new conversation with the Multi-turn-prompt agent.
 
-You should start the conversation by sending an initial message to the bot, and the dialog flow will start.
+You should start the conversation by sending an initial message to the agent, and the dialog flow will start.
 
 
 ### Interact with the bot from WebChat using Azure Bot Service
