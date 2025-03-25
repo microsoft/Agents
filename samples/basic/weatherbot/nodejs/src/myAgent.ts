@@ -6,7 +6,7 @@ import { createReactAgent } from '@langchain/langgraph/prebuilt'
 import { GetWeatherTool } from './tools/getWeatherTool.js'
 import { dateTool } from './tools/dateTimeTool.js'
 
-export const WeatherAgent = new ApplicationBuilder().build()
+export const weatherAgent = new ApplicationBuilder().build()
 
 interface WeatherForecastAgentResponse {
   contentType: 'Text' | 'AdaptiveCard'
@@ -42,14 +42,16 @@ const sysMessage = new SystemMessage(`
         }`
 )
 
-WeatherAgent.activity(ActivityTypes.Message, async (context, state) => {
+weatherAgent.activity(ActivityTypes.Message, async (context, state) => {
   const llmResponse = await agent.invoke({
     messages: [
       sysMessage,
       new HumanMessage(context.activity.text!)
     ]
   },
-  { configurable: { thread_id: context.activity.conversation!.id } })
+  {
+    configurable: { thread_id: context.activity.conversation!.id }
+  })
 
   const llmResponseContent: WeatherForecastAgentResponse = JSON.parse(llmResponse.messages[llmResponse.messages.length - 1].content as string)
 
