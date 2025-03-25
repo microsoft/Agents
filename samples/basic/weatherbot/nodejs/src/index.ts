@@ -1,5 +1,5 @@
 import { authorizeJWT, CloudAdapter, loadAuthConfigFromEnv } from '@microsoft/agents-hosting'
-import express, { Response } from 'express'
+import express from 'express'
 import { weatherAgent } from './myAgent.js'
 
 const authConfig = loadAuthConfigFromEnv()
