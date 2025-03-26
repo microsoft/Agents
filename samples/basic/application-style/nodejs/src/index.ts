@@ -1,4 +1,4 @@
-import { AuthConfiguration, authorizeJWT, CloudAdapter, loadAuthConfigFromEnv, Request } from '@microsoft/agents-bot-hosting'
+import { AuthConfiguration, authorizeJWT, CloudAdapter, loadAuthConfigFromEnv, Request } from '@microsoft/agents-hosting'
 import express, { Response } from 'express'
 import { webChatAgent } from './webChat'
 

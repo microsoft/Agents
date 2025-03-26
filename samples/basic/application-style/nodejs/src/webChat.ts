@@ -2,9 +2,9 @@
 // Licensed under the MIT License.
 
 import { TurnState, MemoryStorage, TurnContext, AgentApplication, AttachmentDownloader }
-  from '@microsoft/agents-bot-hosting'
-import { version } from '@microsoft/agents-bot-hosting/package.json'
-import { ActivityTypes } from '@microsoft/agents-bot-activity'
+  from '@microsoft/agents-hosting'
+import { version } from '@microsoft/agents-hosting/package.json'
+import { ActivityTypes } from '@microsoft/agents-activity'
 
 interface ConversationState {
   count: number;

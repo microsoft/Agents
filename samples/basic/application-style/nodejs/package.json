@@ -19,9 +19,9 @@
     "docker": "docker build -t \"$npm_package_name:$npm_package_version\" ."
   },
   "dependencies": {
-    "@microsoft/agents-bot-hosting": "^0.1.40",
-    "@microsoft/agents-bot-hosting-storage-blob": "^0.1.40",
-    "@microsoft/agents-bot-hosting-storage-cosmos": "^0.1.40",
+    "@microsoft/agents-hosting": "^0.1.41",
+    "@microsoft/agents-hosting-storage-blob": "^0.1.41",
+    "@microsoft/agents-hosting-storage-cosmos": "^0.1.41",
     "express": "^5.0.1"
   },
   "devDependencies": {
