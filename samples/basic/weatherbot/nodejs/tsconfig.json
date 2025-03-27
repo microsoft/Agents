@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+      "incremental": true,
+      "target": "ES2022",
+      "module": "ES2022",
+      "declaration": true,
+      "sourceMap": true,
+      "composite": true,
+      "strict": true,
+      "moduleResolution": "node",
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "resolveJsonModule": true,
+      "rootDir": "src",
+      "outDir": "dist",
+      "tsBuildInfoFile": "dist/.tsbuildinfo"
+  }
+}
