@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import express, { Response } from 'express'
-import { Request, CloudAdapter, authorizeJWT, AuthConfiguration, loadAuthConfigFromEnv } from '@microsoft/agents-bot-hosting'
+import { Request, CloudAdapter, authorizeJWT, AuthConfiguration, loadAuthConfigFromEnv } from '@microsoft/agents-hosting'
 import { CardFactoryBot } from './bot'
 
 const authConfig: AuthConfiguration = loadAuthConfigFromEnv()

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { ActivityHandler, Activity, ActivityTypes } from '@microsoft/agents-bot-hosting'
+import { ActivityHandler, Activity, ActivityTypes } from '@microsoft/agents-hosting'
 import { CardMessages } from './cardMessages'
 import AdaptiveCard from './resources/adaptiveCard.json'
 
