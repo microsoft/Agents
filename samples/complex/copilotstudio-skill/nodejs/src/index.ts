@@ -1,9 +1,9 @@
 import express, { json } from 'express'
 
-import { CloudAdapter, loadAuthConfigFromEnv, authorizeJWT } from '@microsoft/agents-bot-hosting'
-import pjson from '@microsoft/agents-bot-hosting/package.json'
+import { CloudAdapter, loadAuthConfigFromEnv, authorizeJWT } from '@microsoft/agents-hosting'
+import pjson from '@microsoft/agents-hosting/package.json'
 
-import { EchoBot } from './bot.js'
+import { EchoBot } from './agent.js'
 
 const config = loadAuthConfigFromEnv()
 const adapter = new CloudAdapter(config)
