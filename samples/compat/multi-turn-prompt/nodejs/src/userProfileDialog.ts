@@ -16,7 +16,7 @@ import {
   WaterfallDialog,
   WaterfallStepContext
 } from '@microsoft/agents-hosting-dialogs'
-import { UserProfile } from '../userProfile'
+import { UserProfile } from './userProfile'
 
 const ATTACHMENT_PROMPT = 'ATTACHMENT_PROMPT'
 const CHOICE_PROMPT = 'CHOICE_PROMPT'

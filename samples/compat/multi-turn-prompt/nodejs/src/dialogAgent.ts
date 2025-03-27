@@ -3,9 +3,9 @@
 
 import { ActivityHandler, AgentState, AgentStatePropertyAccessor, ConversationState, TurnContext, UserState } from '@microsoft/agents-hosting'
 import { Dialog, DialogState } from '@microsoft/agents-hosting-dialogs'
-import { UserProfileDialog } from '../dialogs/userProfileDialog'
+import { UserProfileDialog } from './userProfileDialog'
 
-export class DialogBot extends ActivityHandler {
+export class DialogAgent extends ActivityHandler {
   private conversationState: AgentState
   private userState: AgentState
   private dialog: Dialog

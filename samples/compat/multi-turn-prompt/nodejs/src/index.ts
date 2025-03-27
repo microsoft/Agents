@@ -1,6 +1,6 @@
 import express, { Response } from 'express'
-import { DialogBot } from './bots/dialogBot'
-import { UserProfileDialog } from './dialogs/userProfileDialog'
+import { DialogAgent } from './dialogAgent'
+import { UserProfileDialog } from './userProfileDialog'
 import { CloudAdapter, authorizeJWT, loadAuthConfigFromEnv, UserState, ConversationState, MemoryStorage, Request } from '@microsoft/agents-hosting'
 import { version as sdkVersion } from '@microsoft/agents-hosting/package.json'
 
@@ -20,7 +20,7 @@ const userState = new UserState(memoryStorage)
 const dialog = new UserProfileDialog(userState)
 
 // Create the bot's main handler.
-const myBot = new DialogBot(conversationState, userState, dialog)
+const myBot = new DialogAgent(conversationState, userState, dialog)
 
 const app = express()
 
