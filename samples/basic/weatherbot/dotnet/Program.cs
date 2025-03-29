@@ -1,19 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using WeatherBot;
+using Microsoft.Agents.Hosting.AspNetCore;
+using Microsoft.Agents.Storage;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.SemanticKernel;
-using Microsoft.Extensions.Configuration;
+using WeatherBot;
 using WeatherBot.Agents;
-using Azure.Identity;
-using Microsoft.Agents.Hosting.AspNetCore;
-using Microsoft.Agents.Samples;
-using Microsoft.Agents.BotBuilder.App;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 if (builder.Environment.IsDevelopment())
 {
@@ -32,13 +30,13 @@ if (builder.Configuration.GetSection("AIServices").GetValue<bool>("UseAzureOpenA
     builder.Services.AddAzureOpenAIChatCompletion(
         deploymentName: builder.Configuration.GetSection("AIServices:AzureOpenAI").GetValue<string>("DeploymentName"),
         endpoint: builder.Configuration.GetSection("AIServices:AzureOpenAI").GetValue<string>("Endpoint"),
-        //apiKey: builder.Configuration.GetSection("AIServices:AzureOpenAI").GetValue<string>("ApiKey"));
+        apiKey: builder.Configuration.GetSection("AIServices:AzureOpenAI").GetValue<string>("ApiKey"));
 
-        //Use the Azure CLI (for local) or Managed Identity (for Azure running app) to authenticate to the Azure OpenAI service
-        credentials: new ChainedTokenCredential(
-           new AzureCliCredential(),
-           new ManagedIdentityCredential()
-        ));
+    //Use the Azure CLI (for local) or Managed Identity (for Azure running app) to authenticate to the Azure OpenAI service
+    //credentials: new ChainedTokenCredential(
+    //   new AzureCliCredential(),
+    //   new ManagedIdentityCredential()
+    //));
 }
 else
 {
@@ -47,19 +45,17 @@ else
         apiKey: builder.Configuration.GetSection("AIServices:OpenAI").GetValue<string>("ApiKey"));
 }
 
-// Register the WeatherForecastAgent
+builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
+
+builder.AddAgentApplicationOptions();
+
 builder.Services.AddTransient<WeatherForecastAgent>();
 
-// Add AspNet token validation
-builder.Services.AddBotAspNetAuthentication(builder.Configuration);
+builder.AddAgent<MyAgent>();
 
-// Add AgentApplicationOptions.  This will use DI'd services and IConfiguration for construction.
-builder.Services.AddTransient<AgentApplicationOptions>();
+builder.Services.AddSingleton<IStorage, MemoryStorage>();
 
-// Add the bot (which is transient)
-builder.AddBot<MyBot>();
-
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
