@@ -1,15 +1,15 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Agents;
-using WeatherBot.Plugins;
-using System.Threading.Tasks;
 using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.Connectors.OpenAI;
+using System;
 using System.Text;
 using System.Text.Json;
-using System;
+using System.Threading.Tasks;
+using WeatherBot.Plugins;
 
 namespace WeatherBot.Agents;
 
@@ -48,10 +48,10 @@ public class WeatherForecastAgent
                 Instructions = AgentInstructions,
                 Name = AgentName,
                 Kernel = this._kernel,
-                Arguments = new KernelArguments(new OpenAIPromptExecutionSettings() 
-                { 
-                    FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(), 
-                    ResponseFormat = "json_object" 
+                Arguments = new KernelArguments(new OpenAIPromptExecutionSettings()
+                {
+                    FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
+                    ResponseFormat = "json_object"
                 }),
             };
 
@@ -69,12 +69,12 @@ public class WeatherForecastAgent
     public async Task<WeatherForecastAgentResponse> InvokeAgentAsync(string input, ChatHistory chatHistory)
     {
         ArgumentNullException.ThrowIfNull(chatHistory);
-
+        AgentThread thread = new ChatHistoryAgentThread();
         ChatMessageContent message = new(AuthorRole.User, input);
         chatHistory.Add(message);
 
         StringBuilder sb = new();
-        await foreach (ChatMessageContent response in this._agent.InvokeAsync(chatHistory))
+        await foreach (ChatMessageContent response in this._agent.InvokeAsync(chatHistory, thread: thread))
         {
             chatHistory.Add(response);
             sb.Append(response.Content);
@@ -83,8 +83,8 @@ public class WeatherForecastAgent
         // Make sure the response is in the correct format and retry if neccesary
         try
         {
-            var resultContent = sb.ToString();
-            var result = JsonSerializer.Deserialize<WeatherForecastAgentResponse>(resultContent);
+            string resultContent = sb.ToString();
+            WeatherForecastAgentResponse result = JsonSerializer.Deserialize<WeatherForecastAgentResponse>(resultContent);
             this.retryCount = 0;
             return result;
         }
