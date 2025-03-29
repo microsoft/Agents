@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 using Microsoft.SemanticKernel;
-using System.ComponentModel;
 using System;
+using System.ComponentModel;
 
 namespace WeatherBot.Plugins;
 
@@ -23,10 +23,10 @@ public class DateTimePlugin
     public string Date(IFormatProvider formatProvider = null)
     {
         // Example: Sunday, 12 January, 2025
-        var date = DateTimeOffset.Now.ToString("D", formatProvider);
+        string date = DateTimeOffset.Now.ToString("D", formatProvider);
         return date;
     }
-        
+
 
     /// <summary>
     /// Get the current date
