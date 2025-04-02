@@ -25,16 +25,10 @@ npm install
 
 ### Run in localhost, anonymous mode
 
-1. Create the `.env` file (or rename env.TEMPLATE)
-
-```bash
-cp env.TEMPLATE .env
-```
-
 1. Start the application
 
 ```bash
-npm start
+npm start:anon
 ```
 
 At this point you should see the message 
@@ -43,11 +37,14 @@ At this point you should see the message
 Server listening to port 3978 for appId  debug undefined
 ```
 
-The bot is ready to accept messages.
+The agent is ready to accept messages.
 
 ### Interact with the bot from the Teams App Test Tool
 
 To interact with the bot you need a chat client, during the install phase we have acquired the `teams-test-app-tool` than can be used to interact with your bot running in `localhost:3978`
+
+> [!Important]
+> The test tool only supports anonymous mode, that means without any `clientId`.
 
 1. Start the test tool with 
 
@@ -65,7 +62,7 @@ npm test
 
 Refresh the browser to start a new conversation with the Echo bot.
 
-You should see a message from the bot like: `Echo bot running on Agents SDK version: 0.1.20`
+You should see a message from the bot like: `Echo running on Agents SDK version: {version}`
 
 
 ### Interact with the bot from WebChat using Azure Bot Service
@@ -76,7 +73,7 @@ You should see a message from the bot like: `Echo bot running on Agents SDK vers
 1. Configuring the token connection in the Agent settings
     1. Open the `env.TEMPLATE` file in the root of the sample project, rename it to `.env` and configure the following values:
       1. Set the **clientId** to the AppId of the bot identity.
-      2. Set the **clientSecret** to the Secret that was created for your identity.
+      2. Set the **clientSecret** to the Secret that was created for your identity. *This is the `Secret Value` shown in the AppRegistration*.
       3. Set the **tenantId** to the Tenant Id where your application is registered.
 
 1. Install the tool [dev tunnel](https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/get-started?tabs=windows)   
