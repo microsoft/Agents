@@ -226,3 +226,4 @@ appsettings.Production.json
 
 # VS Code files
 .vscode
+package-lock.json
