@@ -13,9 +13,9 @@ Multiple internal actions can take place within a turn, such as using internal s
 
 There is information available to the agent per turn based on the `turn context`
 
-<pre>
+```
     await turnContext.SendActivityAsync(MessageFactory.Text({response}"), cancellationToken);
-</pre>
+```
 
 The `turn context` is how activities are sent using the `SendActivityAync` method
 
@@ -25,6 +25,6 @@ State is supported as an optional parameter when the agent is built, and include
 
 Because by default, they are stateless, any information is lost on the next turn, unless it is saved.
 
-### Using multiple agent states across turns
+### Using state across multiple agents
 
 When working with multiple agents developers may want to manage multiple states of agents. This will be dependent on the types of state and storage supported by those agents and what would be required to be stored persistantly, and what data you want or need to store across turns.

@@ -1,27 +1,21 @@
----
-layout: custom
-title: Quickstart C#
----
-
-
 # Quickstart C# 
 
 ## Make a new project
 
-<pre>
+```
 mkdir my_project
 cd my_project
 dotnet new console -n myexample
 cd myexample
-</pre>
+```
 
 [Alternatively, clone the C# Starter Agent From here](https://github.com/microsoft/Agents/tree/main/samples/basic/echo-bot/dotnet)
 
 ## Install the Microsoft 365 Agents SDK
-<pre>
+```
 dotnet add package microsoft.agents.hosting.aspnet.core
 dotnet build
-</pre>
+```
 
 [Update the packages from NuGet Nightly Feed or search on Nuget Microsoft.Agents](https://www.nuget.org/profiles/nugetbotbuilder)
 
@@ -29,7 +23,7 @@ dotnet build
 
 The agent acts like a container (AgentApplication) and can also be created with additional client services (e.g. Microsoft Teams). 
 
-<pre>
+```
 builder.AddAgent( sp =>
 {
     var agent = new AgentApplication(sp.GetRequiredService<AgentApplicationOptions>());
@@ -39,7 +33,7 @@ builder.AddAgent( sp =>
         await turnContext.SendActivityAsync(MessageFactory.Text($"Echo: {text}"), cancellationToken);
     });
 });
-</pre>
+```
 
 This agent also listens for a message type activity and sends a message back
 
@@ -47,38 +41,34 @@ The container itself is an 'agent' implementing your chosen AI Service (e.g. Azu
 
 ## Add Events & Responses
 
-Use the OnActivity event to triggers when a new activity is sent from the client (e.g. a message was sent by a user) 
+Use the `OnActivity` event to triggers when a new activity is sent from the client (e.g. a message was sent by a user) 
 
-Add your AI service or completion endpoint & use the SendActivityAsync method to send a response back to the requesting client, which can be from your AI service:
+Add your AI service or completion endpoint & use the `SendActivityAsync` method to send a response back to the requesting client, which can be from your AI service:
 
-<pre>
+```
     agent.OnActivity(ActivityTypes.Message, async (turnContext, turnState, cancellationToken) =>
     {
         var text = turnContext.Activity.Text;
         var response = {add your request to your AI Service/Completion API here}
         await turnContext.SendActivityAsync(MessageFactory.Text($"{response}"), cancellationToken);
     });
-</pre>
-
-Learn more about supported Events (coming soon)
+```
 
 ## Send Messages
 
 The Agents SDK makes it easy to send different types of messages back, when required. This saves developers time formatting different types, and takes advantage of common types of messages supported by a broad set of clients.
 
-Messages can be sent using MessageFactory that supports types like Text, Images, Cards, Attachments (& Adaptive Cards) and more. 
+`Messages` can be sent using `MessageFactory` that supports types like Text, Images, Cards, Attachments (& Adaptive Cards) and more. 
 
-Messages are constructed and sent back within the SendActivityAsync method:
+`Messages` are constructed and sent back within the `SendActivityAsync` method:
 
-<pre>
+```
     await turnContext.SendActivityAsync(MessageFactory.Text($"{response}"), cancellationToken);
-</pre>
-
-Learn more about message types [here](link to be added)
+```
 
 ## Send Adapative Cards
 
-You may want to modify the response of your agent and format it. You can easily do that using MessageFactory.
+You may want to modify the response of your agent and format it. You can easily do that using `MessageFactory`.
 
 It is a common requirement to format a response returned from an AI model to display to a user. Adaptive Cards are a widely used method to do this and supported by many different clients. 
 
@@ -86,7 +76,7 @@ It is a common requirement to format a response returned from an AI model to dis
 
 Add Orchestrators, like Semantic Kernel, LangChain or more, for all or specific events using their SDKs.
 
-<pre>
+```
       var builder = Kernel.CreateBuilder();
 
       builder.AddAzureOpenAIChatCompletion(
@@ -98,10 +88,10 @@ Add Orchestrators, like Semantic Kernel, LangChain or more, for all or specific 
       var kernel = builder.Build();
       var result = await kernel.InvokePromptAsync(userInput);
 
-</pre>
+```
 
-Once there is a response or behaviour from the orchastrator you want to send back to the user or service, this can be sent in the 'SendActivityAsync' method.
+Once there is a response or behaviour from the orchastrator you want to send back to the user or service, this can be sent in the `SendActivityAsync` method.
 
-<pre>
+```
       await turnContext.SendActivityAsync(MessageFactory.Text(result), cancellationToken);
-</pre>
+```

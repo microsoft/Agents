@@ -13,32 +13,32 @@ Activities are used in 2 places:
 
 1. When listening for events. The agent listens for `Activities`. In the example below, the agent is listening for an `Activity` of type `Message` that can contain any type of text, media, etc. 
 
-<pre>
+```
     agent.OnActivity(ActivityTypes.Message, async (turnContext, turnState, cancellationToken) =>
     {
         // custom logic here
     });
-</pre>
+```
 
 2. When sending responses, developers can construct a `Message` using `MessageFactory` and send it in the `SendActivityAsync` method. 
 
-<pre>
+```
     await turnContext.SendActivityAsync(MessageFactory.Text({response}"), cancellationToken);
-</pre>
+```
 
 
 ## Activity Types
 ### Message
 The most common type of activity, used to exchange text, media, and rich content between the bot and the user, e.g. A user sends a text message to the agent, and the agent replies with a text message.
 
-<pre>
+```
 agent.OnActivity(ActivityTypes.Message, async (turnContext, turnState, cancellationToken))
-</pre>
+```
 
 ### Conversation Update
 Used to notify the agent when members are added to or removed from a conversation, e.g. A user joins a group chat, and the agent is notified of the new participant.
 
-<pre>
+```
 agent.OnActivity(ActivityTypes.ConversationUpdate, async (turnContext, turnState, cancellationToken) =>
 {
     var membersAdded = turnContext.Activity.MembersAdded;
@@ -53,33 +53,33 @@ agent.OnActivity(ActivityTypes.ConversationUpdate, async (turnContext, turnState
         }
     }
 });
-</pre>
+```
 
 ### Typing
 Indicates that the sender is typing a message, e.g. The agent sends a typing indicator to show that it is processing the user's message.
 
-<pre>
+```
 agent.OnActivity(ActivityTypes.Typing, async (turnContext, turnState, cancellationToken) =>
 {
     Console.WriteLine("User is typing...");
     await Task.CompletedTask;
 });
-</pre>
+```
 
 ### End of Conversation
 Indicates that the conversation has ended, e.g. The agent sends an end-of-conversation activity when it has completed its interaction with the user. Useful if you wanted to specifically send pre-built feedback forms or just simply, show a conversation has ended.
 
-<pre>
+```
     agent.OnActivity(ActivityTypes.EndOfConversation, async (turnContext, turnState, cancellationToken) =>
     {
         await turnContext.SendActivityAsync(MessageFactory.Text("Goodbye!"), cancellationToken);
     });
-</pre>
+```
 
 ### Custom Event
 Used to send and receive events, which are lightweight messages that can carry custom data. e.g. The agent sends an event to trigger a specific action in the client application.
 
-<pre>
+```
     agent.OnActivity(ActivityTypes.Event, async (turnContext, turnState, cancellationToken) =>
     {
         var eventActivity = turnContext.Activity.AsEventActivity();
@@ -89,6 +89,6 @@ Used to send and receive events, which are lightweight messages that can carry c
             await turnContext.SendActivityAsync(MessageFactory.Text($"Received custom event with value: {value}"), cancellationToken);
         }
     });
-</pre>
+```
 
 There are other types of `Activities` that are specific to clients, such as Microsoft Teams (e.g. `Message Reaction`). Custom Apps or Websites will also have their own events and to interact with these events, developers can use the `Custom Event` activity type.
