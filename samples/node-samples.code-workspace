@@ -1,0 +1,24 @@
+{
+	"folders": [
+		{
+			"path": "basic/empty-agent/nodejs",
+			"name" : "node-empty-agent"
+		},
+		{
+			"path": "basic/weather-agent/nodejs",
+			"name" : "node-weather-agent"
+		},
+		{
+			"path": "basic/cards/nodejs",
+			"name": "node-cards-agent"
+		},
+		{
+			"path": "basic/copilotstudio-client/nodejs",
+			"name": "copilotstudio-client"
+		},
+		{
+			"path" : "complex/copilotstudio-skill/nodejs",
+			"name": "copilotstudio-skill"
+		}
+	]
+}
