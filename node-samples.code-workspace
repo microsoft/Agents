@@ -2,11 +2,15 @@
 	"folders": [
 		{
 			"path": "samples/basic/empty-agent/nodejs",
-			"name" : "Empty Agent"
+			"name" : "node-empty-agent"
+		},
+		{
+			"path": "samples/basic/weather-agent/nodejs",
+			"name" : "node-weather-agent"
 		},
 		{
 			"path": "samples/basic/cards/nodejs",
-			"name": "cards"
+			"name": "node-cards-agent"
 		},
 		{
 			"path": "samples/basic/copilotstudio-client/nodejs",
