@@ -1,5 +1,5 @@
 {
-  "name": "node-echo-bot",
+  "name": "node-empty-agent",
   "version": "1.0.0",
   "private": true,
   "description": "Agents echo bot sample",
@@ -21,14 +21,14 @@
   },
   "dependencies": {
     "@microsoft/agents-hosting": "^0.1.49",
-    "express": "^5.0.1"
+    "express": "^5.1.0"
   },
   "devDependencies": {
-    "@microsoft/teams-app-test-tool": "^0.2.6",
-    "@types/node": "^22.13.4",
+    "@microsoft/teams-app-test-tool": "^0.2.7",
+    "@types/node": "^22.14.0",
     "npm-run-all": "^4.1.5",
-    "typescript": "^5.7.2",
-    "esbuild": "^0.25.0"
+    "typescript": "^5.8.3",
+    "esbuild": "^0.25.2"
   },
   "keywords": []
 }

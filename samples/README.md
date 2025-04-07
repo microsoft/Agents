@@ -11,7 +11,7 @@ To enable debugging, open this folder using Visual Studio Code (VSCode). Follow 
 
 |Category | Name | Description | node | dotnet | python |
 |---------|-------------|-------------|--------|--------|--------|
-| Basic   | Echo Bot | Simplest bot | [basic/echo-bot/nodejs](./basic/echo-bot/nodejs) | [basic/echo-bot/dotnet](./basic/echo-bot/dotnet) | TBD |
+| Basic   | Empty Agent | Simplest agent | [basic/empty-agent/nodejs](./basic/empty-agent/nodejs) | [basic/empty-agent/dotnet](./basic/empty-agent/dotnet) | TBD |
 | Basic   | WeatherBot Sample | WeatherBot Sample with various orchestrator libs | | (Using Semantic Kernel) [basic/weatherbot/dotnet](./basic/weatherbot/dotnet) | TBD |
 | Basic   | Copilot Studio Client | Consume CopilotStudio Agent | [basic/copilotstudio-client/nodejs](./basic/copilotstudio-client/nodejs) | [basic/copilotstudio-client/dotnet](./basic/copilotstudio-client/dotnet) | TBD |
 | Complex | Copilot Studio Skill | Call the echo bot from a Copilot Studio skill | [complex/copilotstudio-skill/nodejs](./complex/copilotstudio-skill/nodejs) | TBD | TBD |

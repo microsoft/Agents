@@ -3,12 +3,12 @@
 
 import express, { Response } from 'express'
 import { Request, CloudAdapter, authorizeJWT, AuthConfiguration, loadAuthConfigFromEnv } from '@microsoft/agents-hosting'
-import { CardFactoryBot } from './bot'
+import { CardSampleAgent } from './agent'
 
 const authConfig: AuthConfiguration = loadAuthConfigFromEnv()
 
 const adapter = new CloudAdapter(authConfig)
-const myBot = new CardFactoryBot()
+const myBot = new CardSampleAgent()
 
 const app = express()
 app.use(express.json())

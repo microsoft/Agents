@@ -14,7 +14,7 @@ We want you to be able to:
 
 ## Create an agent
 
-It is easy to get the starter sample in C#, JavaScript or Python from [Github](https://github.com/microsoft/Agents/tree/main/samples/basic/echo-bot)
+It is easy to get the starter sample in C#, JavaScript or Python from [Github](https://github.com/microsoft/Agents/tree/main/samples/basic/empty-agent)
 
 To create an agent in C#: 
 

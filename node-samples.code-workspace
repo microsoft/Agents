@@ -1,8 +1,8 @@
 {
 	"folders": [
 		{
-			"path": "samples/basic/echo-bot/nodejs",
-			"name" : "echo bot"
+			"path": "samples/basic/empty-agent/nodejs",
+			"name" : "Empty Agent"
 		},
 		{
 			"path": "samples/basic/cards/nodejs",

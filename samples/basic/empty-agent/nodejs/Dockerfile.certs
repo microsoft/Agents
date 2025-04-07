@@ -1,4 +1,4 @@
-FROM node-echo-bot:1.0.0
+FROM node-empty-agent:1.0.0
 WORKDIR /app
 COPY cert.pem .
 COPY cert.key .
