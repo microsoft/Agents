@@ -53,7 +53,7 @@ jobs:
           docker tag dotnet-echo-bot:latest sdkagents.azurecr.io/dotnet-echo-bot:latest
           docker push sdkagents.azurecr.io/dotnet-echo-bot:latest
 
-      - name: Build docker image Node Echo bot
+      - name: Build docker image Node Empty Agent
         working-directory: ./samples/basic/empty-agent/nodejs/
         run: |
           npm install
@@ -85,9 +85,22 @@ jobs:
           npm install
           npm run docker
 
-      - name: Push image Node Skill bot
+      - name: Push image Node Skill
         if: github.event_name == 'workflow_dispatch'
         working-directory: ./samples/complex/copilotstudio-skill/nodejs/
         run: |
           docker tag node-echo-skill:1.0.0 sdkagents.azurecr.io/node-echo-skill:latest
           docker push sdkagents.azurecr.io/node-echo-skill:latest
+      
+      - name: Build docker iamge Node Weather Agent
+        working-directory: ./samples/basic/weather-agent/nodejs/
+        run: |
+          npm install
+          npm run docker
+
+      - name: Push image Node Weather Agent
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: ./samples/basic/weather-agent/nodejs/
+        run: |
+          docker tag node-weather-agent:1.0.0 sdkagents.azurecr.io/node-weather-agent:latest
+          docker push sdkagents.azurecr.io/node-weather-agent:latest
