@@ -21,10 +21,11 @@ jobs:
 
       - name: Login to ACR
         uses: docker/login-action@v3
+        if: github.event_name == 'workflow_dispatch'
         with:
           registry: sdkagents.azurecr.io
           username: pusher
-          password: ${{ secrets.sdkagents_PUSHER_TOKEN }}
+          password: ${{ secrets.ACR_PUSHER_TOKEN }}
 
       - name: Install Node dependencies
         run: npm install
