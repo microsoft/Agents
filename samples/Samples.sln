@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35818.85
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EchoBot", "basic\echo-bot\dotnet\EchoBot.csproj", "{B1FC20C1-9900-FAC4-B8E6-223888633020}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EchoBot", "basic\empty-agent\dotnet\EchoBot.csproj", "{B1FC20C1-9900-FAC4-B8E6-223888633020}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CopilotStudioClient", "basic\copilotstudio-client\dotnet\CopilotStudioClient.csproj", "{CA8B675F-CC17-A991-7AC6-7A9E3E3BB97D}"
 EndProject

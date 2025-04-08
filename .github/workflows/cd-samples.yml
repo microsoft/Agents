@@ -21,10 +21,11 @@ jobs:
 
       - name: Login to ACR
         uses: docker/login-action@v3
+        if: github.event_name == 'workflow_dispatch'
         with:
-          registry: botagents.azurecr.io
+          registry: sdkagents.azurecr.io
           username: pusher
-          password: ${{ secrets.BOTAGENTS_PUSHER_TOKEN }}
+          password: ${{ secrets.ACR_PUSHER_TOKEN }}
 
       - name: Install Node dependencies
         run: npm install
@@ -41,29 +42,29 @@ jobs:
           npm run build
       
       - name: Build docker image dotnet Echo bot
-        working-directory: ./samples/basic/echo-bot/dotnet/
+        working-directory: ./samples/basic/empty-agent/dotnet/
         run: |
           dotnet publish /t:PublishContainer /p:ContainerRepository=dotnet-echo-bot --os linux --arch x64
 
       - name: Push image dotnet Echo bot
         if: github.event_name == 'workflow_dispatch'
-        working-directory: ./samples/basic/echo-bot/dotnet/
+        working-directory: ./samples/basic/empty-agent/dotnet/
         run: |
-          docker tag dotnet-echo-bot:latest botagents.azurecr.io/dotnet-echo-bot:latest
-          docker push botagents.azurecr.io/dotnet-echo-bot:latest
+          docker tag dotnet-echo-bot:latest sdkagents.azurecr.io/dotnet-echo-bot:latest
+          docker push sdkagents.azurecr.io/dotnet-echo-bot:latest
 
-      - name: Build docker image Node Echo bot
-        working-directory: ./samples/basic/echo-bot/nodejs/
+      - name: Build docker image Node Empty Agent
+        working-directory: ./samples/basic/empty-agent/nodejs/
         run: |
           npm install
           npm run docker
 
-      - name: Push image Node Echo bot
+      - name: Push image Node Empty Agent
         if: github.event_name == 'workflow_dispatch'
-        working-directory: ./samples/basic/echo-bot/nodejs/
+        working-directory: ./samples/basic/empty-agent/nodejs/
         run: |
-          docker tag node-echo-bot:1.0.0 botagents.azurecr.io/node-echo-bot:latest
-          docker push botagents.azurecr.io/node-echo-bot:latest
+          docker tag node-empty-agent:1.0.0 sdkagents.azurecr.io/empty-agent:latest
+          docker push sdkagents.azurecr.io/node-empty-agent:latest
 
       - name: Build docker image Node Cards bot
         working-directory: ./samples/basic/cards/nodejs/
@@ -71,12 +72,12 @@ jobs:
           npm install
           npm run docker
 
-      - name: Push image Node Cards bot
+      - name: Push image Node Cards Agent
         if: github.event_name == 'workflow_dispatch'
         working-directory: ./samples/basic/cards/nodejs/
         run: |
-          docker tag node-cards-bot:1.0.0 botagents.azurecr.io/node-cards-bot:latest
-          docker push botagents.azurecr.io/node-cards-bot:latest
+          docker tag node-cards-bot:1.0.0 sdkagents.azurecr.io/node-cards-bot:latest
+          docker push sdkagents.azurecr.io/node-cards-bot:latest
 
       - name: Build docker iamge Node Skill bot
         working-directory: ./samples/complex/copilotstudio-skill/nodejs/
@@ -84,9 +85,22 @@ jobs:
           npm install
           npm run docker
 
-      - name: Push image Node Skill bot
+      - name: Push image Node Skill
         if: github.event_name == 'workflow_dispatch'
         working-directory: ./samples/complex/copilotstudio-skill/nodejs/
         run: |
-          docker tag node-echo-skill:1.0.0 botagents.azurecr.io/node-echo-skill:latest
-          docker push botagents.azurecr.io/node-echo-skill:latest
+          docker tag node-echo-skill:1.0.0 sdkagents.azurecr.io/node-echo-skill:latest
+          docker push sdkagents.azurecr.io/node-echo-skill:latest
+      
+      - name: Build docker iamge Node Weather Agent
+        working-directory: ./samples/basic/weather-agent/nodejs/
+        run: |
+          npm install
+          npm run docker
+
+      - name: Push image Node Weather Agent
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: ./samples/basic/weather-agent/nodejs/
+        run: |
+          docker tag node-weather-agent:1.0.0 sdkagents.azurecr.io/node-weather-agent:latest
+          docker push sdkagents.azurecr.io/node-weather-agent:latest

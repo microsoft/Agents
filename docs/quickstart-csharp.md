@@ -15,7 +15,7 @@ dotnet new console -n myexample
 cd myexample
 </pre>
 
-[Alternatively, clone the C# Starter Agent From here](https://github.com/microsoft/Agents/tree/main/samples/basic/echo-bot/dotnet)
+[Alternatively, clone the C# Starter Agent From here](https://github.com/microsoft/Agents/tree/main/samples/basic/empty-agent/dotnet)
 
 ## Install the Microsoft 365 Agents SDK
 <pre>

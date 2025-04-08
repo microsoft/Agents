@@ -1,4 +1,4 @@
-# Echo-bot
+# Empty-Agent
 
 This is a sample of a simple Agent that is hosted on an Node.js web service.  This Agent is configured to accept a request and echo the text of the request back to the caller.
 
@@ -65,7 +65,7 @@ Refresh the browser to start a new conversation with the Echo bot.
 You should see a message from the bot like: `Echo running on Agents SDK version: {version}`
 
 
-### Interact with the bot from WebChat using Azure Bot Service
+### Interact with the agent with WebChat UI using Azure Bot Service
 
 1. [Create an Azure Bot](https://aka.ms/AgentsSDK-CreateBot)
    - Record the Application ID, the Tenant ID, and the Client Secret for use below

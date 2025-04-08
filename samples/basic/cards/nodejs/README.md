@@ -1,6 +1,6 @@
-# Cards-bot
+# Cards-Agent
 
-This is a sample of a simple Agent that is hosted on an Node.js web service.  This Agent is configured to show how to create a bot that uses rich cards to enhance your bot design.
+This is a sample of a simple Agent that is hosted on an Node.js web service.  This Agent is configured to show how to create an agent that uses rich cards to enhance your conversation design.
 
 ## Prerequisites
 
@@ -40,11 +40,11 @@ At this point you should see the message
 Server listening to port 3978 for appId debug undefined
 ```
 
-The bot is ready to accept messages.
+The Agent is ready to accept messages.
 
-### Interact with the bot from the Teams App Test Tool
+### Interact with the Agent from the Teams App Test Tool
 
-To interact with the bot you need a chat client, during the install phase we have acquired the `teams-test-app-tool` than can be used to interact with your bot running in `localhost:3978`
+To interact with the agent you need a chat client, during the install phase we have acquired the `teams-test-app-tool` than can be used to interact with your agent running in `localhost:3978`
 
 1. Start the test tool with 
 
@@ -52,15 +52,15 @@ To interact with the bot you need a chat client, during the install phase we hav
 npm run test-tool
 ```
 
-The tool will open a web browser showing the Teams App Test Tool, ready to send messages to your bot.
+The tool will open a web browser showing the Teams App Test Tool, ready to send messages to your agent.
 
-Alternatively you can run the next command to start the bot and the test tool with a single command (make sure you stop the bot started previously):
+Alternatively you can run the next command to start the agent and the test tool with a single command (make sure you stop the agent started previously):
 
 ```bash
 npm test
 ```
 
-Refresh the browser to start a new conversation with the Cards bot.
+Refresh the browser to start a new conversation with the Cards agent.
 
 You should see a message with the list of available cards in Agents:
 - Adaptive Card
@@ -72,14 +72,14 @@ You should see a message with the list of available cards in Agents:
 - Thumbnail Card
 - Video Card
 
-### Interact with the bot from WebChat using Azure Bot Service
+### Interact with the agent from WebChat UI using Azure Bot Service
 
 1. [Create an Azure Bot](https://aka.ms/AgentsSDK-CreateBot)
    - Record the Application ID, the Tenant ID, and the Client Secret for use below
   
 2. Configuring the token connection in the Agent settings
     1. Open the `env.TEMPLATE` file in the root of the sample project, rename it to `.env` and configure the following values:
-      1. Set the **clientId** to the AppId of the bot identity.
+      1. Set the **clientId** to the AppId of the agent identity.
       2. Set the **clientSecret** to the Secret that was created for your identity.
       3. Set the **tenantId** to the Tenant Id where your application is registered.
 
@@ -104,4 +104,4 @@ You should see a message with the list of available cards in Agents:
 
 ## Further reading
 
-To learn more about building Bots and Agents, see our [Microsoft 365 Agents SDK](https://github.com/microsoft/agents) repo.
+To learn more about building  Agents, see our [Microsoft 365 Agents SDK](https://github.com/microsoft/agents) repo.

@@ -1,8 +1,8 @@
 {
-  "name": "node-cards-bot",
+  "name": "node-cards-agent",
   "version": "1.0.0",
   "private": true,
-  "description": "Agents cards bot sample",
+  "description": "Agents cards agent sample",
   "author": "Microsoft",
   "license": "MIT",
   "main": "./lib/index.js",
@@ -20,14 +20,14 @@
   },
   "dependencies": {
     "@microsoft/agents-hosting": "^0.1.49",
-    "express": "^5.0.1"
+    "express": "^5.1.0"
   },
   "devDependencies": {
     "@microsoft/teams-app-test-tool": "^0.2.6",
-    "@types/node": "^22.13.4",
+    "@types/node": "^22.14.0",
     "npm-run-all": "^4.1.5",
-    "typescript": "^5.7.2",
-    "esbuild": "^0.25.0"
+    "typescript": "^5.8.3",
+    "esbuild": "^0.25.2"
   },
   "keywords": []
 }

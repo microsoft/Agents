@@ -5,7 +5,7 @@ import { ActivityHandler, Activity, ActivityTypes } from '@microsoft/agents-host
 import { CardMessages } from './cardMessages'
 import AdaptiveCard from './resources/adaptiveCard.json'
 
-export class CardFactoryBot extends ActivityHandler {
+export class CardSampleAgent extends ActivityHandler {
   constructor () {
     super()
 
