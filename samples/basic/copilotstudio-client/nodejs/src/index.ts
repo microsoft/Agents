@@ -21,7 +21,7 @@ async function acquireToken (settings: ConnectionSettings): Promise<string> {
       authority: `https://login.microsoftonline.com/${settings.tenantId}`,
     },
     cache: {
-      cachePlugin: new MsalCachePlugin(path.join(os.tmpdir(), 'msal.usercache.json'))
+      cachePlugin: new MsalCachePlugin(path.join(os.tmpdir(), 'mcssample.tockencache.json'))
     },
     system: {
       loggerOptions: {

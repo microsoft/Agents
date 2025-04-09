@@ -18,6 +18,7 @@ export class MsalCachePlugin implements ICachePlugin {
           if (error) {
             reject(error)
           } else {
+            console.log('loading token from cache: ', this.cacheLocation)
             tokenCacheContext.tokenCache.deserialize(data)
             resolve()
           }
@@ -27,6 +28,8 @@ export class MsalCachePlugin implements ICachePlugin {
           if (error) {
             reject(error)
           }
+          console.log('caching token at: ', this.cacheLocation)
+          resolve()
         })
       }
     })

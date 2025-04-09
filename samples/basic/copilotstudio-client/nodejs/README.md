@@ -14,7 +14,14 @@ To set up this sample, you will need the following:
     node --version
     ```
 2. An Agent Created in Microsoft Copilot Studio or access to an existing Agent.
-3. Ability to Create an Application Identity in Azure for a Public Client/Native App Registration Or access to an existing Public Client/Native App registration with the CopilotStudio.Copilot.Invoke API Permission assigned. 
+3. Ability to Create an Application Identity in Azure for a Public Client/Native App Registration Or access to an existing Public Client/Native App registration with the `CopilotStudio.Copilot.Invoke` API Permission assigned. 
+
+## Authentication
+
+The DirectToEngine Client requires a User Token to operate. For this sample, we are using a user interactive flow to get the user token for the application ID created above. Other flows are allowed.
+
+> [!Important]
+> The token is cached in the user machine in `$TEMP/mcssample.usercache.json`
 
 ## Create an Agent in Copilot Studio
 
@@ -45,7 +52,7 @@ This step will require permissions to create application identities in your Azur
         1. In the side panel that appears, Click the tab `API's my organization uses`
         2. Search for `Power Platform API`.
             1. *If you do not see `Power Platform API` see the note at the bottom of this section.*
-        3. In the permissions list, choose `CopilotStudio` and Check `CopilotStudio.Copilots.Invoke`
+        3. In the *Delegated permissions* list, choose `CopilotStudio` and Check `CopilotStudio.Copilots.Invoke`
         4. Click `Add Permissions`
     4. (Optional) Click `Grant Admin consent for copilotsdk`
 
@@ -61,16 +68,14 @@ With the above information, you can now run the client `CopilostStudioClient` sa
 
 ```bash
   environmentId="" # Environment ID of environment with the CopilotStudio App.
-  botIdentifier="" # Schema Name of the Copilot to use
+  agentIdentifier="" # Schema Name of the Copilot to use
   tenantId="" # Tenant ID of the App Registration used to login, this should be in the same tenant as the Copilot.
-  appClientId="" # App ID of the App Registration used to login, this should be in the same tenant as the Copilot.
+  appClientId="" # App ID of the App Registration used to login, this should be in the same tenant as the CopilotStudio environment.
 ```
 
 3. Run the CopilotStudioClient sample using `npm start`, which will install the packages, build the project and run it.
 
-This should challenge you to login and connect to the Copilot Studio Hosted bot, allowing you to communicate via a console interface.
+This should challenge you to login and connect to the Copilot Studio Hosted agent, allowing you to communicate via a console interface.
 
-## Authentication
 
-The DirectToEngine Client requires a User Token to operate. For this sample, we are using a user interactive flow to get the user token for the application ID created above. 
 
