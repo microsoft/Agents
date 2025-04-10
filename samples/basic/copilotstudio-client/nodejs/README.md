@@ -18,7 +18,7 @@ To set up this sample, you will need the following:
 
 ## Authentication
 
-The DirectToEngine Client requires a User Token to operate. For this sample, we are using a user interactive flow to get the user token for the application ID created above. Other flows are allowed.
+The Copilot Studio Client requires a User Token to operate. For this sample, we are using a user interactive flow to get the user token for the application ID created above. Other flows are allowed.
 
 > [!Important]
 > The token is cached in the user machine in `$TEMP/mcssample.usercache.json`
