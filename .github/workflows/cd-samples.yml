@@ -63,7 +63,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         working-directory: ./samples/basic/empty-agent/nodejs/
         run: |
-          docker tag node-empty-agent:1.0.0 sdkagents.azurecr.io/empty-agent:latest
+          docker tag node-empty-agent:1.0.0 sdkagents.azurecr.io/node-empty-agent:latest
           docker push sdkagents.azurecr.io/node-empty-agent:latest
 
       - name: Build docker image Node Cards bot
