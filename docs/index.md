@@ -18,8 +18,7 @@ It is easy to get the starter sample in C#, JavaScript or Python from [Github](h
 
 To create an agent in C#: 
 
-<pre>
-    
+```cs
 builder.AddAgent( sp =>
 {
     var agent = new AgentApplication(sp.GetRequiredService<AgentApplicationOptions>());
@@ -29,6 +28,7 @@ builder.AddAgent( sp =>
         await turnContext.SendActivityAsync(MessageFactory.Text($"Echo: {text}"), cancellationToken);
     });
 });
+```
         
 </pre>
 

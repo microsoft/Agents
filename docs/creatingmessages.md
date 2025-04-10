@@ -1,8 +1,3 @@
----
-layout: custom
-title: Creating messages
----
-
 # Creating Messages
 
 Messages are one of the most common types of activities to be used in agents as they are used to communicate to humans or other agents.
@@ -13,13 +8,13 @@ Typically, it depends on the client how a message is rendered in a UI, most clie
 
 ### Text
 
-<pre>
+```cs
  var textMessage = MessageFactory.Text("Hello, world!");
-</pre>
+```
 
 ### Adaptive Cards
 
-<pre>
+```
 var adaptiveCardAttachment = new Attachment
 {
     ContentType = "application/vnd.microsoft.card.adaptive",
@@ -29,15 +24,15 @@ var adaptiveCardAttachment = new Attachment
 var adaptiveCardMessage = MessageFactory.Attachment(adaptiveCardAttachment);
 
 await turnContext.SendActivityAsync(adaptiveCardMessage, cancellationToken);
-</pre>
+```
 
 ### Typing Indicators
 
 Typing indicators use a combination of a Text `Message` and a Typing `Activity`:
 
-<pre>
+```
   var typingMessage = MessageFactory.Text(string.Empty);
   typingMessage.Type = ActivityTypes.Typing;
-</pre>
+```
 
 There are other types of supported messages in `Message Factory` including Carousel, List and Suggested Actions. 

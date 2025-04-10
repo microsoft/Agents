@@ -9,7 +9,8 @@ In the Microsoft 365 Agents SDK, an agent container is built using `Agent Applic
 
 `Agent Application Options` allows for different configuration options including authentication. It is an parameter in the constructor of `Agent Application`
 
-<pre>
+
+```
 builder.AddAgentApplicationOptions();
 
 builder.AddAgent(sp =>
@@ -25,24 +26,24 @@ builder.AddAgent(sp =>
     });
     return agent;
 });
-</pre>
+```
 
 The endpoint of your application needs to be configured to handle incoming requests and is designed to specifically process messages to your agent, using an adapter `IBotHttpadapter` and `IBot agent` (which is the agent created earlier) this converts the http request and response into understandable formats between the web server and the agent.
 
-<pre>
+```cs
 app.MapPost("/api/messages", async (HttpRequest request, HttpResponse response, IBotHttpAdapter adapter, IBot agent, CancellationToken cancellationToken) =>
 {
     await adapter.ProcessAsync(request, response, agent, cancellationToken);
 });
-</pre>
+```
 
 Now the agent is created, you can register to listen for events, add your AI services and custom logic.
 
 In the simple samples on the [repo](aka.ms/agents), you will see the agent is registered automatically for the generic `OnActivity` event. 
-<pre>
+```cs
     agent.OnActivity(ActivityTypes.Message, async (turnContext, turnState, cancellationToken) =>
     {
         var text = turnContext.Activity.Text;
         await turnContext.SendActivityAsync(MessageFactory.Text($"Echo: {text}"), cancellationToken);
     });
-</pre>
+```
