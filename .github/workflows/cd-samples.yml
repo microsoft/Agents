@@ -76,8 +76,8 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         working-directory: ./samples/basic/cards/nodejs/
         run: |
-          docker tag node-cards-bot:1.0.0 sdkagents.azurecr.io/node-cards-bot:latest
-          docker push sdkagents.azurecr.io/node-cards-bot:latest
+          docker tag node-cards-agent:1.0.0 sdkagents.azurecr.io/node-cards-agent:latest
+          docker push sdkagents.azurecr.io/node-cards-agent:latest
 
       - name: Build docker iamge Node Skill bot
         working-directory: ./samples/complex/copilotstudio-skill/nodejs/
