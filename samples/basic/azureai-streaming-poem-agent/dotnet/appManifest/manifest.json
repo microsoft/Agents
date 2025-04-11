@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.16/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.16",
+  "version": "1.0.0",
+  "id": "<<AAD_APP_CLIENT_ID>>",
+  "packageName": "com.Microsoft.Agents.StreamingMessagesBot",
+  "developer": {
+    "name": "Microsoft, Inc.",
+    "websiteUrl": "https://www.microsoft.com",
+    "privacyUrl": "https://www.microsoft.com/privacy",
+    "termsOfUseUrl": "https://www.microsoft.com/termsofuse"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "Streaming Messages",
+    "full": "Streaming Messages"
+  },
+  "description": {
+    "short": "Streaming Messages",
+    "full": "This sample shows streaming messages from OpenAI."
+  },
+  "accentColor": "#FFFFFF",
+  "bots": [
+    {
+      "botId": "<<AAD_APP_CLIENT_ID>>",
+      "scopes": [
+        "personal"
+      ],
+      "isNotificationOnly": false
+    }
+  ],
+  "validDomains": [
+    "<<AGENT_DOMAIN>>"
+  ]
+}

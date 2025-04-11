@@ -1,4 +1,6 @@
-﻿using Microsoft.SemanticKernel;
+﻿using Microsoft.Agents.Builder;
+using Microsoft.Agents.Builder.State;
+using Microsoft.SemanticKernel;
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
@@ -7,8 +9,9 @@ using System.Threading.Tasks;
 
 namespace WeatherBot.Plugins;
 
-public class WeatherForecastPlugin
+public class WeatherForecastPlugin(ITurnContext turnContext)
 {
+
     /// <summary>
     /// Retrieve the weather forecast for a specific date. This is a placeholder for a real implementation
     /// and currently only returns a random temperature. This would typically call a weather service API.
@@ -19,6 +22,14 @@ public class WeatherForecastPlugin
     [KernelFunction]
     public Task<WeatherForecast> GetForecastForDate(string date,  string location)
     {
+        string searchingForDate = date;
+        if ( DateTime.TryParse(date, out DateTime searchingDate) )
+        {
+            searchingForDate = searchingDate.ToLongDateString();
+        }
+        turnContext.StreamingResponse.QueueInformativeUpdateAsync($"Looking up the Weather in {location} for {searchingForDate}");
+
+        // Simulate a delay for the weather service call
         return Task.FromResult(new WeatherForecast
         {
             Date = date,

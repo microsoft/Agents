@@ -1,13 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.Agents.Builder;
 using Microsoft.Agents.Hosting.AspNetCore;
 using Microsoft.Agents.Storage;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.SemanticKernel;
+using System.IO;
+using System.Threading;
 using WeatherBot;
 using WeatherBot.Agents;
 
@@ -49,7 +53,7 @@ builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
 
 builder.AddAgentApplicationOptions();
 
-builder.Services.AddTransient<WeatherForecastAgent>();
+//builder.Services.AddTransient<WeatherForecastAgent>();
 
 builder.AddAgent<MyAgent>();
 
@@ -57,15 +61,17 @@ builder.Services.AddSingleton<IStorage, MemoryStorage>();
 
 WebApplication app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+app.UseRouting();
+app.MapPost("/api/messages", async (HttpRequest request, HttpResponse response, IAgentHttpAdapter adapter, IAgent agent, CancellationToken cancellationToken) =>
 {
-    app.MapGet("/", () => "Microsoft Agents SDK Sample");
-    app.UseDeveloperExceptionPage();
-    app.MapControllers().AllowAnonymous();
-}
-else
-{
-    app.MapControllers();
-}
+    await adapter.ProcessAsync(request, response, agent, cancellationToken);
+})
+    .AllowAnonymous();
+
+// Hardcoded for brevity and ease of testing. 
+// In production, this should be set in configuration.
+app.Urls.Add($"http://localhost:3978");
+
+
 app.Run();
 

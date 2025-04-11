@@ -30,10 +30,10 @@ Read more about [Running an Agent](../../../docs/HowTo/running-an-agent.md)
 
 1. Open the WeatherBot Sample in Visual Studio 2022
 1. Run it in Debug Mode (F5)
-1. A blank web page will open, note down the URL which should be similar too `http://localhost:65349/`
+1. A blank web page will open, note down the URL which should be similar to `http://localhost:3978/`
 1. Open the [BotFramework Emulator](https://github.com/Microsoft/BotFramework-Emulator/releases)
     1. Click **Open Bot**
-    1. In the bot URL field input the URL you noted down from the web page and add /api/messages to it. It should appear similar to `http://localhost:65349/api/messages`
+    1. In the bot URL field input the URL you noted down from the web page and add /api/messages to it. It should appear similar to `http://localhost:3978/api/messages`
     1. Click **Connect**
 
 If all is working correctly, the Bot Emulator should show you a Web Chat experience with the words **"Hello and Welcome! I'm here to help with all your weather forecast needs!"**
