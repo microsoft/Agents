@@ -59,7 +59,7 @@ public static class AspNetExtensions
     /// `OpenIdMetadataUrl` can be omitted.  In which case default values in combination with `IsGov` is used.
     /// `AzureBotServiceTokenHandling` defaults to true and should always be true until Azure Bot Service sends Entra ID token.
     /// </remarks>
-    public static void AddBotAspNetAuthentication(this IServiceCollection services, IConfiguration configuration, string tokenValidationSectionName = "TokenValidation", ILogger logger = null)
+    public static void AddAgentAspNetAuthentication(this IServiceCollection services, IConfiguration configuration, string tokenValidationSectionName = "TokenValidation", ILogger logger = null)
     {
         IConfigurationSection tokenValidationSection = configuration.GetSection(tokenValidationSectionName);
         List<string> validTokenIssuers = tokenValidationSection.GetSection("ValidIssuers").Get<List<string>>();

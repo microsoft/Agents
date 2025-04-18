@@ -1,18 +1,18 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.Agents.BotBuilder;
-using Microsoft.Agents.BotBuilder.App;
-using Microsoft.Agents.BotBuilder.State;
+using Microsoft.Agents.Builder;
+using Microsoft.Agents.Builder.App;
+using Microsoft.Agents.Builder.State;
 using Microsoft.Agents.Core.Models;
 using System.Threading.Tasks;
 using System.Threading;
 
 namespace EchoBot;
 
-public class MyBot : AgentApplication
+public class MyAgent : AgentApplication
 {
-    public MyBot(AgentApplicationOptions options) : base(options)
+    public MyAgent(AgentApplicationOptions options) : base(options)
     {
         OnConversationUpdate(ConversationUpdateEvents.MembersAdded, WelcomeMessageAsync);
 
@@ -33,9 +33,6 @@ public class MyBot : AgentApplication
 
     protected async Task OnMessageAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
     {
-        // Increment count state.
-        int count = turnState.Conversation.IncrementMessageCount();
-
-        await turnContext.SendActivityAsync($"[{count}] you said: {turnContext.Activity.Text}", cancellationToken: cancellationToken);
+        await turnContext.SendActivityAsync($"You said: {turnContext.Activity.Text}", cancellationToken: cancellationToken);
     }
 }

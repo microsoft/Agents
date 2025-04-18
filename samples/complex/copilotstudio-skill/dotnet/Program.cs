@@ -1,26 +1,34 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using EchoBot;
-using Microsoft.Agents.Builder;
+using CopilotStudioEchoSkill;
 using Microsoft.Agents.Hosting.AspNetCore;
-using Microsoft.Agents.Samples;
 using Microsoft.Agents.Storage;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Agents.Samples;
+using Microsoft.Agents.Builder;
+using Microsoft.AspNetCore.Http;
 using System.Threading;
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
+
 builder.Logging.AddConsole();
+builder.Logging.AddDebug();
 
 // Add AspNet token validation
 builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
+
+// Add AgentApplicationOptions from config.
+builder.AddAgentApplicationOptions();
+
+// Add the Agent
+builder.AddAgent<EchoSkill>();
 
 // Register IStorage.  For development, MemoryStorage is suitable.
 // For production Agents, persisted storage should be used so
@@ -28,21 +36,18 @@ builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
 // in a cluster of Agent instances.
 builder.Services.AddSingleton<IStorage, MemoryStorage>();
 
-// Add AgentApplicationOptions from config.
-builder.AddAgentApplicationOptions();
+var app = builder.Build();
 
-// Add the bot (which is transient)
-builder.AddAgent<MyAgent>();
+// Required for providing the Agent manifest.
+app.UseHttpsRedirection();
+app.UseStaticFiles();
 
-
-WebApplication app = builder.Build();
-
-app.UseRouting();
+app.UseAuthorization();
 var root = app.MapPost("/api/messages", async (HttpRequest request, HttpResponse response, IAgentHttpAdapter adapter, IAgent agent, CancellationToken cancellationToken) =>
 {
     await adapter.ProcessAsync(request, response, agent, cancellationToken);
-});
-
+}).RequireAuthorization();
+    
 if (app.Environment.IsDevelopment())
 {
     root.AllowAnonymous();
@@ -55,4 +60,3 @@ if (app.Environment.IsDevelopment())
 app.Urls.Add($"http://localhost:3978");
 
 app.Run();
-
