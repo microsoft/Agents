@@ -21,12 +21,12 @@
   "description": "",
   "dependencies": {
     "@langchain/langgraph": "^0.2.57",
-    "@langchain/openai": "^0.4.5",
-    "@microsoft/agents-hosting": "^0.1.49",
+    "@langchain/openai": "^0.5.10",
+    "@microsoft/agents-hosting": "^0.3.0",
     "express": "^5.0.1"
   },
   "devDependencies": {
-    "@microsoft/teams-app-test-tool": "^0.2.6",
+    "@microsoft/teams-app-test-tool": "^0.2.8",
     "@types/node": "^22.13.4",
     "esbuild": "^0.25.0",
     "nodemon": "^3.1.9",

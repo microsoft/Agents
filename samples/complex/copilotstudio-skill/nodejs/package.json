@@ -17,12 +17,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@microsoft/agents-hosting": "^0.1.49",
+    "@microsoft/agents-hosting": "^0.3.0",
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "express": "^5.0.1"
   },
   "devDependencies": {
-    "globals": "^15.14.0",
+    "globals": "^16.1.0",
     "esbuild": "^0.25.0"
   }
 }

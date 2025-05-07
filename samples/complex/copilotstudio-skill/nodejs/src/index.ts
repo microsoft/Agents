@@ -23,7 +23,7 @@ server.post('/api/messages',
 const port = process.env.PORT || 3978
 
 server.listen(port, () => {
-  console.log(`\n echo bot skill, running on sdk version ${pjson.version} lisenting on ${port} for bot ${process.env.clientId}`)
+  console.log(`\n agent skill, running on sdk version ${pjson.version} lisenting on ${port} for bot ${process.env.clientId}`)
 }).on('error', (err) => {
   console.error(err)
   process.exit(1)

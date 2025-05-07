@@ -1,4 +1,5 @@
-import { ActivityTypes, ApplicationBuilder, MessageFactory } from '@microsoft/agents-hosting'
+import { ActivityTypes } from '@microsoft/agents-activity'
+import { AgentApplicationBuilder, MessageFactory } from '@microsoft/agents-hosting'
 import { AzureChatOpenAI } from '@langchain/openai'
 import { MemorySaver } from '@langchain/langgraph'
 import { HumanMessage, SystemMessage } from '@langchain/core/messages'
@@ -6,7 +7,7 @@ import { createReactAgent } from '@langchain/langgraph/prebuilt'
 import { GetWeatherTool } from './tools/getWeatherTool.js'
 import { dateTool } from './tools/dateTimeTool.js'
 
-export const weatherAgent = new ApplicationBuilder().build()
+export const weatherAgent = new AgentApplicationBuilder().build()
 
 weatherAgent.conversationUpdate('membersAdded', async (context, state) => {
   await context.sendActivity(`Hello and Welcome! I'm here to help with all your weather forecast needs!`)

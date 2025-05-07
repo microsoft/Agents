@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-
 import { TurnState, MemoryStorage, TurnContext, AgentApplication, AttachmentDownloader }
   from '@microsoft/agents-hosting'
 import { version } from '@microsoft/agents-hosting/package.json'

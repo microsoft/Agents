@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-
-import { CardFactory, TurnContext, ActionTypes, Activity, ActivityTypes, Attachment } from '@microsoft/agents-hosting'
+import {  ActionTypes, Activity, ActivityTypes, Attachment } from '@microsoft/agents-activity'
+import { CardFactory, TurnContext } from '@microsoft/agents-hosting'
 
 export class CardMessages {
   static async sendIntroCard (context: TurnContext): Promise<void> {
