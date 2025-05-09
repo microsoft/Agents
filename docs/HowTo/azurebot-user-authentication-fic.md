@@ -33,40 +33,56 @@ This section shows how to create an Microsoft Entra ID identity provider that us
 
 1. Open the **App registrations** panel.
 
-1. In the **App registrations** panel, select **New registration**.
+1. Setup App Registration
+   1. For **Teams SSO** open the existing App Registration for the Agent/Azure Bot.
+      1. On the **Authentication** pane if you don't see a **Web** platform, selct **+ Add a platform**.
+         1. Select **Web**
+         1. Enter the **Redirect URI** from the table in the next step.
+         1. Click **Configure**
 
-1. Fill in the required fields and create the app registration.
+            ![Add Redirect URI](media/redirect-url.png)
+      
+   1. For other channels or OAuth
+      1. In the **App registrations** panel, select **New registration**.
 
-   1. Name your application.
+      1. Fill in the required fields and create the app registration.
 
-   1. Select the **Supported account types** for your application. Select Single Tenant.
+         1. Name your application.
 
-   1. For the **Redirect URI**, select **Web** and set the URL to one of the supported OAuth redirect URLs.
+         1. Select the **Supported account types** for your application. Select Single Tenant.
+
+         1. For the **Redirect URI**, select **Web** and set the URL to one of the supported OAuth redirect URLs.
   
-     |Data residency |Cloud |OAuth URL |OAuth Redirect URL|
-      |-----------------|-------|-----------|------------------|
-      |None   |Public |https://token.botframework.com	|https://token.botframework.com/.auth/web/redirect|
-      |Europe |Public |https://europe.token.botframework.com|https://europe.token.botframework.com/.auth/web/redirect|
-      |United States |Public |https://unitedstates.token.botframework.com	|https://unitedstates.token.botframework.com/.auth/web/redirect|
-      |India  |Public |https://india.token.botframework.com|https://india.token.botframework.com/.auth/web/redirect|
-      |None |Azure Government |https://token.botframework.azure.us|https://token.botframework.azure.us/.auth/web/redirect|
-      |None |Azure operated by 21Vianet |https://token.botframework.azure.cn|https://token.botframework.azure.cn/.auth/web/redirect|
+            |Data residency |Cloud |OAuth URL |OAuth Redirect URL|
+            |-----------------|-------|-----------|------------------|
+            |None   |Public |https://token.botframework.com	|https://token.botframework.com/.auth/web/redirect|
+            |Europe |Public |https://europe.token.botframework.com|https://europe.token.botframework.com/.auth/web/redirect|
+            |United States |Public |https://unitedstates.token.botframework.com	|https://unitedstates.token.botframework.com/.auth/web/redirect|
+            |India  |Public |https://india.token.botframework.com|https://india.token.botframework.com/.auth/web/redirect|
+            |None |Azure Government |https://token.botframework.azure.us|https://token.botframework.azure.us/.auth/web/redirect|
+            |None |Azure operated by 21Vianet |https://token.botframework.azure.cn|https://token.botframework.azure.cn/.auth/web/redirect|
 
-   1. Select **Register**.
-      1. Once created, Azure displays the **Overview** page for the app.
-      1. Record the **Application (client) ID** value. You use this value later as the client ID when you create the connection string and register the Microsoft Entra ID provider with the agent registration.
-      1. Record the **Directory (tenant) ID** value. You use this value to register this provider application with your bot.
+         1. Select **Register**.
+            1. Once created, Azure displays the **Overview** page for the app.
+            1. Record the **Application (client) ID** value. You use this value later as the client ID when you create the connection string and register the Microsoft Entra ID provider with the agent registration.
+            1. Record the **Directory (tenant) ID** value. You use this value to register this provider application with your bot.
 
-1. In the navigation pane, select **Certificates & secrets** to create a secret for your application.
+1. In the navigation pane, select **Certificates & secrets** to add credentials for your application.
    1. Under **Federated Credentials**, select **Add Credentials**.
+
       ![Entra FIC Credentials](media/entra-fic-creds.png)
+
    1. On **Add Credentials** page, Choose the **Federated credential scenario** to **Other Issuer**
+
       ![Entra FIC Other Scenario](media/entra-fic-creds-scenario-others.png)
 
    1. Enter values in the required fields and review and update settings
       1. Provide information under **Connect your account**.
+
          ![Entra FIC Connect](media/entra-fic-creds-scenario-others.png)
+
       1. **Issuer** : `https://login.microsoftonline.com/{customer-tenant-ID}/v2.0`
+
       1. **Subject Identifier** : `/eid1/c/pub/t/{base64 encoded customer tenant ID}/a/{base64 encoded 1-P app client ID}/{unique-identifier-for-projected-identity}`
 
          The following table contains Base64url encoded byte-array representation of supported First party application IDs. Use this value which represents our First party app.
@@ -92,14 +108,66 @@ This section shows how to create an Microsoft Entra ID identity provider that us
       1. **Audience**: *api://AzureADTokenExchange (Use Cloud specific values)*
 
    1. Provide information under **Credential details**.
+ 
       ![Entra FIC Credential Details](media/entra-fic-creds-scenario-cred.png)
 
    1. Select **Add** to add the credential.
 
 1. Expose API endpoint
-   - Click **Expose an API** in the left rail
-   - **For an Azure Bot Service Bot**: The default `api://{appid}` is expected
-   - **For a Teams bot**: This format is REQUIRED `api://botid-{appid}`
+   1. Click **Expose an API** in the left rail
+      - **For an Azure Bot Service Bot**: The default `api://{appid}` is suitable.
+      - **For a Teams bot**: This format is REQUIRED `api://botid-{appid}` 
+
+   1. Add a Scope
+      1. Select **+ Add a scope** in the Scopes defined by this API section.
+
+         ![Add a Scope](media/select-scope.png)
+
+      1. Enter the details for configuring scope.
+ 
+         ![Scope Detail](media/add-scope.png)
+
+      1. Enter the scope name.
+
+      1. Select the user who can give consent for this scope. The default option is **Admins only**.
+
+      1. Enter the **Admin consent display name**.
+
+      1. Enter the description for admin consent.
+
+      1. Enter the **User consent display name**.
+
+      1. Enter the user consent description.
+
+      1. Select the **Enabled** option for state.
+
+      1. Select **Add scope**.
+ 
+   1. **For Teams only**, configure an authorized client application
+      1. Select **+ Add a client application**.  
+   
+         ![Add a client](media/auth-client-apps.png) 
+
+      1. Enter the appropriate Microsoft 365 client ID for the applications that you want to authorize for your app’s web application.
+
+         ![Add a clientId](media/add-client-app.png) 
+
+      1. Select one of the following client IDs:
+         |Use client ID|For authorizing...|
+         |-------------|------------------|
+         |1fec8e78-bce4-4aaf-ab1b-5451cc387264	| Teams mobile or desktop application |
+         |5e3ce6c0-2b1f-4285-8d4b-75ee78787346	| Teams web application |
+         |4765445b-32c6-49b0-83e6-1d93765276ca	| Microsoft 365 web application |
+         |0ec893e0-5785-4de6-99da-4ed124e5296c	| Microsoft 365 desktop application |
+         |d3590ed6-52b3-4102-aeff-aad2292ab01c	| Microsoft 365 mobile application/Outlook desktop application |
+         |bc59ab01-8403-45c6-8796-ac3ef710b3e3	| Outlook web application |
+         |27922004-5251-4030-b22d-91ecd9a37ea4	| Outlook mobile application |
+
+      1. Select the application ID URI you created for your app in Authorized scopes to add the scope to the web API you exposed.
+
+      1. Select **Add application**.
+ 
+         ![Client App Added](media/client-app-added.png) 
 
 1. In the navigation pane, select **API permissions** to open the **API permissions** panel. It's a best practice to explicitly set the API permissions for the app.
    1. Select **Add a permission** to show the **Request API permissions** pane.
@@ -115,12 +183,13 @@ This section shows how to create an Microsoft Entra ID identity provider that us
       - User.Read
       - User.ReadBasic.All
 
-   1. Select Add permissions. (The first time a user accesses this app through the agent, they need to grant consent.)
+   1. Select **Add permissions**. (The first time a user accesses this app through the agent, they need to grant consent.)
 
-You now have a OAuth application configured.
+1. You now have a OAuth application configured.
 
-> [!NOTE]
-> You'll assign the **Application (client) ID**, when you create the connection string and register the identity provider with the agent registration. See next section.
+   > [!NOTE]
+   > You'll assign the **Application (client) ID**, when you create the connection string and register the identity provider with the agent registration. See next section.
+
 
 ## Register the OAuth identity with the Azure Bot
 
