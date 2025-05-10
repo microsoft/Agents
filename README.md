@@ -27,21 +27,23 @@ in just a [few lines of code](https://learn.microsoft.com/en-us/semantic-kernel/
 The M365 Agents SDK brings together core components to allow for developers to create, manage and utilize AI Services and third-party SDKs to power orchestration and develop custom agent logic functionality.
 
 ## Links
+
 The source for the client libraries exists for the most part in repositories for each language. This repository is meant to be a jumping off point into those language specific repositories. Issues related to a specific language should be opened in the corresponding repository but cross cutting issues can be opened in this repository.
 
 | Language    | Repo                             | Documentation                    |
 |:------------|:--------------------------------:|:--------------------------------:|
-| General     |[Agents Repository]               | [ Agents SDK Documentation ](https://aka.ms/m365sdkdocs)   |
+| General     |[Agents Repository]               | [Agents SDK Documentation](https://aka.ms/M365-Agents-SDK-Docs)   |
 | C# /.NET    |[Agents-for-net Repository]       | Coming Soon             |
 | JavaScript  |[Agents-for-js Repository]        | Coming Soon       |
 | Python      |[Agents-for-python Repository]    | Coming Soon           |
 
-[Local Documentation](https://microsoft.github.io/Agents)
-
 ## Evolution of Bot Framework
+
 The Microsoft 365 Agents SDK is the evolution of the Bot Framework. The Bot Framework was previously how a developer can build bots where the primary focus in Conversational AI was around topics, dialogs and messages. The industry has evolved to be driven by Generative AI functionality, grounding on knowledge that is located across the enterprise, and there is the need for companies to be able to orchastrate actions, in additional to answer questions, from within a conversational experience. The Microsoft 365 Agents SDK provides capabilities for modern agent development, bringing together the creation of conversational agents with conversation management, orchestration, connecting to numerous AI Services and clients, including agents created with third party software or technology.
 
 Please be aware as we move through this evolution, there will be some references to Bot Framework within documentation and in the code. 
+
+
 
 ## Contributing
 
@@ -56,6 +58,22 @@ provided by the bot. You will only need to do this once across all repos using o
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+
+## Recommended VS Code Extensions
+
+To ensure a consistent development environment, we recommend using the following VS Code extensions:
+
+|Extension  |Description  |
+|---------|---------|
+|[ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)|Integrates [ESLint](https://eslint.org/) into VS Code. Allows you to find an fix problems in JavaScript code.|
+|[GitHub Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat)|[GitHub Copilot](https://code.visualstudio.com/docs/copilot/overview) is an AI peer programming tool that helps you write code faster and smarter.|
+|[GitHub Codespaces](https://marketplace.visualstudio.com/items?itemName=GitHub.codespaces)|[GitHub Codespaces](https://github.com/features/codespaces) provides cloud-hosted development environments for any activity - whether it's a long-term project, or a short-term task like reviewing a pull request.|
+|[C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit)|C# Dev Kit helps you manage your code with a solution explorer and test your code with integrated unit test discovery and execution, elevating your C# development experience wherever you like to develop (Windows, macOS, Linux, and even in a Codespace).|
+|[Adaptive Card Previewer](https://marketplace.visualstudio.com/items?itemName=TeamsDevApp.vscode-adaptive-cards)|The Microsoft Adaptive Card Previewer uses the latest rendering stack for Microsoft Teams to provide a more accurate preview of Adaptive Cards. You can open a side-by-side preview to view changes live, toggle between light, dark, and high-contrast themes.|
+
+These are listed in `.vscode/extensions.json`, so VS Code should prompt you to install them when you open the project.
+
 
 ## Trademarks
 
