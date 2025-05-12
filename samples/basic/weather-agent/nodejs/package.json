@@ -8,11 +8,7 @@
     "prestart": "npm run build",
     "start": "node --env-file .env ./dist/index.js",
     "test-tool": "teamsapptester start",
-    "test": "npm-run-all -p -r start test-tool",
-    "prebundle": "npm run build",
-    "bundle": "esbuild ./src/index.js --bundle --platform=node --metafile=dist/meta.json --outfile=dist/bundle.cjs --tree-shaking=true --keep-names",
-    "predocker": "npm run bundle",
-    "docker": "docker build -t \"$npm_package_name:$npm_package_version\" ."
+    "test": "npm-run-all -p -r start test-tool"
   },
   "keywords": [],
   "author": "",
@@ -26,9 +22,8 @@
     "express": "^5.0.1"
   },
   "devDependencies": {
-    "@microsoft/teams-app-test-tool": "^0.2.8",
+    "@microsoft/teams-app-test-tool": "^0.2.9",
     "@types/node": "^22.13.4",
-    "esbuild": "^0.25.0",
     "nodemon": "^3.1.9",
     "npm-run-all": "^4.1.5",
     "typescript": "^5.7.2"

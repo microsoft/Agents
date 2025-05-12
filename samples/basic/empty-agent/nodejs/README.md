@@ -19,7 +19,7 @@ This Agent Sample is intended to introduce you to the basic operation of the Mic
 1. Open this folder from your IDE or Terminal of preference
 1. Install dependencies
 
-```bash
+```sh
 npm install
 ```
 
@@ -27,8 +27,9 @@ npm install
 
 1. Start the application
 
-```bash
-npm start:anon
+```sh
+npm run build
+npm run start:anon
 ```
 
 At this point you should see the message 
