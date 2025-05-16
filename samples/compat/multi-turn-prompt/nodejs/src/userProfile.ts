@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { Attachment } from '@microsoft/agents-hosting'
+import { Attachment } from '@microsoft/agents-activity'
 
 export class UserProfile {
   constructor (

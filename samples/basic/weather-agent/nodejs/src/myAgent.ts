@@ -9,7 +9,7 @@ import { dateTool } from './tools/dateTimeTool.js'
 
 export const weatherAgent = new AgentApplicationBuilder().build()
 
-weatherAgent.conversationUpdate('membersAdded', async (context, state) => {
+weatherAgent.onConversationUpdate('membersAdded', async (context, state) => {
   await context.sendActivity(`Hello and Welcome! I'm here to help with all your weather forecast needs!`)
 })
 
@@ -47,7 +47,7 @@ const sysMessage = new SystemMessage(`
         }`
 )
 
-weatherAgent.activity(ActivityTypes.Message, async (context, state) => {
+weatherAgent.onActivity(ActivityTypes.Message, async (context, state) => {
   const llmResponse = await agent.invoke({
     messages: [
       sysMessage,

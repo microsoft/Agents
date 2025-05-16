@@ -14,9 +14,9 @@
     "start": "node --env-file .env ./dist/index.js"
   },
   "dependencies": {
-    "@microsoft/agents-copilotstudio-client": "^0.3.0",
-    "@azure/msal-node": "^3.2.3",
-    "open": "^10.1.0"
+    "@microsoft/agents-copilotstudio-client": "^0.4.0",
+    "@azure/msal-node": "^3.5.3",
+    "open": "^10.1.2"
   },
   "devDependencies": {
     "@types/debug": "^4.1.12",

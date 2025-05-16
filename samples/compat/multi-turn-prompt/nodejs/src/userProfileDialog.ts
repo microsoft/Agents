@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-
-import { MessageFactory, Channels, AgentStatePropertyAccessor, TurnContext, UserState, Attachment } from '@microsoft/agents-hosting'
+import { Attachment, Channels } from '@microsoft/agents-activity'
+import { MessageFactory, AgentStatePropertyAccessor, TurnContext, UserState } from '@microsoft/agents-hosting'
 import {
   AttachmentPrompt,
   ChoiceFactory,

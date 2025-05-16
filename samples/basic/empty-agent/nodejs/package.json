@@ -17,12 +17,12 @@
     "test": "npm-run-all -p -r start:anon test-tool"
   },
   "dependencies": {
-    "@microsoft/agents-hosting": "^0.3.0",
+    "@microsoft/agents-hosting": "^0.4.0",
     "express": "^5.1.0"
   },
   "devDependencies": {
-    "@microsoft/teams-app-test-tool": "^0.2.9",
-    "@types/node": "^22.14.0",
+    "@microsoft/teams-app-test-tool": "^0.2.10",
+    "@types/node": "^22.15.18",
     "npm-run-all": "^4.1.5",
     "typescript": "^5.8.3"
   },

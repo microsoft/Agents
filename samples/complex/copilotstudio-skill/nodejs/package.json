@@ -13,9 +13,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@microsoft/agents-hosting": "^0.3.0",
+    "@microsoft/agents-hosting": "^0.4.0",
     "@microsoft/microsoft-graph-client": "^3.0.7",
-    "express": "^5.0.1"
+    "express": "^5.1.0"
   },
   "devDependencies": {
     "globals": "^16.1.0"
