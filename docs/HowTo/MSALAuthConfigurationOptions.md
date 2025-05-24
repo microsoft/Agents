@@ -193,7 +193,7 @@ Here is an example for `CertificateSubjectName` using the certificate thumbprint
   "Connections": {
     "ServiceConnection": {
       "Settings": {
-        "AuthType": "CertificateSubjectName",
+        "AuthType": "Certificate",
         "ClientId": "<ClientID>",
         "CertThumbprint": "<<CertificateThumbprint>>",
         "AuthorityEndpoint": "https://login.microsoftonline.com/botframework.com",
