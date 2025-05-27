@@ -78,6 +78,7 @@ const askQuestion = async (copilotClient: CopilotStudioClient, conversationId: s
   rl.question('\n>>>: ', async (answer) => {
     if (answer.toLowerCase() === 'exit') {
       rl.close()
+      return
     } else if (answer.length > 0){
       const replies = await copilotClient.askQuestionAsync(answer, conversationId)
       replies.forEach((act: Activity) => {
