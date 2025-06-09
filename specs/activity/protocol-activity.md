@@ -1,6 +1,6 @@
 # Activity Protocol -- Activity
 
-Version: Provisional 3.2.2
+Version: Provisional 3.3
 
 ## Abstract
 
@@ -1528,6 +1528,12 @@ The `error` field contains the reason the original [command activity](#command-a
 
 # Appendix I - Changes
 
+# 2025-05-21 - guhiriya@microsoft.com
+* Added `streaminfo` entity for streaming text via `typing` and `message` activities
+* Defined `streamType`, `streamSequence`, and optional `streamResult`
+* Added usage notes, restrictions, and fallback behavior for unsupported channels
+* Included `streaminfo` in Appendix II non-IRI entity types
+
 # 2025-03-19 - trboehre@microsoft.com
 * Replaced "bot" with "agent" except in relation to Azure Bot and payload fields/values.
 
@@ -1641,6 +1647,7 @@ Activity [entities](#entity) communicate extra metadata about the activity, such
 | string         | N/A                                     | String                    |
 | number         | N/A                                     | Number                    |
 | clientInfo     | N/A                                     | Skype client info         |
+| streamInfo     | N/A                                     | Streaming text metadata   |
 
 ### string and number
 
@@ -1685,6 +1692,82 @@ The `platform` field describes the messaging client platform used to generate th
 Note that on channels with a persistent chat feed, `platform` is typically useful only in deciding which content to include, not the format of that content. For instance, if a user on a mobile device asks for product support help, an Agent could generate help specific to their mobile device. However, the user may then re-open the chat feed on their PC so they can read it on that screen while making changes to their mobile device. In this situation, the `platform` field is intended to inform the content, but the content should be viewable on other devices.
 
 `A9230`: Agents SHOULD NOT use the `platform` field to control how response data is formatted unless they have specific knowledge that the content they are sending may only ever be seen on the device in question.
+
+### streaminfo
+
+The `streaminfo` entity conveys metadata supporting chunked streaming of text messages, typically sent as a sequence of `typing` Activities, followed by a final `message` Activity containing the complete text.
+
+| Property         | Type    | Required | Description                                                                     |
+|------------------|---------|----------|---------------------------------------------------------------------------------|
+| `type`           | string  | Yes      | Must be `"streaminfo"`                                                          |
+| `streamId`       | string  | Yes      | Unique identifier for the streaming session                                     |
+| `streamSequence` | integer | Yes      | Incrementing sequence number for each chunk for non-final messages              |
+| `streamType`     | string  | No       | One of `"informative"`, `"streaming"`, or `"final"`. Defaults to `"streaming"`` |
+| `streamResult`   | string  | No       | Present only on final message; one of `"success"`, `"timeout"`, or `"error"`    |
+
+`A9240`: Streaming text is sent via a sequence of `typing` Activities containing `streaminfo` entities.
+
+`A9241`: The final message is sent as a `message` Activity with `streamType` set to `"final"`.
+
+`A9242`: The full message text is included in the final `message` Activity’s `text` field.
+
+`A9243`: Intermediate `typing` Activities may optionally contain the aggregate of streamed chunks in the `text` field.
+
+`A9244`: Streaming SHOULD be throttled and SHOULD terminate after a configurable timeout.
+
+`A9245`: Receivers MUST ignore `streaminfo` entities they do not understand (see A2104).
+
+`A9246`: Senders MUST NOT include more than one `streaminfo` entity per Activity. If multiple are present, receivers MUST ignore all `streaminfo` entities in that Activity.
+
+`A9247`: Channels that do not support streaming SHOULD buffer all chunks and deliver a single `message` when complete.
+
+---
+
+Example:
+```json
+// Sending an informative message chunk
+{
+  "type": "typing",
+  "text": "Getting the answer...",
+  "textFormat": "markdown",
+  "entities": [
+    {
+      "type": "streaminfo",
+      "streamId": "a-00001",
+      "streamType": "informative",
+      "streamSequence": 1
+    }
+  ]
+}
+
+// Sending a streaming text chunk
+{
+  "type": "typing",
+  "text": "A quick brown fox jumped over the",
+  "entities": [
+    {
+      "type": "streaminfo",
+      "streamId": "a-00001",
+      "streamType": "streaming",
+      "streamSequence": 3
+    }
+  ]
+}
+
+// Sending the final complete message
+{
+  "type": "message",
+  "text": "A quick brown fox jumped over the lazy dog.",
+  "entities": [
+    {
+      "type": "streaminfo",
+      "streamId": "a-00001",
+      "streamType": "final",
+      "streamResult": "success"
+    }
+  ]
+}
+```
 
 # Appendix III - Protocols using the Invoke activity
 
