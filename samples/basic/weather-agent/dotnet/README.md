@@ -89,5 +89,24 @@ Read more about [Running an Agent](../../../docs/HowTo/running-an-agent.md)
 
 1. Select **Test in WebChat** on the Azure Bot
 
+## Running this Agent in Teams
+
+1. There are two version of the manifest provided.  One for M365 Copilot and one for Teams.
+   1. Copy the desired version to `manifest.json`.  This will typically be `teams-manifest.json` for Teams.
+1. Manually update the manifest.json
+   - Edit the `manifest.json` contained in the `/appManifest` folder
+     - Replace with your AppId (that was created above) *everywhere* you see the place holder string `<<AAD_APP_CLIENT_ID>>`
+     - Replace `<<BOT_DOMAIN>>` with your Agent url.  For example, the tunnel host name.
+   - Zip up the contents of the `/appManifest` folder to create a `manifest.zip`
+     - `manifest.json`
+     - `outline.png`
+     - `color.png`
+1. Upload the `manifest.zip` to Teams
+   - Select **Developer Portal** in the Teams left sidebar
+   - Select **Apps** (top row)
+   - Select **Import app**, and select the manifest.zip
+
+1. Select **Preview in Teams** in the upper right corner
+
 ## Further reading
 To learn more about building Bots and Agents, see our [Microsoft 365 Agents SDK](https://github.com/microsoft/agents) repo.

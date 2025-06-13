@@ -29,20 +29,6 @@
       "scopes": [
         "personal"
       ],
-      "commandLists": [
-        {
-          "scopes": [
-            "team",
-            "personal"
-          ],
-          "commands": [
-            {
-              "title": "SignOut",
-              "description": "this issues a signout command to the AutoSignin Agent example"
-            }
-          ]
-        }
-      ],
       "supportsFiles": false,
       "isNotificationOnly": false
     }
@@ -53,7 +39,7 @@
   ],
   "validDomains": [
     "token.botframework.com",
-    "<<AGENT_DOMAIN>>"
+    "<<BOT_DOMAIN>>"
   ],
   "webApplicationInfo": {
     "id": "${{AAD_APP_CLIENT_ID}}",

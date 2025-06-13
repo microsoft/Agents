@@ -15,12 +15,12 @@
     "outline": "outline.png"
   },
   "name": {
-    "short": "WeatherSim Streamer",
-    "full": "WeatherSim Streamer Example"
+    "short": "AgentSDK WeatherAgent",
+    "full": "AgentSDK WeatherAgent"
   },
   "description": {
-    "short": "Sample demonstrating AgentSDK + Azure Bot Services + Azure AI Fondry",
-    "full": "This sample demonstrates how to integrate Azure AI Foundry capabilities built with the AgentSDK and manage Streaming Responses to callerss"
+    "short": "Sample demonstrating AgentSDK, Teams, and SemanticKernel",
+    "full": "Sample demonstrating AgentSDK, Teams, and SemanticKernel"
   },
   "accentColor": "#FFFFFF",
   "copilotAgents": {
@@ -35,8 +35,7 @@
     {
       "botId": "${{AAD_APP_CLIENT_ID}}",
       "scopes": [
-        "personal",
-        "groupChat"
+        "personal"
       ],
       "supportsFiles": false,
       "isNotificationOnly": false
@@ -47,6 +46,6 @@
     "messageTeamMembers"
   ],
   "validDomains": [
-    "<<AGENT_DOMAIN>>"
+    "<<BOT_DOMAIN>>"
   ]
 }

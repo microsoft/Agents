@@ -4,37 +4,33 @@
 using Microsoft.Agents.Builder;
 using Microsoft.Agents.Builder.App;
 using Microsoft.Agents.CopilotStudio.Client;
+using Microsoft.Agents.Core.Models;
 using Microsoft.Agents.Hosting.AspNetCore;
+using Microsoft.Agents.Storage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Agents.Core.Models;
-using Microsoft.Agents.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
 builder.Services.AddHttpClient();
 
-builder.Logging.AddConsole();
-builder.Logging.AddDebug();
-
-
-// Add AgentApplicationOptions from config.
+// Add AgentApplicationOptions from appsettings section "AgentApplication".
 builder.AddAgentApplicationOptions();
 
 // Register IStorage.  For development, MemoryStorage is suitable.
 // For production Agents, persisted storage should be used so
-// that state survives Agent restarts, and operate correctly
+// that state survives Agent restarts, and operates correctly
 // in a cluster of Agent instances.
 builder.Services.AddSingleton<IStorage, MemoryStorage>();
 
-// Add the Agent
+// Add the AgentApplication, which contains the logic for responding to
+// user messages.
 builder.AddAgent(sp =>
 {
     const string MCSConversationPropertyName = "MCSConversationId";
@@ -60,12 +56,22 @@ builder.AddAgent(sp =>
             "mcs");
     }
 
+    app.OnMessage("-signout", async (turnContext, turnState, cancellationToken) =>
+    {
+        // Force a user signout to reset the user state
+        // This is needed to reset the token in Azure Bot Services if needed. 
+        // Typically this wouldn't be need in a production Agent.  Made available to assist it starting from scratch.
+        await app.UserAuthorization.SignOutUserAsync(turnContext, turnState, cancellationToken: cancellationToken);
+        await turnContext.SendActivityAsync("You have signed out", cancellationToken: cancellationToken);
+    }, rank: RouteRank.First);
+
     // Since Auto SignIn is enabled, by the time this is called the token is already available via UserAuthorization.GetTurnTokenAsync or
     // UserAuthorization.ExchangeTurnTokenAsync.
     // NOTE:  This is a slightly unusual way to handle incoming Activities (but perfectly) valid.  For this sample,
     // we just want to proxy messages to/from a Copilot Studio Agent.
     app.OnActivity((turnContext, cancellationToken) => Task.FromResult(true), async (turnContext, turnState, cancellationToken) =>
     {
+        
         var mcsConversationId = turnState.Conversation.GetValue<string>(MCSConversationPropertyName);
         var cpsClient = GetClient(app, turnContext);
 
@@ -94,8 +100,9 @@ builder.AddAgent(sp =>
                 }
             }
         }
-    });
+    }, autoSignInHandlers: ["mcs"]);
 
+    // Called when the OAuth flow fails
     app.UserAuthorization.OnUserSignInFailure(async (turnContext, turnState, handlerName, response, initiatingActivity, cancellationToken) =>
     {
         await turnContext.SendActivityAsync($"SignIn failed with '{handlerName}': {response.Cause}/{response.Error.Message}", cancellationToken: cancellationToken);
@@ -107,19 +114,21 @@ builder.AddAgent(sp =>
 
 // Configure the HTTP request pipeline.
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.MapGet("/", () => "Microsoft Agents SDK Sample");
 
+// This receives incoming messages from Azure Bot Service or other SDK Agents
 app.MapPost("/api/messages", async (HttpRequest request, HttpResponse response, IAgentHttpAdapter adapter, IAgent agent, CancellationToken cancellationToken) =>
 {
     await adapter.ProcessAsync(request, response, agent, cancellationToken);
-})
-    .AllowAnonymous();
+});
 
-// Hardcoded for brevity and ease of testing. 
-// In production, this should be set in configuration.
-app.Urls.Add($"http://localhost:3978");
-app.MapGet("/", () => "Microsoft Agents SDK Sample");
+if (app.Environment.IsDevelopment())
+{
+    // Hardcoded for brevity and ease of testing. 
+    // In production, this should be set in configuration.
+    app.Urls.Add($"http://localhost:3978");
+}
 
 app.Run();
