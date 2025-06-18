@@ -599,6 +599,21 @@ The `relatesTo` field references another conversation, and optionally a specific
 
 `A5200`: `relatesTo` SHOULD NOT reference an activity within the conversation identified by the `conversation` field.
 
+### Reserve Event 
+`Sys.ConsentResponseEvent` activity from Bot to channel to indicate the response to a consent request for conversation recording. The `value` field contains the consent response, which is a complex type indicating whether the user has granted or denied consent for provided media type.
+
+```json
+{
+  "type": "event",
+  "name": "Sys.ConsentResponseEvent",
+  "value": { 
+    "consentValue": "True/False", 
+    "mediaType": "mediaType"
+  }
+}
+```
+
+
 ## Invoke activity
 
 Invoke activities communicate programmatic information from a client or channel to an Agent, and have a corresponding return payload for use within the channel. The meaning of an invoke activity is defined by the `name` field, which is meaningful within the scope of a channel.
