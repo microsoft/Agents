@@ -13,7 +13,7 @@ cd myexample
 
 ## Install the Microsoft 365 Agents SDK
 ```
-dotnet add package microsoft.agents.hosting.aspnet.core
+dotnet add package microsoft.agents.hosting.aspnetcore
 dotnet build
 ```
 
