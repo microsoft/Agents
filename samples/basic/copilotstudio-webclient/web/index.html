@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Agents Copilot Studio Client integration with Web Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="index.css">
+   <script src="https://unpkg.com/botframework-webchat@4.18.0/dist/webchat.js"></script>
+   <script src="https://unpkg.com/@azure/msal-browser@4.13.1/lib/msal-browser.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "@microsoft/agents-copilotstudio-client": "https://unpkg.com/@microsoft/agents-copilotstudio-client@0.5.12-g2d752e9b13/dist/src/browser.mjs"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="webchat" role="main"></div>
+  <script type="module" src="index.js"></script>
+</body>
+</html>
