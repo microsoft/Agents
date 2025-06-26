@@ -127,7 +127,6 @@ try {
                 value = "defaultScope"
             }
         )
-        requestedAccessTokenVersion = 2
     }
 
     # writing json to temp file because of #fail to figure out quote escaping
