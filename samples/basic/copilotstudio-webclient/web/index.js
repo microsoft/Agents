@@ -17,7 +17,7 @@ try {
 
   window.WebChat.renderWebChat(
     {
-      directLine: CopilotStudioWebChat.createConnection(client)
+      directLine: CopilotStudioWebChat.createConnection(client, { typingIndicator: true }),
     },
     document.getElementById('webchat')
   )
