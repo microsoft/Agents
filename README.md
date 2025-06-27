@@ -10,6 +10,21 @@ Use the Agents SDK to:
 - Implement agentic patterns without being restricted to a specific technology stack. The Agents SDK is agnostic regarding the AI you choose.
 - Customize your agent to align with the specific behaviors of clients, such as Microsoft Teams.
 
+## C#, JavaScript & Python Repository links
+
+The source for the client libraries exists for the most part in repositories for each language. This repository is meant to be a jumping off point into those language specific repositories. Issues related to a specific language should be opened in the corresponding repository but cross cutting issues can be opened in this repository.
+
+| Language    | Repo                             | 
+|:------------|:--------------------------------:|
+| General (This repo)     |[Agents Repository]               |   
+| C# /.NET    |[Agents-for-net Repository]       | 
+| JavaScript  |[Agents-for-js Repository]        | 
+| Python      |[Agents-for-python Repository]    
+
+## Documentation
+
+To learn more about the Agents SDK, you can read our official docs here: [Agents SDK Documentation](https://aka.ms/M365-Agents-SDK-Docs) 
+
 ## Related SDKs
 
 * **Semantic Kernel**. [Semantic Kernel](https://learn.microsoft.com/en-us/semantic-kernel/overview/)
@@ -26,18 +41,7 @@ in just a [few lines of code](https://learn.microsoft.com/en-us/semantic-kernel/
 
 * **SharePoint Embedded Copilot**. The SharePoint Embedded Copilot SDK provides a React component that allows you to add a copilot agent to your SharePoint Embedded React application. You can dynamically scope the knowledge for the copilot interaction to a single file, folder or a set of containers mapped to the application. The SDK also allows you to configure the agent text, starter prompts and copilot instructions. Click [here](https://github.com/microsoft/SharePoint-Embedded-Samples/blob/main/Copilot/README.md) to learn more.
 
-The M365 Agents SDK brings together core components to allow for developers to create, manage and utilize AI Services and third-party SDKs to power orchestration and develop custom agent logic functionality.
-
-## Links
-
-The source for the client libraries exists for the most part in repositories for each language. This repository is meant to be a jumping off point into those language specific repositories. Issues related to a specific language should be opened in the corresponding repository but cross cutting issues can be opened in this repository.
-
-| Language    | Repo                             | Documentation                    |
-|:------------|:--------------------------------:|:--------------------------------:|
-| General     |[Agents Repository]               | [Agents SDK Documentation](https://aka.ms/M365-Agents-SDK-Docs)   |
-| C# /.NET    |[Agents-for-net Repository]       | Coming Soon             |
-| JavaScript  |[Agents-for-js Repository]        | Coming Soon       |
-| Python      |[Agents-for-python Repository]    | Coming Soon           |
+The Microsoft 365 Agents SDK brings together core components to allow for developers to create, manage and utilize AI Services and third-party SDKs to power orchestration and develop custom agent logic functionality.
 
 ## Using other services with the Agents SDK
 
@@ -56,7 +60,6 @@ provided by the bot. You will only need to do this once across all repos using o
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
-
 
 ## Recommended VS Code Extensions
 
