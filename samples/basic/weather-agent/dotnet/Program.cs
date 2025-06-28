@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.SemanticKernel;
+using System;
 using System.Threading;
 using WeatherAgent;
 
@@ -25,8 +26,14 @@ builder.Services.AddHttpClient();
 // Register Semantic Kernel
 builder.Services.AddKernel();
 
-// Register the AI service of your choice. AzureOpenAI and OpenAI are demonstrated...
-if (builder.Configuration.GetSection("AIServices").GetValue<bool>("UseAzureOpenAI"))
+// Register the AI service of your choice. AzureOpenAI, OpenAI, and Ollama are demonstrated...
+if (builder.Configuration.GetSection("AIServices").GetValue<bool>("UseOllama"))
+{
+    builder.Services.AddOllamaChatCompletion(
+        modelId: builder.Configuration.GetSection("AIServices:Ollama").GetValue<string>("ModelId") ?? "llama3.2",
+        endpoint: new Uri(builder.Configuration.GetSection("AIServices:Ollama").GetValue<string>("Endpoint") ?? "http://localhost:11434"));
+}
+else if (builder.Configuration.GetSection("AIServices").GetValue<bool>("UseAzureOpenAI"))
 {
     builder.Services.AddAzureOpenAIChatCompletion(
         deploymentName: builder.Configuration.GetSection("AIServices:AzureOpenAI").GetValue<string>("DeploymentName"),
