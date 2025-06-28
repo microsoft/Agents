@@ -22,7 +22,7 @@
 		<PackageReference Include="Microsoft.SemanticKernel.Agents.Core" Version="1.45.0" />
 		<PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureOpenAI" Version="1.45.0" />
 		<PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.45.0" />
-		<PackageReference Include="Microsoft.SemanticKernel.Connectors.Ollama" Version="1.46.0-alpha" />
+		<PackageReference Include="Microsoft.SemanticKernel.Connectors.Ollama" Version="1.45.0" />
 		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.1.*-*" />
 		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.1.*-*" />
 	</ItemGroup>
