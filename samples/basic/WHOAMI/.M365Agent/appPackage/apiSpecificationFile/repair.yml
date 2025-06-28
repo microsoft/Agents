@@ -1,0 +1,54 @@
+openapi: 3.0.0
+info:
+  title: Repair Service
+  description: A simple service to manage repairs
+  version: 1.0.0
+servers:
+  - url: ${{OPENAPI_SERVER_URL}}/api
+    description: The repair api server
+paths:
+  /repairs:
+    get:
+      operationId: listRepairs
+      summary: List all repairs
+      description: Returns a list of repairs with their details and images
+      parameters:
+        - name: assignedTo
+          in: query
+          description: Filter repairs by who they're assigned to
+          schema:
+            type: string
+          required: false
+      responses:
+        '200':
+          description: A list of repairs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The unique identifier of the repair
+                        title:
+                          type: string
+                          description: The short summary of the repair
+                        description:
+                          type: string
+                          description: The detailed description of the repair
+                        assignedTo:
+                          type: string
+                          description: The user who is responsible for the repair
+                        date:
+                          type: string
+                          format: date-time
+                          description: The date and time when the repair is scheduled or completed
+                        image:
+                          type: string
+                          format: uri
+                          description: The URL of the image of the item to be repaired or the repair process

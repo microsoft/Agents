@@ -1,0 +1,43 @@
+{
+  "type": "AdaptiveCard",
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "Container",
+      "$data": "${$root}",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "id: ${if(id, id, 'N/A')}",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "title: ${if(title, title, 'N/A')}",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "description: ${if(description, description, 'N/A')}",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "assignedTo: ${if(assignedTo, assignedTo, 'N/A')}",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "date: ${if(date, date, 'N/A')}",
+          "wrap": true
+        },
+        {
+          "type": "Image",
+          "url": "${image}",
+          "$when": "${image != null}"
+        }
+      ]
+    }
+  ]
+}
