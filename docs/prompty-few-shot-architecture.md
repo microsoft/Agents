@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes a breakthrough architecture pattern for building reliable AI agents that work with local/open-source language models. The approach replaces traditional function calling with Prompty templates and few-shot learning, achieving significant improvements in reliability, performance, and model compatibility.
+This document describes an alternative architecture pattern for building reliable AI agents that work with local/open-source language models. The approach replaces traditional function calling with Prompty templates and few-shot learning, achieving significant improvements in reliability, performance, and model compatibility.
 
 ## The Problem
 
@@ -325,9 +325,9 @@ This approach should be the preferred pattern for agent development when working
 
 ## Implementation Status
 
-- ✅ **Proven**: Successfully implemented in MyM365Agent1 weather agent
+- ✅ **Proven**: Successfully implemented in weather-agent-prompty sample
 - ✅ **Tested**: 100% success rate with Codestral model via LM Studio
 - ✅ **Documented**: Complete architecture and implementation guides
 - ⏳ **Expanding**: Ready for adoption in other agent domains
 
-For implementation details, see the [MyM365Agent1 sample](../samples/MyM365Agent1/) and the [PROMPTY_ARCHITECTURE.md](../samples/MyM365Agent1/PROMPTY_ARCHITECTURE.md) documentation.
+For implementation details, see the [weather-agent-prompty sample](../samples/basic/weather-agent-prompty/) and the [PROMPTY_ARCHITECTURE.md](../samples/basic/weather-agent-prompty/PROMPTY_ARCHITECTURE.md) documentation.

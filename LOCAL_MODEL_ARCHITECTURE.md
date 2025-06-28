@@ -57,11 +57,11 @@ User Input → Intent Detection → Plugin Calls → Prompty Template → Respon
 ## Files Created/Modified
 
 ```
-samples/MyM365Agent1/
-├── MyM365Agent1/
+samples/basic/weather-agent-prompty/
+├── weather-agent-prompty/
 │   ├── Bot/Agents/WeatherForecastAgent.cs     # 🔄 Complete refactor
 │   ├── Prompts/weather-forecast.prompty        # ✨ NEW: Few-shot template
-│   ├── MyM365Agent1.csproj                    # 📦 Added Prompty package
+│   ├── weather-agent-prompty.csproj           # 📦 Added Prompty package
 │   └── Program.cs                             # ⚙️ Added timeout config
 ├── PROMPTY_ARCHITECTURE.md                    # 📚 Technical deep-dive
 ├── README.md                                  # 📖 Project overview
@@ -79,8 +79,8 @@ samples/MyM365Agent1/
 ## Documentation
 
 - **[Technical Guide](docs/prompty-few-shot-architecture.md)**: Complete implementation details and best practices
-- **[Sample Implementation](samples/MyM365Agent1/)**: Working example with weather agent
-- **[Architecture Documentation](samples/MyM365Agent1/PROMPTY_ARCHITECTURE.md)**: Project-specific technical details
+- **[Sample Implementation](samples/basic/weather-agent-prompty/)**: Working example with weather agent
+- **[Architecture Documentation](samples/basic/weather-agent-prompty/PROMPTY_ARCHITECTURE.md)**: Project-specific technical details
 
 ## Usage Example
 
@@ -139,14 +139,14 @@ var result = await kernel.InvokeAsync(weatherFunction, new KernelArguments
 
 ## Impact Statement
 
-This alternative approach represents a significant advancement in AI agent development. By demonstrating that few-shot learning can be more effective than function calling for local models, we've opened the door for:
+This alternative architecture pattern demonstrates significant improvements for AI agent development with local models. By implementing few-shot learning instead of function calling for local models, we enable:
 
 - **Cost-effective** agent deployments using local models
 - **Reliable** agent experiences regardless of model choice
-- **Faster** development cycles with clearer patterns
-- **Better** debugging and maintenance workflows
+- **Improved** development cycles with clearer patterns
+- **Enhanced** debugging and maintenance workflows
 
-The pattern is now **production-ready** and should be the preferred approach for building agents with local/open-source models.
+The pattern provides a production-ready approach for building agents with local/open-source models.
 
 ---
 
@@ -154,4 +154,4 @@ The pattern is now **production-ready** and should be the preferred approach for
 
 **Documentation**: [Prompty + Few-Shot Learning Architecture](docs/prompty-few-shot-architecture.md)
 
-**Live Example**: [MyM365Agent1 Weather Agent](samples/MyM365Agent1/)
+**Live Example**: [Weather Agent with Prompty](samples/basic/weather-agent-prompty/)

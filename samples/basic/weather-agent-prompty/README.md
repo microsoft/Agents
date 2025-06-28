@@ -1,8 +1,8 @@
 # MyM365Agent1 - Prompty-Based Weather Agent
 
-## 🚀 Breakthrough: Function Calling Without Function Calling
+## 🚀 Alternative Architecture: Function Calling Without Function Calling
 
-This project demonstrates a revolutionary approach to building AI agents that work with **any instruction-following model**, not just those with OpenAI-style function calling support.
+This project demonstrates an alternative approach to building AI agents that work with **any instruction-following model**, not just those with OpenAI-style function calling support.
 
 ### The Innovation
 
@@ -52,4 +52,4 @@ This approach is:
 
 ---
 
-*This technique represents a paradigm shift from model-dependent function calling to model-agnostic few-shot learning.*
+*This technique provides an alternative to model-dependent function calling by using model-agnostic few-shot learning.*

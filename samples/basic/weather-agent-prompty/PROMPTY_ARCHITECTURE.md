@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project demonstrates a breakthrough approach to building AI agents that work with **any instruction-following model**, not just those that support OpenAI-style function calling. Instead of relying on complex function calling mechanisms, we use **Prompty templates with few-shot learning examples** to achieve the same results with better performance and reliability.
+This project demonstrates an alternative approach to building AI agents that work with **any instruction-following model**, not just those that support OpenAI-style function calling. Instead of relying on complex function calling mechanisms, we use **Prompty templates with few-shot learning examples** to achieve the same results with better performance and reliability.
 
 ## The Problem We Solved
 
@@ -215,6 +215,6 @@ public class WeatherForecastAgent
 
 ## Conclusion
 
-This approach represents a paradigm shift from **model-dependent function calling** to **model-agnostic few-shot learning**. It's faster, more reliable, and works with a broader range of models while being easier to maintain and debug.
+This approach represents an alternative to **model-dependent function calling** by using **model-agnostic few-shot learning**. It's faster, more reliable, and works with a broader range of models while being easier to maintain and debug.
 
 The key insight: **Don't fight the model's limitations - work with its strengths**. Most models excel at following examples and patterns, even if they struggle with complex function calling protocols.

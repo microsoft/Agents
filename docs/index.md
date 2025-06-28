@@ -54,4 +54,4 @@ Some specific concepts that are important to the SDK are:
 
 ## Advanced Patterns
 
-- [**Prompty + Few-Shot Learning Architecture**](./prompty-few-shot-architecture.md) - Breakthrough pattern for building reliable agents with local/open-source models. Achieves 5x performance improvement and 100% reliability by replacing function calling with template-based few-shot learning.
+- [**Prompty + Few-Shot Learning Architecture**](./prompty-few-shot-architecture.md) - Alternative pattern for building reliable agents with local/open-source models. Achieves 5x performance improvement and 100% reliability by replacing function calling with template-based few-shot learning.
