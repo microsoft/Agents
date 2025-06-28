@@ -6,7 +6,7 @@ This document describes a breakthrough architecture pattern for building reliabl
 
 ## The Problem
 
-Traditional agent architectures rely on OpenAI-style function calling where the model generates structured JSON in a specific `tool_calls` format. However, many local models (like Codestral, Llama, etc.) generate text descriptions instead of proper tool calls, causing:
+Modern Semantic Kernel ChatCompletionAgent relies on OpenAI-style function calling where the model generates structured JSON in a specific `tool_calls` format. However, many local models (like Codestral, Llama, etc.) generate text descriptions instead of proper tool calls, causing:
 
 - ⏱️ **Timeouts**: 100+ second response times
 - 🚫 **Failures**: 0% success rate with function calling
@@ -15,7 +15,7 @@ Traditional agent architectures rely on OpenAI-style function calling where the 
 
 ## The Solution: Prompty + Few-Shot Learning
 
-Instead of relying on model-specific function calling capabilities, we:
+Instead of relying on the ChatCompletionAgent's function calling capabilities, we provide an alternative approach that:
 
 1. **Teach through examples** what we want the model to do
 2. **Use templates** to structure inputs and outputs
@@ -102,6 +102,18 @@ user: {{user_input}}
 ### 2. Agent Implementation
 
 ```csharp
+// Semantic Kernel ChatCompletionAgent approach (doesn't work with local models)
+var agent = new ChatCompletionAgent()
+{
+    Instructions = "You are a weather assistant",
+    Kernel = kernel,
+    Arguments = new KernelArguments(new OpenAIPromptExecutionSettings
+    {
+        FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
+    })
+};
+
+// Alternative Prompty approach (works with any model)
 public class WeatherForecastAgent
 {
     private readonly Kernel _kernel;
@@ -173,7 +185,7 @@ public class WeatherForecastAgent
 
 ## Performance Comparison
 
-| Metric | ChatCompletionAgent + Function Calling | Prompty + Few-Shot Learning |
+| Metric | Semantic Kernel ChatCompletionAgent | Prompty + Few-Shot Learning |
 |--------|----------------------------------------|------------------------------|
 | Response Time | 100+ seconds (timeout) | 15-20 seconds |
 | Success Rate | 0% | 100% |

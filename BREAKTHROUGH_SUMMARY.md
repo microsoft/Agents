@@ -6,7 +6,7 @@ We successfully solved a critical compatibility issue with local LLMs and achiev
 
 ## Problem Solved
 
-**Before**: ChatCompletionAgent with function calling was completely non-functional with local models like Codestral:
+**Before**: Semantic Kernel ChatCompletionAgent with function calling was completely non-functional with local models like Codestral:
 - ❌ 100+ second timeouts
 - ❌ 0% success rate  
 - ❌ Only worked with OpenAI-compatible models
@@ -85,7 +85,7 @@ samples/MyM365Agent1/
 ## Usage Example
 
 ```csharp
-// Traditional approach (doesn't work with local models)
+// Semantic Kernel ChatCompletionAgent approach (doesn't work with local models)
 var agent = new ChatCompletionAgent()
 {
     Instructions = "You are a weather assistant",
@@ -96,7 +96,7 @@ var agent = new ChatCompletionAgent()
     })
 };
 
-// New approach (works with any model)
+// Alternative Prompty approach (works with any model)
 var weatherFunction = kernel.CreateFunctionFromPromptyFile("Prompts/weather-forecast.prompty");
 var result = await kernel.InvokeAsync(weatherFunction, new KernelArguments
 {
