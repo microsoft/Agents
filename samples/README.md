@@ -13,9 +13,9 @@ To enable debugging, open this folder using Visual Studio Code (VSCode). Follow 
 |---------|-------------|-------------|--------|--------|--------|
 | Basic   | Empty Agent | Simplest agent | [basic/empty-agent/nodejs](./basic/empty-agent/nodejs) | [basic/empty-agent/dotnet](./basic/empty-agent/dotnet) | TBD |
 | Basic   |  Full Authentication | Empty Agent w/JWT Auth | TBD | [basic/full-authentication/dotnet](./basic/empty-agent/dotnet) | TBD |
-| Basic   | AutoSignIn | Simple OAuth agent using Graph | TBD | [basic/authorization/auto-signin/dotnet](./basic/authorization/auto-signin/dotnet) | TBD |
-| Basic   | OBOAuthorization | OBO to Copilot Studio Agent | TBD | [basic/authorization/obo-authorization/dotnet](./basic/authorization/obo-authorization/dotnet) | TBD |
 | Basic   | Weather Agent | WeatherAgent with various orchestrator libs | (Using LangChain.js) [basic/weather-agent/nodejs](./basic/weather-agent/nodejs) | (Using Semantic Kernel) [basic/weather-agent/dotnet](./basic/weather-agent/dotnet) | TBD |
 | Basic   |  Streaming Agent | Streams OpenAI responses | TBD | [basic/azureai-streaming-poem-agent/dotnet](./basic/azureai-streaming-poem-agent/dotnet) | TBD |
-| Basic   | Copilot Studio Client | Console app to consume a Copilot Studio Agent | [basic/copilotstudio-client/nodejs](./basic/copilotstudio-client/nodejs) | [basic/copilotstudio-client/dotnet](./basic/copilotstudio-client/dotnet) | TBD |
-| Complex | Copilot Studio Skill | Call the echo bot from a Copilot Studio skill | [complex/copilotstudio-skill/nodejs](./complex/copilotstudio-skill/nodejs) | [complex/copilotstudio-skill/dotnet](./complex/copilotstudio-skill/dotnet) | TBD |
+| OAuth   | AutoSignIn | Simple OAuth agent using Graph | TBD | [basic/authorization/auto-signin/dotnet](./basic/authorization/auto-signin/dotnet) | TBD |
+| Copilot Studio | Copilot Studio Client | Console app to consume a Copilot Studio Agent | [basic/copilotstudio-client/nodejs](./basic/copilotstudio-client/nodejs) | [basic/copilotstudio-client/dotnet](./basic/copilotstudio-client/dotnet) | TBD |
+| Copilot Studio | Copilot Studio Skill | Call the echo bot from a Copilot Studio skill | [complex/copilotstudio-skill/nodejs](./complex/copilotstudio-skill/nodejs) | [complex/copilotstudio-skill/dotnet](./complex/copilotstudio-skill/dotnet) | TBD |
+| Copilot Studio | OBOAuthorization | OBO to Copilot Studio Agent | TBD | [basic/authorization/obo-authorization/dotnet](./basic/authorization/obo-authorization/dotnet) | TBD |

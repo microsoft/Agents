@@ -127,7 +127,7 @@ This section shows how to create an Microsoft Entra ID identity provider that us
  
          ![Scope Detail](media/add-scope.png)
 
-      1. Enter the scope name.
+      1. Enter the scope name `defaultScopes`
 
       1. Select the user who can give consent for this scope. The default option is **Admins only**.
 
@@ -178,10 +178,7 @@ This section shows how to create an Microsoft Entra ID identity provider that us
 
       > Note: Any permission marked as **ADMIN CONSENT REQUIRED** will require both a user and a tenant admin to login, so for your agent tend to stay away from these.
 
-      - openid
-      - profile
       - User.Read
-      - User.ReadBasic.All
 
    1. Select **Add permissions**. (The first time a user accesses this app through the agent, they need to grant consent.)
 
@@ -191,7 +188,7 @@ This section shows how to create an Microsoft Entra ID identity provider that us
    > You'll assign the **Application (client) ID**, when you create the connection string and register the identity provider with the agent registration. See next section.
 
 
-## Register the OAuth identity with the Azure Bot
+## Create an OAuth Connection on the Azure Bot
 
 The next step is to register your identity provider with your agent.
 
@@ -223,7 +220,8 @@ The next step is to register your identity provider with your agent.
 
       > This is the tenant associated with the users who can be authenticated. For more information, see Tenancy in Microsoft Entra ID.
 
-   1. For **Scopes**, enter the names of the permission you chose from the application registration. For testing purposes, you can just enter: `openid profile User.Read User.ReadBasic.All`.
+   1. For **Scopes**, enter the names of the permission you chose from the application registration. For testing purposes, you can just enter: `User.Read`.
+      1. If you need to use this token for OBO to another service (and exchangeable toke), use `api://botid-{{appId}}/defaultScopes` 
 
    > Note: For Microsoft Entra ID, Scopes field takes a case-sensitive, space-separated list of values.
 
@@ -236,5 +234,8 @@ The next step is to register your identity provider with your agent.
 1. The first time, this should open a new browser tab listing the permissions your app is requesting and prompt you to accept.
 1. Select **Accept**.
 1. This should then redirect you to a **Test Connection to your-connection-name Succeeded** page, where `your-connection-succeeded` is your specific connection name.
+1. For exchangeable tokens only
+   1. Copy the the JWT token
+   1. Decode the token using https://jwt.io/
+   1. The `aud` claim value should begin with `api://`
 
-You can now use this connection name in your agent code to retrieve user tokens.
