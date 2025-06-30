@@ -28,4 +28,5 @@ We want you to be able to:
 - Adding OAuth
   - [Federated Credentials OAuth](HowTo/azurebot-user-authentication-fic.md)
 - State and Storage
+  - [Managing State](./HowTo/state-concepts.md)
   - [Changing Storage providers](HowTo/storage.md)
