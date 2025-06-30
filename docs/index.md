@@ -27,6 +27,7 @@ We want you to be able to:
     - [JS](HowTo/azurebot-auth-for-js.md)
 - Adding OAuth
   - [Federated Credentials OAuth](HowTo/azurebot-user-authentication-fic.md)
+  - [Configuring a DotNet Agent to use OAuth](./HowTo/agent-oauthconfig-dotnet.md)
 - State and Storage
   - [Managing State](./HowTo/state-concepts.md)
   - [Changing Storage providers](HowTo/storage.md)
