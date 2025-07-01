@@ -15,7 +15,7 @@
 - [Using the token in code (non-OBO)](#using-the-token-in-code-non-obo) 
 - [Using the token in code (OBO)](#using-the-token-in-code-obo) 
 
-## Agent configurion
+## Agent configuration
 The DotNet agent is configured in appsettings, or via code in Program.cs.  This document details using appsettings.
 
 ## Settings 
@@ -137,7 +137,7 @@ public class MyAgent : AgentApplication
     {
         var token = await UserAuthorization.GetTurnTokenAsync(turnContext, turnState, cancellationToken);
 
-        // use the toke 
+        // use the token 
     }
 }
 ```
@@ -181,7 +181,7 @@ public class MyAgent : AgentApplication
 ### Using `GetTurnTokenAsync`
 - This provides the token any time during the turn
 - It can be called as many times as needed
-- Recommened to call immediately before use since this automatically handles token refresh if needed.
+- Recommended to call immediately before use since this automatically handles token refresh if needed.
 
 ## Using the token in code (OBO) 
 - OBO relies on an exchangeable token being returned.
