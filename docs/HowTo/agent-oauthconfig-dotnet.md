@@ -5,7 +5,7 @@
 - OAuth is handled by the "Auto SignIn" feature of AgentApplication.
   - A "global" option that gets a token for all Activity types
   - A "per-route' option that can be assigned different OAuth setup to get different tokens for each.
-- Multiple OAuth "handlers" can be added to config and assigned to routes, or a default "global" handler can be specified.
+- Multiple "OAuth handlers" can be added to config and assigned to routes, or a default "global" handler can be specified.
 - OBO exchange is supported on any handler, provided the Azure side is configured for it.
 - Reference the [AutoSignIn](https://github.com/microsoft/Agents/tree/main/samples/basic/authorization/auto-signin/dotnet) sample for a quick start, or use your existing agent and add OAuth to it.
 
@@ -134,7 +134,7 @@ public class MyAgent : AgentApplication
 
     public async Task OnMessageAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
     {
-        var token = await GetTurnTokenAsync(turnContext, turnState, cancellationToken);
+        var token = await UserAuthorization.GetTurnTokenAsync(turnContext, turnState, cancellationToken);
 
         // use the toke 
     }
@@ -170,17 +170,17 @@ public class MyAgent : AgentApplication
 
     public async Task OnMessageAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
     {
-        var token = await GetTurnTokenAsync(turnContext, turnState, cancellationToken);
+        var token = await UserAuthorization.GetTurnTokenAsync(turnContext, turnState, cancellationToken);
 
         // use the toke 
     }
 }
 ```
 
-### GetTurnToken
+### Using `GetTurnTokenAsync`
 - This provides the token any time during the turn
 - It can be called as many times as needed
-- Recommened to call immediately before use since this automatically handles token refresh if need.
+- Recommened to call immediately before use since this automatically handles token refresh if needed.
 
 ## Using the token in code (OBO) 
 - Doc coming soon

@@ -22,7 +22,7 @@ We want you to be able to:
   - [Federated Credentials](HowTo/azurebot-create-fic.md)
   - [Managed Identity](HowTo/azurebot-create-msi.md)
   - [SingleTenant with ClientSecret](HowTo/azurebot-create-single-secret.md)
-  - Configuring the Agents Auth settings
+  - Configuring the Agent Auth settings
     - [DotNet](HowTo/MSALAuthConfigurationOptions.md)
     - [JS](HowTo/azurebot-auth-for-js.md)
 - Adding OAuth

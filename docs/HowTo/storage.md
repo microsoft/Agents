@@ -1,6 +1,6 @@
 # Agents SDK Storage Overview
 
-Storage is a critical component of the Microsoft Agents SDK, enabling agents to persist conversation state, user data, and other information across sessions. It supports various storage options, including in-memory storage, Azure Cosmos DB, Azure Blob Storage, and allows for custom storage solutions like MongoDB, DynamoDB, and Redis.
+Storage is a critical component of the Microsoft Agents SDK, enabling agents to persist conversation state, user data, and other information across sessions. It supports various storage options, including in-memory storage, Azure Cosmos DB, Azure Blob Storage, and allows for custom storage providers.
 
 ## Key Storage Options
 
@@ -23,23 +23,49 @@ Storage is a critical component of the Microsoft Agents SDK, enabling agents to 
 1.  Memory
     1. All samples use `MemoryStorage`
     1. DotNet: In Program.cs, register `MemoryStorage`
+     
        ```csharp
        builder.Services.AddSingleton<IStorage, MemoryStorage>();
        ``` 
 1. Blobs
    1. DotNet
       1. Add a package dependency for `Microsoft.Agents.Storage.Blobs`
-      1. In Program.cs, add (or replace existing) `IStorage` registration
+      1. In Program.cs, add (or replace existing) `IStorage` registration with
+       
          ```csharp
-         builder.Services.AddSingleton<IStorage>(sp => new BlobsStorage(blobContainerUri, tokenCredential, new StorageTransferOptions()));
+         builder.Services.AddSingleton<IStorage>(sp =>
+         {
+             // Create a TokenCredential of your choosing
+             var credential = null;
+        
+             return new BlobsStorage
+             (
+                 new Uri("https://your-blobs-host/your-blobs-containername"),
+                 credential
+             );
+         });
          ```
       1. See `StorageTransferOptions` for details.
 
 1. CosmosDb
    1. DotNet
       1. Add a package dependency for `Microsoft.Agents.Storage.CosmosDb`
-      1. In Program.cs, add (or replace existing) `IStorage` registration
+      1. In Program.cs, add (or replace existing) `IStorage` registration with
+       
          ```csharp
-         builder.Services.AddSingleton<IStorage>(sp => new CosmosDbPartitionedStorage(new CosmosDbPartitionedStorageOptions());
+         builder.Services.AddSingleton<IStorage>(sp =>
+         {
+             var options = new CosmosDbPartitionedStorageOptions()
+             {
+                 CosmosDbEndpoint = "your-cosmosdb-endpoint",
+                 DatabaseId = "your-database-id",
+                 ContainerId = "your-container-id",
+        
+                 // Create a TokenCredential of your choosing
+                 TokenCredential = null
+             };
+        
+             return new CosmosDbPartitionedStorage(options);
+         });
          ```
-      1. See `CosmosDbPartitionedStorageOptions` for details.
+      1. See [`CosmosDbPartitionedStorageOptions`](https://github.com/microsoft/Agents-for-net/blob/main/src/libraries/Storage/Microsoft.Agents.Storage.CosmosDb/CosmosDbPartitionedStorageOptions.cs) for more details.
