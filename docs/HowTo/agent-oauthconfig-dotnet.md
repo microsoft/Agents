@@ -51,10 +51,11 @@ The DotNet agent is configured in appsettings, or via code in Program.cs.  This 
 ### AutoSignin
 - Optional, defaults to `true`
 - If true, all received Activities will get a token
-  - This can be modified using `AgentApplicationOptions.UserAuthorizationOptions.AutoSignIn` in code. 
+  - This can be modified using `AgentApplicationOptions.UserAuthorizationOptions.AutoSignIn` in your Agent code. 
     For example, this will only get a token for Messages:
+
     ```csharp
-    app.Options.AutoSignIn = (context, cancellationToken) => Task.FromResult(context.Activity.IsType(ActivityTypes.Message))
+    Options.AutoSignIn = (context, cancellationToken) => Task.FromResult(context.Activity.IsType(ActivityTypes.Message))
     ``` 
 ### Handlers
 - Dictionary or handler objects
@@ -172,7 +173,7 @@ public class MyAgent : AgentApplication
     {
         var token = await UserAuthorization.GetTurnTokenAsync(turnContext, turnState, cancellationToken);
 
-        // use the toke 
+        // use the token
     }
 }
 ```

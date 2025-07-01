@@ -11,14 +11,15 @@ This Agent Sample is intended to introduce you the basic operation of the Micros
 
 ## QuickestStart using Agent Toolkit
 1. If you haven't done so already, install the Agents Playground
+ 
    ```
    winget install agentsplayground
    ```
 1. Start the Agent in VS or VS Code
 1. Start the Teams App Tester.  At a command prompt: `teamsapptester`
    - The tool will open a web browser showing the Teams App Test Tool, ready to send messages to your agent. 
-   - For WebChat using the Test Tool, start with: `teamsapptester --channel-id webchat`
-1. Interact with the agent via the browser
+   - To use WebChat in the Test Tool, start with: `teamsapptester --channel-id webchat`
+1. Interact with the Agent via the browser
 
 ## QuickStart using WebChat or Teams
 
