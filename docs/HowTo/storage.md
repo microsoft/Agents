@@ -1,6 +1,6 @@
 # Agents SDK Storage Overview
 
-Storage is a critical component of the Microsoft Agents SDK, enabling agents to persist conversation state, user data, and other information across sessions. It supports various storage options, including in-memory storage, Azure Cosmos DB, Azure Blob Storage, and allows for custom storage providers.
+Storage is a critical component of the Microsoft Agents SDK, enabling agents to persist conversation state, user data, and other information across sessions. It supports various storage options, including in-memory storage, Azure Cosmos DB, Azure Blobs Storage, and allows for custom storage providers.
 
 ## Key Storage Options
 
@@ -10,7 +10,7 @@ Storage is a critical component of the Microsoft Agents SDK, enabling agents to 
    - Data is only availble on the webapp instance, making it unsuitable when running in a cluster.
 
 1. Azure Cosmos DB
-   - A globally distributed, multi-model database ideal for production bots.
+   - A globally distributed, multi-model database ideal for production agents.
    - Supports partitioned storage for scalability and performance.
 
 1. Azure Blob Storage

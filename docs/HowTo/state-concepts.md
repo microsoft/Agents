@@ -49,6 +49,7 @@ The keys used for each of these predefined buckets are specific to the user and 
 Conversation state is good for tracking the context of the conversation, such as:
 - Whether the agent asked the user a question, and which question that was
 - What the current topic of conversation is, or what the last one was
+- Recording chat history
 
 User state is good for tracking information about the user, such as:
 - Non-critical user information, such as name and preferences, an alarm setting, or an alert preference

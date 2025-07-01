@@ -79,7 +79,7 @@ Create the Azure Bot resource. This allows you to register your agent with the A
 
    1. **Federated credential scenario**: **Managed Identity**
    1. Click **Select a managed identity** and chose the User Managed Identity created above
-   1. Set the **Name**
+   1. Set the **Name**, eg. "agent"
    1. Click **Add** when done
 
 ## Next Steps

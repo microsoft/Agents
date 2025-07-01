@@ -184,4 +184,115 @@ public class MyAgent : AgentApplication
 - Recommened to call immediately before use since this automatically handles token refresh if needed.
 
 ## Using the token in code (OBO) 
-- Doc coming soon
+- OBO relies on an exchangeable token being returned.
+  - This is provided by the "Scopes" on the OAuth Connection being the Application ID URI of the App Registration: `api://botid-{{clientId}}/{{scopeName}}`
+  - For example, if the Scope in **"Expose an API"** is "defaultsScopes", `api://botid-{{clientId}}/defaultScopes` would be used.
+- OBO uses an Agents SDK Connection to perform an MSAL exchange to provide the needed token.
+  - This is specified using the `OBOConnectionName` and `OBOScopes` setting in the UserAuthentication.Handler.
+  - If `OBOConnectionName` and `OBOScopes` are specified in config, then the exchange is performed automatically, and `GetTurnTokenAsync` is used during the turn.
+  - If either, or both, `OBOConnectionName` and `OBOScopes` are missing, then `ExchangeTurnTokenAsync` can be used during the turn to exchange the token.  This provides for resolving connection or scopes at runtime.
+
+#### OBO in config
+
+```json
+  "AgentApplication": {
+    "UserAuthorization": {
+      "DefaultHandlerName": "auto",
+      "Handlers": {
+        "auto": {
+          "Settings": {
+            "AzureBotOAuthConnectionName": "teams_sso",
+            "OBOConnectionName": "ServiceConnection",
+            "OBOScopes": [
+              "https://myservicescope.com/.default"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "Connections": {
+    "ServiceConnection": {
+      "Settings": {
+        "AuthType": "FederatedCredentials",
+        "AuthorityEndpoint": "https://login.microsoftonline.com/{{TenantId}}",
+        "ClientId": "{{ClientId}}",
+        "FederatedClientId": "{{ManagedIdentityClientId}}",
+        "Scopes": [
+          "https://api.botframework.com/.default"
+        ]
+      }
+    }
+  },
+```
+
+Your agent code would look something like this:
+
+```csharp
+public class MyAgent : AgentApplication
+{
+    public MyAgent(AgentApplicationOptions options) : base(options)
+    {
+        OnActivity(ActivityTypes.Message, OnMessageAsync, rank: RouteRank.Last);
+    }
+
+    public async Task OnMessageAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
+    {
+        var token = await UserAuthorization.GetTurnTokenAsync(turnContext, turnState, cancellationToken);
+
+        // use the token
+    }
+}
+```
+
+#### OBO Exchange at runtime
+
+```json
+  "AgentApplication": {
+    "UserAuthorization": {
+      "DefaultHandlerName": "auto",
+      "Handlers": {
+        "auto": {
+          "Settings": {
+            "AzureBotOAuthConnectionName": "teams_sso",
+            "OBOConnectionName": "ServiceConnection"
+          }
+        }
+      }
+    }
+  },
+  "Connections": {
+    "ServiceConnection": {
+      "Settings": {
+        "AuthType": "FederatedCredentials",
+        "AuthorityEndpoint": "https://login.microsoftonline.com/{{TenantId}}",
+        "ClientId": "{{ClientId}}",
+        "FederatedClientId": "{{ManagedIdentityClientId}}",
+        "Scopes": [
+          "https://api.botframework.com/.default"
+        ]
+      }
+    }
+  },
+```
+
+Your agent code would look something like this:
+
+```csharp
+public class MyAgent : AgentApplication
+{
+    public MyAgent(AgentApplicationOptions options) : base(options)
+    {
+        OnActivity(ActivityTypes.Message, OnMessageAsync, rank: RouteRank.Last);
+    }
+
+    public async Task OnMessageAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
+    {
+        var scopes = GetScopes();
+
+        var exchangedToken = await UserAuthorization.ExchangeTurnTokenAsync(turnContext, turnState, exchangeScopes: scopes, cancellationToken);
+
+        // use the token
+    }
+}
+```
