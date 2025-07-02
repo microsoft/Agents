@@ -90,7 +90,7 @@ try {
         az bot msteams create --name $AzureBotName --resource-group $ResourceGroup --only-show-errors | out-null
     }
 
-    return $createResult  # | ConvertTo-Json -Depth 10 | Format-Json
+    return $createResult  | ConvertTo-Json -Depth 10 | Format-Json
 } catch {
     Write-Error "Failed to create Azure Bot: $_"
 
