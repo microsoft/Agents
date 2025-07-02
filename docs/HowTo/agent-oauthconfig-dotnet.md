@@ -135,7 +135,7 @@ public class MyAgent : AgentApplication
 
     public async Task OnMessageAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
     {
-        var token = await UserAuthorization.GetTurnTokenAsync(turnContext, turnState, cancellationToken);
+        var token = await UserAuthorization.GetTurnTokenAsync(turnContext);
 
         // use the token 
     }
@@ -171,7 +171,7 @@ public class MyAgent : AgentApplication
 
     public async Task OnMessageAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
     {
-        var token = await UserAuthorization.GetTurnTokenAsync(turnContext, turnState, cancellationToken);
+        var token = await UserAuthorization.GetTurnTokenAsync(turnContext, "messageOauth");
 
         // use the token
     }
@@ -185,7 +185,7 @@ public class MyAgent : AgentApplication
 
 ## Using the token in code (OBO) 
 - OBO relies on an exchangeable token being returned.
-  - This is provided by the "Scopes" on the OAuth Connection being the Application ID URI of the App Registration: `api://botid-{{clientId}}/{{scopeName}}`
+  - This is provided by the "Scopes" on the OAuth Connection being one of the Scopes list in **Expose an API**
   - For example, if the Scope in **"Expose an API"** is "defaultsScopes", `api://botid-{{clientId}}/defaultScopes` would be used.
 - OBO uses an Agents SDK Connection to perform an MSAL exchange to provide the needed token.
   - This is specified using the `OBOConnectionName` and `OBOScopes` setting in the UserAuthentication.Handler.
@@ -238,7 +238,7 @@ public class MyAgent : AgentApplication
 
     public async Task OnMessageAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
     {
-        var token = await UserAuthorization.GetTurnTokenAsync(turnContext, turnState, cancellationToken);
+        var token = await UserAuthorization.GetTurnTokenAsync(turnContext);
 
         // use the token
     }
@@ -290,7 +290,7 @@ public class MyAgent : AgentApplication
     {
         var scopes = GetScopes();
 
-        var exchangedToken = await UserAuthorization.ExchangeTurnTokenAsync(turnContext, turnState, exchangeScopes: scopes, cancellationToken);
+        var exchangedToken = await UserAuthorization.ExchangeTurnTokenAsync(turnContext, exchangeScopes: scopes);
 
         // use the token
     }
