@@ -56,6 +56,27 @@ function Format-Json([Parameter(Mandatory, ValueFromPipeline)][String] $json) {
     }) -Join "`n"
 }
 
+function AzureBot-Exists {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$ResourceGroup,
+
+        [Parameter(Mandatory=$true)]
+        [string]$AzureBotName
+    )
+
+    try {
+        az bot show --name $AzureBotName --resource-group $ResourceGroup | Out-Null
+    } catch {
+        return $false
+    }
+    return $true
+}
+
+if (AzureBot-Exists -AzureBotName $AzureBotName -ResourceGroup $ResourceGroup) {
+    Write-Host "$AzureBotName already exists in $ResourceGroup"
+    exit 1
+}
 
 # Create identity
 try {
@@ -71,7 +92,7 @@ try {
     }
 } catch {
     Write-Error "Failed to create Agent identity: $_"
-    exit 1
+    exit 2
 }
 
 try {
@@ -102,5 +123,5 @@ try {
     } elseif ($AuthType -eq "ClientSecret") {
         Remove-Agent-ClientSecret -CreateResult $createResult
     }
-    exit 2
+    exit 3
 }
