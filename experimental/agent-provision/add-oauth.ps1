@@ -22,6 +22,7 @@ add-oauth -ResourceGroup myResourceGroup -AzureBotName myAzureBot -AuthType Aadv
 #>
 param(
     [Parameter(Mandatory=$true)]
+    [ValidateSet("Aadv2WithFic")]
     [string]$AuthType,
 
     [Parameter(Mandatory=$true)]

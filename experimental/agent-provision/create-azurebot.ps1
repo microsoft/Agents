@@ -14,11 +14,16 @@ The name of the resource group where the Azure Bot is located.
 .PARAMETER AzureBotName
 The name of the Azure Bot.
 
+.PARAMETER Teams
+Indicates this is a Teams Agent
+
 .EXAMPLE
 create-azurebot -ResourceGroup myResourceGroup -AzureBotName myAzureBot -AuthType FederatedCredentials
 #>
+[CmdletBinding()]
 param(
     [Parameter(Mandatory=$true)]
+    [ValidateSet("FederatedCredentials", "UserManagedIdentity", "ClientSecret")]
     [string]$AuthType,
 
     [Parameter(Mandatory=$true)]
@@ -55,11 +60,11 @@ function Format-Json([Parameter(Mandatory, ValueFromPipeline)][String] $json) {
 # Create identity
 try {
     if ($AuthType -eq "UserManagedIdentity") {
-        $createResult = Create-Agent-UserManagedIdentity -ResourceGroup $ResourceGroup -AzureBotName $AzureBotName | ConvertFrom-Json
+        $createResult = Create-Agent-UserManagedIdentity -ResourceGroup $ResourceGroup -AzureBotName $AzureBotName
     } elseif ($AuthType -eq "ClientSecret") {
-        $createResult = Create-Agent-ClientSecret -ResourceGroup $ResourceGroup -AzureBotName $AzureBotName | ConvertFrom-Json
+        $createResult = Create-Agent-ClientSecret -ResourceGroup $ResourceGroup -AzureBotName $AzureBotName
     } elseif ($AuthType -eq "FederatedCredentials") {
-        $createResult = Create-Agent-FederatedCredentials -ResourceGroup $ResourceGroup -AzureBotName $AzureBotName | ConvertFrom-Json
+        $createResult = Create-Agent-FederatedCredentials -ResourceGroup $ResourceGroup -AzureBotName $AzureBotName
     } else {
         Write-Error "Unsupported authentication type: $AuthType"
         exit 1
@@ -69,23 +74,33 @@ try {
     exit 1
 }
 
-$config = $createResult.Config | ConvertTo-Json -Depth 10 | Format-Json
-Write-Host "`nAgent Configuration:`n`n$config`n"
-
 try {
     # Create Azure Bot
-    if ($AuthType -eq "UserManagedIdentity") {
-        $botCreateResult = az bot create --app-type $createResult.AzureBotAppType --appid $createResult.ClientId --msi-resource-id $createResult.ResourceId --resource-group $ResourceGroup --name $AzureBotName --tenant-id $createResult.TenantId | ConvertFrom-Json
+    if ($createResult.AzureBotAppType -eq "UserAssignedMSI") {
+        az bot create --app-type $createResult.AzureBotAppType --appid $createResult.ClientId --msi-resource-id $createResult.ResourceId --resource-group $ResourceGroup --name $AzureBotName --tenant-id $createResult.TenantId 2>&1 | Out-Null
     } else {
-        $botCreateResult = az bot create --app-type $createResult.AzureBotAppType --appid $createResult.ClientId --resource-group $ResourceGroup --name $AzureBotName --tenant-id $createResult.TenantId | ConvertFrom-Json
+        az bot create --app-type $createResult.AzureBotAppType --appid $createResult.ClientId --resource-group $ResourceGroup --name $AzureBotName --tenant-id $createResult.TenantId 2>&1 | Out-Null
     }
 
-    Write-Host "Created Azure Bot: $($botCreateResult.resourceGroup)/$($botCreateResult.name)"
+    if($LASTEXITCODE){
+        Throw $Error[0]
+    }
 
     if ($Teams) {
-        az bot msteams create --name $AzureBotName --resource-group $ResourceGroup | out-null
+        az bot msteams create --name $AzureBotName --resource-group $ResourceGroup --only-show-errors | out-null
     }
+
+    return $createResult  # | ConvertTo-Json -Depth 10 | Format-Json
 } catch {
-    # TODO: delete identity
     Write-Error "Failed to create Azure Bot: $_"
+
+    # Remove resources
+    if ($AuthType -eq "FederatedCredentials") {
+        Remove-Agent-FederatedCredentials -CreateResult $createResult
+    } elseif ($AuthType -eq "UserManagedIdentity") {
+        Remove-Agent-UserManagedIdentity -CreateResult $createResult
+    } elseif ($AuthType -eq "ClientSecret") {
+        Remove-Agent-ClientSecret -CreateResult $createResult
+    }
+    exit 2
 }

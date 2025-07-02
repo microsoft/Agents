@@ -31,30 +31,42 @@ $tenantId = az account list --query "[?isDefault].tenantId | [0]" --only-show-er
 
 az ad sp create --id $($appCreateResult.appId) | out-null
 
-return @"
-{
-  "ClientId": "$($appCreateResult.appId)",
-  "TenantId": "$($tenantId)",
-  "AzureBotAppType": "SingleTenant",
-  "Config": {
-    "dotnet": {
-      "Connections": {
-        "ServiceConnection": {
-          "Settings": {
-            "AuthType": "ClientSecret",
-            "AuthorityEndpoint": "https://login.microsoftonline.com/$($tenantId)",
-            "ClientId": "$($appCreateResult.appId)",
-            "ClientSecret": "$($appSecret.password)",
-            "Scopes": [
+return @{
+  ClientId = "$($appCreateResult.appId)"
+  TenantId = "$($tenantId)"
+  AzureBotAppType = "SingleTenant"
+  ResourceGroup = "$($ResourceGroup)"
+  AzureBotName = "$($AzureBotName)"
+  Config = @{
+    dotnet = @{
+      Connections = @{
+        ServiceConnection = @{
+          Settings = @{
+            AuthType = "ClientSecret"
+            AuthorityEndpoint = "https://login.microsoftonline.com/$($tenantId)"
+            ClientId = "$($appCreateResult.appId)"
+            ClientSecret = "$($appSecret.password)"
+            Scopes = @(
               "https://api.botframework.com/.default"
-            ]
+            )
           }
         }
       }
-    },
-    "js": null,
-    "python": null
+    }
+    nodejs = @{
+      tenantId = $($tenantId)
+      clientId = $($appCreateResult.appId)
+    }
   }
 }
-"@
+
+}
+
+function Remove-Agent-ClientSecret {
+  param(
+    [Parameter(Mandatory=$true)]
+    [hashtable]$CreateResult
+  )
+
+  az ad app delete --id $CreateResult.ClientId
 }
