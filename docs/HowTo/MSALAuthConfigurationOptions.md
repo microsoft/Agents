@@ -28,7 +28,7 @@ These settings are:
 |TenantId     |String         |Null         |When present and AuthorityEndpoint is null, used to create an Authority to request a token from|
 |Scopes     |String list         |Null         |Default Lists of scopes to request tokens for. Is only used when no scopes are passed from the agent connection request|
 
-### ClientSecret
+### SingleTenant with ClientSecret
 
 |Setting Name  |Type  |Default Value  |Description  |
 |--------------|------|---------------|-------------|
@@ -38,25 +38,7 @@ These settings are:
 |TenantId     |String         |Null         |When present and AuthorityEndpoint is null, used to create an Authority to request a token from|
 |Scopes     |String list         |Null         |Default Lists of scopes to request tokens for. Is only used when no scopes are passed from the agent connection request|
 
-Here is an example for **MultiTenant** `ClientSecret` for Azure Bot Service:
-
-```json
-  "Connections": {
-    "ServiceConnection": {
-      "Settings": {
-        "AuthType": "ClientSecret",
-        "ClientId": "<<ClientID>>",
-        "ClientSecret": "<<ClientSecret>>",
-        "AuthorityEndpoint": "https://login.microsoftonline.com/botframework.com",
-        "Scopes": [
-            "https://api.botframework.com/.default"
-          ],
-      }
-    }
-  }
-```
-
-Here is an example for `ClientSecret` for Azure Bot Service using **SingleTenant**:
+Here is an example appsettings for **SingleTenant** `ClientSecret` for Azure Bot Service:
 
 ```json
   "Connections": {
@@ -74,6 +56,34 @@ Here is an example for `ClientSecret` for Azure Bot Service using **SingleTenant
   }
 ```
 
+### MultiTenant with ClientSecret
+
+|Setting Name  |Type  |Default Value  |Description  |
+|--------------|------|---------------|-------------|
+|ClientId     |String    |Null         |ClientId (AppId) to use when creating the Access token.|
+|ClientSecret     |string         |Null         |When AuthType is ClientSecret, Is Secret associated with the client, this should only be used for testing and development purposes.         |
+|AuthorityEndpoint     |String         |Null         |When present, used as the Authority to request a token from.|
+|TenantId     |String         |Null         |When present and AuthorityEndpoint is null, used to create an Authority to request a token from|
+|Scopes     |String list         |Null         |Default Lists of scopes to request tokens for. Is only used when no scopes are passed from the agent connection request|
+
+Here is an example appsettings  for **MultiTenant** `ClientSecret` for Azure Bot Service:
+
+```json
+  "Connections": {
+    "ServiceConnection": {
+      "Settings": {
+        "AuthType": "ClientSecret",
+        "ClientId": "<<ClientID>>",
+        "ClientSecret": "<<ClientSecret>>",
+        "AuthorityEndpoint": "https://login.microsoftonline.com/botframework.com",
+        "Scopes": [
+            "https://api.botframework.com/.default"
+          ],
+      }
+    }
+  }
+```
+
 ### UserManagedIdentity
 
 |Setting Name  |Type  |Default Value  |Description  |
@@ -82,7 +92,7 @@ Here is an example for `ClientSecret` for Azure Bot Service using **SingleTenant
 
 > When using the Managed Identity Types, your host or client must be running with an Azure Service and have set up that service with either a System Assigned Managed identity, or a User Assigned Managed identity.
 
-Here is an example for `UserManagedIdentity`:
+Here is an example appsettings for `UserManagedIdentity`:
 
 ```json
   "Connections": {
@@ -104,7 +114,7 @@ When using Auth type **SystemManagedIdentity**, Client ID is ignored and the sys
 
 > When using the Managed Identity Types, your host or client must be running with an Azure Service and have set up that service with either a System Assigned Managed identity, or a User Assigned Managed identity.
 
-Here is an example for `SystemManagedIdentity` auth type:
+Here is an example appsettings for `SystemManagedIdentity` auth type:
 
 ```json
   "Connections": {
@@ -129,7 +139,7 @@ Here is an example for `SystemManagedIdentity` auth type:
 |Scopes     |String list         |Null         |Default Lists of scopes to request tokens for. Is only used when no scopes are passed from the agent connection request|
 |FederatedClientId     |String    |Null         |Managed Identity ClientId to use when creating the Access token.|
 
-Here is an example for **SingleTenant** `FederatedCredentials`:
+Here is an example appsettings for `FederatedCredentials`:
 
 ```json
   "Connections": {
@@ -218,7 +228,7 @@ Here is an example for **SingleTenant** `WorkloadIdentity`:
 |ValidCertificateOnly     |bool         |True         |Requires the certificate to have a valid chain.          |
 |SendX5C     |bool         |False         |Enables certificate auto rotation with appropriate configuration.          |
 
-Here is an example for `CertificateSubjectName` for SN+I and **MultiTenant**
+Here is an example appsettings for `CertificateSubjectName` for SN+I and **MultiTenant**
 
 ```json
   "Connections": {
@@ -237,7 +247,7 @@ Here is an example for `CertificateSubjectName` for SN+I and **MultiTenant**
   },
 ```
 
-Here is an example for `CertificateSubjectName` for SN+I and **SingleTenant**
+Here is an example appsettings for `CertificateSubjectName` for SN+I and **SingleTenant**
 
 ```json
   "Connections": {
@@ -269,7 +279,7 @@ Here is an example for `CertificateSubjectName` for SN+I and **SingleTenant**
 |ValidCertificateOnly     |bool         |True         |Requires the certificate to have a valid chain.          |
 |SendX5C     |bool         |False         |Enables certificate auto rotation with appropriate configuration.          |
 
-Here is an example for `CertificateSubjectName` using the certificate thumbprint:
+Here is an example appsettings for `CertificateSubjectName` using the certificate thumbprint:
 
 ```json
   "Connections": {

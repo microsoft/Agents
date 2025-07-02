@@ -1,4 +1,4 @@
-# Register an Agent using Managed Identity for an Azure Bot
+# Provision an Azure Bot using User Assigned Managed Identity
 
 This article shows how to register an agent with the Azure AI Bot Service.
 
@@ -8,7 +8,7 @@ You can manage your agent identity in Azure in a few different ways.
 - As a single-tenant app using secrets, certificates, or Federated Credentials.
 
 > These instructions are for user-assigned managed Identity. If you plan to use the agent for local debugging then Managed Identity will not work. 
-> For those on the Microsoft Tenant, using either MultiTenant or SingleTenant with a secret is prohibited.  There are limited options for running locally in this case, with Certiciate SN+I being a viable alternative.  If this does not work for you, the only alternative is to deploy the Agent code to Azure and run there.
+> If you are on the Microsoft Tenant there are limited options for running locally in this case. 
 
 ## Create the resource
 
@@ -45,6 +45,6 @@ Create the Azure Bot resource. This allows you to register your agent with the A
    1. Select **Settings** on the left sidebar, then **Channels**.
    1. Select **Microsoft Teams** from the list and choose appropriate options.
 
-## Further reading
-- [Configuring DotNet Agent Auth](https://aka.ms/AgentsSDK-DotNetMSALAuth)
-- [Configuring JS Agent Auth](https://aka.ms/AgentsSDK-JSMSALAuth)
+## Next Steps
+- [Configuring DotNet Agent Auth](./MSALAuthConfigurationOptions.md#usermanagedidentity)
+- [Configuring JS Agent Auth](./azurebot-auth-for-js.md#single-tenant---user-assigned-managed-identity)

@@ -1,4 +1,4 @@
-# Register a Single Tenant Agent using Client Secrets for an Azure Bot
+# Provision an Azure Bot using a client secret
 
 This article shows how to register a agent with Azure AI Bot Service.
 
@@ -8,7 +8,7 @@ Your can manage your agent identity in Azure in a few different ways.
 - As a single-tenant app using secrets, certificates, or Federated Credentials.
 
 > These instructions are for SingleTenant Identity with a Client Secret.
-> If you are on the Microsoft Tenant, using either MultiTenant or SingleTenant with a client secret is prohibited.  There are limited options for running locally in this case. Certiciate SN+I is a viable alternative. If this doesn't work for you, the only alternative is to use [Managed Identity](azurebot-create-msi.md) and deploy the agent code to Azure and run there.
+> If you are on the Microsoft Tenant there are limited options for running locally in this case. 
 
 ## Create the resource
 
@@ -58,6 +58,6 @@ Create the Azure Bot resource. This allows you to register your agent with the A
 > [!IMPORTANT]
 > Very important Copy the new secret and store in a safe place.  You need the information later when configuring your agent code.
 
-## Further reading
-- [Configuring DotNet Agent Auth](https://aka.ms/AgentsSDK-DotNetMSALAuth)
-- [Configuring JS Agent Auth](https://aka.ms/AgentsSDK-JSMSALAuth)
+## Next Steps
+- [Configuring DotNet Agent Auth](./MSALAuthConfigurationOptions.md#singletenant-with-clientsecret)
+- [Configuring JS Agent Auth](./azurebot-auth-for-js.md#single-tenant---client-secret)
