@@ -51,3 +51,7 @@ Some specific concepts that are important to the SDK are:
 - [Managing Turns](./docs/managingturns.md)
 - [Using Activities](./docs/usingactivities.md)
 - [Creating Messages](./docs/creatingmessages.md)
+
+## Advanced Patterns
+
+- [**Prompty + Few-Shot Learning Architecture**](./prompty-few-shot-architecture.md) - Alternative pattern for building reliable agents with local/open-source models. Achieves 5x performance improvement and 100% reliability by replacing function calling with template-based few-shot learning.
