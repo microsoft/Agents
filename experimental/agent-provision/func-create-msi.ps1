@@ -27,29 +27,41 @@ param(
 
 $identityCreateResult = az identity create --resource-group "$ResourceGroup" --name "$AzureBotName" --output json | ConvertFrom-Json
 
-return @"
-{
-  "ClientId": "$($identityCreateResult.clientId)",
-  "TenantId": "$($identityCreateResult.tenantId)",
-  "ResourceId": "$($identityCreateResult.id)",
-  "AzureBotAppType": "UserAssignedMSI",
-  "Config": {
-    "dotnet": {
-      "Connections": {
-        "ServiceConnection": {
-          "Settings": {
-            "AuthType": "UserManagedIdentity",
-            "ClientId": "$($identityCreateResult.clientId)",
-            "Scopes": [
+return @{
+  ClientId = "$($identityCreateResult.clientId)"
+  TenantId = "$($identityCreateResult.tenantId)"
+  ResourceId = "$($identityCreateResult.id)"
+  AzureBotAppType = "UserAssignedMSI"
+  ResourceGroup = "$($ResourceGroup)"
+  AzureBotName = "$($AzureBotName)"
+  Config = @{
+    dotnet = @{
+      Connections = @{
+        ServiceConnection = @{
+          Settings = @{
+            AuthType = "UserManagedIdentity"
+            ClientId = "$($identityCreateResult.clientId)"
+            Scopes = @(
               "https://api.botframework.com/.default"
-            ]
+            )
           }
         }
       }
-    },
-    "js": null,
-    "python": null
+    }
+    nodejs = @{
+      tenantId = $($identityCreateResult.tenantId)
+      clientId = $($identityCreateResult.clientId)
+    }
   }
 }
-"@
+
+}
+
+function Remove-Agent-UserManagedIdentity {
+  param(
+    [Parameter(Mandatory=$true)]
+    [hashtable]$CreateResult
+  )
+
+  az identity delete --ids $CreateResult.ResourceId
 }
