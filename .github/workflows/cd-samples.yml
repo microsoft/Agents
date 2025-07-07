@@ -39,6 +39,12 @@ jobs:
           npm install
           npm run build
 
+      - name: Build Node Copilot Studio client - React Webchat sample
+        working-directory: ./samples/basic/copilotstudio-webchat-react/
+        run: |
+          npm install
+          npm run build
+
       - name: build Node Empty Agent
         working-directory: ./samples/basic/empty-agent/nodejs/
         run: |
