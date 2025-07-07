@@ -7,7 +7,7 @@
   "license": "MIT",
   "main": "./lib/index.js",
   "scripts": {
-    "prebuild": "npm install",
+    "prebuild": "npm ci",
     "build": "tsc --build",
     "prestart": "npm run build",
     "start": "node --env-file .env ./dist/index.js",
