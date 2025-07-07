@@ -36,36 +36,36 @@ jobs:
       - name: Build Node Copilot Studio client sample
         working-directory: ./samples/basic/copilotstudio-client/nodejs/
         run: |
-          npm install
+          npm ci
           npm run build
 
       - name: Build Node Copilot Studio client - React Webchat sample
         working-directory: ./samples/basic/copilotstudio-webchat-react/
         run: |
-          npm install
+          npm ci
           npm run build
 
       - name: build Node Empty Agent
         working-directory: ./samples/basic/empty-agent/nodejs/
         run: |
-          npm install
+          npm ci
           npm run build
       
       - name: Build  Node Cards bot
         working-directory: ./samples/basic/cards/nodejs/
         run: |
-          npm install
+          npm ci
           npm run build
 
       - name: Build  iamge Node Skill bot
         working-directory: ./samples/complex/copilotstudio-skill/nodejs/
         run: |
-          npm install
+          npm ci
           npm run build
       
       - name: Build Node Weather Agent
         working-directory: ./samples/basic/weather-agent/nodejs/
         run: |
-          npm install
+          npm ci
           npm run build
 

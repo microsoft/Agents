@@ -66,13 +66,18 @@ agent.onMessage('poem', async (context: TurnContext, state: TurnState) => {
         prompt: 'Write a poem in no less than 500 words about the Greek God Apollo as depicted in the Percy Jackson books'
     })
 
-    for await (const textPart of result.textStream) {
-        if (textPart.length> 0) {
-            await context.streamingResponse.queueTextChunk(textPart)
+    try {
+        for await (const textPart of result.textStream) {
+            if (textPart.length > 0) {
+                await context.streamingResponse.queueTextChunk(textPart)
+            }
         }
+        await context.streamingResponse.endStream()
+    } catch (error) {
+        console.error('Error during streaming:', error);
+        await context.streamingResponse.queueTextChunk('An error occurred while generating the poem. Please try again later.');
+        await context.streamingResponse.endStream();
     }
-
-    await context.streamingResponse.endStream()
 })
 
 startServer(agent)

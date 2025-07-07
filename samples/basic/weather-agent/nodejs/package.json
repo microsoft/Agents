@@ -27,5 +27,13 @@
     "nodemon": "^3.1.9",
     "npm-run-all": "^4.1.5",
     "typescript": "^5.7.2"
+  },
+  "overrides": {
+    "@microsoft/agents-activity": {
+      "zod": "3.25.67"
+    },
+    "@langchain/core": {
+      "zod": "3.25.67"
+    }
   }
 }

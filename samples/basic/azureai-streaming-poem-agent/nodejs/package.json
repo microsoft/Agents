@@ -1,8 +1,8 @@
 {
   "dependencies": {
-    "@ai-sdk/azure": "^1.3.23",
-    "@microsoft/agents-hosting-express": "^0.5.4-ga4d0401645",
-    "ai": "^4.3.16"
+    "@ai-sdk/azure": "^1.3.24",
+    "@microsoft/agents-hosting-express": "^0.5.16-g6bdf69cc43",
+    "ai": "^4.3.17"
   },
   "scripts": {
     "build": "tsc -b",
@@ -10,6 +10,6 @@
     "start": "node --env-file .env dist/agent.js"
   },
   "devDependencies": {
-    "@microsoft/teams-app-test-tool": "^0.2.11"
+    "@microsoft/teams-app-test-tool": "^0.2.14"
   }
 }
