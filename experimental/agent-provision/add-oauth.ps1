@@ -22,6 +22,7 @@ add-oauth -ResourceGroup myResourceGroup -AzureBotName myAzureBot -AuthType Aadv
 #>
 param(
     [Parameter(Mandatory=$true)]
+    [ValidateSet("Aadv2WithFic")]
     [string]$AuthType,
 
     [Parameter(Mandatory=$true)]
@@ -127,7 +128,6 @@ try {
                 value = "defaultScope"
             }
         )
-        requestedAccessTokenVersion = 2
     }
 
     # writing json to temp file because of #fail to figure out quote escaping
