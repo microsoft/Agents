@@ -67,7 +67,7 @@ public static class AspNetExtensions
 
         if (!tokenValidationSection.Exists())
         {
-            logger?.LogError("Missing configuration section '{tokenValidationSectionName}'. This section is required to be present in appsettings.json",tokenValidationSectionName);
+            logger?.LogError("Missing configuration section '{tokenValidationSectionName}'. This section is required to be present in appsettings.json", tokenValidationSectionName);
             throw new InvalidOperationException($"Missing configuration section '{tokenValidationSectionName}'. This section is required to be present in appsettings.json");
         }
 

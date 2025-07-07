@@ -1,14 +1,13 @@
-# Register a Managed Identity agent with Azure
+# Register an Agent using Managed Identity for an Azure Bot
 
 This article shows how to register an agent with the Azure AI Bot Service.
 
 You can manage your agent identity in Azure in a few different ways.
 
-- As a user-assigned managed identity, so that you don't need to manage your agent's credentials yourself.
-- As a single-tenant app.
-- As a multi-tenant app.
+- As a user-assigned managed identity, so that you don't need to manage the bot's credentials yourself.
+- As a single-tenant app using secrets, certificates, or Federated Credentials.
 
-> These instructions are for user-assigned managed Identity. If you plan to use the agent for local debugging then managed identity will not work. You should use SingleTenant instead.  
+> These instructions are for user-assigned managed Identity. If you plan to use the agent for local debugging then Managed Identity will not work. 
 > For those on the Microsoft Tenant, using either MultiTenant or SingleTenant with a secret is prohibited.  There are limited options for running locally in this case, with Certiciate SN+I being a viable alternative.  If this does not work for you, the only alternative is to deploy the Agent code to Azure and run there.
 
 ## Create the resource
@@ -19,9 +18,7 @@ Create the Azure Bot resource. This allows you to register your agent with the A
 
 1. In the right pane, select **Create a resource**.
 
-1. In the search box enter `bot`, then press Enter.
-
-1. Select the **Azure Bot** card.
+1. Find and select the **Azure Bot** card.
 
    ![Azure Bot Resource](media/azure-bot-resource.png)
 
@@ -41,9 +38,13 @@ Create the Azure Bot resource. This allows you to register your agent with the A
 
 1. If the validation passes, select **Create**.
 
-1. Once the deployment completes, select Go to resource. You should see the agentand related resources listed in the resource group you selected.
+1. Once the deployment is completed, select **Go to resource**. You should see the agent and related resources listed in the resource group you selected.
 
 1. If this is a Teams bot
 
    1. Select **Settings** on the left sidebar, then **Channels**.
-   1. Select **Microsoft Teams** from the list, and choose appropriate options.
+   1. Select **Microsoft Teams** from the list and choose appropriate options.
+
+## Further reading
+- [Configuring DotNet Agent Auth](https://aka.ms/AgentsSDK-DotNetMSALAuth)
+- [Configuring JS Agent Auth](https://aka.ms/AgentsSDK-JSMSALAuth)

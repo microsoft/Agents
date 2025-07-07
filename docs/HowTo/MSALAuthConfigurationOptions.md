@@ -5,11 +5,13 @@ The DotNet Agents SDK MSAL authentication provider is a utility aid you on creat
 This utility has supports multiple distinct profiles that can be used to create access tokens.
 Each access token can be created using one of the following auth types:
 
-- Client Secret
-- Client Certificate using Thumbprint
-- Client Certificate using Subject Name (including SN+I)
-- User Managed Identity
-- System Managed Identity
+- [Client Secret](#clientsecret)
+- [Client Certificate using Thumbprint](#certificate)
+- [Client Certificate using Subject Name (including SN+I)](#certificatesubjectname)
+- [User Managed Identity](#usermanagedidentity)
+- [System Managed Identity](#systemmanagedidentity)
+- [Federated Credentials](#federatedcredentials)
+- [Workload Identity](#workloadidentity)
 
 ## Configuring a Connection
 
@@ -21,7 +23,7 @@ These settings are:
 
 |Setting Name  |Type  |Default Value  |Description  |
 |--------------|------|---------------|-------------|
-|AuthType     |AuthTypes Enum (Certificate, CertificateSubjectName, ClientSecret, UserManagedIdentity, SystemManagedIdentity) |ClientSecret        |This is the type of authentication that will be created.|
+|AuthType     |AuthTypes Enum (Certificate, CertificateSubjectName, ClientSecret, UserManagedIdentity, SystemManagedIdentity, FederatedCredentials, WorkloadIdentity) |ClientSecret        |This is the type of authentication that will be created.|
 |AuthorityEndpoint     |String         |Null         |When present, used as the Authority to request a token from.|
 |TenantId     |String         |Null         |When present and AuthorityEndpoint is null, used to create an Authority to request a token from|
 |Scopes     |String list         |Null         |Default Lists of scopes to request tokens for. Is only used when no scopes are passed from the agent connection request|
@@ -32,6 +34,9 @@ These settings are:
 |--------------|------|---------------|-------------|
 |ClientId     |String    |Null         |ClientId (AppId) to use when creating the Access token.|
 |ClientSecret     |string         |Null         |When AuthType is ClientSecret, Is Secret associated with the client, this should only be used for testing and development purposes.         |
+|AuthorityEndpoint     |String         |Null         |When present, used as the Authority to request a token from.|
+|TenantId     |String         |Null         |When present and AuthorityEndpoint is null, used to create an Authority to request a token from|
+|Scopes     |String list         |Null         |Default Lists of scopes to request tokens for. Is only used when no scopes are passed from the agent connection request|
 
 Here is an example for **MultiTenant** `ClientSecret` for Azure Bot Service:
 
@@ -60,7 +65,7 @@ Here is an example for `ClientSecret` for Azure Bot Service using **SingleTenant
         "AuthType": "ClientSecret",
         "ClientId": "<<ClientID>>",
         "ClientSecret": "<<ClientSecret>>",
-        "AuthorityEndpoint": "https://login.microsoftonline.com/<<ClientTenantId>>",
+        "AuthorityEndpoint": "https://login.microsoftonline.com/<<TenantId>>",
         "Scopes": [
             "https://api.botframework.com/.default"
           ],
@@ -85,7 +90,6 @@ Here is an example for `UserManagedIdentity`:
       "Settings": {
         "AuthType": "UserManagedIdentity",
         "ClientId": "<ClientID>",
-        "TenantId": "<<ClientTenantId>>",
         "Scopes": [
           "https://api.botframework.com/.default"
         ]
@@ -107,22 +111,95 @@ Here is an example for `SystemManagedIdentity` auth type:
     "ServiceConnection": {
       "Settings": {
         "AuthType": "SystemManagedIdentity",
-        "TenantId": "<<ClientTenantId>>",
         "Scopes": [
           "https://api.botframework.com/.default"
         ]
       }
     }
   }
+```
+
+### FederatedCredentials
+
+|Setting Name  |Type  |Default Value  |Description  |
+|--------------|------|---------------|-------------|
+|ClientId     |String    |Null         |ClientId (AppId) to use when creating the Access token.|
+|AuthorityEndpoint     |String         |Null         |When present, used as the Authority to request a token from.|
+|TenantId     |String         |Null         |When present and AuthorityEndpoint is null, used to create an Authority to request a token from|
+|Scopes     |String list         |Null         |Default Lists of scopes to request tokens for. Is only used when no scopes are passed from the agent connection request|
+|FederatedClientId     |String    |Null         |Managed Identity ClientId to use when creating the Access token.|
+
+Here is an example for **SingleTenant** `FederatedCredentials`:
 
 ```json
   "Connections": {
     "ServiceConnection": {
       "Settings": {
-        "AuthType": "SystemManagedIdentity",
+        "AuthType": "FederatedCredentials",
+        "ClientId": "<ClientID>",
+        "AuthorityEndpoint": "https://login.microsoftonline.com/<<TenantId>>",
+        "FederatedClientId": "<FederatedClientId>",
         "Scopes": [
           "https://api.botframework.com/.default"
         ]
+      }
+    }
+  }
+```
+
+### WorkloadIdentity
+
+|Setting Name  |Type  |Default Value  |Description  |
+|--------------|------|---------------|-------------|
+|ClientId     |String    |Null         |ClientId (AppId) to use when creating the Access token.|
+|AuthorityEndpoint     |String         |Null         |When present, used as the Authority to request a token from.|
+|TenantId     |String         |Null         |When present and AuthorityEndpoint is null, used to create an Authority to request a token from|
+|Scopes     |String list         |Null         |Default Lists of scopes to request tokens for. Is only used when no scopes are passed from the agent connection request|
+|FederatedTokenFile     |String    |Null         |The token file (same as AKS `AZURE_FEDERATED_TOKEN_FILE` env var)|
+
+Here is an example for **SingleTenant** `WorkloadIdentity`:
+
+```json
+  "Connections": {
+    "ServiceConnection": {
+      "Settings": {
+        "AuthType": "WorkloadIdentity",
+        "ClientId": "<ClientID>",
+        "AuthorityEndpoint": "https://login.microsoftonline.com/<<TenantId>>",
+        "FederatedTokenFile": "<FederatedTokenFile>",
+        "Scopes": [
+          "https://api.botframework.com/.default"
+        ]
+      }
+    }
+  }
+```
+
+#### Optional Federated Credentials or Workload Identity client assertion options
+|Setting Name  |Type  |Default Value  |Description  |
+|--------------|------|---------------|-------------|
+|ClientId     |String    |Null         |Client ID for which a signed assertion is requested|
+|TokenEndpoint     |String    |Null         |The intended token endpoint|
+|Claims     |String    |Null         |Claims to be included in the client assertion|
+|ClientCapabilities     |String[]    |Null         |Capabilities that the client application has declared. |
+
+```json
+  "Connections": {
+    "ServiceConnection": {
+      "Settings": {
+        "AuthType": "WorkloadIdentity",
+        "ClientId": "<ClientID>",
+        "AuthorityEndpoint": "https://login.microsoftonline.com/<<TenantId>>",
+        "FederatedTokenFile": "<FederatedTokenFile>",
+        "Scopes": [
+          "https://api.botframework.com/.default"
+        ],
+        "AssertionRequestOptions": {
+            "ClientId": null,
+            "TokenEndpoint": null,
+            "Claims": null,
+            "ClientCapabilities": null,
+        }
       }
     }
   }
@@ -132,6 +209,9 @@ Here is an example for `SystemManagedIdentity` auth type:
 
 |AuthType      |Type  |Default Value  |Description  |
 |--------------|------|---------------|-------------|
+|AuthorityEndpoint     |String         |Null         |When present, used as the Authority to request a token from.|
+|TenantId     |String         |Null         |When present and AuthorityEndpoint is null, used to create an Authority to request a token from|
+|Scopes     |String list         |Null         |Default Lists of scopes to request tokens for. Is only used when no scopes are passed from the agent connection request|
 |ClientId     |String    |Null         |ClientId (AppId) to use when creating the Access token.|
 |CertSubjectName     |String         |Null         |When AuthType is CertificateSubjectName, this is the subject name that is sought|
 |CertStoreName     |String         |"My"         |When AuthType is either CertificateSubjectName or Certificate, Indicates which certificate store to look in|
@@ -149,7 +229,6 @@ Here is an example for `CertificateSubjectName` for SN+I and **MultiTenant**
         "CertSubjectName": "<<CertificateSubjectName>>",
         "SendX5C": true,
         "AuthorityEndpoint": "https://login.microsoftonline.com/botframework.com",
-        "TenantId": "<<ClientTenantId>>",
         "Scopes": [
           "https://api.botframework.com/.default"
         ]
@@ -181,6 +260,9 @@ Here is an example for `CertificateSubjectName` for SN+I and **SingleTenant**
 
 |AuthType      |Type  |Default Value  |Description  |
 |--------------|------|---------------|-------------|
+|AuthorityEndpoint     |String         |Null         |When present, used as the Authority to request a token from.|
+|TenantId     |String         |Null         |When present and AuthorityEndpoint is null, used to create an Authority to request a token from|
+|Scopes     |String list         |Null         |Default Lists of scopes to request tokens for. Is only used when no scopes are passed from the agent connection request|
 |ClientId     |String    |Null         |ClientId (AppId) to use when creating the Access token.|
 |CertThumbprint |String         |Null         |Thumbprint of the certificate to load, only valid when AuthType is set as Certificate|
 |CertStoreName     |String         |"My"         |When AuthType is either CertificateSubjectName or Certificate, Indicates which certificate store to look in|
@@ -197,7 +279,6 @@ Here is an example for `CertificateSubjectName` using the certificate thumbprint
         "ClientId": "<ClientID>",
         "CertThumbprint": "<<CertificateThumbprint>>",
         "AuthorityEndpoint": "https://login.microsoftonline.com/botframework.com",
-        "TenantId": "<<ClientTenantId>>",
         "Scopes": [
           "https://api.botframework.com/.default"
         ]

@@ -1,9 +1,9 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.16/MicrosoftTeams.schema.json",
-  "manifestVersion": "1.16",
+  "manifestVersion": "1.20",
   "version": "1.0.0",
   "id": "${{AAD_APP_CLIENT_ID}}",
-  "packageName": "com.microsoft.agents.streamingagent",
+  "packageName": "com.microsoft.agents.streaming",
   "developer": {
     "name": "Microsoft, Inc.",
     "websiteUrl": "https://example.azurewebsites.net",
@@ -15,12 +15,12 @@
     "outline": "outline.png"
   },
   "name": {
-    "short": "Streaming Agent",
-    "full": "Streaming Agent Example"
+    "short": "AgentSDK Streaming responses",
+    "full": "AgentSDK Streaming OpenAI responses"
   },
   "description": {
-    "short": "Sample demonstrating a streaming agent using Agents SDK.",
-    "full": "This sample demonstrates streaming OpenAI responses back to a client"
+    "short": "Sample demonstrating AgentSDK + OpenAI to demonstrate streaming responses",
+    "full": "Sample demonstrating AgentSDK + OpenAI to demonstrate streaming responses"
   },
   "accentColor": "#FFFFFF",
   "bots": [
@@ -38,6 +38,6 @@
     "messageTeamMembers"
   ],
   "validDomains": [
-    "<<AGENT_DOMAIN>>"
+    "<<BOT_DOMAIN>>"
   ]
 }
