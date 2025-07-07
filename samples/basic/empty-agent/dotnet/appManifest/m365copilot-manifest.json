@@ -2,7 +2,7 @@
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/vdevPreview/MicrosoftTeams.schema.json",
   "manifestVersion": "devPreview",
   "version": "1.0.0",
-  "id": "${{AAD_APP_CLIENT_ID}}",
+  "id": "${{BOT_ID}}",
   "packageName": "com.microsoft.agents.emptyagent",
   "developer": {
     "name": "Microsoft, Inc.",
@@ -26,14 +26,14 @@
   "copilotAgents": {
     "customEngineAgents": [
       {
-        "id": "${{AAD_APP_CLIENT_ID}}",
+        "id": "${{BOT_ID}}",
         "type": "bot"
       }
     ]
   },
   "bots": [
     {
-      "botId": "${{AAD_APP_CLIENT_ID}}",
+      "botId": "${{BOT_ID}}",
       "scopes": [
         "personal"
       ],
@@ -46,6 +46,6 @@
     "messageTeamMembers"
   ],
   "validDomains": [
-    "<<BOT_DOMAIN>>"
+    "${{BOT_DOMAIN}}"
   ]
 }

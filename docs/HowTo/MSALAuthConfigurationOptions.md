@@ -45,9 +45,9 @@ Here is an example appsettings for **SingleTenant** `ClientSecret` for Azure Bot
     "ServiceConnection": {
       "Settings": {
         "AuthType": "ClientSecret",
-        "ClientId": "<<ClientID>>",
-        "ClientSecret": "<<ClientSecret>>",
-        "AuthorityEndpoint": "https://login.microsoftonline.com/<<TenantId>>",
+        "ClientId": "{{BOT_ID}}",
+        "ClientSecret": "{{BOT_SECRET}}",
+        "AuthorityEndpoint": "https://login.microsoftonline.com/{{BOT_TENANT_ID}}",
         "Scopes": [
             "https://api.botframework.com/.default"
           ],
@@ -73,8 +73,8 @@ Here is an example appsettings  for **MultiTenant** `ClientSecret` for Azure Bot
     "ServiceConnection": {
       "Settings": {
         "AuthType": "ClientSecret",
-        "ClientId": "<<ClientID>>",
-        "ClientSecret": "<<ClientSecret>>",
+        "ClientId": "{{BOT_ID}}",
+        "ClientSecret": "{{BOT_SECRET}}",
         "AuthorityEndpoint": "https://login.microsoftonline.com/botframework.com",
         "Scopes": [
             "https://api.botframework.com/.default"
@@ -99,7 +99,7 @@ Here is an example appsettings for `UserManagedIdentity`:
     "ServiceConnection": {
       "Settings": {
         "AuthType": "UserManagedIdentity",
-        "ClientId": "<ClientID>",
+        "ClientId": "{{BOT_ID}}",
         "Scopes": [
           "https://api.botframework.com/.default"
         ]
@@ -146,9 +146,9 @@ Here is an example appsettings for `FederatedCredentials`:
     "ServiceConnection": {
       "Settings": {
         "AuthType": "FederatedCredentials",
-        "ClientId": "<ClientID>",
-        "AuthorityEndpoint": "https://login.microsoftonline.com/<<TenantId>>",
-        "FederatedClientId": "<FederatedClientId>",
+        "ClientId": "{{BOT_ID}}",
+        "AuthorityEndpoint": "https://login.microsoftonline.com/{{BOT_TENANT_ID}}",
+        "FederatedClientId": "{{BOT_FEDERATED_ID}}",
         "Scopes": [
           "https://api.botframework.com/.default"
         ]
@@ -174,9 +174,9 @@ Here is an example for **SingleTenant** `WorkloadIdentity`:
     "ServiceConnection": {
       "Settings": {
         "AuthType": "WorkloadIdentity",
-        "ClientId": "<ClientID>",
-        "AuthorityEndpoint": "https://login.microsoftonline.com/<<TenantId>>",
-        "FederatedTokenFile": "<FederatedTokenFile>",
+        "ClientId": "{{BOT_ID}}",
+        "AuthorityEndpoint": "https://login.microsoftonline.com/{{BOT_TENANT_ID}}",
+        "FederatedTokenFile": "{{BOT_FEDERATED_TOKENFILE}}",
         "Scopes": [
           "https://api.botframework.com/.default"
         ]
@@ -198,9 +198,9 @@ Here is an example for **SingleTenant** `WorkloadIdentity`:
     "ServiceConnection": {
       "Settings": {
         "AuthType": "WorkloadIdentity",
-        "ClientId": "<ClientID>",
-        "AuthorityEndpoint": "https://login.microsoftonline.com/<<TenantId>>",
-        "FederatedTokenFile": "<FederatedTokenFile>",
+        "ClientId": "{{BOT_ID}}",
+        "AuthorityEndpoint": "https://login.microsoftonline.com/{{BOT_TENANT_ID}}",
+        "FederatedTokenFile": "{{BOT_FEDERATED_TOKENFILE}}",
         "Scopes": [
           "https://api.botframework.com/.default"
         ],
@@ -235,8 +235,8 @@ Here is an example appsettings for `CertificateSubjectName` for SN+I and **Multi
     "ServiceConnection": {
       "Settings": {
         "AuthType": "CertificateSubjectName",
-        "ClientId": "<ClientID>",
-        "CertSubjectName": "<<CertificateSubjectName>>",
+        "ClientId": "{{BOT_ID}}",
+        "CertSubjectName": "{{BOT_CERT_SUBJECTNAME}}",
         "SendX5C": true,
         "AuthorityEndpoint": "https://login.microsoftonline.com/botframework.com",
         "Scopes": [
@@ -254,10 +254,10 @@ Here is an example appsettings for `CertificateSubjectName` for SN+I and **Singl
     "ServiceConnection": {
       "Settings": {
         "AuthType": "CertificateSubjectName",
-        "ClientId": "<ClientID>",
-        "CertSubjectName": "<<CertificateSubjectName>>",
+        "ClientId": "{{BOT_ID}}",
+        "CertSubjectName": "{{BOT_CERT_SUBJECTNAME}}",
         "SendX5C": true,
-        "AuthorityEndpoint": "https://login.microsoftonline.com/<<ClientTenantId>>",
+        "AuthorityEndpoint": "https://login.microsoftonline.com/{{BOT_TENANT_ID}}",
         "Scopes": [
           "https://api.botframework.com/.default"
         ]
@@ -286,8 +286,8 @@ Here is an example appsettings for `CertificateSubjectName` using the certificat
     "ServiceConnection": {
       "Settings": {
         "AuthType": "Certificate",
-        "ClientId": "<ClientID>",
-        "CertThumbprint": "<<CertificateThumbprint>>",
+        "ClientId": "{{BOT_ID}}",
+        "CertThumbprint": "{{BOT_CERT_THUMBPRINT}}",
         "AuthorityEndpoint": "https://login.microsoftonline.com/botframework.com",
         "Scopes": [
           "https://api.botframework.com/.default"
