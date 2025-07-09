@@ -75,3 +75,15 @@ jobs:
           npm ci
           npm run build
 
+      - name: Build Node auto signin
+        working-directory: ./samples/basic/authorization/auto-signin/nodejs
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build Node OBO
+        working-directory: ./samples/basic/authorization/obo-authorization/nodejs
+        run: |
+          npm ci
+          npm run build
+

@@ -21,12 +21,20 @@
 			"name": "copilotstudio-skill"
 		}, 
 		{
-			"path" : "samples/basic/azureai-streaming-poem-agent/nodejs",
+			"path" : "basic/azureai-streaming-poem-agent/nodejs",
 			"name": "azureai-streaming-poem-agent"
 		},
 		{
-			"path" : "samples/basic/copilotstudio-webchat-react",
+			"path" : "basic/copilotstudio-webchat-react",
 			"name" : "copilotstudio-webchat-react"
+		},
+		{
+			"path" : "basic/authorization/auto-signin/nodejs",
+			"name" : "auto-signin"
+		},
+		{
+			"path" : "basic/authorization/obo-authorization/nodejs",
+			"name" : "obo-authorization"
 		}
 	]
 }
