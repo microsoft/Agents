@@ -1,6 +1,6 @@
 ﻿# AutoSignIn
 
-This Agent has been created using [Microsoft 365 Agents Framework](https://github.com/microsoft/agents-for-net), it shows how to use Auto SignIn user authorization in your Agent.
+This Agent has been created using [Microsoft 365 Agents SDK](https://github.com/microsoft/agents-for-net), it shows how to use Auto SignIn user authorization in your Agent.
 
 This sample:
 - Gets an OAuth token automatically for every message sent by the user
@@ -13,7 +13,7 @@ The sample uses the bot OAuth capabilities in [Azure Bot Service](https://docs.b
 - ## Prerequisites
 
 -  [.Net](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) version 8.0
--  [dev tunnel](https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/get-started?tabs=windows)
+-  [dev tunnel](https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/get-started?tabs=windows) (for local development)
 
 ## Running this sample
 
