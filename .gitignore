@@ -391,7 +391,9 @@ FodyWeavers.xsd
 
 #Ignore env files
 *.env
+settings.js
 dist/
+static/
 devTools/
 node_modules/
-package-lock.json
+

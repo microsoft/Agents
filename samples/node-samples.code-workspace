@@ -19,6 +19,14 @@
 		{
 			"path" : "complex/copilotstudio-skill/nodejs",
 			"name": "copilotstudio-skill"
+		}, 
+		{
+			"path" : "samples/basic/azureai-streaming-poem-agent/nodejs",
+			"name": "azureai-streaming-poem-agent"
+		},
+		{
+			"path" : "samples/basic/copilotstudio-webchat-react",
+			"name" : "copilotstudio-webchat-react"
 		}
 	]
 }
