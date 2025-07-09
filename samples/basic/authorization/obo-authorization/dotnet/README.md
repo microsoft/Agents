@@ -1,6 +1,6 @@
 ﻿# OBO OAuth
 
-This Agent has been created using [Microsoft 365 Agents Framework](https://github.com/microsoft/agents-for-net), it shows how to use authorization in your Agent using OAuth and OBO.
+This Agent has been created using [Microsoft 365 Agents SDK](https://github.com/microsoft/agents-for-net), it shows how to use authorization in your Agent using OAuth and OBO.
 
 - The sample uses the Agent SDK User Authorization capabilities in [Azure Bot Service](https://docs.botframework.com), providing features to make it easier to develop an Agent that authorizes users with various identity providers such as Azure AD (Azure Active Directory), GitHub, Uber, etc.
 - This sample shows how to use an OBO Exchange to communicate with Microsoft Copilot Studio using the CopilotStudioClient.
