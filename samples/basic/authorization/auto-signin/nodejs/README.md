@@ -19,12 +19,16 @@ The sample uses the bot OAuth capabilities in [Azure Bot Service](https://docs.b
 -  [NodeJS](https://nodejs.org) version 20.0 or greater
 -  [dev tunnel](https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/get-started?tabs=windows) (for local development)
 
-## Running this sample
+## Configure Azure Bot Service
 
 1. [Create an Azure Bot](https://aka.ms/AgentsSDK-CreateBot)
    - Record the Application ID, the Tenant ID, and the Client Secret for use below
 
-1. [Add OAuth to your bot](https://aka.ms/AgentsSDK-AddAuth) for ADv2 and GitHub
+1. [Add OAuth to your bot](https://aka.ms/AgentsSDK-AddAuth) using the _Azure Active Directory v2_ Provider.
+
+1. Create a second Azure Bot **OAuth Connection** using the _GitHub_ provider.
+
+  > To configure OAuth for GitHub you need a GitHub account, under settings/developer settings/OAuth apps, create a new OAuth app, and set the callback URL to `https://token.botframework.com/.auth/web/redirect`. Then you will need to provide the clientId and clientSecret, and the required scopes: `user repo`
 
 1. Configuring the token connection in the Agent settings
    > The instructions for this sample are for a SingleTenant Azure Bot using ClientSecrets.  The token connection configuration will vary if a different type of Azure Bot was configured.  For more information see [MSAL Authentication provider](docs/HowTo/azurebot-auth-for-js.md)
@@ -86,8 +90,8 @@ The sample uses the bot OAuth capabilities in [Azure Bot Service](https://docs.b
 
 ## Interacting with the Agent
 
-- When the conversation starts, you will be greeted with a welcome message which include your name and instructions.  If this is the first time you've interacted with the Agent in a conversation, you will be prompts to sign in (WebChat), or with Teams SSO the OAuth will happen silently.
-- Sending `/me` will display additional information about you.
+- When the conversation starts, you will be greeted with a welcome message, and another message informing the token status. 
+- Sending `/me` will trigger the OAuth flow and display additional information about you.
 - Note that if running this in Teams and SSO is setup, you shouldn't see any "sign in" prompts.  This is true in this sample since we are only requesting a basic set of scopes that Teams doesn't require additional consent for.
 
 ## Further reading
