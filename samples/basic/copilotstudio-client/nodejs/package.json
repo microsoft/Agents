@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@azure/msal-node": "^3.5.3",
-    "@microsoft/agents-copilotstudio-client": "^0.5.12-g2d752e9b13",
+    "@microsoft/agents-copilotstudio-client": "^0.6.0",
     "open": "^10.1.2"
   },
   "devDependencies": {

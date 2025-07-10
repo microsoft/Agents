@@ -13,7 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@microsoft/agents-hosting": "^0.5.16-g6bdf69cc43",
+    "@microsoft/agents-hosting": "^0.6.0",
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "express": "^5.1.0"
   },

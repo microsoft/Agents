@@ -19,7 +19,7 @@
         "docker": "docker build -t \"$npm_package_name:$npm_package_version\" ."
     },
     "dependencies": {
-        "@microsoft/agents-hosting-dialogs": "^0.4.0",
+        "@microsoft/agents-hosting-dialogs": "^0.6.0",
         "express": "^5.1.0"
     },
     "devDependencies": {
