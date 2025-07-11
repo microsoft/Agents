@@ -4,7 +4,7 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>disable</ImplicitUsings>
-		<NoWarn>$(NoWarn);SKEXP0010</NoWarn>
+		<NoWarn>$(NoWarn);SKEXP0010;SKEXP0070</NoWarn>
 		<UserSecretsId>b842df34-390f-490d-9dc0-73909363ad16</UserSecretsId>
 	</PropertyGroup>
 
@@ -22,6 +22,7 @@
 		<PackageReference Include="Microsoft.SemanticKernel.Agents.Core" Version="1.45.0" />
 		<PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureOpenAI" Version="1.45.0" />
 		<PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.45.0" />
+		<PackageReference Include="Microsoft.SemanticKernel.Connectors.Ollama" Version="1.45.0" />
 		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.1.*-*" />
 		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.1.*-*" />
 	</ItemGroup>
