@@ -42,6 +42,7 @@ This step will require permissions to Create application identities in your Azur
         1. In the permissions list choose `Delegated Permissions`, `CopilotStudio` and Check `CopilotStudio.Copilots.Invoke`
         1. Click `Add Permissions`
     1. (Optional) Click `Grant Admin consent for copilotsdk`
+    1. On the Authentication page, under `Advanced settings`, make sure the `Enable the following mobile and desktop flows` toggle is set to `Yes`.
     1. Close Azure Portal
 
 > [!TIP]
