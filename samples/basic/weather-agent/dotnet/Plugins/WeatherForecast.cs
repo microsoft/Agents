@@ -8,7 +8,7 @@ public class WeatherForecast
     /// <summary>
     /// A date for the weather forecast
     /// </summary>
-    public string Date { get; set; }
+    public string? Date { get; set; }
 
     /// <summary>
     /// The temperature in Celsius

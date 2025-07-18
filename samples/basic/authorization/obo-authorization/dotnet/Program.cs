@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.Agents.AspNetAuthentication;
 using Microsoft.Agents.Builder;
 using Microsoft.Agents.Builder.App;
 using Microsoft.Agents.CopilotStudio.Client;
@@ -45,7 +44,7 @@ builder.AddAgent(sp =>
 
         return new CopilotClient(
             settings,
-            sp.GetService<IHttpClientFactory>(),
+            sp.GetService<IHttpClientFactory>()!,
             tokenProviderFunction: async (s) =>
             {
                 // In this sample, the Azure Bot OAuth Connection is configured to return an 
@@ -106,7 +105,7 @@ builder.AddAgent(sp =>
     // Called when the OAuth flow fails
     app.UserAuthorization.OnUserSignInFailure(async (turnContext, turnState, handlerName, response, initiatingActivity, cancellationToken) =>
     {
-        await turnContext.SendActivityAsync($"SignIn failed with '{handlerName}': {response.Cause}/{response.Error.Message}", cancellationToken: cancellationToken);
+        await turnContext.SendActivityAsync($"SignIn failed with '{handlerName}': {response.Cause}/{response.Error!.Message}", cancellationToken: cancellationToken);
     });
 
     return app;

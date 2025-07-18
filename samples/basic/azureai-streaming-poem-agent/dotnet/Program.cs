@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using Azure.AI.OpenAI;
-using Microsoft.Agents.AspNetAuthentication;
 using Microsoft.Agents.Builder;
 using Microsoft.Agents.Hosting.AspNetCore;
 using Microsoft.Agents.Storage;
@@ -23,8 +22,8 @@ builder.Services.AddHttpClient();
 builder.Services.AddTransient<ChatClient>(sp =>
 {
     return new AzureOpenAIClient(
-            new Uri(builder.Configuration["AIServices:AzureOpenAI:Endpoint"]),
-            new ApiKeyCredential(builder.Configuration["AIServices:AzureOpenAI:ApiKey"]))
+            new Uri(builder.Configuration["AIServices:AzureOpenAI:Endpoint"]!),
+            new ApiKeyCredential(builder.Configuration["AIServices:AzureOpenAI:ApiKey"]!))
     .GetChatClient(builder.Configuration["AIServices:AzureOpenAI:DeploymentName"]);
 });
 

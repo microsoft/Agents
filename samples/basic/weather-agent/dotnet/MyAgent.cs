@@ -18,8 +18,8 @@ namespace WeatherAgent;
 
 public class MyAgent : AgentApplication
 {
-    private WeatherForecastAgent _weatherAgent;
-    private Kernel _kernel;
+    private WeatherForecastAgent? _weatherAgent;
+    private readonly Kernel _kernel;
 
     public MyAgent(AgentApplicationOptions options, Kernel kernel) : base(options)
     {
@@ -40,7 +40,7 @@ public class MyAgent : AgentApplication
         ];
 
         // Start a Streaming Process 
-        await turnContext.StreamingResponse.QueueInformativeUpdateAsync("Working on a response for you"); 
+        await turnContext.StreamingResponse.QueueInformativeUpdateAsync("Working on a response for you", cancellationToken); 
 
         ChatHistory chatHistory = turnState.GetValue("conversation.chatHistory", () => new ChatHistory());
         _weatherAgent = new WeatherForecastAgent(_kernel, serviceCollection.BuildServiceProvider());
@@ -59,7 +59,7 @@ public class MyAgent : AgentApplication
         switch (forecastResponse.ContentType)
         {
             case WeatherForecastAgentResponseContentType.Text:
-                turnContext.StreamingResponse.QueueTextChunk(forecastResponse.Content);
+                turnContext.StreamingResponse.QueueTextChunk(forecastResponse.Content!);
                 break;
             case WeatherForecastAgentResponseContentType.AdaptiveCard:
                 turnContext.StreamingResponse.FinalMessage = MessageFactory.Attachment(new Attachment()

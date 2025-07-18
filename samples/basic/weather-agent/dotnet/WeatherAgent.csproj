@@ -6,6 +6,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<NoWarn>$(NoWarn);SKEXP0010</NoWarn>
 		<UserSecretsId>b842df34-390f-490d-9dc0-73909363ad16</UserSecretsId>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.Agents.AspNetAuthentication;
 using Microsoft.Agents.Builder;
 using Microsoft.Agents.Hosting.AspNetCore;
 using Microsoft.Agents.Storage;
@@ -30,9 +29,9 @@ builder.Services.AddKernel();
 if (builder.Configuration.GetSection("AIServices").GetValue<bool>("UseAzureOpenAI"))
 {
     builder.Services.AddAzureOpenAIChatCompletion(
-        deploymentName: builder.Configuration.GetSection("AIServices:AzureOpenAI").GetValue<string>("DeploymentName"),
-        endpoint: builder.Configuration.GetSection("AIServices:AzureOpenAI").GetValue<string>("Endpoint"),
-        apiKey: builder.Configuration.GetSection("AIServices:AzureOpenAI").GetValue<string>("ApiKey"));
+        deploymentName: builder.Configuration.GetSection("AIServices:AzureOpenAI").GetValue<string>("DeploymentName")!,
+        endpoint: builder.Configuration.GetSection("AIServices:AzureOpenAI").GetValue<string>("Endpoint")!,
+        apiKey: builder.Configuration.GetSection("AIServices:AzureOpenAI").GetValue<string>("ApiKey")!);
 
     //Use the Azure CLI (for local) or Managed Identity (for Azure running app) to authenticate to the Azure OpenAI service
     //credentials: new ChainedTokenCredential(
@@ -43,8 +42,8 @@ if (builder.Configuration.GetSection("AIServices").GetValue<bool>("UseAzureOpenA
 else
 {
     builder.Services.AddOpenAIChatCompletion(
-        modelId: builder.Configuration.GetSection("AIServices:OpenAI").GetValue<string>("ModelId"),
-        apiKey: builder.Configuration.GetSection("AIServices:OpenAI").GetValue<string>("ApiKey"));
+        modelId: builder.Configuration.GetSection("AIServices:OpenAI").GetValue<string>("ModelId")!,
+        apiKey: builder.Configuration.GetSection("AIServices:OpenAI").GetValue<string>("ApiKey")!);
 }
 
 // Add AgentApplicationOptions from appsettings section "AgentApplication".

@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using CopilotStudioEchoSkill;
-using Microsoft.Agents.AspNetAuthentication;
 using Microsoft.Agents.Builder;
 using Microsoft.Agents.Hosting.AspNetCore;
 using Microsoft.Agents.Storage;

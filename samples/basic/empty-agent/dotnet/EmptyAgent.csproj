@@ -4,14 +4,8 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<Compile Remove="wwwroot\**" />
-		<Content Remove="wwwroot\**" />
-		<EmbeddedResource Remove="wwwroot\**" />
-		<None Remove="wwwroot\**" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.2.*-*" />

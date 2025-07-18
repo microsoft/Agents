@@ -86,10 +86,10 @@ public class WeatherForecastAgent
         {
             string resultContent = sb.ToString();
             var jsonNode = JsonNode.Parse(resultContent);
-            WeatherForecastAgentResponse result = new WeatherForecastAgentResponse()
+            WeatherForecastAgentResponse result = new()
             {
-                Content = jsonNode["content"].ToString(),
-                ContentType = Enum.Parse<WeatherForecastAgentResponseContentType>(jsonNode["contentType"].ToString(), true)
+                Content = jsonNode!["content"]!.ToString(),
+                ContentType = Enum.Parse<WeatherForecastAgentResponseContentType>(jsonNode["contentType"]!.ToString(), true)
             };
             return result;
         }
