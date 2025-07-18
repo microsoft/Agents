@@ -20,7 +20,7 @@ public class DateTimePlugin
     /// </example>
     /// <returns> The current date </returns>
     [KernelFunction, Description("Get the current date")]
-    public string Date(IFormatProvider formatProvider = null)
+    public string Date(IFormatProvider formatProvider = null!)
     {
         // Example: Sunday, 12 January, 2025
         string date = DateTimeOffset.Now.ToString("D", formatProvider);
@@ -36,7 +36,7 @@ public class DateTimePlugin
     /// </example>
     /// <returns> The current date </returns>
     [KernelFunction, Description("Get the current date")]
-    public string Today(IFormatProvider formatProvider = null) =>
+    public string Today(IFormatProvider formatProvider = null!) =>
         // Example: Sunday, 12 January, 2025
         this.Date(formatProvider);
 
@@ -48,7 +48,7 @@ public class DateTimePlugin
     /// </example>
     /// <returns> The current date and time in the local time zone </returns>
     [KernelFunction, Description("Get the current date and time in the local time zone")]
-    public string Now(IFormatProvider formatProvider = null) =>
+    public string Now(IFormatProvider formatProvider = null!) =>
         // Sunday, January 12, 2025 9:15 PM
         DateTimeOffset.Now.ToString("f", formatProvider);
 }

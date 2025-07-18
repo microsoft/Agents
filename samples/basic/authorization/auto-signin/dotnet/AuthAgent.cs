@@ -15,13 +15,13 @@ using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 
-
+namespace AutoSignIn;
 public class AuthAgent : AgentApplication
 {
     /// <summary>
     /// Default Sign In Name
     /// </summary>
-    private string _defaultDisplayName = "Unknown User";
+    private readonly string _defaultDisplayName = "Unknown User";
 
     /// <summary>
     /// Describes the agent registration for the Authorization Agent
@@ -83,7 +83,7 @@ public class AuthAgent : AgentApplication
             if (member.Id != turnContext.Activity.Recipient.Id)
             {
                 string displayName = await GetDisplayName(turnContext);
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new();
                 sb.AppendLine($"Welcome to the AutoSignIn Example, **{displayName}**!");
                 sb.AppendLine("This Agent automatically signs you in when you first connect.");
                 sb.AppendLine("You can use the following commands to interact with the agent:");
@@ -126,13 +126,13 @@ public class AuthAgent : AgentApplication
         }
 
         // Just to verify we in fact have two different tokens.  This wouldn't be needed in a production Agent and here just to verify sample setup.
-        if (await UserAuthorization.GetTurnTokenAsync(turnContext, UserAuthorization.DefaultHandlerName, cancellationToken: cancellationToken) == await UserAuthorization.GetTurnTokenAsync(turnContext, "me"))
+        if (await UserAuthorization.GetTurnTokenAsync(turnContext, UserAuthorization.DefaultHandlerName, cancellationToken: cancellationToken) == await UserAuthorization.GetTurnTokenAsync(turnContext, "me", cancellationToken))
         {
             await turnContext.SendActivityAsync($"It would seem '{UserAuthorization.DefaultHandlerName}' and 'me' are using the same OAuth Connection", cancellationToken: cancellationToken);
             return;
         }
 
-        var meInfo = $"Name: {displayName}\r\nJob Title: {graphInfo["jobTitle"].GetValue<string>()}\r\nEmail: {graphInfo["mail"].GetValue<string>()}";
+        var meInfo = $"Name: {displayName}\r\nJob Title: {graphInfo["jobTitle"]!.GetValue<string>()}\r\nEmail: {graphInfo["mail"]!.GetValue<string>()}";
         await turnContext.SendActivityAsync(meInfo, cancellationToken: cancellationToken);
     }
 
@@ -179,7 +179,7 @@ public class AuthAgent : AgentApplication
     {
         // Raise a notification to the user that the sign-in process failed.  In a production Agent, this would be used
         // to display alternative ways to get help, or in some cases transfer to a live agent.
-        await turnContext.SendActivityAsync($"Sign In: Failed to login to '{handlerName}': {response.Cause}/{response.Error.Message}", cancellationToken: cancellationToken);
+        await turnContext.SendActivityAsync($"Sign In: Failed to login to '{handlerName}': {response.Cause}/{response.Error!.Message}", cancellationToken: cancellationToken);
     }
 
     /// <summary>
@@ -191,7 +191,7 @@ public class AuthAgent : AgentApplication
         var graphInfo = await GetGraphInfo(turnContext, UserAuthorization.DefaultHandlerName);
         if (graphInfo != null)
         {
-            displayName = graphInfo!["displayName"].GetValue<string>();
+            displayName = graphInfo!["displayName"]!.GetValue<string>();
         }
         return displayName;
     }
@@ -208,7 +208,7 @@ public class AuthAgent : AgentApplication
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                return JsonNode.Parse(content);
+                return JsonNode.Parse(content)!;
             }
         }
         catch (Exception ex)
@@ -216,6 +216,6 @@ public class AuthAgent : AgentApplication
             // Handle error response from Graph API
             System.Diagnostics.Trace.WriteLine($"Error getting display name: {ex.Message}");
         }
-        return null;
+        return null!;
     }
 }

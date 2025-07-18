@@ -23,5 +23,5 @@ public class WeatherForecastAgentResponse
 
     [JsonPropertyName("content")]
     [Description("The content of the response, may be plain text, or JSON based adaptive card but must be a string.")]
-    public string Content { get; set; }
+    public string? Content { get; set; }
 }

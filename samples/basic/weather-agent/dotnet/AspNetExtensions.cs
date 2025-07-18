@@ -19,8 +19,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Microsoft.Agents.AspNetAuthentication;
-
 public static class AspNetExtensions
 {
     private static readonly ConcurrentDictionary<string, ConfigurationManager<OpenIdConnectConfiguration>> _openIdMetadataCache = new();
@@ -56,7 +54,7 @@ public static class AspNetExtensions
             return;
         }
 
-        services.AddAgentAspNetAuthentication(tokenValidationSection.Get<TokenValidationOptions>());
+        services.AddAgentAspNetAuthentication(tokenValidationSection.Get<TokenValidationOptions>()!);
     }
 
     /// <summary>
@@ -154,7 +152,7 @@ public static class AspNetExtensions
                         return;
                     }
 
-                    string[] parts = authorizationHeader?.Split(' ');
+                    string[] parts = authorizationHeader?.Split(' ')!;
                     if (parts.Length != 2 || parts[0] != "Bearer")
                     {
                         // Default to AadTokenValidation handling
@@ -164,7 +162,7 @@ public static class AspNetExtensions
                     }
 
                     JwtSecurityToken token = new(parts[1]);
-                    string issuer = token.Claims.FirstOrDefault(claim => claim.Type == AuthenticationConstants.IssuerClaim)?.Value;
+                    string issuer = token.Claims.FirstOrDefault(claim => claim.Type == AuthenticationConstants.IssuerClaim)?.Value!;
 
                     if (validationOptions.AzureBotServiceTokenHandling && AuthenticationConstants.BotFrameworkTokenIssuer.Equals(issuer))
                     {
@@ -209,17 +207,17 @@ public static class AspNetExtensions
 
     public class TokenValidationOptions
     {
-        public IList<string> Audiences { get; set; }
+        public IList<string>? Audiences { get; set; }
 
         /// <summary>
         /// TenantId of the Azure Bot.  Optional but recommended. 
         /// </summary>
-        public string TenantId { get; set; }
+        public string? TenantId { get; set; }
 
         /// <summary>
         /// Additional valid issuers.  Optional, in which case the Public Azure Bot Service issuers are used.
         /// </summary>
-        public IList<string> ValidIssuers { get; set; }
+        public IList<string>? ValidIssuers { get; set; }
 
         /// <summary>
         /// Can be omitted, in which case public Azure Bot Service and Azure Cloud metadata urls are used.
@@ -231,14 +229,14 @@ public static class AspNetExtensions
         /// </summary>
         /// <see cref="AuthenticationConstants.PublicAzureBotServiceOpenIdMetadataUrl"/>
         /// <see cref="AuthenticationConstants.GovAzureBotServiceOpenIdMetadataUrl"/>
-        public string AzureBotServiceOpenIdMetadataUrl { get; set; }
+        public string? AzureBotServiceOpenIdMetadataUrl { get; set; }
 
         /// <summary>
         /// Entra OpenIdMetadataUrl.  Optional, in which case default value depends on IsGov.
         /// </summary>
         /// <see cref="AuthenticationConstants.PublicOpenIdMetadataUrl"/>
         /// <see cref="AuthenticationConstants.GovOpenIdMetadataUrl"/>
-        public string OpenIdMetadataUrl { get; set; }
+        public string? OpenIdMetadataUrl { get; set; }
 
         /// <summary>
         /// Determines if Azure Bot Service tokens are handled.  Defaults to true and should always be true until Azure Bot Service sends Entra ID token.
