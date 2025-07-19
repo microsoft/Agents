@@ -1,0 +1,27 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.M365Copilot.Beta", "src\Microsoft.Agents.M365Copilot.Beta\Microsoft.Agents.M365Copilot.Beta.csproj", "{745698F5-0395-C211-E34F-8A64640E0353}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.M365Copilot.Beta.Tests", "tests\Microsoft.Agents.M365Copilot.Beta.Tests\Microsoft.Agents.M365Copilot.Beta.Tests.csproj", "{9217C9E9-5E31-5A43-F437-E92AB6EC971C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{745698F5-0395-C211-E34F-8A64640E0353}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{745698F5-0395-C211-E34F-8A64640E0353}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{745698F5-0395-C211-E34F-8A64640E0353}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{745698F5-0395-C211-E34F-8A64640E0353}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9217C9E9-5E31-5A43-F437-E92AB6EC971C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9217C9E9-5E31-5A43-F437-E92AB6EC971C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9217C9E9-5E31-5A43-F437-E92AB6EC971C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9217C9E9-5E31-5A43-F437-E92AB6EC971C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
