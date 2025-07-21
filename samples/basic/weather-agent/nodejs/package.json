@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "prebuild": "npm ci",
     "build": "tsc --build",
     "prestart": "npm run build",
     "start": "node --env-file .env ./dist/index.js",
@@ -16,19 +15,19 @@
   "type": "module",
   "description": "",
   "dependencies": {
-    "@langchain/langgraph": "^0.2.72",
+    "@langchain/langgraph": "^0.3.11",
     "@langchain/openai": "^0.5.10",
-    "@microsoft/agents-hosting": "^0.5.16-g6bdf69cc43",
+    "@microsoft/agents-hosting-express": "^1.0.0",
     "express": "^5.1.0"
   },
   "devDependencies": {
-    "@microsoft/teams-app-test-tool": "^0.2.14",
+    "@microsoft/teams-app-test-tool": "^0.2.15",
     "@types/node": "^24.0.10",
     "nodemon": "^3.1.9",
     "npm-run-all": "^4.1.5",
     "typescript": "^5.7.2"
   },
-  "overrides": {
+ "overrides": {
     "@microsoft/agents-activity": {
       "zod": "3.25.67"
     },

@@ -1,5 +1,5 @@
 import { ActivityTypes } from '@microsoft/agents-activity'
-import { AgentApplicationBuilder, MessageFactory } from '@microsoft/agents-hosting'
+import { AgentApplicationBuilder, MessageFactory, TurnContext } from '@microsoft/agents-hosting'
 import { AzureChatOpenAI } from '@langchain/openai'
 import { MemorySaver } from '@langchain/langgraph'
 import { HumanMessage, SystemMessage } from '@langchain/core/messages'
@@ -47,7 +47,11 @@ const sysMessage = new SystemMessage(`
         }`
 )
 
-weatherAgent.onActivity(ActivityTypes.Message, async (context, state) => {
+weatherAgent.onActivity(ActivityTypes.Message, async (context: TurnContext, state) => {
+  context.streamingResponse.setFeedbackLoop(true)
+  context.streamingResponse.setSensitivityLabel({ type: 'https://schema.org/Message', '@type': 'CreativeWork', name: 'Internal' })
+  context.streamingResponse.setGeneratedByAILabel(true)
+  context.streamingResponse.queueInformativeUpdate('Processing your weather request...')
   const llmResponse = await agent.invoke({
     messages: [
       sysMessage,
@@ -57,12 +61,15 @@ weatherAgent.onActivity(ActivityTypes.Message, async (context, state) => {
   {
     configurable: { thread_id: context.activity.conversation!.id }
   })
-
+  
   const llmResponseContent: WeatherForecastAgentResponse = JSON.parse(llmResponse.messages[llmResponse.messages.length - 1].content as string)
 
   if (llmResponseContent.contentType === 'Text') {
-    await context.sendActivity(llmResponseContent.content)
+    await context.streamingResponse.queueTextChunk(llmResponseContent.content)
+    await context.streamingResponse.endStream()
   } else if (llmResponseContent.contentType === 'AdaptiveCard') {
+    await context.streamingResponse.queueInformativeUpdate('Here is the weather forecast for you:')
+    await context.streamingResponse.endStream()
     const response = MessageFactory.attachment({
       contentType: 'application/vnd.microsoft.card.adaptive',
       content: llmResponseContent.content
