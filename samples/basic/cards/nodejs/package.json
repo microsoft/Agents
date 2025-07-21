@@ -15,7 +15,7 @@
     "test": "npm-run-all -p -r start test-tool"
   },
   "dependencies": {
-    "@microsoft/agents-hosting": "^0.6.0",
+    "@microsoft/agents-hosting": "^1.0.0",
     "express": "^5.1.0"
   },
   "devDependencies": {

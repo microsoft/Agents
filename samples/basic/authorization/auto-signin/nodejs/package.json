@@ -12,7 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@microsoft/agents-hosting-express": "^0.6.0",
+    "@microsoft/agents-hosting-express": "^1.0.0",
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "adaptivecards-templating": "^2.3.1",
     "express": "^5.1.0"
