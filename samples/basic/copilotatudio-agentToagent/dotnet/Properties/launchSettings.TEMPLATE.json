@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "mcs.console": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DirectToEngineSettings__TenantId": "",
+        "DirectToEngineSettings__EnvironmentId": "",
+        "DirectToEngineSettings__AppClientId": "",
+        "DirectToEngineSettings__BotIdentifier": ""
+      }
+    }
+  }
+}
