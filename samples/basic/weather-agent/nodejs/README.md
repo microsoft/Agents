@@ -13,15 +13,19 @@ This Agent Sample is intended to introduce you the basics of integrating LangCha
 
 ## Running this sample
 
-Create a `.env` file, based on the provided `env.TEMPLATE` and include the AzureOpenAI settings:
+Create a `.env` file, based on the provided `env.TEMPLATE` and configure either the AzureOpenAI or OpenAI settings:
 
 ```env
 AZURE_OPENAI_API_INSTANCE_NAME=
 AZURE_OPENAI_API_DEPLOYMENT_NAME=
 AZURE_OPENAI_API_KEY=
 AZURE_OPENAI_API_VERSION=
-```
 
+OPENAI_MODEL=
+OPENAI_API_KEY=
+
+USE_AZURE_OPENAI_API=true
+```
 
 ## Getting Started with WeatherBot Sample
 
