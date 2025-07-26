@@ -1,6 +1,6 @@
 import { ActivityTypes } from '@microsoft/agents-activity'
 import { AgentApplicationBuilder, MessageFactory, TurnContext } from '@microsoft/agents-hosting'
-import { AzureChatOpenAI } from '@langchain/openai'
+import { AzureChatOpenAI, ChatOpenAI } from '@langchain/openai'
 import { MemorySaver } from '@langchain/langgraph'
 import { HumanMessage, SystemMessage } from '@langchain/core/messages'
 import { createReactAgent } from '@langchain/langgraph/prebuilt'
@@ -14,17 +14,27 @@ weatherAgent.onConversationUpdate('membersAdded', async (context, state) => {
 })
 
 interface WeatherForecastAgentResponse {
-  contentType: 'Text' | 'AdaptiveCard'
-  content: string
+  contentType: 'Text' | 'AdaptiveCard';
+  content: string;
 }
 
-const agentModel = new AzureChatOpenAI({
-  azureOpenAIApiKey: process.env.AZURE_OPENAI_API_KEY,
-  azureOpenAIApiInstanceName: process.env.AZURE_OPENAI_API_INSTANCE_NAME,
-  azureOpenAIApiDeploymentName: process.env.AZURE_OPENAI_API_DEPLOYMENT_NAME,
-  azureOpenAIApiVersion: process.env.AZURE_OPENAI_API_VERSION,
-  temperature: 0
-})
+let agentModel
+
+if (process.env.USE_AZURE_OPENAI_API === 'true') {
+  agentModel = new AzureChatOpenAI({
+    azureOpenAIApiKey: process.env.AZURE_OPENAI_API_KEY,
+    azureOpenAIApiInstanceName: process.env.AZURE_OPENAI_API_INSTANCE_NAME,
+    azureOpenAIApiDeploymentName: process.env.AZURE_OPENAI_API_DEPLOYMENT_NAME,
+    azureOpenAIApiVersion: process.env.AZURE_OPENAI_API_VERSION,
+    temperature: 0
+  })
+} else {
+  agentModel = new ChatOpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+    model: process.env.OPENAI_MODEL,
+    temperature: 0
+  })
+}
 
 const agentTools = [GetWeatherTool, dateTool]
 const agentCheckpointer = new MemorySaver()
