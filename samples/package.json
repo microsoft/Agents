@@ -1,7 +1,7 @@
 {
     "type": "module",
     "scripts": {
-        "lint": "eslint --fix"
+        "lint": "eslint"
     },
     "devDependencies": {
         "@eslint/js": "^9.31.0",

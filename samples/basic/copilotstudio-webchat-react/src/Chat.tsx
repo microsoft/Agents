@@ -12,15 +12,13 @@ import { acquireToken } from './acquireToken'
 
 const { BasicWebChat, Composer } = Components
 
-function Chat() {
-
+function Chat () {
   let agentsSettings: ConnectionSettings
 
   try {
     agentsSettings = require('./settings.js').settings
-  }
-  catch (error) {
-    console.error(error + "\nsettings.js Not Found. Rename settings.EXAMPLE.js to settings.js and fill out necessary fields")
+  } catch (error) {
+    console.error(error + '\nsettings.js Not Found. Rename settings.EXAMPLE.js to settings.js and fill out necessary fields')
     agentsSettings = {
       appClientId: '',
       tenantId: '',
@@ -46,7 +44,7 @@ function Chat() {
           <BasicWebChat />
         </Composer>
       </FluentThemeProvider>
-    )
+      )
     : null
 }
 
