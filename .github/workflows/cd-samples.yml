@@ -20,8 +20,7 @@ jobs:
           node-version: 22
 
       - name: Install Node dependencies
-        run: npm install
-        working-directory: ./samples
+        run: npm ci
 
       - name: Build dotnet Samples
         working-directory: ./samples
@@ -31,7 +30,6 @@ jobs:
 
       - name: Run lint
         run: npm run lint
-        working-directory: ./samples
 
       - name: Build Node Copilot Studio client sample
         working-directory: ./samples/basic/copilotstudio-client/nodejs/
