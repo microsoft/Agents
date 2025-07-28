@@ -1,0 +1,861 @@
+Microsoft.Agents.M365Copilot.Beta.BaseM365CopilotClient-->BaseRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.BaseM365CopilotClient::|public|constructor(requestAdapter:IRequestAdapter; backingStore?:IBackingStoreFactory):void
+Microsoft.Agents.M365Copilot.Beta.BaseM365CopilotClient::|public|copilot:global.Microsoft.Agents.M365Copilot.Beta.Copilot.CopilotRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.adminRequestBuilder-->BaseRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.adminRequestBuilder.adminRequestBuilderDeleteRequestConfiguration-->RequestConfiguration<DefaultQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.adminRequestBuilder.adminRequestBuilderGetQueryParameters::|public|Expand:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.adminRequestBuilder.adminRequestBuilderGetQueryParameters::|public|Select:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.adminRequestBuilder.adminRequestBuilderGetRequestConfiguration-->RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.AdminRequestBuilder.AdminRequestBuilderGetQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.adminRequestBuilder.adminRequestBuilderPatchRequestConfiguration-->RequestConfiguration<DefaultQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.adminRequestBuilder::|public|constructor(pathParameters:Dictionary<string, object>; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.adminRequestBuilder::|public|constructor(rawUrl:string; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.adminRequestBuilder::|public|DeleteAsync(requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>; cancellationToken?:CancellationToken):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.adminRequestBuilder::|public|GetAsync(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.AdminRequestBuilder.AdminRequestBuilderGetQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.CopilotAdmin
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.adminRequestBuilder::|public|PatchAsync(body:global.Microsoft.Agents.M365Copilot.Beta.Models.CopilotAdmin; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.CopilotAdmin
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.adminRequestBuilder::|public|settings:global.Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.SettingsRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.adminRequestBuilder::|public|ToDeleteRequestInformation(requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.adminRequestBuilder::|public|ToGetRequestInformation(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.AdminRequestBuilder.AdminRequestBuilderGetQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.adminRequestBuilder::|public|ToPatchRequestInformation(body:global.Microsoft.Agents.M365Copilot.Beta.Models.CopilotAdmin; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.adminRequestBuilder::|public|WithUrl(rawUrl:string):global.Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.AdminRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.LimitedMode.limitedModeRequestBuilder-->BaseRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.LimitedMode.limitedModeRequestBuilder.limitedModeRequestBuilderDeleteRequestConfiguration-->RequestConfiguration<DefaultQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.LimitedMode.limitedModeRequestBuilder.limitedModeRequestBuilderGetQueryParameters::|public|Expand:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.LimitedMode.limitedModeRequestBuilder.limitedModeRequestBuilderGetQueryParameters::|public|Select:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.LimitedMode.limitedModeRequestBuilder.limitedModeRequestBuilderGetRequestConfiguration-->RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.LimitedMode.LimitedModeRequestBuilder.LimitedModeRequestBuilderGetQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.LimitedMode.limitedModeRequestBuilder.limitedModeRequestBuilderPatchRequestConfiguration-->RequestConfiguration<DefaultQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.LimitedMode.limitedModeRequestBuilder::|public|constructor(pathParameters:Dictionary<string, object>; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.LimitedMode.limitedModeRequestBuilder::|public|constructor(rawUrl:string; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.LimitedMode.limitedModeRequestBuilder::|public|DeleteAsync(requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>; cancellationToken?:CancellationToken):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.LimitedMode.limitedModeRequestBuilder::|public|GetAsync(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.LimitedMode.LimitedModeRequestBuilder.LimitedModeRequestBuilderGetQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.CopilotAdminLimitedMode
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.LimitedMode.limitedModeRequestBuilder::|public|PatchAsync(body:global.Microsoft.Agents.M365Copilot.Beta.Models.CopilotAdminLimitedMode; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.CopilotAdminLimitedMode
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.LimitedMode.limitedModeRequestBuilder::|public|ToDeleteRequestInformation(requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.LimitedMode.limitedModeRequestBuilder::|public|ToGetRequestInformation(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.LimitedMode.LimitedModeRequestBuilder.LimitedModeRequestBuilderGetQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.LimitedMode.limitedModeRequestBuilder::|public|ToPatchRequestInformation(body:global.Microsoft.Agents.M365Copilot.Beta.Models.CopilotAdminLimitedMode; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.LimitedMode.limitedModeRequestBuilder::|public|WithUrl(rawUrl:string):global.Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.LimitedMode.LimitedModeRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.settingsRequestBuilder-->BaseRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.settingsRequestBuilder.settingsRequestBuilderDeleteRequestConfiguration-->RequestConfiguration<DefaultQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.settingsRequestBuilder.settingsRequestBuilderGetQueryParameters::|public|Expand:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.settingsRequestBuilder.settingsRequestBuilderGetQueryParameters::|public|Select:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.settingsRequestBuilder.settingsRequestBuilderGetRequestConfiguration-->RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.SettingsRequestBuilder.SettingsRequestBuilderGetQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.settingsRequestBuilder.settingsRequestBuilderPatchRequestConfiguration-->RequestConfiguration<DefaultQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.settingsRequestBuilder::|public|constructor(pathParameters:Dictionary<string, object>; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.settingsRequestBuilder::|public|constructor(rawUrl:string; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.settingsRequestBuilder::|public|DeleteAsync(requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>; cancellationToken?:CancellationToken):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.settingsRequestBuilder::|public|GetAsync(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.SettingsRequestBuilder.SettingsRequestBuilderGetQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.CopilotAdminSetting
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.settingsRequestBuilder::|public|limitedMode:global.Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.LimitedMode.LimitedModeRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.settingsRequestBuilder::|public|PatchAsync(body:global.Microsoft.Agents.M365Copilot.Beta.Models.CopilotAdminSetting; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.CopilotAdminSetting
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.settingsRequestBuilder::|public|ToDeleteRequestInformation(requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.settingsRequestBuilder::|public|ToGetRequestInformation(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.SettingsRequestBuilder.SettingsRequestBuilderGetQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.settingsRequestBuilder::|public|ToPatchRequestInformation(body:global.Microsoft.Agents.M365Copilot.Beta.Models.CopilotAdminSetting; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.settingsRequestBuilder::|public|WithUrl(rawUrl:string):global.Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.Settings.SettingsRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.copilotRequestBuilder-->BaseRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.copilotRequestBuilder::|public|admin:global.Microsoft.Agents.M365Copilot.Beta.Copilot.Admin.AdminRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.copilotRequestBuilder::|public|constructor(pathParameters:Dictionary<string, object>; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.copilotRequestBuilder::|public|constructor(rawUrl:string; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.copilotRequestBuilder::|public|interactionHistory:global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.InteractionHistoryRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.copilotRequestBuilder::|public|retrieval:global.Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.RetrievalRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.copilotRequestBuilder::|public|users:global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.UsersRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsGetResponse-->global.Microsoft.Agents.M365Copilot.Beta.Models.BaseCollectionPaginationCountResponse
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsGetResponse::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsGetResponse::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsGetResponse::|public|Value:List<global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteraction>
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsGetResponse::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsGetResponse
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder-->BaseRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder.getAllEnterpriseInteractionsRequestBuilderGetQueryParameters::|public|Count:bool?
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder.getAllEnterpriseInteractionsRequestBuilderGetQueryParameters::|public|Expand:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder.getAllEnterpriseInteractionsRequestBuilderGetQueryParameters::|public|Filter:string
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder.getAllEnterpriseInteractionsRequestBuilderGetQueryParameters::|public|Orderby:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder.getAllEnterpriseInteractionsRequestBuilderGetQueryParameters::|public|Search:string
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder.getAllEnterpriseInteractionsRequestBuilderGetQueryParameters::|public|Select:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder.getAllEnterpriseInteractionsRequestBuilderGetQueryParameters::|public|Skip:int?
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder.getAllEnterpriseInteractionsRequestBuilderGetQueryParameters::|public|Top:int?
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder.getAllEnterpriseInteractionsRequestBuilderGetRequestConfiguration-->RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsRequestBuilder.GetAllEnterpriseInteractionsRequestBuilderGetQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder::|public|constructor(pathParameters:Dictionary<string, object>; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder::|public|constructor(rawUrl:string; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder::|public|GetAsGetAllEnterpriseInteractionsGetResponseAsync(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsRequestBuilder.GetAllEnterpriseInteractionsRequestBuilderGetQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsGetResponse
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder::|public|GetAsync(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsRequestBuilder.GetAllEnterpriseInteractionsRequestBuilderGetQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsResponse
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder::|public|ToGetRequestInformation(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsRequestBuilder.GetAllEnterpriseInteractionsRequestBuilderGetQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder::|public|WithUrl(rawUrl:string):global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsResponse-->global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsGetResponse
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsResponse::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsResponse
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.interactionHistoryRequestBuilder-->BaseRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.interactionHistoryRequestBuilder.interactionHistoryRequestBuilderDeleteRequestConfiguration-->RequestConfiguration<DefaultQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.interactionHistoryRequestBuilder.interactionHistoryRequestBuilderGetQueryParameters::|public|Expand:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.interactionHistoryRequestBuilder.interactionHistoryRequestBuilderGetQueryParameters::|public|Select:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.interactionHistoryRequestBuilder.interactionHistoryRequestBuilderGetRequestConfiguration-->RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.InteractionHistoryRequestBuilder.InteractionHistoryRequestBuilderGetQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.interactionHistoryRequestBuilder.interactionHistoryRequestBuilderPatchRequestConfiguration-->RequestConfiguration<DefaultQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.interactionHistoryRequestBuilder::|public|constructor(pathParameters:Dictionary<string, object>; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.interactionHistoryRequestBuilder::|public|constructor(rawUrl:string; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.interactionHistoryRequestBuilder::|public|DeleteAsync(requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>; cancellationToken?:CancellationToken):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.interactionHistoryRequestBuilder::|public|getAllEnterpriseInteractions:global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.interactionHistoryRequestBuilder::|public|GetAsync(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.InteractionHistoryRequestBuilder.InteractionHistoryRequestBuilderGetQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionHistory
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.interactionHistoryRequestBuilder::|public|interactions:global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.InteractionsRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.interactionHistoryRequestBuilder::|public|PatchAsync(body:global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionHistory; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionHistory
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.interactionHistoryRequestBuilder::|public|ToDeleteRequestInformation(requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.interactionHistoryRequestBuilder::|public|ToGetRequestInformation(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.InteractionHistoryRequestBuilder.InteractionHistoryRequestBuilderGetQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.interactionHistoryRequestBuilder::|public|ToPatchRequestInformation(body:global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionHistory; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.interactionHistoryRequestBuilder::|public|WithUrl(rawUrl:string):global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.InteractionHistoryRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Count.CountRequestBuilder-->BaseRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Count.CountRequestBuilder.CountRequestBuilderGetQueryParameters::|public|Filter:string
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Count.CountRequestBuilder.CountRequestBuilderGetQueryParameters::|public|Search:string
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Count.CountRequestBuilder.CountRequestBuilderGetRequestConfiguration-->RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Count.CountRequestBuilder.CountRequestBuilderGetQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Count.CountRequestBuilder::|public|constructor(pathParameters:Dictionary<string, object>; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Count.CountRequestBuilder::|public|constructor(rawUrl:string; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Count.CountRequestBuilder::|public|GetAsync(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Count.CountRequestBuilder.CountRequestBuilderGetQueryParameters>>; cancellationToken?:CancellationToken):int?
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Count.CountRequestBuilder::|public|ToGetRequestInformation(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Count.CountRequestBuilder.CountRequestBuilderGetQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Count.CountRequestBuilder::|public|WithUrl(rawUrl:string):global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Count.CountRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.interactionsRequestBuilder-->BaseRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.interactionsRequestBuilder.interactionsRequestBuilderGetQueryParameters::|public|Count:bool?
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.interactionsRequestBuilder.interactionsRequestBuilderGetQueryParameters::|public|Expand:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.interactionsRequestBuilder.interactionsRequestBuilderGetQueryParameters::|public|Filter:string
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.interactionsRequestBuilder.interactionsRequestBuilderGetQueryParameters::|public|Orderby:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.interactionsRequestBuilder.interactionsRequestBuilderGetQueryParameters::|public|Search:string
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.interactionsRequestBuilder.interactionsRequestBuilderGetQueryParameters::|public|Select:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.interactionsRequestBuilder.interactionsRequestBuilderGetQueryParameters::|public|Skip:int?
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.interactionsRequestBuilder.interactionsRequestBuilderGetQueryParameters::|public|Top:int?
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.interactionsRequestBuilder.interactionsRequestBuilderGetRequestConfiguration-->RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.InteractionsRequestBuilder.InteractionsRequestBuilderGetQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.interactionsRequestBuilder.interactionsRequestBuilderPostRequestConfiguration-->RequestConfiguration<DefaultQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.interactionsRequestBuilder::[AiInteractionId:string]:global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.interactionsRequestBuilder::|public|constructor(pathParameters:Dictionary<string, object>; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.interactionsRequestBuilder::|public|constructor(rawUrl:string; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.interactionsRequestBuilder::|public|Count:global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Count.CountRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.interactionsRequestBuilder::|public|GetAsync(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.InteractionsRequestBuilder.InteractionsRequestBuilderGetQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionCollectionResponse
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.interactionsRequestBuilder::|public|PostAsync(body:global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteraction; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteraction
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.interactionsRequestBuilder::|public|ToGetRequestInformation(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.InteractionsRequestBuilder.InteractionsRequestBuilderGetQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.interactionsRequestBuilder::|public|ToPostRequestInformation(body:global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteraction; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.interactionsRequestBuilder::|public|WithUrl(rawUrl:string):global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.InteractionsRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder-->BaseRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder.AiInteractionItemRequestBuilderDeleteRequestConfiguration-->RequestConfiguration<DefaultQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder.AiInteractionItemRequestBuilderGetQueryParameters::|public|Expand:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder.AiInteractionItemRequestBuilderGetQueryParameters::|public|Select:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder.AiInteractionItemRequestBuilderGetRequestConfiguration-->RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder.AiInteractionItemRequestBuilderGetQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder.AiInteractionItemRequestBuilderPatchRequestConfiguration-->RequestConfiguration<DefaultQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder::|public|constructor(pathParameters:Dictionary<string, object>; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder::|public|constructor(rawUrl:string; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder::|public|DeleteAsync(requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>; cancellationToken?:CancellationToken):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder::|public|GetAsync(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder.AiInteractionItemRequestBuilderGetQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteraction
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder::|public|PatchAsync(body:global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteraction; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteraction
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder::|public|ToDeleteRequestInformation(requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder::|public|ToGetRequestInformation(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder.AiInteractionItemRequestBuilderGetQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder::|public|ToPatchRequestInformation(body:global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteraction; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder::|public|WithUrl(rawUrl:string):global.Microsoft.Agents.M365Copilot.Beta.Copilot.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.retrievalPostRequestBody::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.retrievalPostRequestBody::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.retrievalPostRequestBody::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.retrievalPostRequestBody::|public|FilterExpression:string
+Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.retrievalPostRequestBody::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.retrievalPostRequestBody::|public|MaximumNumberOfResults:int?
+Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.retrievalPostRequestBody::|public|QueryString:string
+Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.retrievalPostRequestBody::|public|ResourceMetadata:List<string>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.retrievalPostRequestBody::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.retrievalPostRequestBody::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.RetrievalPostRequestBody
+Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.retrievalPostRequestBody~~>IAdditionalDataHolder; IBackedModel; IParsable
+Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.retrievalRequestBuilder-->BaseRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.retrievalRequestBuilder.retrievalRequestBuilderPostRequestConfiguration-->RequestConfiguration<DefaultQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.retrievalRequestBuilder::|public|constructor(pathParameters:Dictionary<string, object>; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.retrievalRequestBuilder::|public|constructor(rawUrl:string; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.retrievalRequestBuilder::|public|PostAsync(body:global.Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.RetrievalPostRequestBody; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.RetrievalResponse
+Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.retrievalRequestBuilder::|public|ToPostRequestInformation(body:global.Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.RetrievalPostRequestBody; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.retrievalRequestBuilder::|public|WithUrl(rawUrl:string):global.Microsoft.Agents.M365Copilot.Beta.Copilot.Retrieval.RetrievalRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Count.CountRequestBuilder-->BaseRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Count.CountRequestBuilder.CountRequestBuilderGetQueryParameters::|public|Filter:string
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Count.CountRequestBuilder.CountRequestBuilderGetQueryParameters::|public|Search:string
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Count.CountRequestBuilder.CountRequestBuilderGetRequestConfiguration-->RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Count.CountRequestBuilder.CountRequestBuilderGetQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Count.CountRequestBuilder::|public|constructor(pathParameters:Dictionary<string, object>; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Count.CountRequestBuilder::|public|constructor(rawUrl:string; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Count.CountRequestBuilder::|public|GetAsync(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Count.CountRequestBuilder.CountRequestBuilderGetQueryParameters>>; cancellationToken?:CancellationToken):int?
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Count.CountRequestBuilder::|public|ToGetRequestInformation(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Count.CountRequestBuilder.CountRequestBuilderGetQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Count.CountRequestBuilder::|public|WithUrl(rawUrl:string):global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Count.CountRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder-->BaseRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder.AiUserItemRequestBuilderDeleteRequestConfiguration-->RequestConfiguration<DefaultQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder.AiUserItemRequestBuilderGetQueryParameters::|public|Expand:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder.AiUserItemRequestBuilderGetQueryParameters::|public|Select:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder.AiUserItemRequestBuilderGetRequestConfiguration-->RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder.AiUserItemRequestBuilderGetQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder.AiUserItemRequestBuilderPatchRequestConfiguration-->RequestConfiguration<DefaultQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder::|public|constructor(pathParameters:Dictionary<string, object>; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder::|public|constructor(rawUrl:string; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder::|public|DeleteAsync(requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>; cancellationToken?:CancellationToken):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder::|public|GetAsync(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder.AiUserItemRequestBuilderGetQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.AiUser
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder::|public|interactionHistory:global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.InteractionHistoryRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder::|public|PatchAsync(body:global.Microsoft.Agents.M365Copilot.Beta.Models.AiUser; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.AiUser
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder::|public|ToDeleteRequestInformation(requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder::|public|ToGetRequestInformation(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder.AiUserItemRequestBuilderGetQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder::|public|ToPatchRequestInformation(body:global.Microsoft.Agents.M365Copilot.Beta.Models.AiUser; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder::|public|WithUrl(rawUrl:string):global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsGetResponse-->global.Microsoft.Agents.M365Copilot.Beta.Models.BaseCollectionPaginationCountResponse
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsGetResponse::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsGetResponse::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsGetResponse::|public|Value:List<global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteraction>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsGetResponse::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsGetResponse
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder-->BaseRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder.getAllEnterpriseInteractionsRequestBuilderGetQueryParameters::|public|Count:bool?
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder.getAllEnterpriseInteractionsRequestBuilderGetQueryParameters::|public|Expand:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder.getAllEnterpriseInteractionsRequestBuilderGetQueryParameters::|public|Filter:string
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder.getAllEnterpriseInteractionsRequestBuilderGetQueryParameters::|public|Orderby:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder.getAllEnterpriseInteractionsRequestBuilderGetQueryParameters::|public|Search:string
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder.getAllEnterpriseInteractionsRequestBuilderGetQueryParameters::|public|Select:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder.getAllEnterpriseInteractionsRequestBuilderGetQueryParameters::|public|Skip:int?
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder.getAllEnterpriseInteractionsRequestBuilderGetQueryParameters::|public|Top:int?
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder.getAllEnterpriseInteractionsRequestBuilderGetRequestConfiguration-->RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsRequestBuilder.GetAllEnterpriseInteractionsRequestBuilderGetQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder::|public|constructor(pathParameters:Dictionary<string, object>; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder::|public|constructor(rawUrl:string; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder::|public|GetAsGetAllEnterpriseInteractionsGetResponseAsync(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsRequestBuilder.GetAllEnterpriseInteractionsRequestBuilderGetQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsGetResponse
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder::|public|GetAsync(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsRequestBuilder.GetAllEnterpriseInteractionsRequestBuilderGetQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsResponse
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder::|public|ToGetRequestInformation(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsRequestBuilder.GetAllEnterpriseInteractionsRequestBuilderGetQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsRequestBuilder::|public|WithUrl(rawUrl:string):global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsResponse-->global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsGetResponse
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.getAllEnterpriseInteractionsResponse::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsResponse
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.interactionHistoryRequestBuilder-->BaseRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.interactionHistoryRequestBuilder.interactionHistoryRequestBuilderDeleteRequestConfiguration-->RequestConfiguration<DefaultQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.interactionHistoryRequestBuilder.interactionHistoryRequestBuilderGetQueryParameters::|public|Expand:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.interactionHistoryRequestBuilder.interactionHistoryRequestBuilderGetQueryParameters::|public|Select:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.interactionHistoryRequestBuilder.interactionHistoryRequestBuilderGetRequestConfiguration-->RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.InteractionHistoryRequestBuilder.InteractionHistoryRequestBuilderGetQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.interactionHistoryRequestBuilder.interactionHistoryRequestBuilderPatchRequestConfiguration-->RequestConfiguration<DefaultQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.interactionHistoryRequestBuilder::|public|constructor(pathParameters:Dictionary<string, object>; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.interactionHistoryRequestBuilder::|public|constructor(rawUrl:string; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.interactionHistoryRequestBuilder::|public|DeleteAsync(requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>; cancellationToken?:CancellationToken):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.interactionHistoryRequestBuilder::|public|getAllEnterpriseInteractions:global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.GetAllEnterpriseInteractions.GetAllEnterpriseInteractionsRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.interactionHistoryRequestBuilder::|public|GetAsync(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.InteractionHistoryRequestBuilder.InteractionHistoryRequestBuilderGetQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionHistory
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.interactionHistoryRequestBuilder::|public|interactions:global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.InteractionsRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.interactionHistoryRequestBuilder::|public|PatchAsync(body:global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionHistory; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionHistory
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.interactionHistoryRequestBuilder::|public|ToDeleteRequestInformation(requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.interactionHistoryRequestBuilder::|public|ToGetRequestInformation(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.InteractionHistoryRequestBuilder.InteractionHistoryRequestBuilderGetQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.interactionHistoryRequestBuilder::|public|ToPatchRequestInformation(body:global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionHistory; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.interactionHistoryRequestBuilder::|public|WithUrl(rawUrl:string):global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.InteractionHistoryRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Count.CountRequestBuilder-->BaseRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Count.CountRequestBuilder.CountRequestBuilderGetQueryParameters::|public|Filter:string
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Count.CountRequestBuilder.CountRequestBuilderGetQueryParameters::|public|Search:string
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Count.CountRequestBuilder.CountRequestBuilderGetRequestConfiguration-->RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Count.CountRequestBuilder.CountRequestBuilderGetQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Count.CountRequestBuilder::|public|constructor(pathParameters:Dictionary<string, object>; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Count.CountRequestBuilder::|public|constructor(rawUrl:string; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Count.CountRequestBuilder::|public|GetAsync(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Count.CountRequestBuilder.CountRequestBuilderGetQueryParameters>>; cancellationToken?:CancellationToken):int?
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Count.CountRequestBuilder::|public|ToGetRequestInformation(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Count.CountRequestBuilder.CountRequestBuilderGetQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Count.CountRequestBuilder::|public|WithUrl(rawUrl:string):global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Count.CountRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.interactionsRequestBuilder-->BaseRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.interactionsRequestBuilder.interactionsRequestBuilderGetQueryParameters::|public|Count:bool?
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.interactionsRequestBuilder.interactionsRequestBuilderGetQueryParameters::|public|Expand:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.interactionsRequestBuilder.interactionsRequestBuilderGetQueryParameters::|public|Filter:string
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.interactionsRequestBuilder.interactionsRequestBuilderGetQueryParameters::|public|Orderby:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.interactionsRequestBuilder.interactionsRequestBuilderGetQueryParameters::|public|Search:string
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.interactionsRequestBuilder.interactionsRequestBuilderGetQueryParameters::|public|Select:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.interactionsRequestBuilder.interactionsRequestBuilderGetQueryParameters::|public|Skip:int?
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.interactionsRequestBuilder.interactionsRequestBuilderGetQueryParameters::|public|Top:int?
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.interactionsRequestBuilder.interactionsRequestBuilderGetRequestConfiguration-->RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.InteractionsRequestBuilder.InteractionsRequestBuilderGetQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.interactionsRequestBuilder.interactionsRequestBuilderPostRequestConfiguration-->RequestConfiguration<DefaultQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.interactionsRequestBuilder::[AiInteractionId:string]:global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.interactionsRequestBuilder::|public|constructor(pathParameters:Dictionary<string, object>; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.interactionsRequestBuilder::|public|constructor(rawUrl:string; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.interactionsRequestBuilder::|public|Count:global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Count.CountRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.interactionsRequestBuilder::|public|GetAsync(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.InteractionsRequestBuilder.InteractionsRequestBuilderGetQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionCollectionResponse
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.interactionsRequestBuilder::|public|PostAsync(body:global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteraction; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteraction
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.interactionsRequestBuilder::|public|ToGetRequestInformation(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.InteractionsRequestBuilder.InteractionsRequestBuilderGetQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.interactionsRequestBuilder::|public|ToPostRequestInformation(body:global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteraction; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.interactionsRequestBuilder::|public|WithUrl(rawUrl:string):global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.InteractionsRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder-->BaseRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder.AiInteractionItemRequestBuilderDeleteRequestConfiguration-->RequestConfiguration<DefaultQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder.AiInteractionItemRequestBuilderGetQueryParameters::|public|Expand:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder.AiInteractionItemRequestBuilderGetQueryParameters::|public|Select:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder.AiInteractionItemRequestBuilderGetRequestConfiguration-->RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder.AiInteractionItemRequestBuilderGetQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder.AiInteractionItemRequestBuilderPatchRequestConfiguration-->RequestConfiguration<DefaultQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder::|public|constructor(pathParameters:Dictionary<string, object>; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder::|public|constructor(rawUrl:string; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder::|public|DeleteAsync(requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>; cancellationToken?:CancellationToken):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder::|public|GetAsync(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder.AiInteractionItemRequestBuilderGetQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteraction
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder::|public|PatchAsync(body:global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteraction; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteraction
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder::|public|ToDeleteRequestInformation(requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder::|public|ToGetRequestInformation(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder.AiInteractionItemRequestBuilderGetQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder::|public|ToPatchRequestInformation(body:global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteraction; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder::|public|WithUrl(rawUrl:string):global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.InteractionHistory.Interactions.Item.AiInteractionItemRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.usersRequestBuilder-->BaseRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.usersRequestBuilder.usersRequestBuilderGetQueryParameters::|public|Count:bool?
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.usersRequestBuilder.usersRequestBuilderGetQueryParameters::|public|Expand:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.usersRequestBuilder.usersRequestBuilderGetQueryParameters::|public|Filter:string
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.usersRequestBuilder.usersRequestBuilderGetQueryParameters::|public|Orderby:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.usersRequestBuilder.usersRequestBuilderGetQueryParameters::|public|Search:string
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.usersRequestBuilder.usersRequestBuilderGetQueryParameters::|public|Select:string[]
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.usersRequestBuilder.usersRequestBuilderGetQueryParameters::|public|Skip:int?
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.usersRequestBuilder.usersRequestBuilderGetQueryParameters::|public|Top:int?
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.usersRequestBuilder.usersRequestBuilderGetRequestConfiguration-->RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.UsersRequestBuilder.UsersRequestBuilderGetQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.usersRequestBuilder.usersRequestBuilderPostRequestConfiguration-->RequestConfiguration<DefaultQueryParameters>
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.usersRequestBuilder::[AiUserId:string]:global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Item.AiUserItemRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.usersRequestBuilder::|public|constructor(pathParameters:Dictionary<string, object>; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.usersRequestBuilder::|public|constructor(rawUrl:string; requestAdapter:IRequestAdapter):void
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.usersRequestBuilder::|public|Count:global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.Count.CountRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.usersRequestBuilder::|public|GetAsync(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.UsersRequestBuilder.UsersRequestBuilderGetQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.AiUserCollectionResponse
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.usersRequestBuilder::|public|PostAsync(body:global.Microsoft.Agents.M365Copilot.Beta.Models.AiUser; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>; cancellationToken?:CancellationToken):global.Microsoft.Agents.M365Copilot.Beta.Models.AiUser
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.usersRequestBuilder::|public|ToGetRequestInformation(requestConfiguration?:Action<RequestConfiguration<global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.UsersRequestBuilder.UsersRequestBuilderGetQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.usersRequestBuilder::|public|ToPostRequestInformation(body:global.Microsoft.Agents.M365Copilot.Beta.Models.AiUser; requestConfiguration?:Action<RequestConfiguration<DefaultQueryParameters>>):RequestInformation
+Microsoft.Agents.M365Copilot.Beta.Copilot.Users.usersRequestBuilder::|public|WithUrl(rawUrl:string):global.Microsoft.Agents.M365Copilot.Beta.Copilot.Users.UsersRequestBuilder
+Microsoft.Agents.M365Copilot.Beta.Models.accessScope::0000-inOrganization
+Microsoft.Agents.M365Copilot.Beta.Models.accessScope::0001-notInOrganization
+Microsoft.Agents.M365Copilot.Beta.Models.accessScope::0002-none
+Microsoft.Agents.M365Copilot.Beta.Models.accessScope::0003-unknownFutureValue
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteraction-->global.Microsoft.Agents.M365Copilot.Beta.Models.Entity
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteraction::|public|AppClass:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteraction::|public|Attachments:List<global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionAttachment>
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteraction::|public|Body:global.Microsoft.Agents.M365Copilot.Beta.Models.ItemBody
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteraction::|public|Contexts:List<global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionContext>
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteraction::|public|ConversationType:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteraction::|public|CreatedDateTime:DateTimeOffset?
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteraction::|public|Etag:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteraction::|public|From:global.Microsoft.Agents.M365Copilot.Beta.Models.IdentitySet
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteraction::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteraction::|public|InteractionType:global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionType?
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteraction::|public|Links:List<global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionLink>
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteraction::|public|Locale:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteraction::|public|Mentions:List<global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionMention>
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteraction::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteraction::|public|RequestId:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteraction::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteraction::|public|SessionId:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteraction::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteraction
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionAttachment::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionAttachment::|public|AttachmentId:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionAttachment::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionAttachment::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionAttachment::|public|Content:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionAttachment::|public|ContentType:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionAttachment::|public|ContentUrl:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionAttachment::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionAttachment::|public|Name:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionAttachment::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionAttachment::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionAttachment::|public|TeamsAppId:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionAttachment::|public|ThumbnailUrl:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionAttachment::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionAttachment
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionAttachment~~>IAdditionalDataHolder; IBackedModel; IParsable
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionCollectionResponse-->global.Microsoft.Agents.M365Copilot.Beta.Models.BaseCollectionPaginationCountResponse
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionCollectionResponse::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionCollectionResponse::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionCollectionResponse::|public|Value:List<global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteraction>
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionCollectionResponse::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionCollectionResponse
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionContext::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionContext::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionContext::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionContext::|public|ContextReference:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionContext::|public|ContextType:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionContext::|public|DisplayName:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionContext::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionContext::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionContext::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionContext::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionContext
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionContext~~>IAdditionalDataHolder; IBackedModel; IParsable
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionHistory-->global.Microsoft.Agents.M365Copilot.Beta.Models.Entity
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionHistory::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionHistory::|public|Interactions:List<global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteraction>
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionHistory::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionHistory::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionHistory::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionHistory
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionLink::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionLink::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionLink::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionLink::|public|DisplayName:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionLink::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionLink::|public|LinkType:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionLink::|public|LinkUrl:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionLink::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionLink::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionLink::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionLink
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionLink~~>IAdditionalDataHolder; IBackedModel; IParsable
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionMention::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionMention::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionMention::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionMention::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionMention::|public|Mentioned:global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionMentionedIdentitySet
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionMention::|public|MentionId:int?
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionMention::|public|MentionText:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionMention::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionMention::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionMention::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionMention
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionMentionedIdentitySet-->global.Microsoft.Agents.M365Copilot.Beta.Models.IdentitySet
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionMentionedIdentitySet::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionMentionedIdentitySet::|public|Conversation:global.Microsoft.Agents.M365Copilot.Beta.Models.TeamworkConversationIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionMentionedIdentitySet::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionMentionedIdentitySet::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionMentionedIdentitySet::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionMentionedIdentitySet::|public|Tag:global.Microsoft.Agents.M365Copilot.Beta.Models.TeamworkTagIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionMentionedIdentitySet::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionMentionedIdentitySet
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionMention~~>IAdditionalDataHolder; IBackedModel; IParsable
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionType::0000-userPrompt
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionType::0001-aiResponse
+Microsoft.Agents.M365Copilot.Beta.Models.aiInteractionType::0002-unknownFutureValue
+Microsoft.Agents.M365Copilot.Beta.Models.aiUser-->global.Microsoft.Agents.M365Copilot.Beta.Models.Entity
+Microsoft.Agents.M365Copilot.Beta.Models.aiUser::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.aiUser::|public|InteractionHistory:global.Microsoft.Agents.M365Copilot.Beta.Models.AiInteractionHistory
+Microsoft.Agents.M365Copilot.Beta.Models.aiUser::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.aiUser::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.aiUser::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.AiUser
+Microsoft.Agents.M365Copilot.Beta.Models.aiUserCollectionResponse-->global.Microsoft.Agents.M365Copilot.Beta.Models.BaseCollectionPaginationCountResponse
+Microsoft.Agents.M365Copilot.Beta.Models.aiUserCollectionResponse::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.aiUserCollectionResponse::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.aiUserCollectionResponse::|public|Value:List<global.Microsoft.Agents.M365Copilot.Beta.Models.AiUser>
+Microsoft.Agents.M365Copilot.Beta.Models.aiUserCollectionResponse::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.AiUserCollectionResponse
+Microsoft.Agents.M365Copilot.Beta.Models.approvalIdentitySet-->global.Microsoft.Agents.M365Copilot.Beta.Models.IdentitySet
+Microsoft.Agents.M365Copilot.Beta.Models.approvalIdentitySet::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.approvalIdentitySet::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.approvalIdentitySet::|public|Group:global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.approvalIdentitySet::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.approvalIdentitySet::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.approvalIdentitySet::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.ApprovalIdentitySet
+Microsoft.Agents.M365Copilot.Beta.Models.auditUserIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.UserIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.auditUserIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.auditUserIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.auditUserIdentity::|public|HomeTenantId:string
+Microsoft.Agents.M365Copilot.Beta.Models.auditUserIdentity::|public|HomeTenantName:string
+Microsoft.Agents.M365Copilot.Beta.Models.auditUserIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.auditUserIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.auditUserIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.AuditUserIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.azureCommunicationServicesUserIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.azureCommunicationServicesUserIdentity::|public|AzureCommunicationServicesResourceId:string
+Microsoft.Agents.M365Copilot.Beta.Models.azureCommunicationServicesUserIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.azureCommunicationServicesUserIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.azureCommunicationServicesUserIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.azureCommunicationServicesUserIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.azureCommunicationServicesUserIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.AzureCommunicationServicesUserIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.BaseCollectionPaginationCountResponse::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Models.BaseCollectionPaginationCountResponse::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Models.BaseCollectionPaginationCountResponse::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.BaseCollectionPaginationCountResponse::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.BaseCollectionPaginationCountResponse::|public|OdataCount:long?
+Microsoft.Agents.M365Copilot.Beta.Models.BaseCollectionPaginationCountResponse::|public|OdataNextLink:string
+Microsoft.Agents.M365Copilot.Beta.Models.BaseCollectionPaginationCountResponse::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.BaseCollectionPaginationCountResponse::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.BaseCollectionPaginationCountResponse
+Microsoft.Agents.M365Copilot.Beta.Models.BaseCollectionPaginationCountResponse~~>IAdditionalDataHolder; IBackedModel; IParsable
+Microsoft.Agents.M365Copilot.Beta.Models.bodyType::0000-text
+Microsoft.Agents.M365Copilot.Beta.Models.bodyType::0001-html
+Microsoft.Agents.M365Copilot.Beta.Models.CallRecords.userIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.CallRecords.userIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.CallRecords.userIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.CallRecords.userIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.CallRecords.userIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.CallRecords.userIdentity::|public|UserPrincipalName:string
+Microsoft.Agents.M365Copilot.Beta.Models.CallRecords.userIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.CallRecords.UserIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.chatMessageFromIdentitySet-->global.Microsoft.Agents.M365Copilot.Beta.Models.IdentitySet
+Microsoft.Agents.M365Copilot.Beta.Models.chatMessageFromIdentitySet::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.chatMessageFromIdentitySet::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.chatMessageFromIdentitySet::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.chatMessageFromIdentitySet::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.chatMessageFromIdentitySet::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.ChatMessageFromIdentitySet
+Microsoft.Agents.M365Copilot.Beta.Models.chatMessageMentionedIdentitySet-->global.Microsoft.Agents.M365Copilot.Beta.Models.IdentitySet
+Microsoft.Agents.M365Copilot.Beta.Models.chatMessageMentionedIdentitySet::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.chatMessageMentionedIdentitySet::|public|Conversation:global.Microsoft.Agents.M365Copilot.Beta.Models.TeamworkConversationIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.chatMessageMentionedIdentitySet::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.chatMessageMentionedIdentitySet::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.chatMessageMentionedIdentitySet::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.chatMessageMentionedIdentitySet::|public|Tag:global.Microsoft.Agents.M365Copilot.Beta.Models.TeamworkTagIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.chatMessageMentionedIdentitySet::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.ChatMessageMentionedIdentitySet
+Microsoft.Agents.M365Copilot.Beta.Models.chatMessageReactionIdentitySet-->global.Microsoft.Agents.M365Copilot.Beta.Models.IdentitySet
+Microsoft.Agents.M365Copilot.Beta.Models.chatMessageReactionIdentitySet::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.chatMessageReactionIdentitySet::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.chatMessageReactionIdentitySet::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.chatMessageReactionIdentitySet::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.chatMessageReactionIdentitySet::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.ChatMessageReactionIdentitySet
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsApplicationIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsApplicationIdentity::|public|ApplicationType:string
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsApplicationIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsApplicationIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsApplicationIdentity::|public|Hidden:bool?
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsApplicationIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsApplicationIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsApplicationIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.CommunicationsApplicationIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsApplicationInstanceIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsApplicationInstanceIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsApplicationInstanceIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsApplicationInstanceIdentity::|public|Hidden:bool?
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsApplicationInstanceIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsApplicationInstanceIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsApplicationInstanceIdentity::|public|TenantId:string
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsApplicationInstanceIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.CommunicationsApplicationInstanceIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsEncryptedIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsEncryptedIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsEncryptedIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsEncryptedIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsEncryptedIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsEncryptedIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.CommunicationsEncryptedIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsGuestIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsGuestIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsGuestIdentity::|public|Email:string
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsGuestIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsGuestIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsGuestIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsGuestIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.CommunicationsGuestIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsIdentitySet-->global.Microsoft.Agents.M365Copilot.Beta.Models.IdentitySet
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsIdentitySet::|public|ApplicationInstance:global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsIdentitySet::|public|AssertedIdentity:global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsIdentitySet::|public|AzureCommunicationServicesUser:global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsIdentitySet::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsIdentitySet::|public|Encrypted:global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsIdentitySet::|public|EndpointType:global.Microsoft.Agents.M365Copilot.Beta.Models.EndpointType?
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsIdentitySet::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsIdentitySet::|public|Guest:global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsIdentitySet::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsIdentitySet::|public|OnPremises:global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsIdentitySet::|public|Phone:global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsIdentitySet::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsIdentitySet::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.CommunicationsIdentitySet
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsPhoneIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsPhoneIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsPhoneIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsPhoneIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsPhoneIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsPhoneIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.CommunicationsPhoneIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsUserIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsUserIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsUserIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsUserIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsUserIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsUserIdentity::|public|TenantId:string
+Microsoft.Agents.M365Copilot.Beta.Models.communicationsUserIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.CommunicationsUserIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.copilotAdmin-->global.Microsoft.Agents.M365Copilot.Beta.Models.Entity
+Microsoft.Agents.M365Copilot.Beta.Models.copilotAdmin::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.copilotAdmin::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.copilotAdmin::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.copilotAdmin::|public|Settings:global.Microsoft.Agents.M365Copilot.Beta.Models.CopilotAdminSetting
+Microsoft.Agents.M365Copilot.Beta.Models.copilotAdmin::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.CopilotAdmin
+Microsoft.Agents.M365Copilot.Beta.Models.copilotAdminLimitedMode-->global.Microsoft.Agents.M365Copilot.Beta.Models.Entity
+Microsoft.Agents.M365Copilot.Beta.Models.copilotAdminLimitedMode::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.copilotAdminLimitedMode::|public|GroupId:string
+Microsoft.Agents.M365Copilot.Beta.Models.copilotAdminLimitedMode::|public|IsEnabledForGroup:bool?
+Microsoft.Agents.M365Copilot.Beta.Models.copilotAdminLimitedMode::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.copilotAdminLimitedMode::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.copilotAdminLimitedMode::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.CopilotAdminLimitedMode
+Microsoft.Agents.M365Copilot.Beta.Models.copilotAdminSetting-->global.Microsoft.Agents.M365Copilot.Beta.Models.Entity
+Microsoft.Agents.M365Copilot.Beta.Models.copilotAdminSetting::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.copilotAdminSetting::|public|LimitedMode:global.Microsoft.Agents.M365Copilot.Beta.Models.CopilotAdminLimitedMode
+Microsoft.Agents.M365Copilot.Beta.Models.copilotAdminSetting::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.copilotAdminSetting::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.copilotAdminSetting::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.CopilotAdminSetting
+Microsoft.Agents.M365Copilot.Beta.Models.detailsInfo::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Models.detailsInfo::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Models.detailsInfo::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.detailsInfo::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.detailsInfo::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.detailsInfo::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.detailsInfo::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.DetailsInfo
+Microsoft.Agents.M365Copilot.Beta.Models.detailsInfo~~>IAdditionalDataHolder; IBackedModel; IParsable
+Microsoft.Agents.M365Copilot.Beta.Models.dictionaries::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Models.dictionaries::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Models.dictionaries::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.dictionaries::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.dictionaries::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.dictionaries::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.dictionaries::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.Dictionaries
+Microsoft.Agents.M365Copilot.Beta.Models.dictionaries~~>IAdditionalDataHolder; IBackedModel; IParsable
+Microsoft.Agents.M365Copilot.Beta.Models.emailIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.emailIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.emailIdentity::|public|Email:string
+Microsoft.Agents.M365Copilot.Beta.Models.emailIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.emailIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.emailIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.emailIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.EmailIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.endpointType::0000-default
+Microsoft.Agents.M365Copilot.Beta.Models.endpointType::0001-voicemail
+Microsoft.Agents.M365Copilot.Beta.Models.endpointType::0002-skypeForBusiness
+Microsoft.Agents.M365Copilot.Beta.Models.endpointType::0003-skypeForBusinessVoipPhone
+Microsoft.Agents.M365Copilot.Beta.Models.endpointType::0004-unknownFutureValue
+Microsoft.Agents.M365Copilot.Beta.Models.engagementIdentitySet-->global.Microsoft.Agents.M365Copilot.Beta.Models.IdentitySet
+Microsoft.Agents.M365Copilot.Beta.Models.engagementIdentitySet::|public|Audience:global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.engagementIdentitySet::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.engagementIdentitySet::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.engagementIdentitySet::|public|Group:global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.engagementIdentitySet::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.engagementIdentitySet::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.engagementIdentitySet::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.EngagementIdentitySet
+Microsoft.Agents.M365Copilot.Beta.Models.entity::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Models.entity::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Models.entity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.entity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.entity::|public|Id:string
+Microsoft.Agents.M365Copilot.Beta.Models.entity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.entity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.entity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.Entity
+Microsoft.Agents.M365Copilot.Beta.Models.entity~~>IAdditionalDataHolder; IBackedModel; IParsable
+Microsoft.Agents.M365Copilot.Beta.Models.groundingEntityType::0000-site
+Microsoft.Agents.M365Copilot.Beta.Models.groundingEntityType::0001-list
+Microsoft.Agents.M365Copilot.Beta.Models.groundingEntityType::0002-listItem
+Microsoft.Agents.M365Copilot.Beta.Models.groundingEntityType::0003-drive
+Microsoft.Agents.M365Copilot.Beta.Models.groundingEntityType::0004-driveItem
+Microsoft.Agents.M365Copilot.Beta.Models.groundingEntityType::0005-unknownFutureValue
+Microsoft.Agents.M365Copilot.Beta.Models.identity::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Models.identity::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Models.identity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.identity::|public|DisplayName:string
+Microsoft.Agents.M365Copilot.Beta.Models.identity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.identity::|public|Id:string
+Microsoft.Agents.M365Copilot.Beta.Models.identity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.identity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.identity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.identitySet::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Models.identitySet::|public|Application:global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.identitySet::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Models.identitySet::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.identitySet::|public|Device:global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.identitySet::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.identitySet::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.identitySet::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.identitySet::|public|User:global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.identitySet::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.IdentitySet
+Microsoft.Agents.M365Copilot.Beta.Models.identitySet~~>IAdditionalDataHolder; IBackedModel; IParsable
+Microsoft.Agents.M365Copilot.Beta.Models.identity~~>IAdditionalDataHolder; IBackedModel; IParsable
+Microsoft.Agents.M365Copilot.Beta.Models.initiator-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.initiator::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.initiator::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.initiator::|public|InitiatorType:global.Microsoft.Agents.M365Copilot.Beta.Models.InitiatorType?
+Microsoft.Agents.M365Copilot.Beta.Models.initiator::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.initiator::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.initiator::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.Initiator
+Microsoft.Agents.M365Copilot.Beta.Models.initiatorType::0000-user
+Microsoft.Agents.M365Copilot.Beta.Models.initiatorType::0001-application
+Microsoft.Agents.M365Copilot.Beta.Models.initiatorType::0002-system
+Microsoft.Agents.M365Copilot.Beta.Models.initiatorType::0003-unknownFutureValue
+Microsoft.Agents.M365Copilot.Beta.Models.itemBody::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Models.itemBody::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Models.itemBody::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.itemBody::|public|Content:string
+Microsoft.Agents.M365Copilot.Beta.Models.itemBody::|public|ContentType:global.Microsoft.Agents.M365Copilot.Beta.Models.BodyType?
+Microsoft.Agents.M365Copilot.Beta.Models.itemBody::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.itemBody::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.itemBody::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.itemBody::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.ItemBody
+Microsoft.Agents.M365Copilot.Beta.Models.itemBody~~>IAdditionalDataHolder; IBackedModel; IParsable
+Microsoft.Agents.M365Copilot.Beta.Models.keyValuePair::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Models.keyValuePair::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Models.keyValuePair::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.keyValuePair::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.keyValuePair::|public|Name:string
+Microsoft.Agents.M365Copilot.Beta.Models.keyValuePair::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.keyValuePair::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.keyValuePair::|public|Value:string
+Microsoft.Agents.M365Copilot.Beta.Models.keyValuePair::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.KeyValuePair
+Microsoft.Agents.M365Copilot.Beta.Models.keyValuePair~~>IAdditionalDataHolder; IBackedModel; IParsable
+Microsoft.Agents.M365Copilot.Beta.Models.messageUserRole::0000-envelopeFrom
+Microsoft.Agents.M365Copilot.Beta.Models.messageUserRole::0001-headerFrom
+Microsoft.Agents.M365Copilot.Beta.Models.messageUserRole::0002-to
+Microsoft.Agents.M365Copilot.Beta.Models.messageUserRole::0003-cc
+Microsoft.Agents.M365Copilot.Beta.Models.messageUserRole::0004-bcc
+Microsoft.Agents.M365Copilot.Beta.Models.messageUserRole::0005-unknownFutureValue
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ErrorDetails::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ErrorDetails::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ErrorDetails::|public|Code:string
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ErrorDetails::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ErrorDetails::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ErrorDetails::|public|Message:string
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ErrorDetails::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ErrorDetails::|public|Target:string
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ErrorDetails::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ErrorDetails
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ErrorDetails~~>IAdditionalDataHolder; IBackedModel; IParsable
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.InnerError::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.InnerError::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.InnerError::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.InnerError::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.InnerError::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.InnerError::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.InnerError
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.InnerError~~>IAdditionalDataHolder; IBackedModel; IParsable
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.MainError::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.MainError::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.MainError::|public|Code:string
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.MainError::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.MainError::|public|Details:List<global.Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ErrorDetails>
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.MainError::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.MainError::|public|InnerError:global.Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.InnerError
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.MainError::|public|Message:string
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.MainError::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.MainError::|public|Target:string
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.MainError::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.MainError
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.MainError~~>IAdditionalDataHolder; IBackedModel; IParsable
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ODataError-->ApiException
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ODataError::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ODataError::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ODataError::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ODataError::|public|Error:global.Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.MainError
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ODataError::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ODataError::|public|Message:string
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ODataError::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ODataError::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.ODataErrors.ODataError
+Microsoft.Agents.M365Copilot.Beta.Models.programResource-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.programResource::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.programResource::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.programResource::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.programResource::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.programResource::|public|Type:string
+Microsoft.Agents.M365Copilot.Beta.Models.programResource::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.ProgramResource
+Microsoft.Agents.M365Copilot.Beta.Models.provisionedIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.provisionedIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.provisionedIdentity::|public|Details:global.Microsoft.Agents.M365Copilot.Beta.Models.DetailsInfo
+Microsoft.Agents.M365Copilot.Beta.Models.provisionedIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.provisionedIdentity::|public|IdentityType:string
+Microsoft.Agents.M365Copilot.Beta.Models.provisionedIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.provisionedIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.provisionedIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.ProvisionedIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.provisioningServicePrincipal-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.provisioningServicePrincipal::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.provisioningServicePrincipal::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.provisioningServicePrincipal::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.provisioningServicePrincipal::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.provisioningServicePrincipal::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.ProvisioningServicePrincipal
+Microsoft.Agents.M365Copilot.Beta.Models.provisioningSystem-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.provisioningSystem::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.provisioningSystem::|public|Details:global.Microsoft.Agents.M365Copilot.Beta.Models.DetailsInfo
+Microsoft.Agents.M365Copilot.Beta.Models.provisioningSystem::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.provisioningSystem::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.provisioningSystem::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.provisioningSystem::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.ProvisioningSystem
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalExtract::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalExtract::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalExtract::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalExtract::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalExtract::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalExtract::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalExtract::|public|Text:string
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalExtract::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.RetrievalExtract
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalExtract~~>IAdditionalDataHolder; IBackedModel; IParsable
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalHit::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalHit::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalHit::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalHit::|public|Extracts:List<global.Microsoft.Agents.M365Copilot.Beta.Models.RetrievalExtract>
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalHit::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalHit::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalHit::|public|ResourceMetadata:global.Microsoft.Agents.M365Copilot.Beta.Models.SearchResourceMetadataDictionary
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalHit::|public|ResourceType:global.Microsoft.Agents.M365Copilot.Beta.Models.GroundingEntityType?
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalHit::|public|SensitivityLabel:global.Microsoft.Agents.M365Copilot.Beta.Models.SearchSensitivityLabelInfo
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalHit::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalHit::|public|WebUrl:string
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalHit::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.RetrievalHit
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalHit~~>IAdditionalDataHolder; IBackedModel; IParsable
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalResponse::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalResponse::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalResponse::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalResponse::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalResponse::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalResponse::|public|RetrievalHits:List<global.Microsoft.Agents.M365Copilot.Beta.Models.RetrievalHit>
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalResponse::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalResponse::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.RetrievalResponse
+Microsoft.Agents.M365Copilot.Beta.Models.retrievalResponse~~>IAdditionalDataHolder; IBackedModel; IParsable
+Microsoft.Agents.M365Copilot.Beta.Models.searchResourceMetadataDictionary-->global.Microsoft.Agents.M365Copilot.Beta.Models.Dictionaries
+Microsoft.Agents.M365Copilot.Beta.Models.searchResourceMetadataDictionary::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.searchResourceMetadataDictionary::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.searchResourceMetadataDictionary::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.searchResourceMetadataDictionary::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.SearchResourceMetadataDictionary
+Microsoft.Agents.M365Copilot.Beta.Models.searchSensitivityLabelInfo::|public|AdditionalData:IDictionary<string, object>
+Microsoft.Agents.M365Copilot.Beta.Models.searchSensitivityLabelInfo::|public|BackingStore:IBackingStore
+Microsoft.Agents.M365Copilot.Beta.Models.searchSensitivityLabelInfo::|public|Color:string
+Microsoft.Agents.M365Copilot.Beta.Models.searchSensitivityLabelInfo::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.searchSensitivityLabelInfo::|public|DisplayName:string
+Microsoft.Agents.M365Copilot.Beta.Models.searchSensitivityLabelInfo::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.searchSensitivityLabelInfo::|public|IsEncrypted:bool?
+Microsoft.Agents.M365Copilot.Beta.Models.searchSensitivityLabelInfo::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.searchSensitivityLabelInfo::|public|Priority:int?
+Microsoft.Agents.M365Copilot.Beta.Models.searchSensitivityLabelInfo::|public|SensitivityLabelId:string
+Microsoft.Agents.M365Copilot.Beta.Models.searchSensitivityLabelInfo::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.searchSensitivityLabelInfo::|public|Tooltip:string
+Microsoft.Agents.M365Copilot.Beta.Models.searchSensitivityLabelInfo::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.SearchSensitivityLabelInfo
+Microsoft.Agents.M365Copilot.Beta.Models.searchSensitivityLabelInfo~~>IAdditionalDataHolder; IBackedModel; IParsable
+Microsoft.Agents.M365Copilot.Beta.Models.Security.submissionUserIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.Security.submissionUserIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.Security.submissionUserIdentity::|public|Email:string
+Microsoft.Agents.M365Copilot.Beta.Models.Security.submissionUserIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.Security.submissionUserIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.Security.submissionUserIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.Security.submissionUserIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.Security.SubmissionUserIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.servicePrincipalIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.servicePrincipalIdentity::|public|AppId:string
+Microsoft.Agents.M365Copilot.Beta.Models.servicePrincipalIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.servicePrincipalIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.servicePrincipalIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.servicePrincipalIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.servicePrincipalIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.ServicePrincipalIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.sharePointIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.sharePointIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.sharePointIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.sharePointIdentity::|public|LoginName:string
+Microsoft.Agents.M365Copilot.Beta.Models.sharePointIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.sharePointIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.sharePointIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.SharePointIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.sharePointIdentitySet-->global.Microsoft.Agents.M365Copilot.Beta.Models.IdentitySet
+Microsoft.Agents.M365Copilot.Beta.Models.sharePointIdentitySet::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.sharePointIdentitySet::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.sharePointIdentitySet::|public|Group:global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.sharePointIdentitySet::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.sharePointIdentitySet::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.sharePointIdentitySet::|public|SiteGroup:global.Microsoft.Agents.M365Copilot.Beta.Models.SharePointIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.sharePointIdentitySet::|public|SiteUser:global.Microsoft.Agents.M365Copilot.Beta.Models.SharePointIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.sharePointIdentitySet::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.SharePointIdentitySet
+Microsoft.Agents.M365Copilot.Beta.Models.sourceProvisionedIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.sourceProvisionedIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.sourceProvisionedIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.sourceProvisionedIdentity::|public|IdentityType:string
+Microsoft.Agents.M365Copilot.Beta.Models.sourceProvisionedIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.sourceProvisionedIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.sourceProvisionedIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.SourceProvisionedIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.targetProvisionedIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.targetProvisionedIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.targetProvisionedIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.targetProvisionedIdentity::|public|IdentityType:string
+Microsoft.Agents.M365Copilot.Beta.Models.targetProvisionedIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.targetProvisionedIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.targetProvisionedIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.TargetProvisionedIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkApplicationIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkApplicationIdentity::|public|ApplicationIdentityType:global.Microsoft.Agents.M365Copilot.Beta.Models.TeamworkApplicationIdentityType?
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkApplicationIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkApplicationIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkApplicationIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkApplicationIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkApplicationIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.TeamworkApplicationIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkApplicationIdentityType::0000-aadApplication
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkApplicationIdentityType::0001-bot
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkApplicationIdentityType::0002-tenantBot
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkApplicationIdentityType::0003-office365Connector
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkApplicationIdentityType::0004-outgoingWebhook
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkApplicationIdentityType::0005-unknownFutureValue
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkConversationIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkConversationIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkConversationIdentity::|public|ConversationIdentityType:global.Microsoft.Agents.M365Copilot.Beta.Models.TeamworkConversationIdentityType?
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkConversationIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkConversationIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkConversationIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkConversationIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.TeamworkConversationIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkConversationIdentityType::0000-team
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkConversationIdentityType::0001-channel
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkConversationIdentityType::0002-chat
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkConversationIdentityType::0003-unknownFutureValue
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkTagIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkTagIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkTagIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkTagIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkTagIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkTagIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.TeamworkTagIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkUserIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkUserIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkUserIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkUserIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkUserIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkUserIdentity::|public|UserIdentityType:global.Microsoft.Agents.M365Copilot.Beta.Models.TeamworkUserIdentityType?
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkUserIdentity::|public|UserPrincipalName:string
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkUserIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.TeamworkUserIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkUserIdentityType::0000-aadUser
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkUserIdentityType::0001-onPremiseAadUser
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkUserIdentityType::0002-anonymousGuest
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkUserIdentityType::0003-federatedUser
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkUserIdentityType::0004-personalMicrosoftAccountUser
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkUserIdentityType::0005-skypeUser
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkUserIdentityType::0006-phoneUser
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkUserIdentityType::0007-unknownFutureValue
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkUserIdentityType::0008-emailUser
+Microsoft.Agents.M365Copilot.Beta.Models.teamworkUserIdentityType::0009-azureCommunicationServicesUser
+Microsoft.Agents.M365Copilot.Beta.Models.userIdentity-->global.Microsoft.Agents.M365Copilot.Beta.Models.Identity
+Microsoft.Agents.M365Copilot.Beta.Models.userIdentity::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.userIdentity::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.userIdentity::|public|IpAddress:string
+Microsoft.Agents.M365Copilot.Beta.Models.userIdentity::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.userIdentity::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.userIdentity::|public|UserPrincipalName:string
+Microsoft.Agents.M365Copilot.Beta.Models.userIdentity::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.UserIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.userInformation-->global.Microsoft.Agents.M365Copilot.Beta.Models.UserIdentity
+Microsoft.Agents.M365Copilot.Beta.Models.userInformation::|public|AccessScope:global.Microsoft.Agents.M365Copilot.Beta.Models.AccessScope?
+Microsoft.Agents.M365Copilot.Beta.Models.userInformation::|public|constructor():void
+Microsoft.Agents.M365Copilot.Beta.Models.userInformation::|public|CustomAttributes:List<global.Microsoft.Agents.M365Copilot.Beta.Models.KeyValuePair>
+Microsoft.Agents.M365Copilot.Beta.Models.userInformation::|public|GetFieldDeserializers():IDictionary<string, Action<IParseNode>>
+Microsoft.Agents.M365Copilot.Beta.Models.userInformation::|public|OdataType:string
+Microsoft.Agents.M365Copilot.Beta.Models.userInformation::|public|Role:global.Microsoft.Agents.M365Copilot.Beta.Models.MessageUserRole?
+Microsoft.Agents.M365Copilot.Beta.Models.userInformation::|public|Serialize(writer:ISerializationWriter):void
+Microsoft.Agents.M365Copilot.Beta.Models.userInformation::|static|public|CreateFromDiscriminatorValue(parseNode:IParseNode):global.Microsoft.Agents.M365Copilot.Beta.Models.UserInformation
