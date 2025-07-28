@@ -10,6 +10,6 @@
     "start": "node --env-file .env dist/agent.js"
   },
   "devDependencies": {
-    "@microsoft/teams-app-test-tool": "^0.2.14"
+    "@microsoft/m365agentsplayground": "^0.2.16"
   }
 }
