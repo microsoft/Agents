@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../vs-ai-toolkit"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"appsettings*.json": "jsonc"
+		},
+		"cSpell.enabledLanguageIds": [
+			"COBOL",
+			"ACUCOBOL"
+		]
+	}
+}
