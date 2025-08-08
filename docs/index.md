@@ -1,6 +1,6 @@
 # Microsoft 365 Agents SDK
 
-The [Microsoft 365 Agents SDK](aka.ms/agents) allows developers to create agents that can be used in applications like Microsoft 365 Copilot, Microsoft Teams, Custom Apps, Slack, Discord and more. These agents react to events, and those events can be a conversational or operate in the background action to trigger autonomously. Developers can work with Agents built using this SDK or other AI Agents, Orchastrators and Knowledge from other providers.
+The [Microsoft 365 Agents SDK](aka.ms/agents) allows developers to create agents that can be used in applications like Microsoft 365 Copilot, Microsoft Teams, Custom Apps, Slack, Discord and more. These agents react to events, and those events can be a conversational or operate in the background action to trigger autonomously. Developers can work with Agents built using this SDK or other AI Agents, Orchestrators and Knowledge from other providers.
 
 ## Key features of the Agents SDK
 
