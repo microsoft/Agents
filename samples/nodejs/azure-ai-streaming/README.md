@@ -1,10 +1,8 @@
-﻿# LangChain multi-turn WeatherAgent
+# azure-ai-streaming agent
 
-This is a sample of a simple Agent that is hosted on an Node.js web service with the Express framework. This agent is configured to accept a request asking for information about a weather forecast and respond to the caller with an Adaptive Card.
+This is a sample of a simple Agent that is hosted on an Node.js web service with the Express framework. This agent is configured to accept a request and forward to an LLM that will return a poem using Azure OpenAI
 
-This agent sample is intended to introduce you the basics of integrating LangChain with the Microsoft 365 Agents SDK in order to build powerful agents. It can also be used as a the base for a custom agent that you choose to develop.
-
-***Note:*** This sample requires JSON output from the model which works best from newer versions of the model such as gpt-4o-mini.
+This agent sample is intended to introduce you the basics of implementing Stream Responses with the Microsoft 365 Agents SDK in order to build powerful agents. It can also be used as a the base for a custom agent that you choose to develop.
 
 ## Prerequisites
 
@@ -16,26 +14,20 @@ This agent sample is intended to introduce you the basics of integrating LangCha
 Create a `.env` file, based on the provided `env.TEMPLATE` and configure either the AzureOpenAI or OpenAI settings:
 
 ```env
-AZURE_OPENAI_API_INSTANCE_NAME=
-AZURE_OPENAI_API_DEPLOYMENT_NAME=
-AZURE_OPENAI_API_KEY=
-AZURE_OPENAI_API_VERSION=
-
-OPENAI_MODEL=
-OPENAI_API_KEY=
-
-USE_AZURE_OPENAI_API=true
+AZURE_RESOURCE_NAME=
+AZURE_API_KEY=
+AZURE_OPENAI_DEPLOYMENT_NAME=
 ```
 
-## Getting Started with langchain-multiturn sample
+## Getting started with the azure-ai-streaming sample
 
 ### QuickStart using the Microsoft 365 Agents Playground
 
-1. Open the `langchain-multiturn` sample in Visual Studio Code
+1. Open the `nodejs/azure-ai-streaming` sample in Visual Studio Code
 1. Start the application with  `npm start`
 1. Start the test tool with `npm run test-tool`
 
-If all is working correctly, the Agents Playground tool should show you a web chat experience with the words **"Hello and Welcome! I'm here to help with all your weather forecast needs!"**, now you can interact with the agent asking forecast questions such as **tell me the weather forecast for today in NYC** 
+If all is working correctly, the Agents Playground tool should show you a web chat experience with the words **Welcome to the Streaming sample, type poem to see the streaming feature in action.**, now you can interact with the agent typing the word **poem** 
 
 ### QuickStart using WebChat
 
@@ -44,7 +36,6 @@ If all is working correctly, the Agents Playground tool should show you a web ch
 - Access to an Azure Subscription with access to preform the following tasks:
     - Create and configure Entra ID Application Identities
     - Create and configure an [Azure Bot Service](https://aka.ms/AgentsSDK-CreateBot) for your bot
-    - Create and configure an [Azure App Service](https://learn.microsoft.com/azure/app-service/) to deploy your bot on to.
     - A tunneling tool to allow for local development and debugging should you wish to do local development whilst connected to a external client such as Microsoft Teams.
 
 

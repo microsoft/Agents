@@ -18,7 +18,7 @@ This Agent has been created using [Microsoft 365 Agents SDK](https://github.com/
 1. [Add OAuth to your bot](https://aka.ms/AgentsSDK-AddAuth) using the _Azure Active Directory v2_ Provider.
 
 1. Configuring the token connection in the Bot settings
-   > The instructions for this sample are for a SingleTenant Azure Bot using ClientSecrets.  The token connection configuration will vary if a different type of Azure Bot was configured.  For more information see [JS Authentication provider](docs/HowTo/azurebot-auth-for-js.md)
+   > The instructions for this sample are for a SingleTenant Azure Bot using ClientSecrets.  The token connection configuration will vary if a different type of Azure Bot was configured.  For more information see [JS Authentication provider](https://learn.microsoft.com/microsoft-365/agents-sdk/azure-bot-authentication-for-javascript)
 
   1. Open the `env.TEMAPLTE` file in the root of the sample project and rename it to `.env`
   1. Update **clientId**, **tenantId** and **clientSecret**

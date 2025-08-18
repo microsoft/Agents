@@ -31,7 +31,7 @@ The sample uses the bot OAuth capabilities in [Azure Bot Service](https://docs.b
   > To configure OAuth for GitHub you need a GitHub account, under settings/developer settings/OAuth apps, create a new OAuth app, and set the callback URL to `https://token.botframework.com/.auth/web/redirect`. Then you will need to provide the clientId and clientSecret, and the required scopes: `user repo`
 
 1. Configuring the token connection in the Agent settings
-   > The instructions for this sample are for a SingleTenant Azure Bot using ClientSecrets.  The token connection configuration will vary if a different type of Azure Bot was configured.  For more information see [MSAL Authentication provider](docs/HowTo/azurebot-auth-for-js.md)
+   > The instructions for this sample are for a SingleTenant Azure Bot using ClientSecrets.  The token connection configuration will vary if a different type of Azure Bot was configured.  For more information see [MSAL Authentication provider](https://learn.microsoft.com/microsoft-365/agents-sdk/azure-bot-authentication-for-javascript)
 
   1. Open the `env.TEMAPLTE` file in the root of the sample project and rename it to `.env`
   1. Update **clientId**, **tenantId** and **clientSecret**

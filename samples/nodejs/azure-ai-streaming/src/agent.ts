@@ -7,10 +7,11 @@ import { streamText } from 'ai'
 const agent = new AgentApplication<TurnState>()
 
 agent.onConversationUpdate('membersAdded', async (context: TurnContext) => {
-  await context.sendActivity('Welcome to the Streaming sample, type **poem** to see the echo feature in action.')
+  await context.sendActivity('Welcome to the Streaming sample, type **poem** to see the streaming feature in action.')
 })
 
 agent.onActivity('invoke', async (context: TurnContext, state: TurnState) => {
+  console.log('feedback', JSON.stringify(context.activity.value, null, 2))
   const invokeResponse = Activity.fromObject({
     type: ActivityTypes.InvokeResponse,
     value: {
@@ -18,6 +19,7 @@ agent.onActivity('invoke', async (context: TurnContext, state: TurnState) => {
     }
   })
   await context.sendActivity(invokeResponse)
+  await context.sendActivity('Thanks for submitting your feedback.')
 })
 
 agent.onMessage('poem', async (context: TurnContext, state: TurnState) => {
