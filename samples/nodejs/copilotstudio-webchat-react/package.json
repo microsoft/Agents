@@ -4,12 +4,11 @@
   "private": true,
   "author": "Microsoft",
   "license": "MIT",
-  "main": "public/static/index.js",
   "engines": {
     "node": ">=20"
   },
   "scripts": {
-    "build": "esbuild src/index.tsx --bundle --platform=browser --target=esnext --outdir=public/static --jsx=automatic",
+    "build": "esbuild src/index.tsx --bundle --platform=browser --target=esnext --outdir=public/dist --jsx=automatic",
     "start": "npm run build -- --watch --serve=localhost:3000 --servedir=./public"
   },
   "dependencies": {
