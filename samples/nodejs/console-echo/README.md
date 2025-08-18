@@ -44,4 +44,4 @@ In most situations, we don't work with the adapter directly, but it's good to kn
 
 ## Further reading
 
-To learn more about building Bots and Agents, see our [Microsoft 365 Agents SDK](https://github.com/microsoft/agents) repo.
+To learn more about building agents, see our [Microsoft 365 Agents SDK](https://github.com/microsoft/agents) repo.
