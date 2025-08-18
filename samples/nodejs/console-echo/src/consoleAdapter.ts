@@ -3,9 +3,9 @@
  * Licensed under the MIT License.
  */
 
-import { BaseAdapter, CloudAdapter, ResourceResponse, TurnContext } from '@microsoft/agents-hosting';
-import { ActivityTypes, Activity, ConversationReference } from '@microsoft/agents-activity';
-import * as readline from 'readline';
+import { BaseAdapter, CloudAdapter, TurnContext } from '@microsoft/agents-hosting'
+import { ActivityTypes, Activity, ConversationReference } from '@microsoft/agents-activity'
+import * as readline from 'readline'
 
 /**
  * Lets a user communicate with a bot from a console window.
@@ -26,15 +26,15 @@ import * as readline from 'readline';
  * It implements the CloudAdapter interface for compatibility with the Agents SDK.
  */
 export class ConsoleAdapter extends CloudAdapter {
-  nextId: number;
-  reference: ConversationReference;
+  nextId: number
+  reference: ConversationReference
   /**
    * Creates a new ConsoleAdapter instance.
    * @param [reference] Reference used to customize the address information of activities sent from the adapter.
    */
-  constructor( reference?: ConversationReference ) {
-    super();
-    this.nextId = 0;
+  constructor (reference?: ConversationReference) {
+    super()
+    this.nextId = 0
     this.reference = {
       ...reference,
       channelId: 'console',
@@ -42,7 +42,7 @@ export class ConsoleAdapter extends CloudAdapter {
       agent: { id: 'bot', name: 'Bot' },
       conversation: { id: 'convo1', name: '', isGroup: false },
       serviceUrl: ''
-    };
+    }
   }
 
   /**
@@ -71,29 +71,29 @@ export class ConsoleAdapter extends CloudAdapter {
    * @param logic Function called each time a message is input by the user.
    * @returns Function to stop listening to console input.
    */
-  listen ( logic: { ( context: TurnContext ): Promise<void>; ( revocableContext: TurnContext ): Promise<void>; } ) {
-    const rl = this.createInterface( {
+  listen (logic: { (context: TurnContext): Promise<void>; (revocableContext: TurnContext): Promise<void>; }) {
+    const rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
       terminal: false
-    } );
-    rl.on( 'line', async line => {
+    })
+    rl.on('line', async line => {
       // Initialize activity
-      const activity = Activity.fromObject( { type: ActivityTypes.Message, text: line } );
+      const activity = Activity.fromObject({ type: ActivityTypes.Message, text: line })
       activity.applyConversationReference(
         this.reference,
         true
-      );
+      )
 
       // Create context and run middleware pipe
-      const context = new TurnContext( this as unknown as BaseAdapter, activity );
-      await this.runMiddleware( context, logic ).catch( err => {
-        this.printError( err.toString() );
-      } );
-    } );
+      const context = new TurnContext(this as unknown as BaseAdapter, activity)
+      await this.runMiddleware(context, logic).catch(err => {
+        this.printError(err.toString())
+      })
+    })
     return () => {
-      rl.close();
-    };
+      rl.close()
+    }
   }
 
   /**
@@ -119,17 +119,17 @@ export class ConsoleAdapter extends CloudAdapter {
    * @param reference A `ConversationReference` saved during a previous message from a user. This can be calculated for any incoming activity using `TurnContext.getConversationReference(context.activity)`.
    * @param logic A function handler that will be called to perform the bot's logic after the adapter's middleware has been run.
    */
-  continueConversation ( reference: ConversationReference, logic: ( revocableContext: TurnContext ) => Promise<void> ) {
+  continueConversation (reference: ConversationReference, logic: (revocableContext: TurnContext) => Promise<void>) {
     // Create context and run middleware pipe
-    const activity = new Activity( ActivityTypes.Message );
+    const activity = new Activity(ActivityTypes.Message)
     activity.applyConversationReference(
       reference,
       true
-    );
-    const context = new TurnContext( this as unknown as BaseAdapter, activity );
-    return this.runMiddleware( context, logic ).catch( err => {
-      this.printError( err.toString() );
-    } );
+    )
+    const context = new TurnContext(this as unknown as BaseAdapter, activity)
+    return this.runMiddleware(context, logic).catch(err => {
+      this.printError(err.toString())
+    })
   }
 
   /**
@@ -142,87 +142,46 @@ export class ConsoleAdapter extends CloudAdapter {
    * @param _context Context for the current turn of conversation with the user.
    * @param activities List of activities to send.
    */
-  async sendActivities ( _context: TurnContext, activities: Activity[] ) {
-    /** @type {ResourceResponse[]} */
-    const responses = [];
-    for ( const activity of activities ) {
+  async sendActivities (_context: TurnContext, activities: Activity[]) {
+    const responses = []
+    for (const activity of activities) {
       // Generate a unique id for each activity response
-      const id = (activity.id || `console-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`);
-      responses.push( { id } );
-
-      switch ( activity.type ) {
-        case 'delay':
-          await this.sleep( Number( activity.value ) );
-          break;
-        case ActivityTypes.Message:
-          if (
-            activity.attachments &&
-            activity.attachments.length > 0
-          ) {
-            const append =
-              activity.attachments.length === 1
-                ? '(1 attachment)'
-                : `(${ activity.attachments.length } attachments)`;
-            this.print( `${ activity.text } ${ append }` );
-          } else {
-            this.print( activity.text || '' );
-          }
-          break;
-        default:
-          this.print( `[${ activity.type }]` );
-          break;
-      }
+      const id = (activity.id || `console-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`)
+      responses.push({ id })
+      this.print(activity.text || '')
     }
-    return responses;
+    return responses
   }
 
   /**
    * Not supported for the ConsoleAdapter.  Calling this method or `TurnContext.updateActivity()`
    * will result an error being returned.
    */
-  updateActivity ( _context: TurnContext, _activity: Activity ) {
-    return Promise.reject( new Error( 'ConsoleAdapter.updateActivity(): not supported.' ) );
+  updateActivity (_context: TurnContext, _activity: Activity) {
+    return Promise.reject(new Error('ConsoleAdapter.updateActivity(): not supported.'))
   }
 
   /**
    * Not supported for the ConsoleAdapter.  Calling this method or `TurnContext.deleteActivity()`
    * will result an error being returned.
    */
-  deleteActivity ( _context: TurnContext, _reference: Partial<ConversationReference> ) {
-    return Promise.reject( new Error( 'ConsoleAdapter.deleteActivity(): not supported.' ) );
-  }
-
-  /**
-   * Allows for mocking of the console interface in unit tests.
-   * @param options Console interface options.
-   */
-  createInterface ( options: any ) {
-    return readline.createInterface( options );
+  deleteActivity (_context: TurnContext, _reference: Partial<ConversationReference>) {
+    return Promise.reject(new Error('ConsoleAdapter.deleteActivity(): not supported.'))
   }
 
   /**
    * Logs text to the console.
    * @param line Text to print.
    */
-  print ( line: string ) {
-    console.log( line );
+  print (line: string) {
+    console.log(line)
   }
 
   /**
    * Logs an error to the console.
    * @param line Error text to print.
    */
-  printError ( line: string ) {
-    console.error( line );
-  }
-
-  /**
-   * Puts the current thread to sleep for a specified duration.
-   * @param milliseconds Duration to sleep in milliseconds.
-   */
-  sleep ( milliseconds: number ) {
-    return new Promise( resolve => {
-      setTimeout( resolve, milliseconds );
-    } );
+  printError (line: string) {
+    console.error(line)
   }
 }

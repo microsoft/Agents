@@ -1,22 +1,22 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { TurnContext } from '@microsoft/agents-hosting';
+import { ActivityTypes } from '@microsoft/agents-activity'
+import { TurnContext, AgentApplication, TurnState } from '@microsoft/agents-hosting'
 
-export class DialogAgent {
-  async onTurn ( context: TurnContext ) {
-    // Check to see if this activity is an incoming message.
-    // (It could theoretically be another type of activity.)
-    if ( context.activity.type === 'message' && context.activity.text ) {
-      // Check to see if the user sent a simple "quit" message.
-      if ( context.activity.text.toLowerCase() === 'quit' ) {
-        // Send a reply.
-        context.sendActivity( '> Bye!' );
-        process.exit();
-      } else {
-        // Echo the message text back to the user.
-        return context.sendActivity( `> I heard you say "${ context.activity.text }"` );
-      }
-    }
+export class DialogAgent extends AgentApplication<TurnState> {
+  constructor () {
+    super()
+    this.onMessage('quit', this._quit)
+    this.onActivity(ActivityTypes.Message, this._echo)
+  }
+
+  private async _quit (context: TurnContext, state: TurnState): Promise<void> {
+    await context.sendActivity('> Bye!')
+    process.exit()
+  }
+
+  private async _echo (context: TurnContext, state: TurnState): Promise<void> {
+    await context.sendActivity(`> I heard you say "${context.activity.text}"`)
   }
 }
