@@ -30,37 +30,13 @@ This Agent Sample is intended to introduce you the basic operation of the Micros
   - Test in a client
 
 1. Create an Azure Bot with one of these authentication types
-   - [SingleTenant, Client Secret](https://github.com/microsoft/Agents/blob/main/docs/HowTo/azurebot-create-single-secret.md)
-   - [SingleTenant, Federated Credentials](https://github.com/microsoft/Agents/blob/main/docs/HowTo/azurebot-create-fic.md) 
-   - [User Assigned Managed Identity](https://github.com/microsoft/Agents/blob/main/docs/HowTo/azurebot-create-msi.md)
+   - [SingleTenant, Client Secret](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/azure-bot-create-single-secret)
+   - [SingleTenant, Federated Credentials](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/azure-bot-create-federated-credentials) 
+   - [User Assigned Managed Identity](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/azure-bot-create-managed-identity)
+    
+   > Be sure to follow the **Next Steps** at the end of these docs to configure your agent settings.
 
-1. Configuring the authentication connection in the Agent settings
-   > These instructions are for **SingleTenant, Client Secret**. For other auth type configuration, see [DotNet MSAL Authentication](https://github.com/microsoft/Agents/blob/main/docs/HowTo/MSALAuthConfigurationOptions.md).
-   1. Open the `appsettings.json` file in the root of the sample project.
-
-   1. Find the section labeled `Connections`,  it should appear similar to this:
-
-      ```json
-      "Connections": {
-        "ServiceConnection": {
-          "Settings": {
-            "AuthType": "ClientSecret", // this is the AuthType for the connection, valid values can be found in Microsoft.Agents.Authentication.Msal.Model.AuthTypes.  The default is ClientSecret.
-            "AuthorityEndpoint": "https://login.microsoftonline.com/{{TenantId}}",
-            "ClientId": "{{ClientId}}", // this is the Client ID used for the connection.
-            "ClientSecret": "{{ClientSecret}}", // this is the Client Secret used for the connection.
-            "Scopes": [
-              "https://api.botframework.com/.default"
-            ]
-          }
-        }
-      },
-      ```
-
-      1. Replace all **{{ClientId}}** with the AppId of the Azure Bot.
-      1. Replace all **{{TenantId}}** with the Tenant Id where your application is registered.
-      1. Set the **{{ClientSecret}}** to the Secret that was created on the App Registration.
-      
-      > Storing sensitive values in appsettings is not recommend.  Follow [AspNet Configuration](https://learn.microsoft.com/aspnet/core/fundamentals/configuration/?view=aspnetcore-9.0) for best practices.
+   > **IMPORTANT:** If you want to run your agent locally via devtunnels, the only support auth type is ClientSecrets and Certificates
 
 1. Running the Agent
    1. Running the Agent locally
@@ -109,7 +85,7 @@ This Agent Sample is intended to introduce you the basic operation of the Micros
 1. Enable by updating appsettings
    ```json
    "TokenValidation": {
-     "Enabled": false,
+     "Enabled": true,
      "Audiences": [
        "{{ClientId}}" // this is the Client ID used for the Azure Bot
      ],
@@ -118,4 +94,4 @@ This Agent Sample is intended to introduce you the basic operation of the Micros
    ```
 
 ## Further reading
-To learn more about building Agents, see our [Microsoft 365 Agents SDK](https://github.com/microsoft/agents) repo.
+To learn more about building Agents, see [Microsoft 365 Agents SDK](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/).

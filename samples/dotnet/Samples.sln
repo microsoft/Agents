@@ -2,21 +2,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoSignIn", "auto-signin\AutoSignIn.csproj", "{A1B2C3D4-E5F6-7890-1234-567890ABCDEF}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StreamingMessageAgent", "azure-ai-streaming\StreamingMessageAgent.csproj", "{6547D985-7762-488D-9ADC-1BC3FD62AF66}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CopilotStudioClient", "copilotstudio-client\CopilotStudioClient.csproj", "{355B8CA0-6C85-4C42-B68A-2736624D0B2F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CopilotStudioEchoSkill", "copilotstudio-skill\CopilotStudioEchoSkill.csproj", "{570A35C7-AC4D-4313-9FD9-84F2E4003832}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OBOAuthorization", "obo-authorization\OBOAuthorization.csproj", "{69FAB538-686C-4CE7-B4CE-9BD884E31EB2}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuickStart", "quickstart\QuickStart.csproj", "{6F14E243-7ED3-43D8-A433-5BA4D52077CF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RetrievalBot", "RetrievalBot\RetrievalBot.csproj", "{9419EAC0-31D3-47DC-A008-9EDF584076D6}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Auth", "Auth", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
@@ -25,16 +19,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemanticKernelMultiturn", "semantic-kernel-multiturn\SemanticKernelMultiturn.csproj", "{2989FC05-935F-2F5E-5704-E3B6BFC0A3B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoSignIn", "auto-signin\AutoSignIn.csproj", "{C326AAC3-7AA5-0DF6-3182-9650728F2F8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OBOAuthorization", "obo-authorization\OBOAuthorization.csproj", "{ED0CBBBC-AF2F-6BCB-C555-1AF802EAEA7B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A1B2C3D4-E5F6-7890-1234-567890ABCDEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A1B2C3D4-E5F6-7890-1234-567890ABCDEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A1B2C3D4-E5F6-7890-1234-567890ABCDEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A1B2C3D4-E5F6-7890-1234-567890ABCDEF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6547D985-7762-488D-9ADC-1BC3FD62AF66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6547D985-7762-488D-9ADC-1BC3FD62AF66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6547D985-7762-488D-9ADC-1BC3FD62AF66}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -47,10 +41,6 @@ Global
 		{570A35C7-AC4D-4313-9FD9-84F2E4003832}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{570A35C7-AC4D-4313-9FD9-84F2E4003832}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{570A35C7-AC4D-4313-9FD9-84F2E4003832}.Release|Any CPU.Build.0 = Release|Any CPU
-		{69FAB538-686C-4CE7-B4CE-9BD884E31EB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{69FAB538-686C-4CE7-B4CE-9BD884E31EB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{69FAB538-686C-4CE7-B4CE-9BD884E31EB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{69FAB538-686C-4CE7-B4CE-9BD884E31EB2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6F14E243-7ED3-43D8-A433-5BA4D52077CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6F14E243-7ED3-43D8-A433-5BA4D52077CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F14E243-7ED3-43D8-A433-5BA4D52077CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -63,13 +53,17 @@ Global
 		{2989FC05-935F-2F5E-5704-E3B6BFC0A3B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2989FC05-935F-2F5E-5704-E3B6BFC0A3B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2989FC05-935F-2F5E-5704-E3B6BFC0A3B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C326AAC3-7AA5-0DF6-3182-9650728F2F8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C326AAC3-7AA5-0DF6-3182-9650728F2F8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C326AAC3-7AA5-0DF6-3182-9650728F2F8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C326AAC3-7AA5-0DF6-3182-9650728F2F8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED0CBBBC-AF2F-6BCB-C555-1AF802EAEA7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED0CBBBC-AF2F-6BCB-C555-1AF802EAEA7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED0CBBBC-AF2F-6BCB-C555-1AF802EAEA7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED0CBBBC-AF2F-6BCB-C555-1AF802EAEA7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{A1B2C3D4-E5F6-7890-1234-567890ABCDEF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{69FAB538-686C-4CE7-B4CE-9BD884E31EB2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {12345678-1234-5678-9012-123456789012}

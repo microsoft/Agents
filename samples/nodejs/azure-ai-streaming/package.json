@@ -7,6 +7,7 @@
   "scripts": {
     "build": "tsc -b",
     "prestart": "npm run build",
+    "test-tool": "agentsplayground",
     "start": "node --env-file .env dist/agent.js"
   },
   "devDependencies": {

@@ -12,10 +12,20 @@ To setup for this sample, you will need the following:
 ### Create a Agent in Copilot Studio
 
 1. Create a Agent in [Copilot Studio](https://copilotstudio.microsoft.com)
-    1. Publish your newly created Agent
-    1. In Copilot Studio, go to Settings => Advanced => Metadata and copy the following values, You will need them later:
-        1. Schema name
-        1. Environment Id
+   1. Publish your newly created Copilot
+   1. Go to **Settings** => **Advanced** => **Metadata** and note the following values:
+      1. Schema name
+      1. Environment Id
+   1. Set the Copilot Studio Agent information in appsettings
+
+      ```json
+        "CopilotStudioAgent": {
+          "EnvironmentId": "", // Environment ID of environment with the CopilotStudio App.
+          "SchemaName": "", // Schema Name of the Copilot to use
+          "TenantId": "", // Tenant ID of the App Registration used to login,  this should be in the same tenant as the Copilot.
+          "AppClientId": "" // App ID of the App Registration used to login,  this should be in the same tenant as the Copilot.
+        }
+      ```
 
 ## Create an Application Registration in Entra ID - User Interactive Login
 
@@ -44,34 +54,19 @@ This step will require permissions to Create application identities in your Azur
     1. (Optional) Click `Grant Admin consent for copilotsdk`
     1. Close Azure Portal
 
-> [!TIP]
-> If you do not see `Power Platform API` in the list of API's your organization uses, you need to add the Power Platform API to your tenant. To do that, goto [Power Platform API Authentication](https://learn.microsoft.com/power-platform/admin/programmability-authentication-v2#step-2-configure-api-permissions) and follow the instructions on Step 2 to add the Power Platform Admin API to your Tenant
+> **TIP:** If you do not see `Power Platform API` in the list of API's your organization uses, you need to add the Power Platform API to your tenant. To do that, goto [Power Platform API Authentication](https://learn.microsoft.com/power-platform/admin/programmability-authentication-v2#step-2-configure-api-permissions) and follow the instructions on Step 2 to add the Power Platform Admin API to your Tenant
 
 ### Instructions - Configure the Example Application - User Interactive Login
 
 With the above information, you can now run the client `CopilostStudioClientSample`.
 
-1. Open the appSettings.json file for the CopilotStudioClientSample, or rename launchSettings.TEMPLATE.json to launchSettings.json.
-1. Configured the placeholder values for the various key's based on what was recorded during the setup phase.
-
-```json
-  "CopilotStudioClientSettings": {
-    "EnvironmentId": "", // Environment ID of environment with the CopilotStudio App.
-    "SchemaName": "", // Schema Name of the Copilot to use
-    "TenantId": "", // Tenant ID of the App Registration used to login,  this should be in the same tenant as the Copilot.
-    "AppClientId": "" // App ID of the App Registration used to login,  this should be in the same tenant as the Copilot.
-  }
-```
-
 ## Create an Application Registration in Entra ID - Service Principal Login
 
-> [!Warning]
-> The Service Principal login method is not generally supported in the current version of the CopilotStudioClient. 
+> **WARNING:** The Service Principal login method is not generally supported in the current version of the CopilotStudioClient. 
 > 
 > Current use of this feature requires authorization from Copilot Studio team and will be made generally available in the future.
 
-> [!IMPORTANT]
-> When using Service Principal login, Your Copilot Studio Agent must be configured for User Anonymous authentication.
+> **IMPORTANT:** When using Service Principal login, Your Copilot Studio Agent must be configured for User Anonymous authentication.
 
 This step will require permissions to Create application identities in your Azure tenant. For this sample, you will be creating a Native Client Application Identity, which does not have secrets.
 
@@ -96,8 +91,7 @@ This step will require permissions to Create application identities in your Azur
     1. (Optional) Click `Grant Admin consent for copilotsdk`
     1. Close Azure Portal
 
-> [!TIP]
-> If you do not see `Power Platform API` in the list of API's your organization uses, you need to add the Power Platform API to your tenant. To do that, goto [Power Platform API Authentication](https://learn.microsoft.com/power-platform/admin/programmability-authentication-v2#step-2-configure-api-permissions) and follow the instructions on Step 2 to add the Power Platform Admin API to your Tenant
+> **TIP:** If you do not see `Power Platform API` in the list of API's your organization uses, you need to add the Power Platform API to your tenant. To do that, goto [Power Platform API Authentication](https://learn.microsoft.com/power-platform/admin/programmability-authentication-v2#step-2-configure-api-permissions) and follow the instructions on Step 2 to add the Power Platform Admin API to your Tenant
 
 ### Instructions - Configure the Example Application - Service Principal Login
 
@@ -106,18 +100,16 @@ With the above information, you can now run the client `CopilostStudioClientSamp
 1. Open the appSettings.json file for the CopilotStudioClientSample, or rename launchSettings.TEMPLATE.json to launchSettings.json.
 1. Configured the placeholder values for the various key's based on what was recorded during the setup phase.
 
-```json
-  "CopilotStudioClientSettings": {
-    "EnvironmentId": "", // Environment ID of environment with the CopilotStudio App.
-    "SchemaName": "", // Schema Name of the Copilot to use
-    "TenantId": "", // Tenant ID of the App Registration used to login,  this should be in the same tenant as the Copilot.
-    "UseS2SConnection": true,
-    "AppClientId": "" // App ID of the App Registration used to login,  this should be in the same tenant as the Copilot.
-    "AppClientSecret": "" // App Secret of the App Registration used to login,  this should be in the same tenant as the Copilot.
-  }
-```
-
-
+   ```json
+   "CopilotStudioClientSettings": {
+     "EnvironmentId": "", // Environment ID of environment with the CopilotStudio App.
+     "SchemaName": "", // Schema Name of the Copilot to use
+     "TenantId": "", // Tenant ID of the App Registration used to login,  this should be in the same tenant as the Copilot.
+     "UseS2SConnection": true,
+     "AppClientId": "" // App ID of the App Registration used to login,  this should be in the same tenant as the Copilot.
+     "AppClientSecret": "" // App Secret of the App Registration used to login,  this should be in the same tenant as the Copilot.
+   }
+   ```
 
 3. Run the CopilotStudioClientSample.exe program.
 

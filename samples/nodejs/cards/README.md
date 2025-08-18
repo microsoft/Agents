@@ -1,6 +1,6 @@
 # Cards-Agent
 
-This is a sample of a simple Agent that is hosted on an Node.js web service.  This Agent is configured to show how to create an agent that uses rich cards to enhance your conversation design.
+This is a sample of a simple Agent that is hosted on an Node.js web service with the Express framework.  This Agent is configured to show how to create an agent that uses rich cards to enhance your conversation design.
 
 ## Prerequisites
 

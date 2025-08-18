@@ -125,13 +125,6 @@ public class AuthAgent : AgentApplication
             return;
         }
 
-        // Just to verify we in fact have two different tokens.  This wouldn't be needed in a production Agent and here just to verify sample setup.
-        if (await UserAuthorization.GetTurnTokenAsync(turnContext, UserAuthorization.DefaultHandlerName, cancellationToken: cancellationToken) == await UserAuthorization.GetTurnTokenAsync(turnContext, "me", cancellationToken))
-        {
-            await turnContext.SendActivityAsync($"It would seem '{UserAuthorization.DefaultHandlerName}' and 'me' are using the same OAuth Connection", cancellationToken: cancellationToken);
-            return;
-        }
-
         var meInfo = $"Name: {displayName}\r\nJob Title: {graphInfo["jobTitle"]!.GetValue<string>()}\r\nEmail: {graphInfo["mail"]!.GetValue<string>()}";
         await turnContext.SendActivityAsync(meInfo, cancellationToken: cancellationToken);
     }

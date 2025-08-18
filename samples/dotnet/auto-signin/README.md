@@ -4,7 +4,7 @@ This Agent has been created using [Microsoft 365 Agents Framework](https://githu
 
 This sample:
 - Gets an OAuth token automatically for every message sent by the user
-  > This is done by setting the `AgentApplication:UserAuthorization:AutoSign` setting to true.  This will use the default UserAuthorization Handler to automatically get a token for all incoming Activities.  Use this when your Agents needs the same token for much of it's functionality.
+  > This is done by setting the `AgentApplication:UserAuthorization:AutoSignIn` setting to true.  This will use the default UserAuthorization Handler to automatically get a token for all incoming Activities.  Use this when your Agents needs the same token for much of it's functionality.
 - Per-Route sign in .  In this sample, this is the `-me` message.
   > Messages the user sends are routed to a handler of your choice.  This feature allows you to indicate that a particular token is needed for the handler.  Per-Route user authorization will automatically handle the OAuth flow to get the token and make it available to your Agent.  Keep in mind that if the the Auto SignIn option is enabled, you actually have two tokens available in the handler.
 
@@ -24,43 +24,16 @@ The sample uses the bot OAuth capabilities in [Azure Bot Service](https://docs.b
   - Test in a client
 
 1. Create an Azure Bot with one of these authentication types
-   - [SingleTenant, Client Secret](https://github.com/microsoft/Agents/blob/main/docs/HowTo/azurebot-create-single-secret.md)
-   - [SingleTenant, Federated Credentials](https://github.com/microsoft/Agents/blob/main/docs/HowTo/azurebot-create-fic.md) 
-   - [User Assigned Managed Identity](https://github.com/microsoft/Agents/blob/main/docs/HowTo/azurebot-create-msi.md)
+   - [SingleTenant, Client Secret](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/azure-bot-create-single-secret)
+   - [SingleTenant, Federated Credentials](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/azure-bot-create-federated-credentials) 
+   - [User Assigned Managed Identity](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/azure-bot-create-managed-identity)
+    
+   > Be sure to follow the **Next Steps** at the end of these docs to configure your agent settings.
 
-1. [Add OAuth to your bot](https://aka.ms/AgentsSDK-AddAuth)
+   > **IMPORTANT:** If you want to run your agent locally via devtunnels, the only support auth type is ClientSecrets and Certificates
 
-1. For purposes of this sample, create a second Azure Bot **OAuth Connection** as a copy of the one just created.
-   > This is to ease setup of this sample.  In an actual Agent, this second connection would be setup separately, with different API Permissions and scopes specific to the external service being accessed. \
-   > This OAuth Connection is for the `-me` message in this sample.   
-
-1. Configuring the authentication connection in the Agent settings
-   > These instructions are for **SingleTenant, Client Secret**. For other auth type configuration, see [DotNet MSAL Authentication](https://github.com/microsoft/Agents/blob/main/docs/HowTo/MSALAuthConfigurationOptions.md).
-   1. Open the `appsettings.json` file in the root of the sample project.
-
-   1. Find the section labeled `Connections`,  it should appear similar to this:
-
-      ```json
-      "Connections": {
-        "ServiceConnection": {
-          "Settings": {
-            "AuthType": "ClientSecret", // this is the AuthType for the connection, valid values can be found in Microsoft.Agents.Authentication.Msal.Model.AuthTypes.  The default is ClientSecret.
-            "AuthorityEndpoint": "https://login.microsoftonline.com/{{TenantId}}",
-            "ClientId": "{{ClientId}}", // this is the Client ID used for the connection.
-            "ClientSecret": "{{ClientSecret}}", // this is the Client Secret used for the connection.
-            "Scopes": [
-              "https://api.botframework.com/.default"
-            ]
-          }
-        }
-      },
-      ```
-
-      1. Replace all **{{ClientId}}** with the AppId of the Azure Bot.
-      1. Replace all **{{TenantId}}** with the Tenant Id where your application is registered.
-      1. Set the **{{ClientSecret}}** to the Secret that was created on the App Registration.
-      
-      > Storing sensitive values in appsettings is not recommend.  Follow [AspNet Configuration](https://learn.microsoft.com/aspnet/core/fundamentals/configuration/?view=aspnetcore-9.0) for best practices.
+1. [Add OAuth to your bot](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/azure-bot-user-authorization-federated-credentials)
+   1. For ease of setup, you can use just one OAuth Connection for both handlers (below).
 
 1. Configure the UserAuthorization handlers
    1. Open the `appsettings.json` file and locate
@@ -68,7 +41,7 @@ The sample uses the bot OAuth capabilities in [Azure Bot Service](https://docs.b
       "AgentApplication": {
         "UserAuthorization": {
           "DefaultHandlerName": "auto",
-          "AutoSignin": true,
+          "AutoSignIn": true,
           "Handlers": {
             "auto": {
               "Settings": {
@@ -90,6 +63,8 @@ The sample uses the bot OAuth capabilities in [Azure Bot Service](https://docs.b
 
       1. Replace **{{auto_connection_name}}** with the first **OAuth Connection** name created
       1. Replace **{{me_connection_name}}** with the second **OAuth Connection** name created
+      
+      > For more information on OAuth see [Configure your .NET Agent to use OAuth](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/agent-oauth-configuration-dotnet)
 
 1. Running the Agent
    1. Running the Agent locally
@@ -139,12 +114,12 @@ The sample uses the bot OAuth capabilities in [Azure Bot Service](https://docs.b
 - Sending `-me` will display additional information about you.
 - Note that if running this in Teams and SSO is setup, you shouldn't see any "sign in" prompts.  This is true in this sample since we are only requesting a basic set of scopes that Teams doesn't require additional consent for.
 
-1. ## Enabling JWT token validation
+## Enabling JWT token validation
 1. By default, the AspNet token validation is disabled in order to support local debugging.
 1. Enable by updating appsettings
    ```json
    "TokenValidation": {
-     "Enabled": false,
+     "Enabled": true,
      "Audiences": [
        "{{ClientId}}" // this is the Client ID used for the Azure Bot
      ],
@@ -153,5 +128,6 @@ The sample uses the bot OAuth capabilities in [Azure Bot Service](https://docs.b
    ```
 
 ## Further reading
-To learn more about building Agents, see our [Microsoft 365 Agents SDK](https://github.com/microsoft/agents) repo.
+- [Configure your .NET Agent to use OAuth](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/agent-oauth-configuration-dotnet)
+- To learn more about building Agents, see [Microsoft 365 Agents SDK](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/).
 

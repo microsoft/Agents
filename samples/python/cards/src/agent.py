@@ -71,6 +71,7 @@ async def on_message(context: TurnContext, _state: TurnState):
             await CardMessages.send_intro_card(context)
     else:
         await context.send_activity(
-            "This sample is only for testing Cards using CardFatory methods."
+            "This sample is only for testing Cards using CardFactory methods."
             "Please refer to other samples to test out more functionalities"
         )
+

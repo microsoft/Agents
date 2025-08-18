@@ -5,7 +5,7 @@
 |QuickStart/Empty Agent|Simplest agent|[quickstart](quickstart/README.md)|
 |AutoSignIn|Simple OAuth agent using Graph|[auto-signin](auto-signin/README.md)|
 |OBOAuthorization|OBO to Copilot Studio Agent |[obo-authorization](obo-authorization/README.md)|
-|Implement Semantic Kernel|WeatherAgent with Semantic Kernel|[semantic-kernel-multiturn](semantic-kernel-multiturn/README.md)|
+|Semantic Kernel | WeatherAgent which demonstrates a multi-turn AI interaction |[semantic-kernel-multiturn](semantic-kernel-multiturn/README.md)|
 |Streaming Agent |Streams OpenAI responses|[azure-ai-streaming](azure-ai-streaming/README.md)|
 |Copilot Studio Client|Console app to consume a Copilot Studio Agent|[copilotstudio-client](copilotstudio-client/README.md)|
 |Copilot Studio Skill |Call the echo bot from a Copilot Studio skill |[copilotstudio-skill](copilotstudio-skill/README.md)|
