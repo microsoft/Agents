@@ -5,7 +5,7 @@
 |QuickStart/Empty Agent|Simplest agent|N/A|
 |AutoSignIn|Simple OAuth agent using Graph|[auto-signin](auto-signin/README.md)|
 |OBOAuthorization|OBO to Copilot Studio Agent|[obo-authorization](obo-authorization/README.md)|
-|Integrate LangChain|WeatherAgent with LangChain|[integrate-langchain](integrate-langchain/README.md)|
+|Integrate LangChain|WeatherAgent with LangChain|[langchain-multiturn](langchain-multiturn/README.md)|
 |Streaming Agent|Streams OpenAI responses|[azure-ai-streaming](azure-ai-streaming/README.md)|
 |Copilot Studio Client|Console app to consume a Copilot Studio Agent|[copilotstudio-client](copilotstudio-client/README.md)|
 |Copilot Studio Client - React Webchat|App to consume a Copilot Studio Agent integrated with a Webchat Client|[copilotstudio-webchat-react](copilotstudio-webchat-react/README.md)|
