@@ -19,8 +19,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Microsoft.Agents.AspNetAuthentication;
-
 public static class AspNetExtensions
 {
     private static readonly ConcurrentDictionary<string, ConfigurationManager<OpenIdConnectConfiguration>> _openIdMetadataCache = new();
@@ -35,15 +33,34 @@ public static class AspNetExtensions
     /// <remarks>
     /// <para>This extension reads <see cref="TokenValidationOptions"/> settings from configuration.  If configuration is missing JWT token
     /// is not enabled.</para>
-    /// The minimum, but typical, configuration is:
+    /// <p>The minimum, but typical, configuration is:</p>
     /// <code>
     /// "TokenValidation": {
+    ///    "Enabled": boolean,
     ///    "Audiences": [
     ///      "{{ClientId}}" // this is the Client ID used for the Azure Bot
     ///    ],
     ///    "TenantId": "{{TenantId}}"
     /// }
     /// </code>
+    /// <para>The full options are:</para>
+    /// <code>
+    /// "TokenValidation": {
+    ///   "Enabled": boolean,
+    ///   "Audiences": [
+    ///     "{required:agent-appid}"
+    ///   ],
+    ///   "TenantId": "{recommended:tenant-id}",
+    ///   "ValidIssuers": [
+    ///     "{default:Public-AzureBotService}"
+    ///   ],
+    ///   "IsGov": {optional:false},
+    ///   "AzureBotServiceOpenIdMetadataUrl": optional,
+    ///   "OpenIdMetadataUrl": optional,
+    ///   "AzureBotServiceTokenHandling": "{optional:true}"
+    ///   "OpenIdMetadataRefresh": "optional-12:00:00"
+    /// }
+    /// </code>    
     /// </remarks>
     public static void AddAgentAspNetAuthentication(this IServiceCollection services, IConfiguration configuration, string tokenValidationSectionName = "TokenValidation")
     {

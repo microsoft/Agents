@@ -4,7 +4,7 @@
 # enable logging for Microsoft Agents library
 # for more information, see README.md for Quickstart Agent
 import logging
-ms_agents_logger = logging.getLogger("microsoft.agents")
+ms_agents_logger = logging.getLogger("microsoft_agents")
 ms_agents_logger.addHandler(logging.StreamHandler())
 ms_agents_logger.setLevel(logging.INFO)
 
@@ -17,8 +17,8 @@ from dotenv import load_dotenv
 
 from msal import PublicClientApplication
 
-from microsoft.agents.activity import ActivityTypes, load_configuration_from_env
-from microsoft.agents.copilotstudio.client import (
+from microsoft_agents.activity import ActivityTypes, load_configuration_from_env
+from microsoft_agents.copilotstudio.client import (
     ConnectionSettings,
     CopilotClient,
 )

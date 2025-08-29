@@ -46,7 +46,9 @@ namespace RetrievalBot.Plugins
         [KernelFunction]
         public async Task<string> BuildRetrievalAsync(string userquery)
         {
-            string accessToken = _app.Authorization.GetTurnToken("graph");
+#pragma warning disable CS0618 // Type or member is obsolete
+            string accessToken = _app.UserAuthorization.GetTurnToken("graph");
+#pragma warning restore CS0618 // Type or member is obsolete
             var tokenProvider = new StaticTokenProvider(accessToken);
             var authProvider = new BaseBearerTokenAuthenticationProvider(tokenProvider);
             var requestAdapter = new HttpClientRequestAdapter(authProvider);

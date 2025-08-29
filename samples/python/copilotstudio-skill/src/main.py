@@ -4,14 +4,14 @@
 # enable logging for Microsoft Agents library
 # for more information, see README.md for Quickstart Agent
 import logging
-ms_agents_logger = logging.getLogger("microsoft.agents")
+ms_agents_logger = logging.getLogger("microsoft_agents")
 ms_agents_logger.addHandler(logging.StreamHandler())
 ms_agents_logger.setLevel(logging.INFO)
 
 from os import environ
 
-from microsoft.agents.hosting.core import AgentApplication
-from microsoft.agents.hosting.aiohttp import (
+from microsoft_agents.hosting.core import AgentApplication
+from microsoft_agents.hosting.aiohttp import (
     start_agent_process,
     jwt_authorization_middleware,
     CloudAdapter,

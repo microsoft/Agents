@@ -8,6 +8,7 @@
 		<UserSecretsId>b842df34-390f-490d-9dc0-73909363ad16</UserSecretsId>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -18,9 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Azure.Identity" Version="1.13.2" />
 		<PackageReference Include="Microsoft.Graph" Version="5.75.0" />
-		<PackageReference Include="Microsoft.IdentityModel.Validators" Version="8.7.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="AdaptiveCards" Version="3.1.0" />
@@ -28,8 +27,8 @@
 		<PackageReference Include="Microsoft.SemanticKernel.Agents.OpenAI" Version="1.29.0-alpha" />
 		<PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureOpenAI" Version="1.29.0" />
 		<PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.29.0" />
-		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="0.2.257-alpha" />
-		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="0.2.257-alpha" />
+		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.2.*-*" />
+		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.2.*-*" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="dotnet\src\Microsoft.Agents.M365Copilot.Beta\Microsoft.Agents.M365Copilot.Beta.csproj" />

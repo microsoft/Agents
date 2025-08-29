@@ -77,15 +77,15 @@ import logging
 logger = logging.getLogger(__name__)
 ```
 
-By using `__name__`, the logger for the module will have namespaces corresponding to the file structure. So, `microsoft.agents.hosting.core.app.agent_application.py` will initialize a new logger with the namespace `microsoft.agents.hosting.core.app.agent_application`, and any configurations to parent namespaces such as `microsoft.agents.hosting` or `microsoft` will apply to that new logger. By default, logging level for the `microsoft.agents.*` namespaces is set to `WARNING`, so logs emitted with levels above and equal to that are logged. By default, this would be `WARNING`, `ERROR`, and `CRITICAL`. Thus, by default `DEBUG` and `INFO` logs are ignored.
+By using `__name__`, the logger for the module will have namespaces corresponding to the file structure. So, `microsoft_agents.hosting.core.app.agent_application.py` will initialize a new logger with the namespace `microsoft_agents.hosting.core.app.agent_application`, and any configurations to parent namespaces such as `microsoft_agents.hosting` or `microsoft` will apply to that new logger. By default, logging level for the `microsoft_agents.*` namespaces is set to `WARNING`, so logs emitted with levels above and equal to that are logged. By default, this would be `WARNING`, `ERROR`, and `CRITICAL`. Thus, by default `DEBUG` and `INFO` logs are ignored.
 
 ### Configuration
 
-In these samples, we configure the logging for the `microsoft.agents` namespace with:
+In these samples, we configure the logging for the `microsoft_agents` namespace with:
 
 ```python
 import logging
-ms_agents_logger = logging.getLogger("microsoft.agents")
+ms_agents_logger = logging.getLogger("microsoft_agents")
 ms_agents_logger.addHandler(logging.StreamHandler())
 ms_agents_logger.setLevel(logging.INFO)
 ```
@@ -103,7 +103,7 @@ Acquiring token using Confidential Client Application.
 Meanwhile, here is an example that extends the configuration above to display logs in a more readable fashion by applying a formatter:
 ```python
 import logging
-ms_agents_logger = logging.getLogger("microsoft.agents")
+ms_agents_logger = logging.getLogger("microsoft_agents")
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s (%(filename)s:%(lineno)d)"))
 ms_agents_logger.addHandler(console_handler)
@@ -115,9 +115,9 @@ Running the Quickstart Agent with this configuration will print something like f
 ```bash
 ======== Running on http://localhost:3978 ========
 (Press CTRL+C to quit)
-2025-08-06 09:39:24,539 - microsoft.agents.authentication.msal.msal_auth - INFO - Acquiring token using Confidential Client Application. (msal_auth.py:55)
-2025-08-06 09:39:24,658 - microsoft.agents.authentication.msal.msal_auth - INFO - Using cached client credentials for MSAL authentication. (msal_auth.py:117)
-2025-08-06 09:39:24,824 - microsoft.agents.authentication.msal.msal_auth - INFO - Acquiring token using Confidential Client Application. (msal_auth.py:55)
+2025-08-06 09:39:24,539 - microsoft_agents.authentication.msal.msal_auth - INFO - Acquiring token using Confidential Client Application. (msal_auth.py:55)
+2025-08-06 09:39:24,658 - microsoft_agents.authentication.msal.msal_auth - INFO - Using cached client credentials for MSAL authentication. (msal_auth.py:117)
+2025-08-06 09:39:24,824 - microsoft_agents.authentication.msal.msal_auth - INFO - Acquiring token using Confidential Client Application. (msal_auth.py:55)
 ...
 ```
 

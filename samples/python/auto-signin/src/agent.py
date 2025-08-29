@@ -6,7 +6,7 @@ import logging, json
 from os import environ, path
 from dotenv import load_dotenv
 
-from microsoft.agents.hosting.core import (
+from microsoft_agents.hosting.core import (
     Authorization,
     TurnContext,
     MessageFactory,
@@ -15,9 +15,9 @@ from microsoft.agents.hosting.core import (
     TurnState,
     MemoryStorage,
 )
-from microsoft.agents.activity import activity, load_configuration_from_env, ActivityTypes, Activity
-from microsoft.agents.hosting.aiohttp import CloudAdapter
-from microsoft.agents.authentication.msal import MsalConnectionManager
+from microsoft_agents.activity import load_configuration_from_env, ActivityTypes
+from microsoft_agents.hosting.aiohttp import CloudAdapter
+from microsoft_agents.authentication.msal import MsalConnectionManager
 
 from .github_api_client import get_current_profile, get_pull_requests
 from .user_graph_client import get_user_info

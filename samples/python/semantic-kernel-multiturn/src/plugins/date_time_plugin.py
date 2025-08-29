@@ -2,6 +2,7 @@ from semantic_kernel.functions import kernel_function
 from datetime import date
 from datetime import datetime
 
+
 class DateTimePlugin:
 
     @kernel_function(
@@ -28,4 +29,3 @@ class DateTimePlugin:
         date_time = datetime.now()
         formatted_date_time = date_time.strftime(formatProvider)
         return formatted_date_time
-
