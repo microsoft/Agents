@@ -5,7 +5,7 @@ import json
 from os import environ
 from dotenv import load_dotenv
 
-from microsoft.agents.hosting.core import (
+from microsoft_agents.hosting.core import (
     Authorization,
     TurnContext,
     MemoryStorage,
@@ -14,9 +14,9 @@ from microsoft.agents.hosting.core import (
     MemoryStorage,
     MessageFactory,
 )
-from microsoft.agents.activity import load_configuration_from_env
-from microsoft.agents.hosting.aiohttp import CloudAdapter
-from microsoft.agents.authentication.msal import MsalConnectionManager
+from microsoft_agents.activity import load_configuration_from_env
+from microsoft_agents.hosting.aiohttp import CloudAdapter
+from microsoft_agents.authentication.msal import MsalConnectionManager
 
 from .card_messages import CardMessages
 

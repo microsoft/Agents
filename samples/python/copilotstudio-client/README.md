@@ -4,7 +4,7 @@
 
 To set up this sample, you will need the following:
 
-- [Python](https://www.python.org/) version 3.9 or higher
+1. [Python](https://www.python.org/) version 3.9 or higher
 2. An Agent Created in Microsoft Copilot Studio or access to an existing Agent.
 3. Ability to Create an Application Identity in Azure for a Public Client/Native App Registration Or access to an existing Public Client/Native App registration with the `CopilotStudio.Copilots.Invoke` API Permission assigned. 
 
@@ -81,4 +81,5 @@ python -m src.main
 This should challenge you to login and connect to the Copilot Studio Hosted agent, allowing you to communicate via a console interface.
 
 ## Further Reading
+
 For more information on logging configuration, see the logging section in the Quickstart Agent sample README.

@@ -21,7 +21,7 @@ namespace RetrievalBot.Plugins
         /// </example>
         /// <returns> The current date </returns>
         [KernelFunction, Description("Get the current date")]
-        public string Date(IFormatProvider formatProvider = null)
+        public string Date(IFormatProvider? formatProvider = null)
         {
             // Example: Sunday, 12 January, 2025
             var date = DateTimeOffset.Now.ToString("D", formatProvider);
@@ -37,7 +37,7 @@ namespace RetrievalBot.Plugins
         /// </example>
         /// <returns> The current date </returns>
         [KernelFunction, Description("Get the current date")]
-        public string Today(IFormatProvider formatProvider = null) =>
+        public string Today(IFormatProvider? formatProvider = null) =>
             // Example: Sunday, 12 January, 2025
             this.Date(formatProvider);
 

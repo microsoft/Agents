@@ -10,7 +10,6 @@ This Agent Sample is intended to introduce you to the Copilot Retrieval API Grou
 
 - [.NET](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) version 8.0
 - [Dev Tunnels](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started)
-- [Bot Framework Emulator](https://github.com/Microsoft/BotFramework-Emulator/releases) for Testing Web Chat.
 - Download and install Visual Studio (I have 2022 version).
 - You need Azure subscription to create Azure Bot Service. Follow the steps here – Link TBD
 - Have Git available on your computer [Git - Installing Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
@@ -27,8 +26,6 @@ This Agent Sample is intended to introduce you to the Copilot Retrieval API Grou
 
 - Access to an Azure Subscription with access to preform the following tasks:
     - Create and configure [Entra ID Application Identities](https://aka.ms/AgentsSDK-CreateBot)
-    - Create and configure an [Azure Bot Service](https://aka.ms/azuredeployment) for your bot
-    - Create and configure an [Azure App Service](https://learn.microsoft.com/azure/app-service/) to deploy your bot on to.
     - A tunneling tool to allow for local development and debugging should you wish to do local development whilst connected to a external client such as Microsoft Teams.
 
     1. Configure your AI service settings. The sample provides configuration placeholders for using Azure OpenAI or OpenAI, but others can be used as well.
@@ -70,24 +67,6 @@ This Agent Sample is intended to introduce you to the Copilot Retrieval API Grou
                 1. `AIServices__OpenAI__ApiKey` - Your OpenAI API key
                 1. `AIServices__UseAzureOpenAI` - `false`
 
-## Getting Started with RetrievalBot Sample
-
-Read more about [Running an Agent](../../../docs/HowTo/running-an-agent.md)
-
-### QuickStart using Bot Framework Emulator
-
-1. Open the RetrievalBot Sample in Visual Studio 2022
-1. Run it in Debug Mode (F5)
-1. A blank web page will open, note down the URL which should be similar too `http://localhost:65349/`
-1. Open the [BotFramework Emulator](https://github.com/Microsoft/BotFramework-Emulator/releases)
-    1. Click **Open Bot**
-    1. In the bot URL field input the URL you noted down from the web page and add /api/messages to it. It should appear similar to `http://localhost:65349/api/messages`
-    1. Click **Connect**
-
-If all is working correctly, the Bot Emulator should show you a Web Chat experience with the words **"Hello and Welcome! I'm here to help with all your weather forecast needs!"**
-
-If you type a message and hit enter, or the send arrow, you should receive a message asking for more information, or with a weather forecast card.
-
 ### QuickStart using WebChat
 
 1. Create an Azure Bot
@@ -102,15 +81,15 @@ If you type a message and hit enter, or the send arrow, you should receive a mes
 
       ```json
       "TokenValidation": {
+        "Enabled": true,
         "Audiences": [
-          "00000000-0000-0000-0000-000000000000" // this is the Client ID used for the Azure Bot
-        ]
+          "{{ClientId}}" // this is the Client ID used for the Azure Bot
+        ],
+        "TenantId": "{{TenantId}}"
       },
 
       "Connections": {
-          "BotServiceConnection": {
-          "Assembly": "Microsoft.Agents.Authentication.Msal",
-          "Type":  "MsalAuth",
+          "ServiceConnection": {
           "Settings": {
               "AuthType": "ClientSecret", // this is the AuthType for the connection, valid values can be found in Microsoft.Agents.Authentication.Msal.Model.AuthTypes.  The default is ClientSecret.
               "AuthorityEndpoint": "https://login.microsoftonline.com/{{TenantId}}",
@@ -118,8 +97,7 @@ If you type a message and hit enter, or the send arrow, you should receive a mes
               "ClientSecret": "00000000-0000-0000-0000-000000000000", // this is the Client Secret used for the connection.
               "Scopes": [
                 "https://api.botframework.com/.default"
-              ],
-              "TenantId": "{{TenantId}}" // This is the Tenant ID used for the Connection. 
+              ]
           }
       }
       ```
@@ -132,7 +110,6 @@ If you type a message and hit enter, or the send arrow, you should receive a mes
       > Storing sensitive values in appsettings is not recommend.  Follow [AspNet Configuration](https://learn.microsoft.com/aspnet/core/fundamentals/configuration/?view=aspnetcore-9.0) for best practices.
 
 1. Run `dev tunnels`. Please follow [Create and host a dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) and host the tunnel with anonymous user access command as shown below:
-   > NOTE: Go to your project directory and open the `./Properties/launchSettings.json` file. Check the port number and use that port number in the devtunnel command (instead of 3978).
 
    ```bash
    devtunnel host -p 3978 --allow-anonymous
@@ -153,4 +130,4 @@ If you type a message and hit enter, or the send arrow, you should receive a mes
 
 
 ## Further reading
-To learn more about building Bots and Agents, see our [Microsoft 365 Agents SDK](https://github.com/microsoft/agents) repo.
+To learn more about building Agents, see [Microsoft 365 Agents SDK](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/).

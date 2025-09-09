@@ -1,7 +1,7 @@
-from microsoft.agents.activity import ActionTypes, Activity, ActivityTypes, Attachment
-from microsoft.agents.hosting.core import CardFactory, TurnContext
+from microsoft_agents.activity import ActionTypes, Activity, ActivityTypes, Attachment
+from microsoft_agents.hosting.core import CardFactory, TurnContext
 
-from microsoft.agents.activity import (
+from microsoft_agents.activity import (
     HeroCard,
     AnimationCard,
     AudioCard,

@@ -6,7 +6,7 @@ import logging, json
 from os import environ, path
 from dotenv import load_dotenv
 
-from microsoft.agents.hosting.core import (
+from microsoft_agents.hosting.core import (
     Authorization,
     TurnContext,
     MessageFactory,
@@ -15,9 +15,9 @@ from microsoft.agents.hosting.core import (
     TurnState,
     MemoryStorage,
 )
-from microsoft.agents.activity import activity, load_configuration_from_env, ActivityTypes, Activity
-from microsoft.agents.hosting.aiohttp import CloudAdapter
-from microsoft.agents.authentication.msal import MsalConnectionManager
+from microsoft_agents.activity import load_configuration_from_env, ActivityTypes
+from microsoft_agents.hosting.aiohttp import CloudAdapter
+from microsoft_agents.authentication.msal import MsalConnectionManager
 
 from .github_api_client import get_current_profile, get_pull_requests
 from .user_graph_client import get_user_info
@@ -73,7 +73,7 @@ async def status(context: TurnContext, state: TurnState) -> bool:
 
 @AGENT_APP.message("/logout")
 async def logout(context: TurnContext, state: TurnState) -> None:
-    await AGENT_APP.auth.sign_out(context, state)
+    await AGENT_APP.auth.sign_out(context)
     await context.send_activity(MessageFactory.text("You have been logged out."))
 
 
@@ -105,7 +105,9 @@ async def pull_requests(context: TurnContext, state: TurnState) -> None:
 
         # prs = await get_pull_requests("microsoft", "agents", user_token_response.token)
         # as suggested by Copilot, using a public repository without SAML enforcement
-        prs = await get_pull_requests("octocat", "Hello-World", user_token_response.token)
+        prs = await get_pull_requests(
+            "octocat", "Hello-World", user_token_response.token
+        )
         for pr in prs:
             card = create_pr_card(pr)
             await context.send_activity(MessageFactory.attachment(card))

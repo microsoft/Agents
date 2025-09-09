@@ -76,7 +76,7 @@ namespace RetrievalBot.Agents
         /// </summary>
         /// <param name="input">A message to process.</param>
         /// <returns>An instance of <see cref="RetrievalAgentResponse"/></returns>
-        public async Task<RetrievalAgentResponse> InvokeAgentAsync(string input, ChatHistory chatHistory)
+        public async Task<RetrievalAgentResponse?> InvokeAgentAsync(string input, ChatHistory chatHistory)
         {
             ArgumentNullException.ThrowIfNull(chatHistory);
 

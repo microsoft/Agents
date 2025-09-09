@@ -8,16 +8,16 @@ import traceback
 from dotenv import load_dotenv
 
 from os import environ
-from microsoft.agents.hosting.aiohttp import CloudAdapter
-from microsoft.agents.hosting.core import (
+from microsoft_agents.hosting.aiohttp import CloudAdapter
+from microsoft_agents.hosting.core import (
     Authorization,
     AgentApplication,
     TurnState,
     TurnContext,
     MemoryStorage,
 )
-from microsoft.agents.authentication.msal import MsalConnectionManager
-from microsoft.agents.activity import load_configuration_from_env
+from microsoft_agents.authentication.msal import MsalConnectionManager
+from microsoft_agents.activity import load_configuration_from_env
 
 load_dotenv()  # robrandao: todo
 agents_sdk_config = load_configuration_from_env(environ)

@@ -5,7 +5,9 @@ from pydantic import BaseModel
 
 from semantic_kernel import Kernel
 from semantic_kernel.connectors.ai.open_ai import OpenAIPromptExecutionSettings
-from semantic_kernel.connectors.ai.function_choice_behavior import FunctionChoiceBehavior
+from semantic_kernel.connectors.ai.function_choice_behavior import (
+    FunctionChoiceBehavior,
+)
 from semantic_kernel.functions import KernelArguments
 from semantic_kernel.contents import ChatHistory
 from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
@@ -13,14 +15,16 @@ from semantic_kernel.agents import ChatCompletionAgent, ChatHistoryAgentThread
 
 from src.plugins import DateTimePlugin, WeatherForecastPlugin, AdaptiveCardPlugin
 
+
 class WeatherForecastAgentResponse(BaseModel):
     contentType: str = Literal["Text", "AdaptiveCard"]
     content: Union[dict, str]
 
+
 class WeatherForecastAgent:
 
     agent_name = "WeatherForecastAgent"
-    
+
     agent_instructions = """
             You are a friendly assistant that helps people find a weather forecast for a given time and place.
             You may ask follow up questions until you have enough information to answer the customers question,
@@ -36,50 +40,45 @@ class WeatherForecastAgent:
                 "content": "{The content of the response, may be plain text, or JSON based adaptive card}"
             }
             """
-    
+
     def __init__(self, client: AzureChatCompletion):
 
-        self.kernel = Kernel()
+        self.client = client
 
         execution_settings = OpenAIPromptExecutionSettings()
         execution_settings.function_choice_behavior = FunctionChoiceBehavior.Auto()
         execution_settings.temperature = 0
         execution_settings.top_p = 1
+        self.execution_settings = execution_settings
 
-        self.agent = ChatCompletionAgent(
-            service=client,
-            name=WeatherForecastAgent.agent_name,
-            instructions=WeatherForecastAgent.agent_instructions,
-            kernel=self.kernel,
-            arguments=KernelArguments(
-                chat_history=ChatHistory(),
-                settings=execution_settings,
-                kernel=self.kernel
-            )
-        )
-
-        self.agent.kernel.add_plugin(
-            plugin=DateTimePlugin(),
-            plugin_name="datetime"
-        )
-        self.kernel.add_plugin(
-            plugin=AdaptiveCardPlugin(),
-            plugin_name="adaptiveCard"
-        )
-        self.kernel.add_plugin(
-            plugin=WeatherForecastPlugin(),
-            plugin_name="weatherForecast"
-        )
-
-    async def invoke_agent(self, input: str, chat_history: ChatHistory) -> dict[str, Any]:
+    async def invoke_agent(
+        self, input: str, chat_history: ChatHistory
+    ) -> dict[str, Any]:
 
         thread = ChatHistoryAgentThread()
+        kernel = Kernel()
 
         chat_history.add_user_message(input)
 
+        agent = ChatCompletionAgent(
+            service=self.client,
+            name=WeatherForecastAgent.agent_name,
+            instructions=WeatherForecastAgent.agent_instructions,
+            kernel=kernel,
+            arguments=KernelArguments(
+                chat_history=ChatHistory(),
+                settings=self.execution_settings,
+                kernel=kernel,
+            ),
+        )
+
+        agent.kernel.add_plugin(plugin=DateTimePlugin(), plugin_name="datetime")
+        kernel.add_plugin(plugin=AdaptiveCardPlugin(), plugin_name="adaptiveCard")
+        kernel.add_plugin(plugin=WeatherForecastPlugin(), plugin_name="weatherForecast")
+
         resp: str = ""
 
-        async for chat in self.agent.invoke(chat_history, thread=thread):
+        async for chat in agent.invoke(chat_history, thread=thread):
             chat_history.add_message(chat.content)
             resp += chat.content.content
 
@@ -87,7 +86,7 @@ class WeatherForecastAgent:
         if "json\n" in resp:
             resp = resp.replace("json\n", "")
             resp = resp.replace("```", "")
-        
+
         resp = resp.strip()
 
         try:
@@ -95,4 +94,8 @@ class WeatherForecastAgent:
             result = WeatherForecastAgentResponse.model_validate(json_node)
             return result
         except Exception as e:
-            return await self.invoke_agent("That response did not match the expected format. Please try again. Error: " + str(e), chat_history)
+            return await self.invoke_agent(
+                "That response did not match the expected format. Please try again. Error: "
+                + str(e),
+                chat_history,
+            )

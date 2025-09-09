@@ -15,7 +15,7 @@ namespace RetrievalBot
 {
     public class Retrieval: AgentApplication
     {
-        Kernel _kernel = null;
+        private readonly Kernel _kernel;
 
         public Retrieval(AgentApplicationOptions options, Kernel kernel) : base (options)
         {

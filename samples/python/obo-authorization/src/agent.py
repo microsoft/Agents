@@ -5,7 +5,7 @@ import re
 from os import environ
 from dotenv import load_dotenv
 
-from microsoft.agents.hosting.core import (
+from microsoft_agents.hosting.core import (
     Authorization,
     TurnContext,
     MemoryStorage,
@@ -13,10 +13,15 @@ from microsoft.agents.hosting.core import (
     TurnState,
     MemoryStorage,
 )
-from microsoft.agents.activity import load_configuration_from_env, ActivityTypes
-from microsoft.agents.hosting.aiohttp import CloudAdapter
-from microsoft.agents.authentication.msal import MsalConnectionManager
-from microsoft.agents.copilotstudio.client import ConnectionSettings, CopilotClient, PowerPlatformEnvironment, PowerPlatformCloud
+from microsoft_agents.activity import load_configuration_from_env, ActivityTypes
+from microsoft_agents.hosting.aiohttp import CloudAdapter
+from microsoft_agents.authentication.msal import MsalConnectionManager
+from microsoft_agents.copilotstudio.client import (
+    ConnectionSettings,
+    CopilotClient,
+    PowerPlatformEnvironment,
+    PowerPlatformCloud,
+)
 
 # Load configuration from environment
 load_dotenv()
@@ -36,8 +41,9 @@ AGENT_APP = AgentApplication[TurnState](
 # in practice, use a more robust method to manage app state with conversation state
 mcs_convo_id = None
 
+
 async def get_client(context: TurnContext) -> CopilotClient:
-    
+
     settings = ConnectionSettings(
         environment_id=environ.get("COPILOTSTUDIOAGENT__ENVIRONMENTID"),
         agent_identifier=environ.get("COPILOTSTUDIOAGENT__SCHEMANAME"),
@@ -54,13 +60,15 @@ async def get_client(context: TurnContext) -> CopilotClient:
 
     return mcs_client
 
+
 @AGENT_APP.message("/signout")
 async def signout(context: TurnContext, state: TurnState):
     # Force a user signout to reset the user state
-    # This is needed to reset the token in Azure Bot Services if needed. 
+    # This is needed to reset the token in Azure Bot Services if needed.
     # Typically this wouldn't be need in a production Agent.  Made available to assist it starting from scratch.
-    await AGENT_APP.auth.sign_out(context, state)
+    await AGENT_APP.auth.sign_out(context)
     await context.send_activity("You have signed out")
+
 
 # Since Auto SignIn is enabled, by the time this is called the token is already available via Authorization.get_token or
 # Authorization.exchange_token.

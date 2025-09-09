@@ -1,0 +1,64 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v/MicrosoftTeams.schema.json",
+  "version": "1.0.0",
+  "manifestVersion": "",
+  "id": "643bbcc0-be45-46d5-838c-b8390347bf49",
+  "name": {
+    "short": "Testing Teams SSO Auth",
+    "full": "Testing Teams Single Sign On Sample"
+  },
+  "developer": {
+    "name": "Microsoft",
+    "mpnId": "",
+    "websiteUrl": "https://example.azurewebsites.net",
+    "privacyUrl": "https://example.azurewebsites.net/privacy",
+    "termsOfUseUrl": "https://example.azurewebsites.net/termsofuse"
+  },
+  "description": {
+    "short": "1Test Teams SSO Auth",
+    "full": "1This is a bot for testing Single Sign on for Teams"
+  },
+  "icons": {
+    "outline": "outline.png",
+    "color": "color.png"
+  },
+  "accentColor": "#FFFFFF",
+  "staticTabs": [
+    {
+      "entityId": "conversations",
+      "name": "Chat",
+      "scopes": [
+        "personal"
+      ]
+    },
+    {
+      "entityId": "about",
+      "name": "",
+      "scopes": [
+        "personal"
+      ]
+    }
+  ],
+  "bots": [
+    {
+      "botId": "79e090f7-bb8e-4b24-b966-1e88178962c6",
+      "scopes": [
+        "personal",
+        "team",
+        "groupchat"
+      ],
+      "isNotificationOnly": false,
+      "supportsCalling": false,
+      "supportsVideo": false,
+      "supportsFiles": false
+    }
+  ],
+  "validDomains": [
+    "token.botframework.com",
+    "ngrok.io"
+  ],
+  "webApplicationInfo": {
+    "id": "79e090f7-bb8e-4b24-b966-1e88178962c6",
+    "resource": "api://botid-79e090f7-bb8e-4b24-b966-1e88178962c6/access_as_user"
+  }
+}
