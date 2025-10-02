@@ -46,8 +46,8 @@ This is a sample of a simple Agent that is hosted on an Asp.net core web service
    ```json
    "AzureOpenAI": {
      "Endpoint": "",
-     "ModelName": null,
-     "OpenAIKey": null
+     "DeploymentName": null,
+     "ApiKey": null
    },
    ```
    > Storing sensitive values in appsettings is not recommend.  Follow [AspNet Configuration](https://learn.microsoft.com/aspnet/core/fundamentals/configuration/?view=aspnetcore-9.0) for best practices.
