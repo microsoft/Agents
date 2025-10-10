@@ -10,3 +10,4 @@
 |Copilot Studio Client|Console app to consume a Copilot Studio Agent|[copilotstudio-client](copilotstudio-client/README.md)|
 |Copilot Studio Skill |Call the echo bot from a Copilot Studio skill |[copilotstudio-skill](copilotstudio-skill/README.md)|
 |RetrievalBot Sample with Semantic Kernel|A simple Retrieval Agent that is hosted on an Asp.net core web service. |[RetrievalBot](RetrievalBot/README.md)|
+| Praoctive Messaging |create a new conversation or send a proactive message into an existing user–agent conversation in Microsoft Teams. |[proactive-messaging](proactive-messaging/README.md)|
