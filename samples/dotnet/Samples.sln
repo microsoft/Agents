@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoSignIn", "auto-signin\A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OBOAuthorization", "obo-authorization\OBOAuthorization.csproj", "{ED0CBBBC-AF2F-6BCB-C555-1AF802EAEA7B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgentsSDK-Agent-Framework-Sample", "Agent Framework\AgentsSDK-Agent-Framework-Sample.csproj", "{812FEFD7-E6E1-D544-9367-915A49EC6FD7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{ED0CBBBC-AF2F-6BCB-C555-1AF802EAEA7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED0CBBBC-AF2F-6BCB-C555-1AF802EAEA7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED0CBBBC-AF2F-6BCB-C555-1AF802EAEA7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{812FEFD7-E6E1-D544-9367-915A49EC6FD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{812FEFD7-E6E1-D544-9367-915A49EC6FD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{812FEFD7-E6E1-D544-9367-915A49EC6FD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{812FEFD7-E6E1-D544-9367-915A49EC6FD7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
