@@ -19,13 +19,21 @@ def start_server(
             adapter,
         )
 
+    async def liveness_check(req: Request) -> Response:
+        return Response(text="OK", status=200)
+
+    async def readiness_check(req: Request) -> Response:
+        return Response(text="OK", status=200)
+
     APP = Application(middlewares=[jwt_authorization_middleware])
     APP.router.add_post("/api/messages", entry_point)
+    APP.router.add_get("/liveness", liveness_check)
+    APP.router.add_get("/readiness", readiness_check)
     APP["agent_configuration"] = auth_configuration
     APP["agent_app"] = agent_application
     APP["adapter"] = agent_application.adapter
 
     try:
-        run_app(APP, host="localhost", port=environ.get("PORT", 3978))
+        run_app(APP, host="0.0.0.0", port=environ.get("PORT", 8088))
     except Exception as error:
         raise error

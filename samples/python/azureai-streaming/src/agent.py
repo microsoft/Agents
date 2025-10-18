@@ -43,7 +43,8 @@ token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://co
 CLIENT = AsyncAzureOpenAI(
     api_version=environ["AZURE_OPENAI_API_VERSION"],
     azure_endpoint=environ["AZURE_OPENAI_ENDPOINT"],
-    azure_ad_token_provider=token_provider
+    api_key=environ["AZURE_OPENAI_API_KEY"] if "AZURE_OPENAI_API_KEY" in environ else None,
+    # azure_ad_token_provider=token_provider
 )
 
 @AGENT_APP.conversation_update("membersAdded")
@@ -75,7 +76,7 @@ async def on_poem_message(context: TurnContext, _state: TurnState):
     context.streaming_response.queue_informative_update("Starting a poem...\n")
 
     streamed_response = await CLIENT.chat.completions.create(
-        model="gpt-4o",
+        model=environ["AZURE_OPENAI_CHAT_DEPLOYMENT_NAME"] if "AZURE_OPENAI_CHAT_DEPLOYMENT_NAME" in environ else "gpt-4o-mini",
         messages=[
             {"role": "system", "content": """You are a creative assistant who has deeply studied Greek and Roman Gods, You also know all of the Percy Jackson Series
 You write poems about the Greek Gods as they are depicted in the Percy Jackson books.
