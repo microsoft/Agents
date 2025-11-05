@@ -5,10 +5,8 @@ This Agent has been created using [Microsoft 365 Agents SDK](https://github.com/
 This sample uses different routes, and some are configured to use one or more auth handlers:
 
 ```ts
-  this.onMessage('/logout', this._logout)
-  this.onMessage('/me', this._profileRequest, ['graph'])
-  this.onMessage('/prs', this._pullRequests, ['github'])
-  this.onMessage('/status', this._status, ['graph', 'github'])
+  this.onMessage('-me', this._profileRequest, ['graph'])
+  this.onMessage('-logout', this._logout)
 ```
 
 
@@ -47,16 +45,12 @@ The sample uses the bot OAuth capabilities in [Azure Bot Service](https://docs.b
           storage: new MemoryStorage(),
           authorization: {
             graph: { text: 'Sign in with Microsoft Graph', title: 'Graph Sign In' },
-            github: { text: 'Sign in with GitHub', title: 'GitHub Sign In' },
           }
         })
     ```
 
-    you should have one item for `graph` and aonther for `github`
-
     ```env
     graph_connectionName=
-    github_connectionName=
     ```
       
 
@@ -91,7 +85,7 @@ The sample uses the bot OAuth capabilities in [Azure Bot Service](https://docs.b
 ## Interacting with the Agent
 
 - When the conversation starts, you will be greeted with a welcome message, and another message informing the token status. 
-- Sending `/me` will trigger the OAuth flow and display additional information about you.
+- Sending `-me` will trigger the OAuth flow and display additional information about you.
 - Note that if running this in Teams and SSO is setup, you shouldn't see any "sign in" prompts.  This is true in this sample since we are only requesting a basic set of scopes that Teams doesn't require additional consent for.
 
 ## Further reading
