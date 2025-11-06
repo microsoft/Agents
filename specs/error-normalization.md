@@ -20,9 +20,9 @@ These errors represent similar functionality across both platforms with matching
 | High | Storage | BlobStorageConfigRequired (implied) | N/A | BlobStorageConfigRequired | -61100 | Both require blob storage config |
 | High | Storage | BlobConnectionStringOrUrlRequired (implied) | N/A | BlobConnectionStringOrUrlRequired | -61101 | Both require connection string/URL |
 | High | Storage | BlobContainerNameRequired (implied) | N/A | BlobContainerNameRequired | -61102 | Both require container name |
-| High | Configuration | InvalidConfiguration (implied) | N/A | InvalidConfiguration | -61012, -61103, -66000 | Common configuration validation errors (multiple Python error codes represent similar scenarios) |
+| High | Configuration | InvalidConfiguration (implied) | N/A | InvalidConfiguration | -61012, -61103, -66000 | Common configuration validation errors (Note: Python has multiple error codes for InvalidConfiguration across different libraries - cosmos storage, blob storage, and general hosting. This represents a normalization opportunity.) |
 
-**Note:** The InvalidConfiguration entry represents one error type with multiple Python implementations across different libraries.
+**Note:** The InvalidConfiguration entry represents one conceptual error type that has been implemented with different error codes across multiple Python libraries. This highlights a normalization opportunity where similar errors could use a consistent code.
 
 ### Medium Confidence Matches
 
@@ -427,14 +427,14 @@ The following ranges are allocated for different error categories:
 ### 6.1 Code Range Conflicts
 
 **Issue 1:** Error code -90005 is used for two different errors in C#:
-- SendToAgentUnauthorized (line 34 in the original C# error list)
-- AgentTokenProviderNotFound (line 145 in the original C# error list)
+- SendToAgentUnauthorized
+- AgentTokenProviderNotFound
 
 **Recommendation:** Assign a unique error code to AgentTokenProviderNotFound to avoid confusion. Consider using -90006 or another available code in the -90000 range.
 
 **Issue 2:** Python authentication error range (-60012 to -60020) overlaps with the Connector/Communication range (-60000 to -60099), which could lead to confusion.
 
-**Recommendation:** Consider moving Python authentication errors to a separate range (e.g., -40100 to -40199) to align more closely with C# authentication errors and avoid overlap.
+**Recommendation:** Consider moving Python authentication errors to a separate range (e.g., -40100 to -40199) to align more closely with C# authentication errors and avoid overlap with the connector range. This would create a clearer separation of concerns and make error handling more intuitive.
 
 ### 6.2 Cross-Platform Alignment
 
@@ -446,8 +446,12 @@ For errors that represent the same functionality across platforms, consider alig
 3. Hosting/Adapter errors - Python has -63000 range, C# should align
 
 **Medium Priority:**
-1. Authentication errors - Consider consolidating C# -40000 range and Python -60012 to -60020 range
+1. Authentication errors - Consider consolidating C# -40000 range and Python -60012 to -60020 range. Recommend moving Python authentication errors to -40100 to -40199 range to align with C# and avoid overlap with connector errors.
 2. Access token provider errors - Align C# -50000 and Python -65006
+
+**Normalization Opportunities:**
+1. **InvalidConfiguration**: Python currently uses three different error codes (-61012, -61103, -66000) for the same conceptual error across different libraries. Consider standardizing on a single error code (e.g., -66000) for all InvalidConfiguration errors.
+2. **Range overlap**: Resolve the overlap between Python authentication errors (-60012 to -60020) and connector errors (-60000 to -60011) by moving authentication errors to the -40000 range.
 
 ### 6.3 Documentation URLs
 
@@ -470,16 +474,19 @@ Ensure error messages follow consistent patterns:
 ## 7. Summary
 
 This analysis identifies:
-- **9 high confidence** error type matches between C# and Python (9 table rows representing matching error scenarios)
-- **20 medium confidence** matches between C# and Python errors
-- **11 low confidence** matches between C# and Python errors
+- **9 high confidence error type matches** between C# and Python (representing 9 distinct error scenarios where both platforms require similar functionality)
+- **20 medium confidence matches** between C# and Python errors
+- **11 low confidence matches** between C# and Python errors
 - **46 Python-only** errors
 - **16 C#-only** errors
 - **10 error areas** for documentation
+
+**Note on counting methodology:** Each "match" represents a distinct error scenario that exists in both platforms, even if the implementations differ. For example, "InvalidConfiguration" is counted once despite having multiple Python error codes (-61012, -61103, -66000) because it represents a single conceptual error type.
 
 **Key Findings:**
 1. Python has significantly more error codes defined, particularly in areas like storage, hosting, and activity schema validation
 2. C# has more authentication and builder-specific errors
 3. Error code -90005 in C# is duplicated (used for both SendToAgentUnauthorized and AgentTokenProviderNotFound)
-4. Python authentication errors (-60012 to -60020) overlap with the broader connector/communication range
-5. There is an opportunity to normalize error codes across platforms in areas of overlapping functionality, particularly for storage, Teams integration, and hosting components
+4. Python authentication errors (-60012 to -60020) overlap with the connector/communication range (-60000 to -60011), creating potential confusion
+5. Python's InvalidConfiguration error has three different codes across different libraries, presenting a normalization opportunity
+6. There is significant opportunity to normalize error codes across platforms in areas of overlapping functionality, particularly for storage, Teams integration, and hosting components
