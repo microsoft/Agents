@@ -6,6 +6,8 @@ This document provides an analysis of error codes across C# and Python implement
 
 The following table identifies errors that are likely to be the same between C# and Python implementations, sorted by confidence level (High, Medium, Low).
 
+**Counting Methodology:** Each "match" represents a distinct error scenario that exists in both platforms, even if the implementations differ. For example, "InvalidConfiguration" is counted once despite having multiple Python error codes (-61012, -61103, -66000) because it represents a single conceptual error type.
+
 ### High Confidence Matches
 
 These errors represent similar functionality across both platforms with matching or closely related error scenarios:
@@ -20,9 +22,9 @@ These errors represent similar functionality across both platforms with matching
 | High | Storage | BlobStorageConfigRequired (implied) | N/A | BlobStorageConfigRequired | -61100 | Both require blob storage config |
 | High | Storage | BlobConnectionStringOrUrlRequired (implied) | N/A | BlobConnectionStringOrUrlRequired | -61101 | Both require connection string/URL |
 | High | Storage | BlobContainerNameRequired (implied) | N/A | BlobContainerNameRequired | -61102 | Both require container name |
-| High | Configuration | InvalidConfiguration (implied) | N/A | InvalidConfiguration | -61012, -61103, -66000 | Common configuration validation errors (Note: Python has multiple error codes for InvalidConfiguration across different libraries - cosmos storage, blob storage, and general hosting. This represents a normalization opportunity.) |
+| High | Configuration | InvalidConfiguration (implied) | N/A | InvalidConfiguration | -61012, -61103, -66000 | Common configuration validation errors |
 
-**Note:** The InvalidConfiguration entry represents one conceptual error type that has been implemented with different error codes across multiple Python libraries. This highlights a normalization opportunity where similar errors could use a consistent code.
+**Note on InvalidConfiguration:** Python has multiple error codes for this single conceptual error type across different libraries (cosmos storage: -61012, blob storage: -61103, general hosting: -66000). This represents a significant normalization opportunity where similar errors could use a consistent code.
 
 ### Medium Confidence Matches
 
@@ -474,14 +476,13 @@ Ensure error messages follow consistent patterns:
 ## 7. Summary
 
 This analysis identifies:
-- **9 high confidence error type matches** between C# and Python (representing 9 distinct error scenarios where both platforms require similar functionality)
+- **9 high confidence error type matches** between C# and Python
+  - Each match represents a distinct error scenario where both platforms require similar functionality
 - **20 medium confidence matches** between C# and Python errors
 - **11 low confidence matches** between C# and Python errors
 - **46 Python-only** errors
 - **16 C#-only** errors
 - **10 error areas** for documentation
-
-**Note on counting methodology:** Each "match" represents a distinct error scenario that exists in both platforms, even if the implementations differ. For example, "InvalidConfiguration" is counted once despite having multiple Python error codes (-61012, -61103, -66000) because it represents a single conceptual error type.
 
 **Key Findings:**
 1. Python has significantly more error codes defined, particularly in areas like storage, hosting, and activity schema validation
