@@ -73,7 +73,8 @@ async def status(context: TurnContext, state: TurnState) -> bool:
 
 @AGENT_APP.message("/logout")
 async def logout(context: TurnContext, state: TurnState) -> None:
-    await AGENT_APP.auth.sign_out(context)
+    await AGENT_APP.auth.sign_out(context, "GRAPH")
+    await AGENT_APP.auth.sign_out(context, "GITHUB")
     await context.send_activity(MessageFactory.text("You have been logged out."))
 
 

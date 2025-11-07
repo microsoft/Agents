@@ -24,6 +24,7 @@ This is a sample of a simple Agent that is hosted on a Python web service. The s
 1. Configure the Azure OpenAI settings in the Agent settings
    1. Set **AZURE_OPENAI_API_VERSION** to an OpenAI API version such as ` 2025-01-01-preview`
    1. Set **AZURE_OPENAI_ENDPOINT** to the endpoint for your Azure OpenAI instance. For example, if using an Azure AI Foundry named `testing`, the endpoint would be `https://endpoint.openai.azure.com/`
+   1. Set **AZURE_OPENAI_API_KEY** to the key.
 
 
 1. Run `dev tunnels`. See [Create and host a dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) and host the tunnel with anonymous user access command as shown below:
