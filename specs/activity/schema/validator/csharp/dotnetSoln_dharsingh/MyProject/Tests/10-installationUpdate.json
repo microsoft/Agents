@@ -1,0 +1,11 @@
+{
+  "type": "installationUpdate",
+  "id": "install-update-1",
+  "timestamp": "2025-09-15T10:00:10.000Z",
+  "serviceUrl": "https://smba.trafficmanager.net/amer/",
+  "channelId": "msteams",
+  "from": { "id": "user-id-admin", "name": "Admin User" },
+  "conversation": { "id": "conv-tenant-level" },
+  "recipient": { "id": "bot-id-1", "name": "AdminBot" },
+  "action": "add"
+}
