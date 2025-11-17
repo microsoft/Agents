@@ -27,7 +27,7 @@ class OboApp extends AgentApplication<TurnState> {
     } else {
       await context.sendActivity(MessageFactory.text('Token request status: ' + tresp || 'unknown'))
     }
-    const oboToken = await this.authorization.exchangeToken(context, 'graph', { scopes: ['https://graph.microsoft.com/.default']})
+    const oboToken = await this.authorization.exchangeToken(context, 'graph', { scopes: ['https://graph.microsoft.com/.default'] })
     await context.sendActivity(MessageFactory.text('OBO Token received: ' + (oboToken?.token?.length || 0)))
   }
 

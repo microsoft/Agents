@@ -21,5 +21,5 @@ skillAgent.onActivity('message', async (context) => {
 
 const server = startServer(skillAgent)
 
-// Serve static files from the "public" folder  
-server.use(express.static('public'));
+// Serve static files from the "public" folder
+server.use(express.static('public'))

@@ -6,20 +6,19 @@ import { Activity, ActivityTypes } from '@microsoft/agents-activity'
 import { CardMessages } from './cardMessages'
 import AdaptiveCard from './resources/adaptiveCard.json'
 
-const CardSampleAgent = new AgentApplication<TurnState>();
+const CardSampleAgent = new AgentApplication<TurnState>()
 
-CardSampleAgent.onConversationUpdate('membersAdded',  async (context: TurnContext, state: TurnState) => {
+CardSampleAgent.onConversationUpdate('membersAdded', async (context: TurnContext, state: TurnState) => {
   const membersAdded = context.activity.membersAdded
   for (let cnt = 0; cnt < membersAdded!.length; cnt++) {
     if ((context.activity.recipient != null) && membersAdded![cnt].id !== context.activity.recipient.id) {
       await CardMessages.sendIntroCard(context)
-
     }
   }
 })
 
-CardSampleAgent.onActivity(ActivityTypes.Message,  async (context: TurnContext, state: TurnState) => {
-    if (context.activity.text !== undefined) {
+CardSampleAgent.onActivity(ActivityTypes.Message, async (context: TurnContext, state: TurnState) => {
+  if (context.activity.text !== undefined) {
     switch (context.activity.text.split('.')[0].toLowerCase()) {
       case 'display cards options':
         await CardMessages.sendIntroCard(context)
