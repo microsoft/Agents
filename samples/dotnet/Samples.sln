@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OBOAuthorization", "obo-aut
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgentFrameworkWeather", "Agent Framework\AgentFrameworkWeather.csproj", "{812FEFD7-E6E1-D544-9367-915A49EC6FD7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenesysHandoff", "GenesysHandoff\GenesysHandoff.csproj", "{84EE4770-235D-45AB-9DF2-873EB8CE33B4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,10 @@ Global
 		{812FEFD7-E6E1-D544-9367-915A49EC6FD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{812FEFD7-E6E1-D544-9367-915A49EC6FD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{812FEFD7-E6E1-D544-9367-915A49EC6FD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84EE4770-235D-45AB-9DF2-873EB8CE33B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84EE4770-235D-45AB-9DF2-873EB8CE33B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84EE4770-235D-45AB-9DF2-873EB8CE33B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84EE4770-235D-45AB-9DF2-873EB8CE33B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
