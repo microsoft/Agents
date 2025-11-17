@@ -5,17 +5,18 @@
   "description": "Agents cards agent sample",
   "author": "Microsoft",
   "license": "MIT",
-  "main": "./lib/index.js",
+  "main": "./lib/agent.js",
   "scripts": {
     "prebuild": "npm ci",
     "build": "tsc --build",
     "prestart": "npm run build",
-    "start": "node --env-file .env ./dist/index.js",
+    "start": "node --env-file .env ./dist/agent.js",
     "test-tool": "agentsplayground",
     "test": "npm-run-all -p -r start test-tool"
   },
   "dependencies": {
-    "@microsoft/agents-hosting": "^1.0.0",
+    "@microsoft/agents-hosting": "1.1.0-alpha.58",
+    "@microsoft/agents-hosting-express": "1.1.0-alpha.58",
     "express": "^5.1.0"
   },
   "devDependencies": {
