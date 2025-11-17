@@ -1,4 +1,5 @@
 import { startServer } from '@microsoft/agents-hosting-express'
+import express from 'express'
 import { AgentApplication, MessageFactory } from '@microsoft/agents-hosting'
 import pjson from '@microsoft/agents-hosting/package.json'
 
@@ -16,4 +17,7 @@ skillAgent.onActivity('message', async (context) => {
   }
 })
 
-startServer(skillAgent)
+const server = startServer(skillAgent)
+
+// Serve static files from the "public" folder  
+server.use(express.static('public'));

@@ -14,7 +14,8 @@
   "description": "",
   "dependencies": {
     "@microsoft/agents-hosting-express": "1.1.0-alpha.58",
-    "@microsoft/microsoft-graph-client": "^3.0.7"
+    "@microsoft/microsoft-graph-client": "^3.0.7",
+    "express": "^5.1.0"
   },
   "devDependencies": {
     "globals": "^16.1.0"
