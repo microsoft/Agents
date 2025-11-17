@@ -63,12 +63,12 @@ npm test
 
 Refresh the browser to start a new conversation with the Echo bot.
 
-You should see a message from the bot like: `Echo running on Agents SDK version: {version}`
+You should see a message from the agent: `Hello and Welcome!`
 
 
 ### Interact with the agent with WebChat UI using Azure Bot Service
 
-1. [Create an Azure Bot](https://aka.ms/AgentsSDK-CreateBot)
+1. [Create an Azure Bot](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/azure-bot-create-single-secret)
    - Record the Application ID, the Tenant ID, and the Client Secret for use below
   
 1. Configuring the token connection in the Agent settings

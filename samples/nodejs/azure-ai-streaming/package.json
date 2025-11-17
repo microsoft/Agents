@@ -2,7 +2,7 @@
   "dependencies": {
     "@ai-sdk/azure": "^2.0.30",
     "@microsoft/agents-hosting-express": "^1.0.0",
-    "ai": "^5.0.44"
+    "ai": "^5.0.52"
   },
   "scripts": {
     "build": "tsc -b",
