@@ -5,14 +5,14 @@
   "description": "Agents echo bot sample",
   "author": "Microsoft",
   "license": "MIT",
-  "main": "./dist/agent.js",
+  "main": "./dist/index.js",
   "scripts": {
     "prebuild": "npm ci",
     "build": "tsc --build",
     "prestart": "npm run build",
     "prestart:anon": "npm run build",
-    "start:anon": "node ./dist/agent.js",
-    "start": "node --env-file .env ./dist/agent.js",
+    "start:anon": "node ./dist/index.js",
+    "start": "node --env-file .env ./dist/index.js",
     "test-tool": "agentsplayground",
     "test": "npm-run-all -p -r start:anon test-tool"
   },
