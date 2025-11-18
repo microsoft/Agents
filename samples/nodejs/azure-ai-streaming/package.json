@@ -8,7 +8,7 @@
     "build": "tsc -b",
     "prestart": "npm run build",
     "test-tool": "agentsplayground",
-    "start": "node --env-file .env dist/agent.js"
+    "start": "node --env-file .env dist/index.js"
   },
   "devDependencies": {
     "@microsoft/m365agentsplayground": "^0.2.16",

@@ -38,7 +38,6 @@ async function acquireToken (settings: ConnectionSettings): Promise<string> {
   const pca = new msal.PublicClientApplication(msalConfig)
   const tokenRequest = {
     scopes: ['https://api.powerplatform.com/.default'],
-    redirectUri: 'http://localhost',
     openBrowser: async (url: string) => {
       await open(url)
     }
@@ -80,27 +79,55 @@ const askQuestion = async (copilotClient: CopilotStudioClient, conversationId: s
       rl.close()
       return
     } else if (answer.length > 0) {
-      const replies = await copilotClient.askQuestionAsync(answer, conversationId)
-      replies.forEach((act: Activity) => {
-        if (act.type === ActivityTypes.Message) {
-          console.log(`\n${act.text}`)
-          act.suggestedActions?.actions.forEach((action: CardAction) => console.log(action.value))
-        } else if (act.type === ActivityTypes.EndOfConversation) {
-          console.log(`\n${act.text}`)
+      for await (const replyActivity of copilotClient.askQuestionAsync(answer, conversationId)) {
+        if (replyActivity.type === ActivityTypes.EndOfConversation) {
+          console.log(`\n${replyActivity.text}`)
           rl.close()
+        } else {
+          printActivity(replyActivity)
         }
-      })
+      }
     }
     await askQuestion(copilotClient, conversationId)
   })
 }
 
+/**
+ * Writes formatted data to the console. This funciton does not handle all of the possible activity types and formats,
+ * it is focused on just a few common types.
+ * @param act The activity to print.
+ */
+function printActivity (act: Activity): void {
+  switch (act.type) {
+    case ActivityTypes.Message: {
+      if (act.textFormat === 'markdown') {
+        console.log(`\n${act.text}`)
+        act.suggestedActions?.actions?.forEach((action: CardAction) => console.log(`\t${action.value}`))
+      } else {
+        console.log(`\n${act.text}`)
+      }
+      break
+    }
+    case ActivityTypes.Typing: {
+      console.log('\n...typing...')
+      break
+    }
+    case ActivityTypes.Event: {
+      console.log(`\n(event) ${act.name}`)
+      break
+    }
+    default: console.log(`\n${act.type}`)
+  }
+}
+
 const main = async () => {
   const copilotClient = await createClient()
-  const act: Activity = await copilotClient.startConversationAsync(true)
-  console.log('\nSuggested Actions: ')
-  act.suggestedActions?.actions.forEach((action: CardAction) => console.log(action.value))
-  await askQuestion(copilotClient, act.conversation?.id!)
+  let conversationId = ''
+  for await (const act of copilotClient.startConversationAsync(true)) {
+    printActivity(act)
+    conversationId = act.conversation?.id ?? ''
+  }
+  await askQuestion(copilotClient, conversationId)
 }
 
 main().catch(e => console.log(e))
