@@ -1069,6 +1069,19 @@ Verify the data being deserialized is in the correct format. Check for schema ve
 
 ---
 
+### -66011
+Invalid Logging Configuration
+
+Invalid logging level configured: {details}
+
+**Description & Context:**
+This is a configuration error indicating that environment variable specifying the logging level for a particular namespace is invalid. The error message includes details about which namespace and log level pair is invalid.
+
+**Likely Fix:**
+Ensure that the log level specified in the `.env` file is one of: `CRITICAL`, `FATAL`, `ERROR`, `WARN`, `INFO`, or `DEBUG`.
+
+---
+
 _This documentation is current as of the latest version of the Microsoft 365 Agents SDK for Python. For the most up-to-date information, refer to the official SDK documentation and release notes._
 
 # C# Error Codes
