@@ -79,7 +79,7 @@ const askQuestion = async (copilotClient: CopilotStudioClient, conversationId: s
       rl.close()
       return
     } else if (answer.length > 0) {
-      for await (const replyActivity of copilotClient.sendMessageStreaming(Activity.fromObject({ text: answer, conversation: { id: conversationId } }))) {
+      for await (const replyActivity of copilotClient.sendActivityStreaming(Activity.fromObject({ type: 'message', text: answer, conversation: { id: conversationId } }))) {
         if (replyActivity.type === ActivityTypes.EndOfConversation) {
           console.log(`\n${replyActivity.text}`)
           rl.close()
