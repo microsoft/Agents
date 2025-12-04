@@ -79,7 +79,7 @@ const askQuestion = async (copilotClient: CopilotStudioClient, conversationId: s
       rl.close()
       return
     } else if (answer.length > 0) {
-      const hasConversationId = conversationId.trim() !== '' 
+      const hasConversationId = conversationId.trim() !== ''
       const activity = new Activity('message')
       activity.text = answer
       if (hasConversationId) {
