@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 import { startServer } from '@microsoft/agents-hosting-express'
-import { TurnState, MemoryStorage, TurnContext, AgentApplication }
+import { TurnState, MemoryStorage, TurnContext, AgentApplication, AttachmentDownloader }
   from '@microsoft/agents-hosting'
 import { ActivityTypes } from '@microsoft/agents-activity'
 
@@ -18,8 +18,11 @@ type ApplicationTurnState = TurnState<ConversationState>
 // in a cluster of Agent instances.
 const storage = new MemoryStorage()
 
+const downloader = new AttachmentDownloader()
+
 const agentApp = new AgentApplication<ApplicationTurnState>({
-  storage
+  storage,
+  fileDownloaders: [downloader]
 })
 
 // Display a welcome message when members are added

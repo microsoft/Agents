@@ -1,11 +1,15 @@
+import { startServer } from '@microsoft/agents-hosting-express'
+import express from 'express'
 import { AgentApplication, MessageFactory } from '@microsoft/agents-hosting'
 import pjson from '@microsoft/agents-hosting/package.json'
 
 export const skillAgent = new AgentApplication()
+
 skillAgent.onConversationUpdate('membersAdded', async (context) => {
   const welcomeText = `Hello from echo bot, running on version ${pjson.version}`
   await context.sendActivity(MessageFactory.text(welcomeText, welcomeText))
 })
+
 skillAgent.onActivity('message', async (context) => {
   const text = context.activity.text
   const replyText = `Echo: ${text}`
@@ -14,3 +18,8 @@ skillAgent.onActivity('message', async (context) => {
     await context.sendActivity(MessageFactory.text('Running on version ' + pjson.version, 'Running on version ' + pjson.version))
   }
 })
+
+const server = startServer(skillAgent)
+
+// Serve static files from the "public" folder
+server.use(express.static('public'))
