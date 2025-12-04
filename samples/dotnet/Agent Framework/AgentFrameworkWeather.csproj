@@ -16,8 +16,8 @@
 		<PackageReference Include="Azure.AI.OpenAI" Version="2.1.0"/>
 		<PackageReference Include="Azure.Identity" Version="1.17.0" />
 		<PackageReference Include="Microsoft.Agents.AI" Version="1.0.0-preview.251009.1" />
-		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.3.88-beta"/>
-		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.3.88-beta"/>
+		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.4.*-*"/>
+		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.4.*-*"/>
 		<PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="9.10.0-preview.1.25513.3"/>
 		<PackageReference Include="OpenWeatherMapSharp" Version="4.1.0"/>
 	</ItemGroup>
