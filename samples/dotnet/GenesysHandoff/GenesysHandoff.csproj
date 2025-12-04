@@ -7,9 +7,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.2.*-*" />
-		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.2.*-*" />
-		<PackageReference Include="Microsoft.Agents.CopilotStudio.Client" Version="1.2.*-*" />
+		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.4.*-*" />
+		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.4.*-*" />
+		<PackageReference Include="Microsoft.Agents.CopilotStudio.Client" Version="1.4.*-*" />
 	</ItemGroup>
 
 	<ItemGroup>
