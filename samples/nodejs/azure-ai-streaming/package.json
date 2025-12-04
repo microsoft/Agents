@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@ai-sdk/azure": "^2.0.30",
-    "@microsoft/agents-hosting-express": "^1.0.0",
+    "@microsoft/agents-hosting-express": "^1.1.0",
     "ai": "^5.0.52"
   },
   "scripts": {
