@@ -1,25 +1,43 @@
-import { AuthConfiguration, authorizeJWT, CloudAdapter, loadAuthConfigFromEnv, Request } from '@microsoft/agents-hosting'
-import express, { Response } from 'express'
-import { agentApp } from './agent'
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+import { startServer } from '@microsoft/agents-hosting-express'
+import { TurnState, MemoryStorage, TurnContext, AgentApplication, AttachmentDownloader }
+  from '@microsoft/agents-hosting'
+import { ActivityTypes } from '@microsoft/agents-activity'
 
-const authConfig: AuthConfiguration = loadAuthConfigFromEnv()
-const adapter = new CloudAdapter(authConfig)
+// Create custom conversation state properties.  This is
+// used to store customer properties in conversation state.
+interface ConversationState {
+  count: number;
+}
+type ApplicationTurnState = TurnState<ConversationState>
 
-const server = express()
-server.use(express.json())
-server.use(authorizeJWT(authConfig))
+// Register IStorage.  For development, MemoryStorage is suitable.
+// For production Agents, persisted storage should be used so
+// that state survives Agent restarts, and operates correctly
+// in a cluster of Agent instances.
+const storage = new MemoryStorage()
 
-server.post('/api/messages', async (req: Request, res: Response) => {
-  await adapter.process(req, res, async (context) => {
-    const app = agentApp
-    await app.run(context)
-  })
+const downloader = new AttachmentDownloader()
+
+const agentApp = new AgentApplication<ApplicationTurnState>({
+  storage,
+  fileDownloaders: [downloader]
 })
 
-const port = process.env.PORT || 3978
-server.listen(port, () => {
-  console.log(`\nServer listening to port ${port} for appId ${authConfig.clientId} debug ${process.env.DEBUG}`)
-}).on('error', (err) => {
-  console.error(err)
-  process.exit(1)
+// Display a welcome message when members are added
+agentApp.onConversationUpdate('membersAdded', async (context: TurnContext, state: ApplicationTurnState) => {
+  await context.sendActivity('Hello and Welcome!')
 })
+
+// Listen for ANY message to be received. MUST BE AFTER ANY OTHER MESSAGE HANDLERS
+agentApp.onActivity(ActivityTypes.Message, async (context: TurnContext, state: ApplicationTurnState) => {
+  // Increment count state
+  let count = state.conversation.count ?? 0
+  state.conversation.count = ++count
+
+  // Echo back users message
+  await context.sendActivity(`[${count}] You said: ${context.activity.text}`)
+})
+
+startServer(agentApp)

@@ -27,8 +27,8 @@
 		<PackageReference Include="Microsoft.SemanticKernel.Agents.OpenAI" Version="1.29.0-alpha" />
 		<PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureOpenAI" Version="1.29.0" />
 		<PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.29.0" />
-		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.2.*-*" />
-		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.2.*-*" />
+		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.4.*-*" />
+		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.4.*-*" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="dotnet\src\Microsoft.Agents.M365Copilot.Beta\Microsoft.Agents.M365Copilot.Beta.csproj" />

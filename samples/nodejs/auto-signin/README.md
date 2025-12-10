@@ -5,10 +5,8 @@ This Agent has been created using [Microsoft 365 Agents SDK](https://github.com/
 This sample uses different routes, and some are configured to use one or more auth handlers:
 
 ```ts
-  this.onMessage('/logout', this._logout)
-  this.onMessage('/me', this._profileRequest, ['graph'])
-  this.onMessage('/prs', this._pullRequests, ['github'])
-  this.onMessage('/status', this._status, ['graph', 'github'])
+  this.onMessage('-me', this._profileRequest, ['graph'])
+  this.onMessage('-logout', this._logout)
 ```
 
 
@@ -33,8 +31,10 @@ The sample uses the bot OAuth capabilities in [Azure Bot Service](https://docs.b
 1. Configuring the token connection in the Agent settings
    > The instructions for this sample are for a SingleTenant Azure Bot using ClientSecrets.  The token connection configuration will vary if a different type of Azure Bot was configured.  For more information see [MSAL Authentication provider](https://learn.microsoft.com/microsoft-365/agents-sdk/azure-bot-authentication-for-javascript)
 
-  1. Open the `env.TEMAPLTE` file in the root of the sample project and rename it to `.env`
-  1. Update **clientId**, **tenantId** and **clientSecret**
+  1. Open the `env.TEMPLATE` file in the root of the sample project, rename it to `.env` and configure the following values:
+      1. Set the **connections__serviceConnection__settings__clientId** to the AppId of the bot identity.
+      2. Set the **connections__serviceConnection__settings__clientSecret** to the Secret that was created for your identity. *This is the `Secret Value` shown in the AppRegistration*.
+      3. Set the **connections__serviceConnection__settings__tenantId** to the Tenant Id where your application is registered.
   
 
 1. Configure the UserAuthorization handlers
@@ -47,16 +47,12 @@ The sample uses the bot OAuth capabilities in [Azure Bot Service](https://docs.b
           storage: new MemoryStorage(),
           authorization: {
             graph: { text: 'Sign in with Microsoft Graph', title: 'Graph Sign In' },
-            github: { text: 'Sign in with GitHub', title: 'GitHub Sign In' },
           }
         })
     ```
 
-    you should have one item for `graph` and aonther for `github`
-
     ```env
     graph_connectionName=
-    github_connectionName=
     ```
       
 
@@ -91,7 +87,7 @@ The sample uses the bot OAuth capabilities in [Azure Bot Service](https://docs.b
 ## Interacting with the Agent
 
 - When the conversation starts, you will be greeted with a welcome message, and another message informing the token status. 
-- Sending `/me` will trigger the OAuth flow and display additional information about you.
+- Sending `-me` will trigger the OAuth flow and display additional information about you.
 - Note that if running this in Teams and SSO is setup, you shouldn't see any "sign in" prompts.  This is true in this sample since we are only requesting a basic set of scopes that Teams doesn't require additional consent for.
 
 ## Further reading
