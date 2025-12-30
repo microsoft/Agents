@@ -14,12 +14,12 @@
     "outline": "outline.png"
   },
   "name": {
-    "short": "User Authorization (OAuth+OBO)",
-    "full": "User Authorization (OAuth+OBO)"
+    "short": "GenesysHandoffAgent",
+    "full": "GenesysHandoffAgent"
   },
   "description": {
-    "short": "Sample demonstrating Azure Bot Services user authorization with using a Agent.",
-    "full": "This sample demonstrates how to integrate with Microsoft Copilot Studio using OBO and CopilotStudioClient."
+    "short": "Genesys Handoff",
+    "full": "Integrating Genesys Handoff functionality within a Microsoft Copilot Studio agent."
   },
   "accentColor": "#FFFFFF",
   "copilotAgents": {
