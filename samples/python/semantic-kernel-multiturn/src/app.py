@@ -1,7 +1,10 @@
-from os import environ
+from __future__ import annotations
 
+from os import environ
+from typing import Optional
+
+import json
 from dotenv import load_dotenv
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
 from semantic_kernel.contents import ChatHistory
 
@@ -10,8 +13,8 @@ from microsoft_agents.hosting.core import (
     AgentApplication,
     TurnState,
     TurnContext,
-    MessageFactory,
     MemoryStorage,
+    StoreItem,
 )
 from microsoft_agents.hosting.aiohttp import CloudAdapter
 from microsoft_agents.authentication.msal import MsalConnectionManager
@@ -28,15 +31,11 @@ CONNECTION_MANAGER = MsalConnectionManager(**agents_sdk_config)
 ADAPTER = CloudAdapter(connection_manager=CONNECTION_MANAGER)
 AUTHORIZATION = Authorization(STORAGE, CONNECTION_MANAGER, **agents_sdk_config)
 
-token_provider = get_bearer_token_provider(
-    DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"
-)
-
 AGENT = WeatherForecastAgent(
     AzureChatCompletion(
         api_version=environ["AZURE_OPENAI_API_VERSION"],
         endpoint=environ["AZURE_OPENAI_ENDPOINT"],
-        ad_token_provider=token_provider,
+        api_key=environ["AZURE_OPENAI_API_KEY"],
         deployment_name=environ.get("AZURE_OPENAI_DEPLOYMENT_NAME", "gpt-4o"),
     )
 )
@@ -44,6 +43,19 @@ AGENT = WeatherForecastAgent(
 AGENT_APP = AgentApplication[TurnState](
     storage=STORAGE, adapter=ADAPTER, authorization=AUTHORIZATION, **agents_sdk_config
 )
+
+class ChatHistoryStoreItem(StoreItem):
+
+    def __init__(self, chat_history: Optional[ChatHistory] = None):
+        self.chat_history = chat_history or ChatHistory()
+
+    def store_item_to_json(self) -> dict:
+        return self.chat_history.model_dump()
+        
+    @staticmethod
+    def from_json_to_store_item(json_data: dict) -> ChatHistoryStoreItem:
+        chat_history = ChatHistory.model_validate(json_data)
+        return ChatHistoryStoreItem(chat_history)
 
 
 @AGENT_APP.conversation_update("membersAdded")
@@ -61,11 +73,14 @@ async def on_message(context: TurnContext, state: TurnState):
         "Working on a response for you..."
     )
 
-    chat_history = state.get_value(
-        "ConversationState.chatHistory", lambda: ChatHistory(), target_cls=ChatHistory
+    chat_history_store_item = state.get_value(
+        "ConversationState.chatHistory", lambda: ChatHistoryStoreItem(), target_cls=ChatHistoryStoreItem
     )
 
-    forecast_response = await AGENT.invoke_agent(context.activity.text, chat_history)
+    forecast_response = await AGENT.invoke_agent(context.activity.text, chat_history_store_item.chat_history)
+
+    state.set_value("ConversationState.chatHistory", chat_history_store_item)
+
     if forecast_response is None:
         context.streaming_response.queue_text_chunk(
             "Sorry, I couldn't get the weather forecast at the moment."

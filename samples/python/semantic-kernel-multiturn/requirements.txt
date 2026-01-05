@@ -1,6 +1,5 @@
 pydantic
 semantic-kernel
-azure-identity
 microsoft-agents-authentication-msal
 microsoft-agents-hosting-core
 microsoft-agents-hosting-aiohttp

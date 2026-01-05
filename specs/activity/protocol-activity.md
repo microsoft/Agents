@@ -508,7 +508,7 @@ Conversation update activities are identified by a `type` value of `conversation
 
 `A4101`: Each `channelAccount` (identified by `id` field) SHOULD appear at most once within the `membersAdded` and `membersRemoved` fields. An ID SHOULD NOT appear in both fields. An ID SHOULD NOT be duplicated within either field.
 
-`A4102`: Channels SHOULD NOT use conversation update activities to indicate changes to a channel account's fields (e.g., `name`) if the channel account was not added to or removed from the conversation.
+`A4102`: Channels SHOULD NOT use conversation update activities to indicate changes to a [Channel account's](#channel-account) fields (e.g., `name`) if the [Channel account](#channel-account) was not added to or removed from the conversation.
 
 `A4103`: Channels SHOULD NOT send the `topicName` or `historyDisclosed` fields if the activity is not signaling a change in value for either field.
 
@@ -1196,11 +1196,13 @@ A `call` action represents a telephone number that may be called. Call uses the 
 
 ### Channel account
 
-Channel accounts represent identities within a channel. The channel account includes an ID that can be used to identify and contact the account within that channel. Sometimes these IDs exist within a single namespace (e.g. Skype IDs); sometimes, they are federated across many servers (e.g. email addresses). In addition to the ID, channel accounts include display names and Azure Active Directory (AAD) object IDs.
+Channel accounts represent identities within a channel. The channel account includes an ID that can be used to identify and contact the account within that channel. Sometimes these IDs exist within a single namespace  sometimes, they are federated across many servers (e.g. email addresses). In addition to the ID, channel accounts include display names and Azure Active Directory (AAD) object IDs.
 
 #### Channel account ID
 
 The `id` field is the identifier and address within the channel. The value of the `id` field is a string. An example `id` within a channel that uses email addresses is "name@example.com"
+
+In the case where role is of type `agenticUser` or `agenticInstance` this id will be the UPN of the Agentic User. 
 
 `A7510`: Channels SHOULD use the same values and conventions for account IDs regardless of their position within the schema (`from.id`, `recipient.id`, `membersAdded`, etc.). This allows Agents and clients to use ordinal string comparisons to know when e.g. they are described in the `membersAdded` field of a `conversationUpdate` activity.
 
@@ -1212,11 +1214,35 @@ The `name` field is an optional, friendly name within the channel. The value of 
 
 The `aadObjectId` field is an optional ID corresponding to the account's object ID within Azure Active Directory (AAD). The value of the `aadObjectId` field is a string.
 
+#### Channel account Agentic App ID
+
+The `agenticAppId` field is an optional ID corresponding to the account's Agentic Instance Client\App ID within Entra ID.  The value of the `agenticAppId` field is a string representation of a GUID. 
+
+This field is REQUIRED if the role is set to `agenticuser` or `agenticinstance`.
+
+#### Channel account Agentic User ID
+
+The `agenticUserId` field is an optional ID corresponding to the account's Agentic object ID within Entra ID.  The value of the `agenticUserId` field is a string representation of a GUID. 
+
+This field is REQUIRED if the role is set to `agenticuser` or `agenticinstance`.
+
 #### Channel account role
 
-The `role` field indicates whether entity behind the account is a user or Agent. This field is intended for use in the [Transcript format](../transcript/transcript.md) [[15](#references)] to distinguish between activities sent by users and activities sent by Agents. The value of the `role` field is a string.
+The `role` field indicates the treatment of the Channel Account. The value of the `role` field is a string.
 
-`A7511`: Senders SHOULD NOT include this field. Receivers SHOULD ignore this field.
+Known roles are:
+
+Role | Description 
+:-----|:-------------
+**agent** | indicates that this channel account is describing the agent identity in the channel. Legacy agents may see this as `bot`
+**agenticInstance** | indicates that this channel account is describing an Agentic Instance in the channel.
+**agenticUser** | indicates that this channel account is describing an Agentic User in this channel. 
+**connectoruser** | indicates that this channel account is describing a connector user from Microsoft Copilot Studio
+**user** | indicates that this channel account is describing a end user account.
+
+
+This field is intended for use in the [Transcript format](../transcript/transcript.md) [[15](#references)] to distinguish between activities sent by users and activities sent by Agents. 
+
 
 ### Conversation account
 
@@ -1567,6 +1593,9 @@ The `error` field contains the reason the original [command activity](#command-a
 18. [IETF BCP-47](https://tools.ietf.org/html/bcp47) -- *Language tag*
 
 # Appendix I - Changes
+
+# 2025-09-30 - mattb-msft
+* Updated Channel Account definition to reflect current rules and usages. 
 
 # 2025-05-21 - guhiriya@microsoft.com
 * Added `streaminfo` entity for streaming text via `typing` and `message` activities

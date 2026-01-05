@@ -17,7 +17,7 @@
   "dependencies": {
     "@langchain/langgraph": "^0.3.11",
     "@langchain/openai": "^0.5.10",
-    "@microsoft/agents-hosting-express": "^1.0.0",
+    "@microsoft/agents-hosting-express": "^1.1.0",
     "express": "^5.1.0"
   },
   "devDependencies": {

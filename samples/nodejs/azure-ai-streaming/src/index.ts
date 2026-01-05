@@ -45,8 +45,8 @@ agent.onMessage('poem', async (context: TurnContext, state: TurnState) => {
     for await (const part of fullStream) {
       switch (part.type) {
         case 'text-delta' : {
-          if (part.textDelta.length > 0) {
-            await context.streamingResponse.queueTextChunk(part.textDelta)
+          if (part.text.length > 0) {
+            await context.streamingResponse.queueTextChunk(part.text)
           }
           break
         }

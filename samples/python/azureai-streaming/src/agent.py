@@ -38,12 +38,10 @@ AGENT_APP = AgentApplication[TurnState](
     storage=STORAGE, adapter=ADAPTER, authorization=AUTHORIZATION, **agents_sdk_config
 )
 
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
-token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
 CLIENT = AsyncAzureOpenAI(
     api_version=environ["AZURE_OPENAI_API_VERSION"],
     azure_endpoint=environ["AZURE_OPENAI_ENDPOINT"],
-    azure_ad_token_provider=token_provider
+    api_key=environ["AZURE_OPENAI_API_KEY"]
 )
 
 @AGENT_APP.conversation_update("membersAdded")

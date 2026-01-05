@@ -63,19 +63,19 @@ npm test
 
 Refresh the browser to start a new conversation with the Echo bot.
 
-You should see a message from the bot like: `Echo running on Agents SDK version: {version}`
+You should see a message from the agent: `Hello and Welcome!`
 
 
 ### Interact with the agent with WebChat UI using Azure Bot Service
 
-1. [Create an Azure Bot](https://aka.ms/AgentsSDK-CreateBot)
+1. [Create an Azure Bot](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/azure-bot-create-single-secret)
    - Record the Application ID, the Tenant ID, and the Client Secret for use below
   
 1. Configuring the token connection in the Agent settings
     1. Open the `env.TEMPLATE` file in the root of the sample project, rename it to `.env` and configure the following values:
-      1. Set the **clientId** to the AppId of the bot identity.
-      2. Set the **clientSecret** to the Secret that was created for your identity. *This is the `Secret Value` shown in the AppRegistration*.
-      3. Set the **tenantId** to the Tenant Id where your application is registered.
+      1. Set the **connections__serviceConnection__settings__clientId** to the AppId of the bot identity.
+      2. Set the **connections__serviceConnection__settings__clientSecret** to the Secret that was created for your identity. *This is the `Secret Value` shown in the AppRegistration*.
+      3. Set the **connections__serviceConnection__settings__tenantId** to the Tenant Id where your application is registered.
 
 1. Install the tool [dev tunnel](https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/get-started?tabs=windows)   
 1. Run `dev tunnels`. See [Create and host a dev tunnel](https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/get-started?tabs=windows) and host the tunnel with anonymous user access command as shown below:

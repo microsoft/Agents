@@ -73,7 +73,8 @@ async def status(context: TurnContext, state: TurnState) -> bool:
 
 @AGENT_APP.message("/logout")
 async def logout(context: TurnContext, state: TurnState) -> None:
-    await AGENT_APP.auth.sign_out(context, state)
+    await AGENT_APP.auth.sign_out(context, "GRAPH")
+    await AGENT_APP.auth.sign_out(context, "GITHUB")
     await context.send_activity(MessageFactory.text("You have been logged out."))
 
 
@@ -105,7 +106,9 @@ async def pull_requests(context: TurnContext, state: TurnState) -> None:
 
         # prs = await get_pull_requests("microsoft", "agents", user_token_response.token)
         # as suggested by Copilot, using a public repository without SAML enforcement
-        prs = await get_pull_requests("octocat", "Hello-World", user_token_response.token)
+        prs = await get_pull_requests(
+            "octocat", "Hello-World", user_token_response.token
+        )
         for pr in prs:
             card = create_pr_card(pr)
             await context.send_activity(MessageFactory.attachment(card))

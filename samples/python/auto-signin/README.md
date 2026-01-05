@@ -98,7 +98,11 @@ The agent is ready to accept messages.
 1. Sending `/me` will trigger the OAuth flow and display additional information about you.
 1. Note that if running this in Teams and SSO is setup, you shouldn't see any "sign in" prompts.  This is true in this sample since we are only requesting a basic set of scopes that Teams doesn't require additional consent for.
 
+### Using the Agent in Teams
+For Auto Sign-In in Teams, additional steps are needed to [Enable SSO for a Teams app](https://learn.microsoft.com/en-us/microsoftteams/platform/bots/how-to/authentication/bot-sso-overview)
+
 ## Further reading
 To learn more about building Agents, see our [Microsoft 365 Agents SDK](https://github.com/microsoft/agents) repo.
+
 
 For more information on logging configuration, see the logging section in the Quickstart Agent sample README.

@@ -51,7 +51,7 @@ The source for the client libraries exists in repositories for each language. Th
 
 | Language    | Repo                             | Documentation                    |
 |:------------|:--------------------------------|:--------------------------------|
-| General     |[Agents Repository]               | [M365 Agents Documentation] |
+| General     |[Agents Repository]               | [M365 Agents Learn Documentation] |
 | C# /.NET    |[Agents-for-net Repository]       | [M365 Agents SDK .NET Documentation] |
 | JavaScript  |[Agents-for-js Repository]        | [M365 Agents JavaScript Documentation] |
 | Python      |[Agents-for-python Repository]    | [M365 Agents Python Documentation]     |
@@ -62,7 +62,7 @@ The source for the client libraries exists in repositories for each language. Th
 | [Adaptive Cards]   | The versatile UI framework for Teams, Copilot and Outlook integrations. |
 | [Bot Framework DirectLineJS]   | Protocol Library for DirectLine, which is used by WebChat. |
 | [Teams AI Repository]   | This SDK is specifically designed in creating bots capable of interacting with Teams and Microsoft 365 applications. Works together with the M365 Agents SDK and Teams Toolkit |
-| [Teams Toolkit Repository] | Teams Toolkit provides support for building Agents for all major Microsoft 365 platform extensibility surfaces, including Copilot for Microsoft 365, tabs, bots, message extensions for Teams as well as Outlook Add-ins |
+| [Agents Toolkit Repository] | Agents Toolkit provides support for building Agents for all major Microsoft 365 platform extensibility surfaces, including Copilot for Microsoft 365, tabs, bots, message extensions for Teams as well as Outlook Add-ins |
 | [WebChat]   | Web Chat is a highly customizable web-based client chat control that provides the ability for users to interact with Agent directly in a web page. |
 
 ## Legacy Repos
@@ -86,10 +86,9 @@ The older Bot Framework repos contain many samples and implementations that may 
 [Agents-for-python Repository]: https://github.com/Microsoft/Agents-for-python
 
 [M365 Agents Learn Documentation]: https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/
-[M365 Agents Documentation]: https://aka.ms/m365sdkdocs
-[M365 Agents SDK .NET Documentation]: https://aka.ms/Agents-net-docs
-[M365 Agents JavaScript Documentation]: https://aka.ms/agents-js-docs
-[M365 Agents Python Documentation]: https://aka.ms/agents-python-docs
+[M365 Agents SDK .NET Documentation]: https://learn.microsoft.com/en-us/dotnet/api/?view=m365-agents-sdk&preserve-view=true
+[M365 Agents JavaScript Documentation]: https://learn.microsoft.com/en-us/javascript/api/overview/agents-overview?view=agents-sdk-js-latest&preserve-view=true
+[M365 Agents Python Documentation]: https://learn.microsoft.com/en-us/python/api/agent-sdk-python/agents-overview?view=agent-sdk-python-latest&preserve-view=true
 
 [BotBuilder Community]: https://github.com/BotBuilderCommunity/
 [Bot Framework DirectLineJS]: https://github.com/microsoft/BotFramework-DirectLineJS
@@ -114,6 +113,6 @@ The older Bot Framework repos contain many samples and implementations that may 
 [WebChat Samples]: https://github.com/microsoft/BotFramework-WebChat/tree/main/samples
 [Bot Framework Emulator]: https://github.com/microsoft/BotFramework-Emulator
 [Teams AI Repository]: https://github.com/microsoft/teams-ai
-[Teams Toolkit Repository]: https://github.com/OfficeDev/Teams-Toolkit
+[Agents Toolkit Repository]: https://github.com/OfficeDev/Teams-Toolkit
 
 [Azure AI Samples]: https://github.com/Azure-Samples/azureai-samples

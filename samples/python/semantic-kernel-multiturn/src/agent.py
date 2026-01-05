@@ -66,9 +66,7 @@ class WeatherForecastAgent:
             instructions=WeatherForecastAgent.agent_instructions,
             kernel=kernel,
             arguments=KernelArguments(
-                chat_history=ChatHistory(),
                 settings=self.execution_settings,
-                kernel=kernel,
             ),
         )
 
@@ -78,7 +76,7 @@ class WeatherForecastAgent:
 
         resp: str = ""
 
-        async for chat in agent.invoke(chat_history, thread=thread):
+        async for chat in agent.invoke(chat_history.to_prompt(), thread=thread):
             chat_history.add_message(chat.content)
             resp += chat.content.content
 
