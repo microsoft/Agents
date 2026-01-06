@@ -98,7 +98,7 @@ const createClient = async (): Promise<CopilotStudioClient> => {
   const settings = new SampleConnectionSettings()
   const token = await getToken(settings)
   const copilotClient = new CopilotStudioClient(settings, token)
-  console.log(`Copilot Studio Client Version: ${pkg.version}, running with settings: ${JSON.stringify(settings, null, 2)}`)
+  console.log(`Copilot Studio Client Version: ${pkg.version}`)
   return copilotClient
 }
 
