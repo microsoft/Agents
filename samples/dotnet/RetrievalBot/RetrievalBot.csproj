@@ -19,7 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Graph" Version="5.75.0" />
+		<PackageReference Include="Microsoft.Graph" Version="5.99.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="AdaptiveCards" Version="3.1.0" />
