@@ -68,9 +68,20 @@ With the above information, you can now run the client `CopilostStudioClient` sa
 
 ```bash
   environmentId="" # Environment ID of environment with the CopilotStudio App.
-  agentIdentifier="" # Schema Name of the Copilot to use
+  schemaName="" # Schema Name of the Copilot to use
   tenantId="" # Tenant ID of the App Registration used to login, this should be in the same tenant as the Copilot.
   appClientId="" # App ID of the App Registration used to login, this should be in the same tenant as the CopilotStudio environment.
+  directConnectUrl="" # The URL to connect directly to the Copilot Studio service. When provided, `environmentId` + `schemaName` are ignored.
+```
+
+#### Optional Configuration
+This sample lets you configure the following settings in the .env file:
+```bash
+   authorityEndpoint="" # The login authority to use for the connection. Default: "https://login.microsoftonline.com".
+   cloud="" # The cloud hosting the Power Platform Services. Default: "Prod".
+   customPowerPlatformCloud="" # The Power Platform API endpoint when cloud is set to "Other".
+   copilotAgentType="" # The type of Copilot Studio Agent (Published or Prebuilt). Default: "Published".
+   useExperimentalEndpoint="" # The flag to use the URL provided via the "x-ms-d2e-experimental" header for subsequent calls to the Copilot Studio service.
 ```
 
 3. Run the CopilotStudioClient sample using `npm start`, which will install the packages, build the project and run it.
