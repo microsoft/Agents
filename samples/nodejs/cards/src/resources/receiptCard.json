@@ -1,0 +1,199 @@
+{
+  "type": "AdaptiveCard",
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.4",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Receipt",
+      "weight": "Bolder",
+      "size": "Large"
+    },
+    {
+      "type": "TextBlock",
+      "text": "John Doe",
+      "weight": "Bolder",
+      "size": "Medium",
+      "spacing": "Medium"
+    },
+    {
+      "type": "FactSet",
+      "facts": [
+        {
+          "title": "Order Number:",
+          "value": "1234"
+        },
+        {
+          "title": "Payment Method:",
+          "value": "VISA 5555-****"
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "style": "emphasis",
+      "items": [
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": [
+                {
+                  "type": "Image",
+                  "url": "https://raw.githubusercontent.com/microsoft/botframework-sdk/main/icon.png",
+                  "size": "Small"
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "stretch",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "Data Transfer",
+                  "weight": "Bolder"
+                },
+                {
+                  "type": "TextBlock",
+                  "text": "Qty: 368",
+                  "isSubtle": true,
+                  "spacing": "None"
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "$38.45",
+                  "weight": "Bolder"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": [
+                {
+                  "type": "Image",
+                  "url": "https://raw.githubusercontent.com/microsoft/botframework-sdk/main/icon.png",
+                  "size": "Small"
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "stretch",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "App Service",
+                  "weight": "Bolder"
+                },
+                {
+                  "type": "TextBlock",
+                  "text": "Qty: 720",
+                  "isSubtle": true,
+                  "spacing": "None"
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "$45.00",
+                  "weight": "Bolder"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "spacing": "Medium"
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "stretch",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "Tax",
+                  "horizontalAlignment": "Right"
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "$7.50",
+                  "weight": "Bolder"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "stretch",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "Total",
+                  "horizontalAlignment": "Right",
+                  "weight": "Bolder",
+                  "size": "Large"
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "$90.95",
+                  "weight": "Bolder",
+                  "size": "Large",
+                  "color": "Good"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "spacing": "Medium"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.OpenUrl",
+      "title": "More Information",
+      "url": "https://azure.microsoft.com/en-us/pricing/"
+    }
+  ]
+}
