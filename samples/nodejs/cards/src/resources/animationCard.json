@@ -1,0 +1,38 @@
+{
+  "type": "AdaptiveCard",
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.4",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Animation Card",
+      "weight": "Bolder",
+      "size": "Large"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Microsoft 365 Agents SDK",
+      "weight": "Bolder",
+      "spacing": "Medium"
+    },
+    {
+      "type": "Image",
+      "url": "https://media.giphy.com/media/Ki55RUbOV5njy/giphy.gif",
+      "altText": "Animation",
+      "size": "Large"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Animation Card - GIF displayed as image in Teams",
+      "wrap": true,
+      "spacing": "Medium"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.OpenUrl",
+      "title": "Learn More",
+      "url": "https://docs.microsoft.com/en-us/azure/bot-service/"
+    }
+  ]
+}
