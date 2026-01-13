@@ -1,0 +1,12 @@
+{
+  "type": "endOfConversation",
+  "id": "end-of-conv-1",
+  "timestamp": "2025-09-15T10:00:05.000Z",
+  "serviceUrl": "https://smba.trafficmanager.net/amer/",
+  "channelId": "msteams",
+  "from": { "id": "bot-id-1", "name": "SurveyBot" },
+  "conversation": { "id": "conv-4" },
+  "recipient": { "id": "user-id-4", "name": "Peter Jones" },
+  "code": "completedSuccessfully",
+  "text": "Thanks for completing the survey!"
+}
