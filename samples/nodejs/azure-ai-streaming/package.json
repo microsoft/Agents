@@ -1,14 +1,14 @@
 {
   "dependencies": {
     "@ai-sdk/azure": "^2.0.30",
-    "@microsoft/agents-hosting-express": "^1.0.0",
+    "@microsoft/agents-hosting-express": "^1.1.0",
     "ai": "^5.0.52"
   },
   "scripts": {
     "build": "tsc -b",
     "prestart": "npm run build",
     "test-tool": "agentsplayground",
-    "start": "node --env-file .env dist/agent.js"
+    "start": "node --env-file .env dist/index.js"
   },
   "devDependencies": {
     "@microsoft/m365agentsplayground": "^0.2.16",
