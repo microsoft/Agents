@@ -87,8 +87,6 @@ The simplest way to run this sample in Teams is to use Microsoft 365 Agents Tool
     * Enter the **redirect URI** for the app in the following format: 
       1) https://token.botframework.com/.auth/web/redirect
 
-![Authentication](Images/Authentication.png)
-    
 5) Navigate to the **Certificates & secrets**. In the Client secrets section, click on "+ New client secret". Add a description (Name of the secret) for the secret and select “Never” for Expires. Click "Add". Once the client secret is created, copy its value, it need to be placed in the appsettings.json.
 
 6) Navigate to **API Permissions**, and make sure to add the following permissions:
@@ -97,10 +95,6 @@ The simplest way to run this sample in Teams is to use Microsoft 365 Agents Tool
       * Select Microsoft Graph -\> Delegated permissions.
       * `User.Read` (enabled by default)
       * Click on Add permissions. Please make sure to grant the admin consent for the required permissions.
-
-**Bot OAuth Connection:**
-
-![Installapp](Images/OauthConnection.png)
 
 **NOTE:** When you create your bot you will create an App ID and App password - make sure you keep these for later.
 
@@ -156,94 +150,64 @@ The simplest way to run this sample in Teams is to use Microsoft 365 Agents Tool
    - From the lower left corner, choose Upload a custom App
    - Go to your project directory, the ./appManifest folder, select the zip folder, and choose Open.
    - Select Add in the pop-up dialog box. Your app is uploaded to Teams.
-   
-**Note**: If you are facing any issue in your app, please uncomment [this](https://github.com/OfficeDev/Microsoft-Teams-Samples/blob/main/samples/bot-all-cards/nodejs/index.js#L32) line and put your debugger for local debug.
-
+    
 ## Running the Sample
 
 **Install the Agent App:**
 
 ![Install Agent App](Images/1.Install.png)
 
-*Add the Agent All Cards app to your Microsoft Teams client.*
-
 **Open the Agent App:**
 
 ![Open Agent App](Images/2.Open_App.png)
-
-*Open the installed agent app in Microsoft Teams.*
 
 **Display All Card Types Menu:**
 
 ![All Card Types Menu](Images/3.DisplayAllCardTypes.png)
 
-*The agent displays an interactive menu with all 11 available card types to explore.*
-
 **Adaptive Card:**
 
 ![Adaptive Card](Images/4.Adaptive_Card.png)
-
-*Rich interactive Adaptive Card with flight booking information and action buttons.*
 
 **Hero Card:**
 
 ![Hero Card](Images/5.Hero_Card.png)
 
-*Large hero card showcasing the Microsoft 365 Agents SDK with action buttons.*
-
 **List Card:**
 
 ![List Card](Images/6.List_Card.png)
-
-*Teams-specific list card displaying files, items, and people in a structured format.*
 
 **O365 Connector Card:**
 
 ![O365 Connector Card](Images/7.O365Connector_Card.png)
 
-*Office 365 message card with project details, facts, and images.*
-
 **Collection Card:**
 
 ![Collection Card](Images/8.Collection_Card.png)
-
-*Adaptive card displaying grouped content for employee engagement scenarios.*
 
 **SignIn Card:**
 
 ![SignIn Card](Images/9.SignIn_Card.png)
 
-*Authentication card prompting users to sign in with Microsoft.*
-
 **Thumbnail Card:**
 
 ![Thumbnail Card](Images/10.Thumbnail_Card.png)
-
-*Compact thumbnail card with Microsoft 365 Agents SDK information.*
 
 **Animation Card:**
 
 ![Animation Card](Images/11.Animation_Card.png)
 
-*Animation card displayed as an Adaptive Card with GIF content.*
-
 **Audio Card:**
 
 ![Audio Card](Images/12.Audio_Card.png)
-
-*Audio card displayed as an Adaptive Card with Microsoft podcast content.*
 
 **Video Card:**
 
 ![Video Card](Images/13.Video_Card.png)
 
-*Video card displayed as an Adaptive Card with Microsoft Copilot content.*
-
 **Receipt Card:**
 
 ![Receipt Card](Images/14.Receipt_Card.png)
-
-*Receipt card displayed as an Adaptive Card with order details and totals.*
 
 ## Deploy the Agent to Azure
 
@@ -264,5 +228,3 @@ To learn more about deploying an agent to Azure, see [Deploy your agent to Azure
 ### Microsoft 365 Development
 - [Microsoft 365 Agents Toolkit for VS Code](https://marketplace.visualstudio.com/items?itemName=TeamsDevApp.ms-teams-vscode-extension)
 - [Microsoft Teams Developer Documentation](https://learn.microsoft.com/en-us/microsoftteams/platform/)
-
-<img src="https://pnptelemetry.azurewebsites.net/microsoft-teams-samples/samples/agent-all-cards-nodejs" />
