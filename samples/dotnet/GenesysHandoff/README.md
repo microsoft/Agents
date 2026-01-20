@@ -2,7 +2,7 @@
 
 **Repository:** `microsoft/Agents` – `samples/dotnet/GenesysHandoff`
 
-This guide provides step-by-step instructions to configure, deploy, and understand the GenesysHandoff sample. Offering detailed guidance and best practices.
+This guide provides step-by-step instructions to configure, deploy, and understand the GenesysHandoff sample, offering detailed guidance and best practices.
 
 ---
 
@@ -180,11 +180,9 @@ Update the `appsettings.json` file with the details collected from the Genesys s
 "Genesys": {
   "OauthUrl": "https://login.<region>.pure.cloud/oauth/token",
   "ApiUrl": "https://api.<region>.pure.cloud",
-  "OAuthClientId": "",     // OAuth Client ID created in Genesys
-  "OAuthClientSecret": "", // OAuth Client Secret created in Genesys
-  "OrganizationId": "",    // Organization ID from Genesys
-  "PlatformConfigId": "",  // Platform Config ID created in Genesys
   "IntegrationId": "",     // GUID from Open Messaging Integration
+  "ClientId": "",     // OAuth Client ID created in Genesys
+  "ClientSecret": "", // OAuth Client Secret created in Genesys
   "WebhookSecret": ""      // Secret token from Genesys webhook (if used)
 }
 ```
@@ -225,11 +223,17 @@ Follow the guide for [configuring your .NET Agent to use OAuth](https://learn.mi
 
 ### 4.4. Update Bot Framework Credentials
 
-Update `appsettings.json` with your Azure Bot registration credentials:
+Update `appsettings.json` with your Azure Bot registration credentials (within the `Connections.ServiceConnection.Settings` section):
 
 ```json
-"ClientId": "",      // App ID from Azure Bot registration
-"ClientSecret": "" // Client secret from Azure Bot registration
+"Connections": {
+  "ServiceConnection": {
+    "Settings": {
+      "ClientId": "",      // App ID from Azure Bot registration
+      "ClientSecret": ""   // Client secret from Azure Bot registration
+    }
+  }
+}
 ```
 
 ---
@@ -300,7 +304,7 @@ To test your agent in Microsoft Teams or Microsoft 365 Copilot, you need to crea
 1. Navigate to the `/appManifest` folder in the project directory.
 
 2. Edit the `manifest.json` file and make the following replacements:
-   - Replace all instances of `<<AAD_APP_CLIENT_ID>>` with your **App ID** (the Azure AD App Registration ID created during Azure Bot setup).
+   - Replace all instances of `${{AAD_APP_CLIENT_ID}}` with your **App ID** (the Azure AD App Registration ID created during Azure Bot setup).
    - Replace `<<BOT_DOMAIN>>` with your Agent URL. For example:
      - For local development: Use your dev tunnel host name (e.g., `abc123.devtunnels.ms`)
      - For Azure deployment: Use your App Service domain (e.g., `youragent.azurewebsites.net`)
