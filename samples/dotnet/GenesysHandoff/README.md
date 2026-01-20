@@ -228,8 +228,8 @@ Follow the guide for [configuring your .NET Agent to use OAuth](https://learn.mi
 Update `appsettings.json` with your Azure Bot registration credentials:
 
 ```json
-"MicrosoftAppId": "",      // App ID from Azure Bot registration
-"MicrosoftAppPassword": "" // Client secret from Azure Bot registration
+"ClientId": "",      // App ID from Azure Bot registration
+"ClientSecret": "" // Client secret from Azure Bot registration
 ```
 
 ---
@@ -357,7 +357,7 @@ After a short period of time (usually a few minutes), the agent will appear in:
 | **Genesys not receiving chat** | Check bot logs for API errors. Verify Genesys `IntegrationId`, OAuth credentials, and region URLs are correct. Ensure the Genesys integration is activated (not in draft mode). |
 | **Agent messages not reaching user** | Verify webhook URL is correct and accessible. Check for function keys if using Azure Functions. Look for exceptions in Application Insights. Verify conversation reference mapping. |
 | **Multiple responses or bot interrupts** | Ensure the bot sets a "handoff active" flag to prevent automated responses during human conversation. Check that the escalation event is the last step in the topic. |
-| **Azure deployment issues** | Verify all app settings are configured in Azure. Check that `MicrosoftAppId` and `MicrosoftAppPassword` are correct. Use Azure Bot's "Test in Web Chat" to verify connectivity. |
+| **Azure deployment issues** | Verify all app settings are configured in Azure. Check that `ClientId` and `ClientSecret` are correct. Use Azure Bot's "Test in Web Chat" to verify connectivity. |
 
 ### Best Practices
 
