@@ -180,14 +180,28 @@ Update the `appsettings.json` file with the details collected from the Genesys s
 "Genesys": {
   "OauthUrl": "https://login.<region>.pure.cloud/oauth/token",
   "ApiUrl": "https://api.<region>.pure.cloud",
-  "IntegrationId": "",     // GUID from Open Messaging Integration
-  "ClientId": "",     // OAuth Client ID created in Genesys
-  "ClientSecret": "", // OAuth Client Secret created in Genesys
-  "WebhookSecret": ""      // Secret token from Genesys webhook (if used)
+  "IntegrationId": "",              // GUID from Open Messaging Integration
+  "ClientId": "",                   // OAuth Client ID created in Genesys
+  "ClientSecret": "",               // OAuth Client Secret created in Genesys
+  "WebhookSignatureSecret": ""      // Optional: outboundNotificationWebhookSignatureSecretToken from Genesys integration
 }
 ```
 
 > **Note:** Replace `<region>` with your Genesys region code (e.g., `usw2` for US-West-2, `use2` for US-East-2).
+
+#### Webhook Signature Validation (Optional but Recommended)
+
+The `WebhookSignatureSecret` setting enables HMAC-SHA256 signature validation for incoming webhook requests from Genesys. When configured:
+
+1. **In Genesys Cloud:** When creating the Open Messaging integration, Genesys generates an `outboundNotificationWebhookSignatureSecretToken`. Copy this value.
+2. **In appsettings.json:** Set the `WebhookSignatureSecret` to this token value.
+
+When enabled, the integration will:
+- Validate the `X-Hub-Signature-256` header on each incoming webhook request
+- Reject requests with invalid or missing signatures (returning a 401 Unauthorized response)
+- Use constant-time comparison to prevent timing attacks
+
+> **Security Tip:** It is strongly recommended to configure this setting in production environments to ensure that webhook requests are genuinely from Genesys Cloud and have not been tampered with.
 
 ---
 
