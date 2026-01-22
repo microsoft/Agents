@@ -210,16 +210,71 @@ Create an Azure Bot using one of the following authentication types:
 
 ### 4.2. Set up OAuth for Agent App Registration
 
-OAuth should be set up on the **same App Registration** used for the agent:
+Set up OAuth on a **new App Registration** for an exchangeable token:
 
-1. Perform the steps in [Add user authorization using Federated Identity Credential](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/azure-bot-user-authorization-federated-credentials) with the following **API Permissions** required:
+#### Create a New App Registration
+
+1. In **Azure Portal**, go to **Azure Active Directory** > **App registrations** > **New registration**.
+2. Select **Single Tenant**.
+3. Give it a name and click **Register**.
+
+#### Configure Authentication
+
+1. Go to the **Authentication** tab.
+2. Click **Add Platform**, select **Web**, and set the Redirect URI to:
+   ```
+   https://token.botframework.com/.auth/web/redirect
+   ```
+3. Click **Add Platform** again, select **Mobile and desktop applications**, and add:
+   ```
+   http://localhost
+   ```
+
+#### Configure API Permissions
+
+1. Go to the **API Permissions** tab.
+2. Add the following permissions:
    - **Dynamics CRM**: `user_impersonation`
-   - **Graph**: `User.Read`
+   - **Microsoft Graph**: `User.Read`
    - **Power Platform API**: `CopilotStudio.Copilots.Invoke`
+3. Click **Grant Admin Consent** for your tenant.
 
 > **TIP:** If you do not see Power Platform API in the list of APIs your organization uses, you need to add the Power Platform API to your tenant. To do that, go to [Power Platform API Authentication](https://learn.microsoft.com/en-us/power-platform/admin/programmability-authentication-v2?tabs=powershell#step-2-configure-api-permissions) and follow the instructions on Step 2 to add the Power Platform Admin API to your Tenant.
 
-2. **Grant Admin Consent** for your tenant for these permissions.
+#### Expose an API
+
+1. Go to the **Expose an API** tab.
+2. Click **Add a Scope**.
+3. Set the **Application ID URI** to:
+   ```
+   api://botid-{{appid}}
+   ```
+   (Replace `{{appid}}` with your App Registration's Application (client) ID)
+4. Configure the scope:
+   - **Scope Name**: `defaultScope`
+   - **Who can consent**: `Admins and users`
+   - Fill in the required **Admin consent display name** and **Admin consent description** fields.
+5. Click **Add scope**.
+
+#### Create a Client Secret
+
+1. Go to the **Certificates & secrets** tab.
+2. Click **New client secret**.
+3. Add a description and select an expiration period.
+4. Click **Add** and **record the secret value** - you will need this later.
+
+#### Create Azure Bot OAuth Connection
+
+1. Go to your **Azure Bot** created in section 4.1.
+2. Click the **Configuration** tab, then click **Add OAuth Connection Settings**.
+3. Configure the connection:
+   - **Name**: Enter a name (you will use this in `appsettings.json` as `OAuthConnectionName`).
+   - **Service Provider**: Select **Azure Active Directory v2**.
+   - **Client ID**: The Application (client) ID from the App Registration created above.
+   - **Client Secret**: The secret value created above.
+   - **Tenant ID**: Your Azure AD Tenant ID.
+   - **Scopes**: `api://botid-{{appid}}/defaultScope` (replace `{{appid}}` with the Client ID from the OAuth App Registration).
+4. Click **Save**.
 
 ### 4.3. Configure .NET Agent for OAuth
 
