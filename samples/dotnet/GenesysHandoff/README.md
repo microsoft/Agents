@@ -87,22 +87,12 @@ Set up the dialog logic so the bot knows when and how to hand off to Genesys. Mo
 5. **Verify Topic Flow:** The final structure of your Escalate topic should be:
    - User trigger → (optional confirmation) → **Customize Response (summarize)** → **Event: GenesysHandoff**
 
-### 2.3. Disable Authentication for the Bot's Channel
-
-By default, Copilot Studio agents require an authenticated user or token. Genesys Cloud cannot present an Azure AD token, so we must remove this requirement:
-
-1. In Copilot Studio, go to your **Agent Settings** > **Security** or **Web Channel Security**.
-2. **Authentication Setting:** Set it to **"No Authentication (No user token required)"**.
-3. Confirm and save this setting.
-
-> **Why?** This allows the Genesys Cloud webhook to send messages to your bot freely. We will secure the integration through other means (like using secret keys and trusted URLs).
-
-### 2.4. Publish the Agent
+### 2.3. Publish the Agent
 
 1. Click **Publish** (usually in the top-right of Copilot Studio).
 2. After publishing, test quickly in the Copilot Studio chat canvas: type a phrase like "I want a human." The bot should trigger the event (you may see no response, which indicates the event was triggered).
 
-### 2.5. Retrieve Agent and Environment Metadata
+### 2.4. Retrieve Agent and Environment Metadata
 
 We need two pieces of info from Copilot Studio to configure the integration code:
 
@@ -371,7 +361,7 @@ After a short period of time (usually a few minutes), the agent will appear in:
 
 | Issue | Solution |
 | :--- | :--- |
-| **Bot doesn't hand off** | Verify the Escalation topic is configured correctly and published. Check that trigger phrases match and the event name is "GenesysHandoff". Ensure bot authentication is set to "No Auth". |
+| **Bot doesn't hand off** | Verify the Escalation topic is configured correctly and published. Check that trigger phrases match and the event name is "GenesysHandoff". |
 | **Genesys not receiving chat** | Check bot logs for API errors. Verify Genesys `IntegrationId`, OAuth credentials, and region URLs are correct. Ensure the Genesys integration is activated (not in draft mode). |
 | **Agent messages not reaching user** | Verify webhook URL is correct and accessible. Check for function keys if using Azure Functions. Look for exceptions in Application Insights. Verify conversation reference mapping. |
 | **Multiple responses or bot interrupts** | Ensure the bot sets a "handoff active" flag to prevent automated responses during human conversation. Check that the escalation event is the last step in the topic. |
