@@ -107,6 +107,16 @@ namespace GenesysHandoff.Genesys
             );
         }
 
+        public async Task DeleteConversationReferenceAsync(string mcsConversationId, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(mcsConversationId))
+            {
+                return;
+            }
+
+            await _storage.DeleteAsync([mcsConversationId], cancellationToken);
+        }
+
         private async Task<string> AuthenticateAsync(CancellationToken cancellationToken)
         {
             await _tokenSemaphore.WaitAsync(cancellationToken);
