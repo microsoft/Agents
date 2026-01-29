@@ -1,0 +1,25 @@
+{
+    "name": "console-echo-agent",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Agents console-echo",
+    "author": "Microsoft",
+    "license": "MIT",
+    "main": "./dist/index.js",
+    "scripts": {
+        "prebuild": "npm install",
+        "build": "tsc --build",
+        "prestart": "npm run build",
+        "start": "node ./dist/index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "dependencies": {
+        "@microsoft/agents-hosting": "^1.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^22.13.4",
+        "esbuild": "^0.25.0",
+        "typescript": "^5.7.2"
+    },
+    "keywords": []
+}
