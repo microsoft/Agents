@@ -1,14 +1,17 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.Agents.Authentication;
 using Microsoft.Agents.Builder;
 using Microsoft.Agents.Core.Models;
 using Microsoft.Agents.Storage;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -44,7 +47,25 @@ namespace GenesysHandoff.Genesys
 
         public async Task RetrieveMessageFromGenesysAsync(HttpRequest request, IChannelAdapter channelAdapter, CancellationToken cancellationToken)
         {
-            var payload = await JsonSerializer.DeserializeAsync<GenesysOutboundPayload>(request.Body, cancellationToken: cancellationToken);
+            // Read the request body and validate signature if configured
+            string requestBody;
+            request.EnableBuffering();
+            using (var reader = new StreamReader(request.Body, Encoding.UTF8, leaveOpen: true))
+            {
+                requestBody = await reader.ReadToEndAsync(cancellationToken);
+                request.Body.Position = 0;
+            }
+
+            // Validate webhook signature if secret is configured
+            if (!string.IsNullOrEmpty(_setting.WebhookSignatureSecret))
+            {
+                if (!ValidateWebhookSignature(request, requestBody))
+                {
+                    throw new UnauthorizedAccessException("Webhook signature validation failed. Request rejected.");
+                }
+            }
+
+            var payload = JsonSerializer.Deserialize<GenesysOutboundPayload>(requestBody);
 
             if (payload == null || payload.Channel == null || payload.Channel.To == null || payload.Channel.To.Id == null)
             {
@@ -61,21 +82,30 @@ namespace GenesysHandoff.Genesys
 
             if (string.IsNullOrEmpty(payload.Text))
             {
-                // If payload is coming as empty send a typing text.
-                await channelAdapter.ContinueConversationAsync(
-                agentId: conversationReference.Agent.Id,
-                reference: conversationReference,
-                callback: async (turnContext, ct) =>
-                {
-                    await turnContext.SendActivityAsync(new Activity { Type = ActivityTypes.Typing }, ct);
-                }, cancellationToken: cancellationToken);
+                // If payload is coming as empty send a typing indicator.
+                var continuationActivity = conversationReference.GetContinuationActivity();
+                var claimsIdentity = AgentClaims.CreateIdentity(conversationReference.Agent.Id);
+                
+                await channelAdapter.ProcessProactiveAsync(
+                    claimsIdentity: claimsIdentity,
+                    continuationActivity: continuationActivity,
+                    audience: string.Empty, 
+                    callback: async (turnContext, ct) =>
+                    {
+                        await turnContext.SendActivityAsync(new Activity { Type = ActivityTypes.Typing }, ct);
+                    },
+                    cancellationToken: cancellationToken);
                 return;
             }
 
+            // Send the agent's message to the user
+            var msgContinuationActivity = conversationReference.GetContinuationActivity();
+            var msgClaimsIdentity = AgentClaims.CreateIdentity(conversationReference.Agent.Id);
 
-            await channelAdapter.ContinueConversationAsync(
-                agentId: conversationReference.Agent.Id, // Replace with your app ID or retrieve from config
-                reference: conversationReference,
+            await channelAdapter.ProcessProactiveAsync(
+                claimsIdentity: msgClaimsIdentity,
+                continuationActivity: msgContinuationActivity,
+                audience: string.Empty, 
                 callback: async (turnContext, ct) =>
                 {
                     // Create a more descriptive reply activity with proper formatting
@@ -305,6 +335,50 @@ namespace GenesysHandoff.Genesys
                 "application/pdf" => "File",
                 _ => "File"
             };
+        }
+
+        /// <summary>
+        /// Validates the webhook signature from Genesys using HMAC-SHA256.
+        /// </summary>
+        /// <param name="request">The incoming HTTP request containing the signature header.</param>
+        /// <param name="requestBody">The raw request body as a string.</param>
+        /// <returns>True if the signature is valid or if signature validation is not configured; otherwise, false.</returns>
+        /// <remarks>
+        /// Genesys sends the signature in the X-Hub-Signature-256 header in the format "sha256={base64-encoded-hash}".
+        /// This method computes the HMAC-SHA256 hash of the request body using the configured webhook secret
+        /// and compares it with the provided signature.
+        /// </remarks>
+        private bool ValidateWebhookSignature(HttpRequest request, string requestBody)
+        {
+            const string SignatureHeaderName = "X-Hub-Signature-256";
+            const string SignaturePrefix = "sha256=";
+
+            // Get the signature from the request header
+            if (!request.Headers.TryGetValue(SignatureHeaderName, out var signatureHeader))
+            {
+                // No signature header present - fail validation if secret is configured
+                return false;
+            }
+
+            var signature = signatureHeader.ToString();
+            if (string.IsNullOrEmpty(signature) || !signature.StartsWith(SignaturePrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            // Compute the expected signature
+            var secretBytes = Encoding.UTF8.GetBytes(_setting.WebhookSignatureSecret!);
+            var bodyBytes = Encoding.UTF8.GetBytes(requestBody);
+
+            using var hmac = new HMACSHA256(secretBytes);
+            var hashBytes = hmac.ComputeHash(bodyBytes);
+            var expectedHash = Convert.ToBase64String(hashBytes);
+            var expectedSignature = $"{SignaturePrefix}{expectedHash}";
+
+            // Use constant-time comparison to prevent timing attacks
+            return CryptographicOperations.FixedTimeEquals(
+                Encoding.UTF8.GetBytes(expectedSignature),
+                Encoding.UTF8.GetBytes(signature));
         }
     }
 }
