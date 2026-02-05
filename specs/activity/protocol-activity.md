@@ -1990,7 +1990,10 @@ When used with [Media.* events](#reserved-events-for-media-streaming), the `stre
 
 ---
 
-Example:
+#### Example: Text Streaming
+
+Text streaming uses `typing` activities for incremental chunks, followed by a final `message` activity:
+
 ```json
 // Sending an informative message chunk
 {
@@ -2033,6 +2036,105 @@ Example:
       "streamResult": "success"
     }
   ]
+}
+```
+
+#### Example: Voice/Media Streaming
+
+Voice streaming uses `event` activities with [Media.* events](#reserved-events-for-media-streaming). The `valueType` identifies the media type, while `streaminfo` handles sequencing:
+
+```json
+// Media.Start - Initiate audio streaming session
+{
+  "type": "event",
+  "name": "Media.Start",
+  "valueType": "application/vnd.microsoft.activity.mediastart+json",
+  "value": {
+    "mediaType": "audio",
+    "contentType": "audio/webm"
+  },
+  "entities": [
+    {
+      "type": "streaminfo",
+      "streamId": "v-00001",
+      "streamType": "streaming",
+      "streamSequence": 1
+    }
+  ]
+}
+
+// Media.Chunk - Send audio chunk with optional transcription
+{
+  "type": "event",
+  "name": "Media.Chunk",
+  "valueType": "application/vnd.microsoft.activity.audiochunk+json",
+  "value": {
+    "contentType": "audio/webm",
+    "contentUrl": "data:audio/webm;base64,GkXfo59ChoEBQveBAU...",
+    "durationMs": 2500,
+    "timestamp": "2025-10-07T10:30:05Z",
+    "transcription": "Book a flight to"
+  },
+  "entities": [
+    {
+      "type": "streaminfo",
+      "streamId": "v-00001",
+      "streamType": "streaming",
+      "streamSequence": 2
+    }
+  ]
+}
+
+// Media.Chunk - Continue streaming
+{
+  "type": "event",
+  "name": "Media.Chunk",
+  "valueType": "application/vnd.microsoft.activity.audiochunk+json",
+  "value": {
+    "contentType": "audio/webm",
+    "contentUrl": "data:audio/webm;base64,R0lGODlhAQABAIAA...",
+    "durationMs": 1800,
+    "timestamp": "2025-10-07T10:30:07Z",
+    "transcription": "Paris please"
+  },
+  "entities": [
+    {
+      "type": "streaminfo",
+      "streamId": "v-00001",
+      "streamType": "streaming",
+      "streamSequence": 3
+    }
+  ]
+}
+
+// Media.End - Signal end of audio stream
+{
+  "type": "event",
+  "name": "Media.End",
+  "valueType": "application/vnd.microsoft.activity.mediaend+json",
+  "entities": [
+    {
+      "type": "streaminfo",
+      "streamId": "v-00001",
+      "streamType": "final",
+      "streamSequence": 4
+    }
+  ]
+}
+
+// Voice.Message - Final complete voice response (Server to Client)
+{
+  "type": "event",
+  "name": "Voice.Message",
+  "valueType": "application/vnd.microsoft.activity.voice+json",
+  "value": {
+    "contentType": "audio/webm",
+    "contentUrl": "data:audio/webm;base64,UklGRiQAAABXQVZF...",
+    "transcription": "I found flights to Paris. The next available is tomorrow at 8:05am.",
+    "durationMs": 4200,
+    "timestamp": "2025-10-07T10:30:12Z",
+    "locale": "en-US"
+  }
 }
 ```
 
