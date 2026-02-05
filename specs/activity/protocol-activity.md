@@ -773,6 +773,12 @@ Example:
 
 The `Voice.Message` event delivers a complete voice message, either as a final response after streaming or as a standalone voice message.
 
+> **Implementation Note:**
+> 
+> The Activity Protocol schema permits `value` and `valueType` on `message` activities (per A2005). However, current SDK implementations may not fully support this combination for validation purposes. For GA compatibility, `Voice.Message` is defined as an `event` activity. This ensures consistent behavior across all existing Bot Framework, Azure Bot Service, and Teams clients.
+> 
+> Future versions (APv4+) may unify voice messages under the `message` activity type for consistency with text messages. See [#377](https://github.com/microsoft/Agents/issues/377) for the longer-term vision.
+
 | Field       | Type   | Required | Description                                      |
 |-------------|--------|----------|--------------------------------------------------|
 | `type`      | string | Yes      | Must be `"event"`                                |
@@ -813,6 +819,14 @@ Example:
 `A5251`: The `value` object MUST include `contentType` and `contentUrl` fields.
 
 `A5252`: Senders SHOULD include a `transcription` field to support accessibility and text-based processing.
+
+#### Error Handling
+
+`A5260`: If a `Media.Chunk` event is received without a corresponding `Media.Start`, receivers MAY ignore it or MAY process it if the `streamId` is known from a prior session.
+
+`A5261`: If a stream error occurs, senders SHOULD send a `Media.End` event with `streamResult` set to `"error"` in the `streaminfo` entity.
+
+`A5262`: Receivers SHOULD be resilient to missing chunks and SHOULD use `streamSequence` to detect gaps.
 
 
 ## Invoke activity
@@ -2226,6 +2240,8 @@ The Microsoft Telephony channel defines channel command activities in the namesp
 ## Session Lifecycle Commands
 
 Session lifecycle commands are used to manage multimodal streaming sessions, particularly for voice interactions. These commands follow request/response semantics with acknowledgments via `commandResult` activities.
+
+> **Note:** The `session.*` command names are reserved Activity Protocol commands for multimodal session management. Unlike application-defined commands (which must use the `application/*` namespace per A6301), these are protocol-level commands similar to other reserved event names.
 
 ### session.init
 
