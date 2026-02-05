@@ -2008,8 +2008,8 @@ When used with [Media.* events](#reserved-events-for-media-streaming), the `stre
 
 Text streaming uses `typing` activities for incremental chunks, followed by a final `message` activity:
 
+**Informative message** - Show processing status:
 ```json
-// Sending an informative message chunk
 {
   "type": "typing",
   "text": "Getting the answer...",
@@ -2023,8 +2023,10 @@ Text streaming uses `typing` activities for incremental chunks, followed by a fi
     }
   ]
 }
+```
 
-// Sending a streaming text chunk
+**Streaming text chunk** - Incremental content:
+```json
 {
   "type": "typing",
   "text": "A quick brown fox jumped over the",
@@ -2037,8 +2039,10 @@ Text streaming uses `typing` activities for incremental chunks, followed by a fi
     }
   ]
 }
+```
 
-// Sending the final complete message
+**Final complete message** - Full response:
+```json
 {
   "type": "message",
   "text": "A quick brown fox jumped over the lazy dog.",
@@ -2057,8 +2061,8 @@ Text streaming uses `typing` activities for incremental chunks, followed by a fi
 
 Voice streaming uses `event` activities with [Media.* events](#reserved-events-for-media-streaming). The `valueType` identifies the media type, while `streaminfo` handles sequencing:
 
+**Media.Start** - Initiate audio streaming session:
 ```json
-// Media.Start - Initiate audio streaming session
 {
   "type": "event",
   "name": "Media.Start",
@@ -2076,8 +2080,10 @@ Voice streaming uses `event` activities with [Media.* events](#reserved-events-f
     }
   ]
 }
+```
 
-// Media.Chunk - Send audio chunk with optional transcription
+**Media.Chunk** - Send audio chunk with optional transcription:
+```json
 {
   "type": "event",
   "name": "Media.Chunk",
@@ -2098,8 +2104,10 @@ Voice streaming uses `event` activities with [Media.* events](#reserved-events-f
     }
   ]
 }
+```
 
-// Media.Chunk - Continue streaming
+**Media.Chunk** - Continue streaming (additional chunks):
+```json
 {
   "type": "event",
   "name": "Media.Chunk",
@@ -2120,8 +2128,10 @@ Voice streaming uses `event` activities with [Media.* events](#reserved-events-f
     }
   ]
 }
+```
 
-// Media.End - Signal end of audio stream
+**Media.End** - Signal end of audio stream:
+```json
 {
   "type": "event",
   "name": "Media.End",
@@ -2135,8 +2145,10 @@ Voice streaming uses `event` activities with [Media.* events](#reserved-events-f
     }
   ]
 }
+```
 
-// Voice.Message - Final complete voice response (Server to Client)
+**Voice.Message** - Final complete voice response (Server to Client):
+```json
 {
   "type": "event",
   "name": "Voice.Message",
@@ -2371,11 +2383,11 @@ Defined end reasons:
 
 The typical flow for a voice streaming session:
 
-```
-Client -> Server:
+```text
+Client → Server:
   session.init → commandResult (listening) → Media.Start → Media.Chunk x N → Media.End → bargeIn (optional)
 
-Server -> Client:
+Server → Client:
   Optional session.update (thinking) → Optional session.update (speaking) → Voice.Message
 
 Barge-In:
@@ -2384,40 +2396,54 @@ Barge-In:
 
 #### Round-Trip Flow Example: Client and Server Interaction
 
+The following example illustrates a complete voice streaming interaction:
+
+**Step 1: Session Handshake**
+```text
+client  → command:        session.init
+server  → commandResult:  { "status": "success", "sessionId": "SESS-123", "state": "listening" }
 ```
-// Client → Server: establish session (handshake)
-  client  → command:        session.init
-  server  → commandResult:  ack { "status": "success", "sessionId": "SESS-123", "state": "listening" }
-  // Because readiness is embedded in the response above, a separate 
-  // session.update(state="listening") call is NOT required.
+> Because readiness (`listening`) is embedded in the response above, a separate `session.update(state="listening")` call is NOT required.
 
-// This step is required only if the channel or runtime explicitly requires a 
-// readiness signal, depending on implementation details.
-// Server → Client (readiness)
-  server  → command:        session.update(state="listening", sessionId:"SESS-123")
-  client  → commandResult:  ack
+**Step 2: Readiness Signal (Optional)**
 
-// Client → Server: stream media (fire-and-forget events)
-  client  → event:          Media.Start   (streamId=STR-1, contentType=audio/webm)
-  client  → event:          Media.Chunk   (streamId=STR-1, seq=1, ...)
-  ... (more Media.Chunk)
-  client  → event:          Media.End     (streamId=STR-1)
-
-// These updates are optional and rate-limited. Clients may safely ignore them.
-// They fire only when thresholds are crossed (e.g., >200ms of "thinking"),
-// depending on implementation details.
-// Server → Client: (optional, per threshold/config) processing + speak phases
-  server  → command:        session.update(state=thinking,  sessionId=SESS-123)
-  client  → commandResult:  ack
-  server  → command:        session.update(state=speaking,  sessionId=SESS-123)
-  client  → commandResult:  ack
-
-// Server → Client: final user-visible content
-  server  → event:          Voice.Message  valueType=application/vnd.microsoft.activity.voice+json
-                            value={ "contentType":"audio/webm", "contentUrl":"...", ... }
+This step is required only if the channel or runtime explicitly requires a readiness signal:
+```text
+server  → command:        session.update { "state": "listening", "sessionId": "SESS-123" }
+client  → commandResult:  { "status": "acknowledged" }
 ```
 
-> **Note:** 
+**Step 3: Stream Media (Fire-and-Forget Events)**
+```text
+client  → event:  Media.Start   { streamId: "STR-1", contentType: "audio/webm" }
+client  → event:  Media.Chunk   { streamId: "STR-1", seq: 1, ... }
+client  → event:  Media.Chunk   { streamId: "STR-1", seq: 2, ... }
+  ... (more Media.Chunk events)
+client  → event:  Media.End     { streamId: "STR-1" }
+```
+
+**Step 4: Processing State Updates (Optional)**
+
+These updates are optional and rate-limited. Clients may safely ignore them. They fire only when thresholds are crossed (e.g., >200ms of "thinking"):
+```text
+server  → command:        session.update { "state": "thinking", "sessionId": "SESS-123" }
+client  → commandResult:  { "status": "acknowledged" }
+
+server  → command:        session.update { "state": "speaking", "sessionId": "SESS-123" }
+client  → commandResult:  { "status": "acknowledged" }
+```
+
+**Step 5: Final Voice Response**
+```text
+server  → event:  Voice.Message  
+                  valueType: "application/vnd.microsoft.activity.voice+json"
+                  value: { "contentType": "audio/webm", "contentUrl": "...", "transcription": "..." }
+```
+
+> **Notes:** 
+> - `listening` is NOT needed as a separate step if included in the `session.init` commandResult.
+> - `thinking` and `speaking` session.update messages are optional and threshold-based.
+> - Media streaming events are fire-and-forget (no acknowledgment required). 
 > - `listening` is NOT needed as a separate step if included in the `session.init` commandResult.
 > - `thinking` and `speaking` session.update messages are optional and threshold-based.
 
