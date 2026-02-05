@@ -2382,6 +2382,45 @@ Barge-In:
   Client sends bargeIn → Server returns to listening
 ```
 
+#### Round-Trip Flow Example: Client and Server Interaction
+
+```
+// Client → Server: establish session (handshake)
+  client  → command:        session.init
+  server  → commandResult:  ack { "status": "success", "sessionId": "SESS-123", "state": "listening" }
+  // Because readiness is embedded in the response above, a separate 
+  // session.update(state="listening") call is NOT required.
+
+// This step is required only if the channel or runtime explicitly requires a 
+// readiness signal, depending on implementation details.
+// Server → Client (readiness)
+  server  → command:        session.update(state="listening", sessionId:"SESS-123")
+  client  → commandResult:  ack
+
+// Client → Server: stream media (fire-and-forget events)
+  client  → event:          Media.Start   (streamId=STR-1, contentType=audio/webm)
+  client  → event:          Media.Chunk   (streamId=STR-1, seq=1, ...)
+  ... (more Media.Chunk)
+  client  → event:          Media.End     (streamId=STR-1)
+
+// These updates are optional and rate-limited. Clients may safely ignore them.
+// They fire only when thresholds are crossed (e.g., >200ms of "thinking"),
+// depending on implementation details.
+// Server → Client: (optional, per threshold/config) processing + speak phases
+  server  → command:        session.update(state=thinking,  sessionId=SESS-123)
+  client  → commandResult:  ack
+  server  → command:        session.update(state=speaking,  sessionId=SESS-123)
+  client  → commandResult:  ack
+
+// Server → Client: final user-visible content
+  server  → event:          Voice.Message  valueType=application/vnd.microsoft.activity.voice+json
+                            value={ "contentType":"audio/webm", "contentUrl":"...", ... }
+```
+
+> **Note:** 
+> - `listening` is NOT needed as a separate step if included in the `session.init` commandResult.
+> - `thinking` and `speaking` session.update messages are optional and threshold-based.
+
 `A9440`: Session lifecycle commands follow request/response semantics; receivers SHOULD send acknowledgments via `commandResult`.
 
 `A9441`: Session lifecycle commands are required only for real-time streaming modalities (voice, video).
