@@ -2443,9 +2443,7 @@ server  → event:  Voice.Message
 > **Notes:** 
 > - `listening` is NOT needed as a separate step if included in the `session.init` commandResult.
 > - `thinking` and `speaking` session.update messages are optional and threshold-based.
-> - Media streaming events are fire-and-forget (no acknowledgment required). 
-> - `listening` is NOT needed as a separate step if included in the `session.init` commandResult.
-> - `thinking` and `speaking` session.update messages are optional and threshold-based.
+> - Media streaming events are fire-and-forget (no acknowledgment required).
 
 `A9440`: Session lifecycle commands follow request/response semantics; receivers SHOULD send acknowledgments via `commandResult`.
 
