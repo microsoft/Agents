@@ -1,6 +1,6 @@
 # Activity Protocol -- Activity
 
-Version: Provisional 3.3
+Version: Provisional 3.4
 
 ## Abstract
 
@@ -637,6 +637,185 @@ Possible values for `contentType` are audio, video, text, screen, all or any oth
   "name": "startConversation"
 }
 ```
+
+### Reserved Events for Media Streaming
+
+Media streaming events are used to facilitate real-time multimodal interactions, particularly for voice and audio streaming. These events use the `Media.*` prefix and work in conjunction with the [`streamInfo`](#streaminfo) entity for stream metadata and sequencing.
+
+`A5210`: Media streaming events MUST use the `Media.*` prefix for their `name` field.
+
+`A5211`: Media streaming events SHOULD include a [`streamInfo`](#streaminfo) entity to convey stream metadata.
+
+`A5212`: Media streaming events MAY use the `value` and `valueType` fields to carry modality-specific content.
+
+#### Media.Start
+
+The `Media.Start` event initiates a media streaming session. It establishes the stream context and media type that will be transmitted.
+
+| Field       | Type   | Required | Description                                      |
+|-------------|--------|----------|--------------------------------------------------|
+| `type`      | string | Yes      | Must be `"event"`                                |
+| `name`      | string | Yes      | Must be `"Media.Start"`                          |
+| `valueType` | string | No       | Identifies the schema of the `value` object, e.g., `"application/vnd.microsoft.activity.mediastart+json"` |
+| `value`     | object | No       | Contains media type and content type information |
+| `entities`  | array  | Yes      | Must include a [`streamInfo`](#streaminfo) entity with `streamState` of `"streaming"` |
+
+Example:
+```json
+{
+  "type": "event",
+  "name": "Media.Start",
+  "valueType": "application/vnd.microsoft.activity.mediastart+json",
+  "value": {
+    "mediaType": "audio",
+    "contentType": "audio/webm"
+  },
+  "entities": [
+    {
+      "type": "streamInfo",
+      "streamId": "abc123",
+      "streamType": "audio",
+      "streamState": "streaming",
+      "streamSequence": 1
+    }
+  ]
+}
+```
+
+`A5220`: Senders MUST include a [`streamInfo`](#streaminfo) entity in `Media.Start` events with a valid `streamId`.
+
+`A5221`: The `streamSequence` in `Media.Start` SHOULD be `1` as it initiates the stream.
+
+#### Media.Chunk
+
+The `Media.Chunk` event sends a chunk of media data during an active streaming session. Chunks are sequenced using the `streamSequence` field in the [`streamInfo`](#streaminfo) entity.
+
+| Field       | Type   | Required | Description                                      |
+|-------------|--------|----------|--------------------------------------------------|
+| `type`      | string | Yes      | Must be `"event"`                                |
+| `name`      | string | Yes      | Must be `"Media.Chunk"`                          |
+| `valueType` | string | No       | Identifies the schema of the `value` object, e.g., `"application/vnd.microsoft.activity.audiochunk+json"` |
+| `value`     | object | Yes      | Contains the media chunk data                    |
+| `entities`  | array  | Yes      | Must include a [`streamInfo`](#streaminfo) entity |
+
+The `value` object for audio chunks typically includes:
+
+| Property       | Type    | Required | Description                                    |
+|----------------|---------|----------|------------------------------------------------|
+| `contentType`  | string  | Yes      | MIME type of the media, e.g., `"audio/webm"`   |
+| `contentUrl`   | string  | Yes      | Data URI containing Base64-encoded media data  |
+| `durationMs`   | integer | No       | Duration of the chunk in milliseconds          |
+| `timestamp`    | string  | No       | ISO 8601 timestamp of the chunk                |
+| `transcription`| string  | No       | Optional real-time transcription of audio      |
+
+Example:
+```json
+{
+  "type": "event",
+  "name": "Media.Chunk",
+  "valueType": "application/vnd.microsoft.activity.audiochunk+json",
+  "value": {
+    "contentType": "audio/webm",
+    "contentUrl": "data:audio/webm;base64,...",
+    "durationMs": 2500,
+    "timestamp": "2025-10-07T10:30:05Z",
+    "transcription": "Your destination?"
+  },
+  "entities": [
+    {
+      "type": "streamInfo",
+      "streamId": "abc123",
+      "streamType": "audio",
+      "streamState": "streaming",
+      "streamSequence": 2
+    }
+  ]
+}
+```
+
+`A5230`: Senders MUST include a [`streamInfo`](#streaminfo) entity in `Media.Chunk` events with the same `streamId` as the corresponding `Media.Start`.
+
+`A5231`: The `streamSequence` MUST be incrementing for each chunk within the same stream.
+
+`A5232`: Receivers SHOULD use `streamSequence` to order chunks and detect missing chunks.
+
+#### Media.End
+
+The `Media.End` event signals the end of a media streaming session.
+
+| Field       | Type   | Required | Description                                      |
+|-------------|--------|----------|--------------------------------------------------|
+| `type`      | string | Yes      | Must be `"event"`                                |
+| `name`      | string | Yes      | Must be `"Media.End"`                            |
+| `valueType` | string | No       | Identifies the schema, e.g., `"application/vnd.microsoft.activity.mediaend+json"` |
+| `entities`  | array  | Yes      | Must include a [`streamInfo`](#streaminfo) entity with `streamState` of `"final"` |
+
+Example:
+```json
+{
+  "type": "event",
+  "name": "Media.End",
+  "valueType": "application/vnd.microsoft.activity.mediaend+json",
+  "entities": [
+    {
+      "type": "streamInfo",
+      "streamId": "abc123",
+      "streamType": "audio",
+      "streamState": "final",
+      "streamSequence": 3
+    }
+  ]
+}
+```
+
+`A5240`: Senders MUST include a [`streamInfo`](#streaminfo) entity in `Media.End` events with `streamState` set to `"final"`.
+
+`A5241`: Receivers SHOULD clean up stream resources upon receiving `Media.End`.
+
+#### Voice.Message
+
+The `Voice.Message` event delivers a complete voice message, either as a final response after streaming or as a standalone voice message.
+
+| Field       | Type   | Required | Description                                      |
+|-------------|--------|----------|--------------------------------------------------|
+| `type`      | string | Yes      | Must be `"event"`                                |
+| `name`      | string | Yes      | Must be `"Voice.Message"`                        |
+| `valueType` | string | Yes      | Must be `"application/vnd.microsoft.activity.voice+json"` |
+| `value`     | object | Yes      | Contains the voice message content               |
+
+The `value` object for voice messages includes:
+
+| Property       | Type    | Required | Description                                    |
+|----------------|---------|----------|------------------------------------------------|
+| `contentType`  | string  | Yes      | MIME type of the audio, e.g., `"audio/webm"`   |
+| `contentUrl`   | string  | Yes      | Data URI or URL containing the audio data      |
+| `transcription`| string  | No       | Text transcription of the audio                |
+| `durationMs`   | integer | No       | Duration in milliseconds                       |
+| `timestamp`    | string  | No       | ISO 8601 timestamp                             |
+| `locale`       | string  | No       | Language/locale of the audio, e.g., `"en-US"`  |
+
+Example:
+```json
+{
+  "type": "event",
+  "name": "Voice.Message",
+  "valueType": "application/vnd.microsoft.activity.voice+json",
+  "value": {
+    "contentType": "audio/webm",
+    "contentUrl": "data:audio/webm;base64,...",
+    "transcription": "Book a flight to Paris",
+    "durationMs": 3400,
+    "timestamp": "2025-10-07T10:30:00Z",
+    "locale": "en-US"
+  }
+}
+```
+
+`A5250`: `Voice.Message` events MUST include a `valueType` of `"application/vnd.microsoft.activity.voice+json"`.
+
+`A5251`: The `value` object MUST include `contentType` and `contentUrl` fields.
+
+`A5252`: Senders SHOULD include a `transcription` field to support accessibility and text-based processing.
 
 
 ## Invoke activity
@@ -1594,6 +1773,14 @@ The `error` field contains the reason the original [command activity](#command-a
 
 # Appendix I - Changes
 
+# 2025-02-05 - guhiriya@microsoft.com
+* Added Reserved Events for Media Streaming (`Media.Start`, `Media.Chunk`, `Media.End`, `Voice.Message`)
+* Extended `streaminfo` entity to support media streaming with `streamState` property
+* Added Session Lifecycle Commands (`session.init`, `session.update`, `session.end`) for multimodal interactions
+* Added normative requirements A5210-A5252 for media streaming events
+* Added normative requirements A9260-A9263 for media streaming in streaminfo
+* Added normative requirements A9400-A9442 for session lifecycle commands
+
 # 2025-09-30 - mattb-msft
 * Updated Channel Account definition to reflect current rules and usages. 
 
@@ -1764,15 +1951,20 @@ Note that on channels with a persistent chat feed, `platform` is typically usefu
 
 ### streaminfo
 
-The `streaminfo` entity conveys metadata supporting chunked streaming of text messages, typically sent as a sequence of `typing` Activities, followed by a final `message` Activity containing the complete text.
+The `streaminfo` entity conveys metadata supporting chunked streaming of messages. It is used for:
+- **Text streaming**: Sent as a sequence of `typing` Activities, followed by a final `message` Activity containing the complete text.
+- **Media streaming**: Used with [Media.* events](#reserved-events-for-media-streaming) (`Media.Start`, `Media.Chunk`, `Media.End`) for real-time voice/audio streaming.
 
 | Property         | Type    | Required | Description                                                                     |
 |------------------|---------|----------|---------------------------------------------------------------------------------|
 | `type`           | string  | Yes      | Must be `"streaminfo"`                                                          |
 | `streamId`       | string  | Yes      | Unique identifier for the streaming session                                     |
 | `streamSequence` | integer | Yes      | Incrementing sequence number for each chunk for non-final messages              |
-| `streamType`     | string  | No       | One of `"informative"`, `"streaming"`, or `"final"`. Defaults to `"streaming"`` |
+| `streamType`     | string  | No       | For text: `"informative"`, `"streaming"`, or `"final"`. For media: `"audio"` or `"video"`. Defaults to `"streaming"` |
+| `streamState`    | string  | No       | State of the stream: `"streaming"`, `"informative"`, or `"final"`. Used primarily for media streaming |
 | `streamResult`   | string  | No       | Present only on final message; one of `"success"`, `"timeout"`, or `"error"`    |
+
+#### Text Streaming
 
 `A9240`: Streaming text is sent via a sequence of `typing` Activities containing `streaminfo` entities.
 
@@ -1789,6 +1981,18 @@ The `streaminfo` entity conveys metadata supporting chunked streaming of text me
 `A9246`: Senders MUST NOT include more than one `streaminfo` entity per Activity. If multiple are present, receivers MUST ignore all `streaminfo` entities in that Activity.
 
 `A9247`: Channels that do not support streaming SHOULD buffer all chunks and deliver a single `message` when complete.
+
+#### Media Streaming
+
+When used with [Media.* events](#reserved-events-for-media-streaming), the `streaminfo` entity serves as the single place for stream identification, sequencing, and state, independent of the activity type.
+
+`A9260`: For media streaming, the `streamType` field SHOULD be set to the media type (e.g., `"audio"`, `"video"`).
+
+`A9261`: For media streaming, the `streamState` field indicates stream lifecycle: `"streaming"` for active chunks, `"final"` for stream end.
+
+`A9262`: The `streamId` MUST be consistent across all activities in a streaming session (`Media.Start`, `Media.Chunk`, `Media.End`).
+
+`A9263`: Receivers SHOULD use `streamSequence` to detect out-of-order or missing chunks in media streams.
 
 ---
 
@@ -1922,6 +2126,155 @@ The authenticity of a call from an Agent can be established by inspecting its JS
 ## Telephony Channel 
 
 The Microsoft Telephony channel defines channel command activities in the namespace `channel/vnd.microsoft.telephony.<action>`. 
+
+## Session Lifecycle Commands
+
+Session lifecycle commands are used to manage multimodal streaming sessions, particularly for voice interactions. These commands follow request/response semantics with acknowledgments via `commandResult` activities.
+
+### session.init
+
+The `session.init` command initializes a new streaming session. It establishes the session context and is acknowledged with a `commandResult` containing the session state.
+
+**Request:**
+```json
+{
+  "type": "command",
+  "id": "cmd1",
+  "name": "session.init",
+  "value": {
+    "sessionId": "sess_123"
+  }
+}
+```
+
+**Response (commandResult):**
+```json
+{
+  "type": "commandResult",
+  "replyToId": "cmd1",
+  "value": {
+    "status": "success",
+    "sessionId": "sess_123",
+    "state": "listening"
+  }
+}
+```
+
+`A9400`: The `session.init` command MUST include a `sessionId` in the `value` object.
+
+`A9401`: Receivers MUST respond with a `commandResult` activity indicating success or failure.
+
+`A9402`: A successful `session.init` response MAY include an initial `state` (e.g., `"listening"`), eliminating the need for a separate `session.update`.
+
+### session.update
+
+The `session.update` command updates the state of an active session. It is used to signal state transitions during multimodal interactions.
+
+**Request:**
+```json
+{
+  "type": "command",
+  "id": "cmd2",
+  "name": "session.update",
+  "value": {
+    "state": "speaking"
+  }
+}
+```
+
+**Response (commandResult):**
+```json
+{
+  "type": "commandResult",
+  "replyToId": "cmd2",
+  "value": {
+    "status": "acknowledged"
+  }
+}
+```
+
+Defined session states:
+
+| State       | Description                                                |
+|-------------|------------------------------------------------------------|
+| `listening` | Bot is awaiting user input (input.expected)                |
+| `thinking`  | Bot is processing the input                                |
+| `speaking`  | Bot is generating or delivering output (output.generating) |
+| `idle`      | Bot is not currently in an active state                    |
+| `error`     | An error has occurred during the interaction               |
+
+`A9410`: The `session.update` command SHOULD include a `state` field in the `value` object.
+
+`A9411`: Receivers SHOULD respond with a `commandResult` activity acknowledging the state change.
+
+`A9412`: Session state updates are optional and threshold-based; clients may safely ignore them.
+
+### session.update (Barge-In)
+
+The `session.update` command can also signal a barge-in event, where the user or system interrupts the current output.
+
+```json
+{
+  "type": "command",
+  "name": "session.update",
+  "value": {
+    "signal": "bargeIn",
+    "origin": "user"
+  }
+}
+```
+
+`A9420`: A barge-in signal SHOULD include `origin` indicating whether it was triggered by `"user"` or `"system"`.
+
+`A9421`: Upon receiving a barge-in, the server SHOULD return to the `"listening"` state.
+
+### session.end
+
+The `session.end` command terminates an active session.
+
+```json
+{
+  "type": "command",
+  "name": "session.end",
+  "value": {
+    "reason": "completed"
+  }
+}
+```
+
+Defined end reasons:
+
+| Reason      | Description                              |
+|-------------|------------------------------------------|
+| `completed` | Session ended normally                   |
+| `cancelled` | Session was cancelled                    |
+| `error`     | Session ended due to an error            |
+| `timeout`   | Session ended due to inactivity timeout  |
+
+`A9430`: The `session.end` command SHOULD include a `reason` field in the `value` object.
+
+`A9431`: Receivers SHOULD clean up session resources upon receiving `session.end`.
+
+### Multimodal Interaction Flow
+
+The typical flow for a voice streaming session:
+
+```
+Client -> Server:
+  session.init → commandResult (listening) → Media.Start → Media.Chunk x N → Media.End → bargeIn (optional)
+
+Server -> Client:
+  Optional session.update (thinking) → Optional session.update (speaking) → Voice.Message
+
+Barge-In:
+  Client sends bargeIn → Server returns to listening
+```
+
+`A9440`: Session lifecycle commands follow request/response semantics; receivers SHOULD send acknowledgments via `commandResult`.
+
+`A9441`: Session lifecycle commands are required only for real-time streaming modalities (voice, video).
+
+`A9442`: The `listening` state MAY be embedded in the `session.init` response, making a separate `session.update(listening)` optional.
 
 ## Patterns for rejecting commands
 
