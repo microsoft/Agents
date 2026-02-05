@@ -658,7 +658,7 @@ The `Media.Start` event initiates a media streaming session. It establishes the 
 | `name`      | string | Yes      | Must be `"Media.Start"`                          |
 | `valueType` | string | No       | Identifies the schema of the `value` object, e.g., `"application/vnd.microsoft.activity.mediastart+json"` |
 | `value`     | object | No       | Contains media type and content type information |
-| `entities`  | array  | Yes      | Must include a [`streamInfo`](#streaminfo) entity with `streamState` of `"streaming"` |
+| `entities`  | array  | Yes      | Must include a [`streamInfo`](#streaminfo) entity with `streamType` of `"streaming"` |
 
 Example:
 ```json
@@ -674,8 +674,7 @@ Example:
     {
       "type": "streamInfo",
       "streamId": "abc123",
-      "streamType": "audio",
-      "streamState": "streaming",
+      "streamType": "streaming",
       "streamSequence": 1
     }
   ]
@@ -725,8 +724,7 @@ Example:
     {
       "type": "streamInfo",
       "streamId": "abc123",
-      "streamType": "audio",
-      "streamState": "streaming",
+      "streamType": "streaming",
       "streamSequence": 2
     }
   ]
@@ -748,7 +746,7 @@ The `Media.End` event signals the end of a media streaming session.
 | `type`      | string | Yes      | Must be `"event"`                                |
 | `name`      | string | Yes      | Must be `"Media.End"`                            |
 | `valueType` | string | No       | Identifies the schema, e.g., `"application/vnd.microsoft.activity.mediaend+json"` |
-| `entities`  | array  | Yes      | Must include a [`streamInfo`](#streaminfo) entity with `streamState` of `"final"` |
+| `entities`  | array  | Yes      | Must include a [`streamInfo`](#streaminfo) entity with `streamType` of `"final"` |
 
 Example:
 ```json
@@ -760,15 +758,14 @@ Example:
     {
       "type": "streamInfo",
       "streamId": "abc123",
-      "streamType": "audio",
-      "streamState": "final",
+      "streamType": "final",
       "streamSequence": 3
     }
   ]
 }
 ```
 
-`A5240`: Senders MUST include a [`streamInfo`](#streaminfo) entity in `Media.End` events with `streamState` set to `"final"`.
+`A5240`: Senders MUST include a [`streamInfo`](#streaminfo) entity in `Media.End` events with `streamType` set to `"final"`.
 
 `A5241`: Receivers SHOULD clean up stream resources upon receiving `Media.End`.
 
@@ -1775,10 +1772,10 @@ The `error` field contains the reason the original [command activity](#command-a
 
 # 2025-02-05 - guhiriya@microsoft.com
 * Added Reserved Events for Media Streaming (`Media.Start`, `Media.Chunk`, `Media.End`, `Voice.Message`)
-* Extended `streaminfo` entity to support media streaming with `streamState` property
+* Documented usage of existing `streaminfo` entity for media streaming (no schema changes)
 * Added Session Lifecycle Commands (`session.init`, `session.update`, `session.end`) for multimodal interactions
 * Added normative requirements A5210-A5252 for media streaming events
-* Added normative requirements A9260-A9263 for media streaming in streaminfo
+* Added normative requirements A9260-A9262 for media streaming in streaminfo
 * Added normative requirements A9400-A9442 for session lifecycle commands
 
 # 2025-09-30 - mattb-msft
@@ -1960,8 +1957,7 @@ The `streaminfo` entity conveys metadata supporting chunked streaming of message
 | `type`           | string  | Yes      | Must be `"streaminfo"`                                                          |
 | `streamId`       | string  | Yes      | Unique identifier for the streaming session                                     |
 | `streamSequence` | integer | Yes      | Incrementing sequence number for each chunk for non-final messages              |
-| `streamType`     | string  | No       | For text: `"informative"`, `"streaming"`, or `"final"`. For media: `"audio"` or `"video"`. Defaults to `"streaming"` |
-| `streamState`    | string  | No       | State of the stream: `"streaming"`, `"informative"`, or `"final"`. Used primarily for media streaming |
+| `streamType`     | string  | No       | One of `"informative"`, `"streaming"`, or `"final"`. Defaults to `"streaming"` |
 | `streamResult`   | string  | No       | Present only on final message; one of `"success"`, `"timeout"`, or `"error"`    |
 
 #### Text Streaming
@@ -1984,15 +1980,13 @@ The `streaminfo` entity conveys metadata supporting chunked streaming of message
 
 #### Media Streaming
 
-When used with [Media.* events](#reserved-events-for-media-streaming), the `streaminfo` entity serves as the single place for stream identification, sequencing, and state, independent of the activity type.
+When used with [Media.* events](#reserved-events-for-media-streaming), the `streaminfo` entity serves as the single place for stream identification and sequencing, independent of the activity type. The existing `streamType` values (`"streaming"`, `"final"`) are used to indicate stream lifecycle, while the `valueType` field on the event activity identifies the media type.
 
-`A9260`: For media streaming, the `streamType` field SHOULD be set to the media type (e.g., `"audio"`, `"video"`).
+`A9260`: For media streaming, the `streamType` field uses existing values: `"streaming"` for active chunks, `"final"` for stream end.
 
-`A9261`: For media streaming, the `streamState` field indicates stream lifecycle: `"streaming"` for active chunks, `"final"` for stream end.
+`A9261`: The `streamId` MUST be consistent across all activities in a streaming session (`Media.Start`, `Media.Chunk`, `Media.End`).
 
-`A9262`: The `streamId` MUST be consistent across all activities in a streaming session (`Media.Start`, `Media.Chunk`, `Media.End`).
-
-`A9263`: Receivers SHOULD use `streamSequence` to detect out-of-order or missing chunks in media streams.
+`A9262`: Receivers SHOULD use `streamSequence` to detect out-of-order or missing chunks in media streams.
 
 ---
 
