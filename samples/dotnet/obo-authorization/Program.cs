@@ -67,11 +67,9 @@ builder.AddAgent(sp =>
 
     // Since Auto SignIn is enabled, by the time this is called the token is already available via UserAuthorization.GetTurnTokenAsync or
     // UserAuthorization.ExchangeTurnTokenAsync.
-    // NOTE:  This is a slightly unusual way to handle incoming Activities (but perfectly) valid.  For this sample,
-    // we just want to proxy messages to/from a Copilot Studio Agent.
+    // For this sample we just want to proxy messages to a Copilot Studio Agent.
     app.OnActivity((turnContext, cancellationToken) => Task.FromResult(true), async (turnContext, turnState, cancellationToken) =>
     {
-        
         var mcsConversationId = turnState.Conversation.GetValue<string>(MCSConversationPropertyName);
         var cpsClient = GetClient(app, turnContext);
 
@@ -100,7 +98,7 @@ builder.AddAgent(sp =>
                 }
             }
         }
-    }, autoSignInHandlers: ["mcs"]);
+    });
 
     // Called when the OAuth flow fails
     app.UserAuthorization.OnUserSignInFailure(async (turnContext, turnState, handlerName, response, initiatingActivity, cancellationToken) =>

@@ -39,7 +39,7 @@ namespace GenesysHandoff
             _genesysService = genesysService;
             OnMessage("-reset", HandleResetMessage);
             OnMessage("-signout", HandleSignOut);
-            OnActivity((turnContext, cancellationToken) => Task.FromResult(true), HandleAllActivities, autoSignInHandlers: ["mcs"]);
+            OnActivity((turnContext, cancellationToken) => Task.FromResult(true), HandleAllActivities);
             UserAuthorization.OnUserSignInFailure(async (turnContext, turnState, handlerName, response, initiatingActivity, cancellationToken) =>
             {
                 await turnContext.SendActivityAsync($"SignIn failed with '{handlerName}': {response.Cause}/{response.Error!.Message}", cancellationToken: cancellationToken);
