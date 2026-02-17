@@ -410,7 +410,17 @@ After a short period of time (usually a few minutes), the agent will appear in:
 
 ---
 
-## 7. Troubleshooting & Best Practices
+## 7. Usage Notes
+
+### Session Reset
+
+The `-reset` command allows users to start a new session with a fresh conversation ID. This clears the current conversation state, any associated escalation status, and removes stored conversation references from storage.
+
+> **Note:** Genesys does not provide an event notification when a conversation ends on their platform. As a result, there is no automatic synchronization between the Genesys conversation lifecycle and the agent session. Using `-reset` is the recommended way to manually end an escalated session and return to the Copilot Studio flow.
+
+---
+
+## 8. Troubleshooting & Best Practices
 
 ### Common Issues
 
@@ -427,8 +437,52 @@ After a short period of time (usually a few minutes), the agent will appear in:
 - **Monitor Genesys Integration:** Use Genesys Cloud admin logs to track message delivery (success/fail).
 - **Keep Summaries Concise:** Avoid sending extremely verbose transcripts; summarize key points for the agent.
 - **Implement Security:** Verify the `WebhookSecret` on every inbound request from Genesys. Consider restricting Azure function to Genesys IP ranges.
-- **Use Persistent Storage:** For production, use Azure Cosmos DB or Azure Storage Tables for conversation mapping to survive restarts.
+- **Use Persistent Storage:** For production, use Azure Cosmos DB or Azure Storage Tables for conversation mapping to survive restarts. See the [Persistent Storage](#persistent-storage) section below for details.
 - **Handle Timeouts:** Consider what happens if the user leaves or the agent doesn't respond.
+
+### Persistent Storage
+
+This sample uses `MemoryStorage` by default, which stores conversation references in memory. This means that if your application restarts, all active handoff sessions will be lost and users will need to start new conversations.
+
+For production deployments, replace `MemoryStorage` with a persistent storage provider like **Azure Cosmos DB** or **Azure Blob Storage**.
+
+#### Replacing MemoryStorage with Cosmos DB
+
+1. **Install the Cosmos DB storage package:**
+   ```bash
+   dotnet add package Microsoft.Bot.Builder.Azure
+   ```
+
+2. **Update your `Program.cs`** to use Cosmos DB storage instead of MemoryStorage:
+   ```csharp
+   // Replace this:
+   // builder.Services.AddSingleton<IStorage, MemoryStorage>();
+
+   // With Cosmos DB storage:
+   builder.Services.AddSingleton<IStorage>(sp =>
+   {
+       var cosmosDbStorageOptions = new CosmosDbPartitionedStorageOptions
+       {
+           CosmosDbEndpoint = "<your-cosmos-endpoint>",
+           AuthKey = "<your-cosmos-auth-key>",
+           DatabaseId = "<your-database-id>",
+           ContainerId = "<your-container-id>"
+       };
+       return new CosmosDbPartitionedStorage(cosmosDbStorageOptions);
+   });
+   ```
+
+3. **Configure connection settings** in `appsettings.json`:
+   ```json
+   "CosmosDb": {
+     "CosmosDbEndpoint": "https://<your-account>.documents.azure.com:443/",
+     "AuthKey": "<your-auth-key>",
+     "DatabaseId": "botstate",
+     "ContainerId": "conversations"
+   }
+   ```
+
+For more details on storage options and implementation, see the official documentation: [Write directly to storage](https://learn.microsoft.com/en-us/azure/bot-service/bot-builder-howto-v4-storage?view=azure-bot-service-4.0&tabs=csharp).
 
 ### Extensions
 
@@ -440,7 +494,7 @@ You can extend this framework to support:
 
 ---
 
-## 8. Conclusion
+## 9. Conclusion
 
 This guide provides a thorough walkthrough to set up the GenesysHandoff sample from scratch. By following the steps to configure Copilot Studio, Genesys Cloud, and the integration code, you should achieve a working end-to-end handoff: a Teams user can escalate to a Genesys live agent, and the agent can chat back via Genesys Cloud, all in real-time.
 
