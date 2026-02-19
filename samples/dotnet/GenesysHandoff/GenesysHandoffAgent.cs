@@ -7,6 +7,7 @@ using Microsoft.Agents.CopilotStudio.Client;
 using Microsoft.Agents.Core.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -89,7 +90,22 @@ namespace GenesysHandoff
                     {
                         if (activity.IsType(ActivityTypes.Message))
                         {
-                            await turnContext.SendActivityAsync(activity.Text, cancellationToken: cancellationToken);
+                            // Create a new activity with only the content, not the MCS-specific metadata
+                            var responseActivity = MessageFactory.Text(activity.Text ?? string.Empty);
+
+                            // Copy attachments (including adaptive cards)
+                            if (activity.Attachments != null && activity.Attachments.Any())
+                            {
+                                responseActivity.Attachments = activity.Attachments;
+                            }
+
+                            // Copy suggested actions if present
+                            if (activity.SuggestedActions != null)
+                            {
+                                responseActivity.SuggestedActions = activity.SuggestedActions;
+                            }
+
+                            await turnContext.SendActivityAsync(responseActivity, cancellationToken: cancellationToken);
                         }
                         // Check for Genesys handoff event
                         // If detected, set escalation flag and notify Genesys of the escalation
@@ -132,8 +148,18 @@ namespace GenesysHandoff
         /// <returns>A task that represents the asynchronous operation.</returns>
         private async Task HandleResetMessage(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
         {
+            var mcsConversationId = turnState.Conversation.GetValue<string>(MCSConversationPropertyName);
+
+            // Clean up the conversation reference from storage if it exists
+            if (!string.IsNullOrEmpty(mcsConversationId))
+            {
+                await _genesysService.DeleteConversationReferenceAsync(mcsConversationId, cancellationToken);
+            }
+
+            // Clean up conversation state
             turnState.Conversation.DeleteValue(MCSConversationPropertyName);
             turnState.Conversation.DeleteValue(IsEscalatedPropertyName);
+
             await turnContext.SendActivityAsync("The conversation has been reset.", cancellationToken: cancellationToken);
         }
 
