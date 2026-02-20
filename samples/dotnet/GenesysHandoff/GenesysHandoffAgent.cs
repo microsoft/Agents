@@ -4,9 +4,6 @@ using Microsoft.Agents.Builder;
 using Microsoft.Agents.Builder.App;
 using Microsoft.Agents.Builder.State;
 using Microsoft.Agents.Core.Models;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,6 +14,8 @@ namespace GenesysHandoff
     /// </summary>
     public class GenesysHandoffAgent : AgentApplication
     {
+        private const string McsHandlerName = "mcs";
+
         private readonly GenesysService _genesysService;
         private readonly CopilotClientFactory _copilotClientFactory;
         private readonly ActivityResponseProcessor _responseProcessor;
@@ -26,26 +25,25 @@ namespace GenesysHandoff
         /// Initializes a new instance of the <see cref="GenesysHandoffAgent"/> class.
         /// </summary>
         /// <param name="options">The options for the agent application.</param>
-        /// <param name="httpClientFactory">The HTTP client factory for making API calls.</param>
-        /// <param name="configuration">The configuration settings for the agent.</param>
         /// <param name="genesysService">The Genesys service for handling interactions.</param>
-        /// <param name="logger">The logger for logging agent activities.</param>
-        /// <param name="responseProcessorLogger">The logger for the activity response processor.</param>
+        /// <param name="copilotClientFactory">The factory for creating Copilot Studio clients.</param>
+        /// <param name="responseProcessor">The processor for handling activity responses.</param>
+        /// <param name="stateManager">The manager for conversation state.</param>
         public GenesysHandoffAgent(
             AgentApplicationOptions options,
-            IHttpClientFactory httpClientFactory,
-            IConfiguration configuration,
             GenesysService genesysService,
-            ILogger<ActivityResponseProcessor> responseProcessorLogger) : base(options)
+            CopilotClientFactory copilotClientFactory,
+            ActivityResponseProcessor responseProcessor,
+            ConversationStateManager stateManager) : base(options)
         {
             _genesysService = genesysService;
-            _copilotClientFactory = new CopilotClientFactory(httpClientFactory, configuration);
-            _responseProcessor = new ActivityResponseProcessor(responseProcessorLogger);
-            _stateManager = new ConversationStateManager();
+            _copilotClientFactory = copilotClientFactory;
+            _responseProcessor = responseProcessor;
+            _stateManager = stateManager;
 
             OnMessage("-reset", HandleResetMessage);
             OnMessage("-signout", HandleSignOut);
-            OnActivity((turnContext, cancellationToken) => Task.FromResult(true), HandleAllActivities, autoSignInHandlers: ["mcs"]);
+            OnActivity((turnContext, cancellationToken) => Task.FromResult(true), HandleAllActivities, autoSignInHandlers: [McsHandlerName]);
             UserAuthorization.OnUserSignInFailure(async (turnContext, turnState, handlerName, response, initiatingActivity, cancellationToken) =>
             {
                 await turnContext.SendActivityAsync($"SignIn failed with '{handlerName}': {response.Cause}/{response.Error!.Message}", cancellationToken: cancellationToken);
@@ -104,7 +102,23 @@ namespace GenesysHandoff
         /// </summary>
         private async Task HandleCopilotStudioMessage(ITurnContext turnContext, ITurnState turnState, Microsoft.Agents.CopilotStudio.Client.CopilotClient cpsClient, string mcsConversationId, CancellationToken cancellationToken)
         {
-            await foreach (IActivity activity in cpsClient.SendActivityAsync(turnContext.Activity, cancellationToken))
+            /**
+             * When a message is received from the user, it is forwarded to Copilot Studio using the conversation ID stored in state.
+             * The agent then listens for responses from Copilot Studio. If a message activity is received, it is sent back to the user.
+             * If an event activity with the name "GenesysHandoff" is received, it indicates that the conversation should be escalated to a human agent through Genesys.
+             */
+            var activityToMcs = new Activity
+            {
+                Type = ActivityTypes.Message,
+                Text = turnContext.Activity.Text,
+                Conversation = new ConversationAccount { Id = mcsConversationId },
+                Attachments = turnContext.Activity.Attachments,
+                Entities = turnContext.Activity.Entities,
+                Value = turnContext.Activity.Value,
+                ValueType = turnContext.Activity.ValueType,
+            };
+
+            await foreach (IActivity activity in cpsClient.SendActivityAsync(activityToMcs, cancellationToken))
             {
                 if (activity.IsType(ActivityTypes.Message))
                 {

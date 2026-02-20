@@ -18,6 +18,8 @@ namespace GenesysHandoff.Services
         /// <returns>A filtered list of entities with valid citation formatting.</returns>
         public static IList<Entity> FixCitationEntities(IList<Entity> entities)
         {
+            ArgumentNullException.ThrowIfNull(entities);
+
             var filteredEntities = new List<Entity>();
             foreach (var entity in entities)
             {
@@ -41,7 +43,7 @@ namespace GenesysHandoff.Services
                             }
 
                             var clientCitationIconName = GetIconNameOrDefault(clientCitation.Appearance.Image?.Name);
-                            
+
                             annotation.Citation.Add(new ClientCitation(
                                 clientCitation.Position,
                                 clientCitation.Appearance.Name,
@@ -58,6 +60,11 @@ namespace GenesysHandoff.Services
                     {
                         filteredEntities.Add(entity);
                     }
+                }
+                else
+                {
+                    // Preserve all other entity types (mentions, reactions, etc.)
+                    filteredEntities.Add(entity);
                 }
             }
             return filteredEntities;

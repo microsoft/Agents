@@ -26,7 +26,12 @@ namespace GenesysHandoff.Services
             if (citationUrls.Count == 0)
                 return text;
 
-            var lines = text.Replace("\r\n", "\n").Split('\n').ToList();
+            // Split on newlines handling both \r\n and \n efficiently
+            // Split on \n first, then trim any remaining \r from each line
+            var lines = text.Split('\n')
+                .Select(line => line.TrimEnd('\r'))
+                .ToList();
+
             TrimTrailingBlankLines(lines);
 
             int originalCount = lines.Count;
@@ -47,7 +52,8 @@ namespace GenesysHandoff.Services
                 .SelectMany(e => e.Citation)
                 .Select(c => c.Appearance?.Url)
                 .Where(u => !string.IsNullOrWhiteSpace(u))
-                .ToHashSet(StringComparer.OrdinalIgnoreCase)!;
+                .OfType<string>() // Explicitly filter to non-null strings for type safety
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
         }
 
         private static void RemoveCitationLinesFromTail(List<string> lines, HashSet<string> citationUrls)

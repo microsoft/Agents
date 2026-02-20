@@ -28,9 +28,14 @@ namespace GenesysHandoff.Services
 
         /// <summary>
         /// Gets whether the conversation has been escalated to a human agent.
+        /// Returns false if the escalation flag has not been set (default behavior for new conversations).
         /// </summary>
+        /// <param name="turnState">The turn state containing conversation properties.</param>
+        /// <returns>True if the conversation has been escalated; otherwise, false.</returns>
         public bool IsEscalated(ITurnState turnState)
         {
+            // GetValue<bool> returns false (default) if the property doesn't exist,
+            // which is the desired behavior for new conversations
             return turnState.Conversation.GetValue<bool>(IsEscalatedPropertyName);
         }
 
@@ -43,8 +48,9 @@ namespace GenesysHandoff.Services
         }
 
         /// <summary>
-        /// Clears all conversation state properties.
+        /// Clears all conversation state properties managed by this class.
         /// </summary>
+        /// <param name="turnState">The turn state to clear.</param>
         public void ClearConversationState(ITurnState turnState)
         {
             turnState.Conversation.DeleteValue(MCSConversationPropertyName);
