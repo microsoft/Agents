@@ -102,11 +102,9 @@ namespace GenesysHandoff
         /// </summary>
         private async Task HandleCopilotStudioMessage(ITurnContext turnContext, ITurnState turnState, Microsoft.Agents.CopilotStudio.Client.CopilotClient cpsClient, string mcsConversationId, CancellationToken cancellationToken)
         {
-            /**
-             * When a message is received from the user, it is forwarded to Copilot Studio using the conversation ID stored in state.
-             * The agent then listens for responses from Copilot Studio. If a message activity is received, it is sent back to the user.
-             * If an event activity with the name "GenesysHandoff" is received, it indicates that the conversation should be escalated to a human agent through Genesys.
-             */
+            // When a message is received from the user, it is forwarded to Copilot Studio using the conversation ID stored in state.
+            // The agent then listens for responses from Copilot Studio. If a message activity is received, it is sent back to the user.
+            // If an event activity with the name "GenesysHandoff" is received, it indicates that the conversation should be escalated to a human agent through Genesys.
             var activityToMcs = new Activity
             {
                 Type = ActivityTypes.Message,
