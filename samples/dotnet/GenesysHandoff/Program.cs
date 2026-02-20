@@ -3,6 +3,7 @@
 
 using GenesysHandoff;
 using GenesysHandoff.Genesys;
+using GenesysHandoff.Services;
 using Microsoft.Agents.Builder;
 using Microsoft.Agents.Hosting.AspNetCore;
 using Microsoft.Agents.Storage;
@@ -26,9 +27,10 @@ builder.AddAgentApplicationOptions();
 // in a cluster of Agent instances.
 builder.Services.AddSingleton<IStorage, MemoryStorage>();
 
-// Add the AgentApplication, which contains the logic for responding to
-// user messages.
-builder.AddAgent<GenesysHandoffAgent>();
+// Register application services
+builder.Services.AddSingleton<CopilotClientFactory>();
+builder.Services.AddSingleton<ActivityResponseProcessor>();
+builder.Services.AddSingleton<ConversationStateManager>();
 
 // Register GenesysService as a singleton.
 GenesysService? genesysService = null;
@@ -38,6 +40,10 @@ builder.Services.AddSingleton(sp =>
     genesysService = new GenesysService(settings, sp.GetService<IHttpClientFactory>()!, sp.GetService<IStorage>()!);
     return genesysService;
 });
+
+// Add the AgentApplication, which contains the logic for responding to
+// user messages.
+builder.AddAgent<GenesysHandoffAgent>();
 
 // Configure the HTTP request pipeline.
 
