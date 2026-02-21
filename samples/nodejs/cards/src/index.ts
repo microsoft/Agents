@@ -1,63 +1,75 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-import { startServer } from '@microsoft/agents-hosting-express'
-import { TurnState, TurnContext, AgentApplication } from '@microsoft/agents-hosting'
-import { Activity, ActivityTypes } from '@microsoft/agents-activity'
-import { CardMessages } from './cardMessages'
-import AdaptiveCard from './resources/adaptiveCard.json'
 
-const CardSampleAgent = new AgentApplication<TurnState>()
+/**
+ * Microsoft Teams Cards Agent Sample
+ * 
+ * This sample demonstrates how to use various card types in Microsoft Teams
+ * using the Microsoft 365 Agents SDK.
+ * 
+ * Features:
+ * - Adaptive Card, Hero Card, Thumbnail Card
+ * - Animation Card, Audio Card, Video Card
+ * - Receipt Card
+ */
 
-CardSampleAgent.onConversationUpdate('membersAdded', async (context: TurnContext, state: TurnState) => {
-  const membersAdded = context.activity.membersAdded
-  for (let cnt = 0; cnt < membersAdded!.length; cnt++) {
-    if ((context.activity.recipient != null) && membersAdded![cnt].id !== context.activity.recipient.id) {
-      await CardMessages.sendIntroCard(context)
-    }
-  }
-})
+import * as path from 'path';
+import * as dotenv from 'dotenv';
 
-CardSampleAgent.onActivity(ActivityTypes.Message, async (context: TurnContext, state: TurnState) => {
-  if (context.activity.text !== undefined) {
-    switch (context.activity.text.split('.')[0].toLowerCase()) {
-      case 'display cards options':
-        await CardMessages.sendIntroCard(context)
-        break
-      case '1':
-        await CardMessages.sendAdaptiveCard(context, AdaptiveCard)
-        break
-      case '2':
-        await CardMessages.sendAnimationCard(context)
-        break
-      case '3':
-        await CardMessages.sendAudioCard(context)
-        break
-      case '4':
-        await CardMessages.sendHeroCard(context)
-        break
-      case '5':
-        await CardMessages.sendReceiptCard(context)
-        break
-      case '6':
-        await CardMessages.sendThumbnailCard(context)
-        break
-      case '7':
-        await CardMessages.sendVideoCard(context)
-        break
-      default: {
-        const reply: Activity = Activity.fromObject(
-          {
-            type: ActivityTypes.Message,
-            text: 'Your input was not recognized, please try again.'
-          }
-        )
-        await context.sendActivity(reply)
-        await CardMessages.sendIntroCard(context)
-      }
-    }
-  } else {
-    await context.sendActivity('This sample is only for testing Cards using CardFactory methods. Please refer to other samples to test out more functionalities.')
-  }
-})
+// Load environment variables from .env (auth settings, etc.)
+const ENV_FILE = path.join(__dirname, '..', '.env');
+dotenv.config({ path: ENV_FILE });
 
-startServer(CardSampleAgent)
+import express from 'express';
+
+// Import CloudAdapter + auth loader + JWT middleware (Agents SDK)
+import { CloudAdapter, loadAuthConfigFromEnv, authorizeJWT } from '@microsoft/agents-hosting';
+
+import { CardsAgent } from './cardsBot';
+
+const PORT = process.env.PORT || 3978;
+const server = express();
+
+server.use(express.json());
+server.use(express.urlencoded({ extended: true }));
+
+// Load authentication configuration from environment variables
+const authConfig = loadAuthConfigFromEnv();
+
+// Create adapter using the Agents SDK
+const adapter = new CloudAdapter(authConfig);
+
+// Global error handler for adapter
+adapter.onTurnError = async (context, error) => {
+    console.error(`\n [onTurnError] Unhandled error: ${error}`);
+    await context.sendTraceActivity(
+        'OnTurnError Trace',
+        `${error}`,
+        'https://www.botframework.com/schemas/error',
+        'TurnError'
+    );
+};
+
+// Health check endpoint
+server.get('/healthz', (req, res) => {
+    res.json({ status: 'ok', time: new Date().toISOString() });
+});
+
+// Apply JWT authorization middleware for secure communication
+server.use('/api/messages', authorizeJWT(authConfig));
+
+// Bot endpoint - Handle incoming Teams activities
+server.post('/api/messages', async (req, res) => {
+    console.log('Received activity:', req.body?.type, 'Text:', req.body?.text);
+    // Route received a request to adapter for processing
+    await adapter.process(req, res, async (context) => {
+        console.log('Processing activity in adapter, type:', context.activity?.type);
+        await CardsAgent.run(context);
+        console.log('Bot handler completed');
+    });
+});
+
+// Start the web server
+server.listen(PORT, () => {
+    console.log(`Server listening on http://localhost:${PORT}`);
+});

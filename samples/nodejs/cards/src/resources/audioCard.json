@@ -1,0 +1,73 @@
+{
+  "type": "AdaptiveCard",
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.4",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Audio Card",
+      "weight": "Bolder",
+      "size": "Large"
+    },
+    {
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "width": "auto",
+          "items": [
+            {
+              "type": "Image",
+              "url": "https://raw.githubusercontent.com/microsoft/botframework-sdk/main/icon.png",
+              "size": "Medium",
+              "altText": "Microsoft Bot Framework"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": "stretch",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Microsoft Agents Podcast",
+              "weight": "Bolder",
+              "size": "Medium"
+            },
+            {
+              "type": "TextBlock",
+              "text": "Azure AI & Agents SDK",
+              "isSubtle": true,
+              "wrap": true
+            },
+            {
+              "type": "TextBlock",
+              "text": "Learn about Microsoft Azure AI services, Agents SDK, and building intelligent agents with Microsoft technologies.",
+              "wrap": true,
+              "size": "Small"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "🔊 Audio cards are not natively supported in Teams. Click below to listen.",
+      "wrap": true,
+      "spacing": "Medium",
+      "isSubtle": true
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.OpenUrl",
+      "title": "🎵 Listen on Microsoft Learn",
+      "url": "https://learn.microsoft.com/en-us/shows/azure-friday/"
+    },
+    {
+      "type": "Action.OpenUrl",
+      "title": "Learn More about Agents SDK",
+      "url": "https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/"
+    }
+  ]
+}
