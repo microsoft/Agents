@@ -1,0 +1,826 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/microsoft/botframework-sdk/main/specs/activity/protocol-activity.schema.json",
+  "title": "Activity",
+  "description": "An Activity is the basic communication type for the Bot Framework 3.0 protocol.",
+  "type": "object",
+  "discriminator": {
+    "propertyName": "type"
+  },
+  "oneOf": [
+    {
+      "$ref": "#/definitions/message"
+    },
+    {
+      "$ref": "#/definitions/contactRelationUpdate"
+    },
+    {
+      "$ref": "#/definitions/conversationUpdate"
+    },
+    {
+      "$ref": "#/definitions/typing"
+    },
+    {
+      "$ref": "#/definitions/endOfConversation"
+    },
+    {
+      "$ref": "#/definitions/event"
+    },
+    {
+      "$ref": "#/definitions/invoke"
+    },
+    {
+      "$ref": "#/definitions/messageUpdate"
+    },
+    {
+      "$ref": "#/definitions/messageDelete"
+    },
+    {
+      "$ref": "#/definitions/installationUpdate"
+    },
+    {
+      "$ref": "#/definitions/messageReaction"
+    },
+    {
+      "$ref": "#/definitions/suggestion"
+    },
+    {
+      "$ref": "#/definitions/trace"
+    },
+    {
+      "$ref": "#/definitions/handoff"
+    }
+  ],
+  "definitions": {
+    "activity": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The type of the activity."
+        },
+        "id": {
+          "type": "string",
+          "description": "The unique identifier for the activity."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The UTC timestamp of the activity."
+        },
+        "localTimestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The local timestamp of the activity."
+        },
+        "localTimezone": {
+          "type": "string",
+          "description": "The timezone of the local timestamp."
+        },
+        "callerId": {
+          "type": "string",
+          "description": "The caller ID."
+        },
+        "serviceUrl": {
+          "type": "string",
+          "description": "The URL of the service."
+        },
+        "channelId": {
+          "type": "string",
+          "description": "The ID of the channel."
+        },
+        "from": {
+          "$ref": "#/definitions/channelAccount",
+          "description": "The sender of the activity."
+        },
+        "conversation": {
+          "$ref": "#/definitions/conversationAccount",
+          "description": "The conversation the activity is part of."
+        },
+        "recipient": {
+          "$ref": "#/definitions/channelAccount",
+          "description": "The recipient of the activity."
+        },
+        "entities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity"
+          },
+          "description": "The entities of the activity."
+        },
+        "channelData": {
+          "type": "object",
+          "description": "The channel-specific data."
+        },
+        "replyToId": {
+          "type": "string",
+          "description": "The ID of the activity to reply to."
+        }
+      },
+      "required": [
+        "type",
+        "channelId",
+        "from",
+        "conversation",
+        "recipient",
+        "serviceUrl"
+      ]
+    },
+    "messageBase": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/activity"
+        }
+      ],
+      "properties": {
+        "locale": {
+          "type": "string",
+          "description": "The locale of the activity."
+        },
+        "text": {
+          "type": "string",
+          "description": "The text of the activity."
+        },
+        "textFormat": {
+          "type": "string",
+          "description": "The format of the text.",
+          "enum": [
+            "plain",
+            "markdown",
+            "xml"
+          ]
+        },
+        "speak": {
+          "type": "string",
+          "description": "The text to be spoken."
+        },
+        "inputHint": {
+          "type": "string",
+          "description": "A hint for the input.",
+          "enum": [
+            "accepting",
+            "expecting",
+            "ignoring"
+          ]
+        },
+        "summary": {
+          "type": "string",
+          "description": "A summary of the activity."
+        },
+        "suggestedActions": {
+          "$ref": "#/definitions/suggestedActions",
+          "description": "The suggested actions for the activity."
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/attachment"
+          },
+          "description": "The attachments of the activity."
+        },
+        "attachmentLayout": {
+          "type": "string",
+          "description": "The layout of the attachments.",
+          "enum": [
+            "list",
+            "carousel"
+          ]
+        },
+        "value": {
+          "type": "object",
+          "description": "The value of the activity."
+        },
+        "expiration": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The expiration time of the activity."
+        },
+        "importance": {
+          "type": "string",
+          "description": "The importance of the activity.",
+          "enum": [
+            "low",
+            "normal",
+            "high"
+          ]
+        },
+        "deliveryMode": {
+          "type": "string",
+          "description": "The delivery mode of the activity.",
+          "enum": [
+            "normal",
+            "notification",
+            "expectReplies"
+          ]
+        },
+        "listenFor": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of phrases to listen for."
+        },
+        "semanticAction": {
+          "$ref": "#/definitions/semanticAction",
+          "description": "The semantic action of the activity."
+        }
+      }
+    },
+    "message": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/messageBase"
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "message"
+          ]
+        }
+      },
+      "required": [ "type" ]
+    },
+    "contactRelationUpdate": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/activity"
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "contactRelationUpdate"
+          ]
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "add",
+            "remove"
+          ]
+        }
+      },
+      "required": [ "type" ]
+    },
+    "conversationUpdate": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/activity"
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "conversationUpdate"
+          ]
+        },
+        "membersAdded": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/channelAccount"
+          },
+          "description": "The members added to the conversation."
+        },
+        "membersRemoved": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/channelAccount"
+          },
+          "description": "The members removed from the conversation."
+        },
+        "topicName": {
+          "type": "string",
+          "description": "The name of the topic."
+        },
+        "historyDisclosed": {
+          "type": "boolean",
+          "description": "Indicates if the history is disclosed."
+        }
+      },
+      "required": [ "type" ]
+    },
+    "typing": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/activity"
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "typing"
+          ]
+        }
+      },
+      "required": [ "type" ]
+    },
+    "endOfConversation": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/activity"
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "endOfConversation"
+          ]
+        },
+        "code": {
+          "type": "string",
+          "description": "The code of the activity."
+        },
+        "text": {
+          "type": "string",
+          "description": "The text of the activity."
+        }
+      },
+      "required": [ "type" ]
+    },
+    "event": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/activity"
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "event"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the activity."
+        },
+        "value": {
+          "type": "object",
+          "description": "The value of the activity."
+        },
+        "relatesTo": {
+          "$ref": "#/definitions/conversationReference",
+          "description": "A reference to another conversation."
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ]
+    },
+    "invoke": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/activity"
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "invoke"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the activity."
+        },
+        "value": {
+          "type": "object",
+          "description": "The value of the activity."
+        },
+        "relatesTo": {
+          "$ref": "#/definitions/conversationReference",
+          "description": "A reference to another conversation."
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ]
+    },
+    "messageUpdate": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/messageBase"
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "messageUpdate"
+          ]
+        }
+      },
+      "required": [ "type" ]
+    },
+    "messageDelete": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/activity"
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "messageDelete"
+          ]
+        }
+      },
+      "required": [ "type" ]
+    },
+    "installationUpdate": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/activity"
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "installationUpdate"
+          ]
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "add",
+            "remove"
+          ]
+        }
+      },
+      "required": [ "type" ]
+    },
+    "messageReaction": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/activity"
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "messageReaction"
+          ]
+        },
+        "reactionsAdded": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/messageReactionObject"
+          },
+          "description": "The reactions added to the activity."
+        },
+        "reactionsRemoved": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/messageReactionObject"
+          },
+          "description": "The reactions removed from the activity."
+        }
+      },
+      "required": [ "type" ]
+    },
+    "suggestion": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/messageBase"
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "suggestion"
+          ]
+        },
+        "textHighlights": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/textHighlight"
+          },
+          "description": "The text highlights of the activity."
+        }
+      },
+      "required": [ "type" ]
+    },
+    "trace": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/activity"
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "trace"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the activity."
+        },
+        "label": {
+          "type": "string",
+          "description": "The label of the activity."
+        },
+        "valueType": {
+          "type": "string",
+          "description": "The type of the value."
+        },
+        "value": {
+          "type": "object",
+          "description": "The value of the activity."
+        },
+        "relatesTo": {
+          "$ref": "#/definitions/conversationReference",
+          "description": "A reference to another conversation."
+        }
+      },
+      "required": [ "type" ]
+    },
+    "handoff": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/activity"
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "handoff"
+          ]
+        }
+      },
+      "required": [ "type" ]
+    },
+    "channelAccount": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The ID of the channel account."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the channel account."
+        },
+        "aadObjectId": {
+          "type": "string",
+          "description": "The Azure Active Directory object ID of the channel account."
+        },
+        "role": {
+          "type": "string",
+          "description": "The role of the channel account.",
+          "enum": [
+            "user",
+            "bot"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "conversationAccount": {
+      "type": "object",
+      "properties": {
+        "isGroup": {
+          "type": "boolean",
+          "description": "Indicates if the conversation is a group conversation."
+        },
+        "conversationType": {
+          "type": "string",
+          "description": "The type of the conversation."
+        },
+        "id": {
+          "type": "string",
+          "description": "The ID of the conversation."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the conversation."
+        },
+        "aadObjectId": {
+          "type": "string",
+          "description": "The Azure Active Directory object ID of the conversation."
+        },
+        "role": {
+          "type": "string",
+          "description": "The role of the conversation account.",
+          "enum": [
+            "user",
+            "bot"
+          ]
+        },
+        "tenantId": {
+          "type": "string",
+          "description": "The tenant ID of the conversation."
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "messageReactionObject": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The type of the message reaction."
+        }
+      }
+    },
+    "suggestedActions": {
+      "type": "object",
+      "properties": {
+        "to": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The recipients of the suggested actions."
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cardAction"
+          },
+          "description": "The suggested actions."
+        }
+      }
+    },
+    "attachment": {
+      "type": "object",
+      "properties": {
+        "contentType": {
+          "type": "string",
+          "description": "The content type of the attachment."
+        },
+        "contentUrl": {
+          "type": "string",
+          "description": "The URL of the attachment content."
+        },
+        "content": {
+          "type": "object",
+          "description": "The content of the attachment."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the attachment."
+        },
+        "thumbnailUrl": {
+          "type": "string",
+          "description": "The URL of the attachment thumbnail."
+        }
+      }
+    },
+    "entity": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The type of the entity."
+        }
+      }
+    },
+    "conversationReference": {
+      "type": "object",
+      "properties": {
+        "activityId": {
+          "type": "string",
+          "description": "The ID of the activity."
+        },
+        "user": {
+          "$ref": "#/definitions/channelAccount",
+          "description": "The user."
+        },
+        "bot": {
+          "$ref": "#/definitions/channelAccount",
+          "description": "The bot."
+        },
+        "conversation": {
+          "$ref": "#/definitions/conversationAccount",
+          "description": "The conversation."
+        },
+        "channelId": {
+          "type": "string",
+          "description": "The ID of the channel."
+        },
+        "serviceUrl": {
+          "type": "string",
+          "description": "The URL of the service."
+        },
+        "locale": {
+          "type": "string",
+          "description": "The locale."
+        }
+      }
+    },
+    "textHighlight": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "The text to highlight."
+        },
+        "occurrence": {
+          "type": "integer",
+          "description": "The occurrence of the text to highlight."
+        }
+      }
+    },
+    "cardAction": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The type of the card action.",
+          "enum": [
+            "openUrl",
+            "imBack",
+            "postBack",
+            "playAudio",
+            "playVideo",
+            "showImage",
+            "downloadFile",
+            "signin",
+            "call",
+            "messageBack"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the card action."
+        },
+        "image": {
+          "type": "string",
+          "description": "The image of the card action."
+        },
+        "text": {
+          "type": "string",
+          "description": "The text of the card action."
+        },
+        "displayText": {
+          "type": "string",
+          "description": "The display text of the card action."
+        },
+        "value": {
+          "type": "string",
+          "description": "The value of the card action."
+        },
+        "channelData": {
+          "type": "object",
+          "description": "The channel-specific data."
+        }
+      }
+    },
+    "semanticAction": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The ID of the semantic action."
+        },
+        "entities": {
+          "type": "object",
+          "description": "The entities of the semantic action."
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "start",
+            "continue",
+            "done"
+          ]
+        }
+      }
+    }
+  }
+}
