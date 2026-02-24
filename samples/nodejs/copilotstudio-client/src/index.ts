@@ -36,8 +36,10 @@ async function acquireToken (settings: ConnectionSettings): Promise<string> {
     }
   }
   const pca = new msal.PublicClientApplication(msalConfig)
+  const scopes = CopilotStudioClient.scopeFromSettings(settings); 
   const tokenRequest = {
-    scopes: ['https://api.powerplatform.com/.default'],
+    scopes: [scopes],
+    redirectUri: 'http://localhost',
     openBrowser: async (url: string) => {
       await open(url)
     }
