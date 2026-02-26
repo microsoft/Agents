@@ -2,6 +2,7 @@
 
 This is a sample to show how to use the `@microsoft/agents-copilotstudio-client` package to talk to an Agent hosted in CopilotStudio.
 
+*Please note - S2S is not currently supported for Copilot Studio. It is in active development, and once there is an ETA we will update this notice.*
 
 ## Prerequisite
 
