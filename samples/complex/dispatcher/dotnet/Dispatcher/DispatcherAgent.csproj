@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<RootNamespace>DispatcherAgent</RootNamespace>
+
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Agents.Authentication.Msal" />
+		<PackageReference Include="Microsoft.Agents.CopilotStudio.Client" />
+		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" />
+		<PackageReference Include="Microsoft.Agents.Storage" />
+		<PackageReference Include="Microsoft.SemanticKernel" />
+		<PackageReference Include="Nerdbank.GitVersioning" />
+	</ItemGroup>
+</Project>

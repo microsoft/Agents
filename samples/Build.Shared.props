@@ -1,0 +1,63 @@
+<Project>
+  <!-- msbuild properties shared for dotnetCore and .NET classic projects: -->
+  <PropertyGroup>
+    <!-- 
+    Create a corse level define to identity .net framework vs .net core 
+
+    This is to align with https://github.com/dotnet/designs/blob/main/accepted/2020/or-greater-defines/or-greater-defines.md 
+    which pre-defines some preprocessor symbols for source files. 
+
+    Also this has to be defined in Directory.build.targets to ensure it is evaluated after evaluating all properties
+    in .csproj files.
+    -->
+    <NETFRAMEWORK Condition="$(TargetFramework.ToLower().StartsWith('net4'))">true</NETFRAMEWORK>
+    <NETFRAMEWORK Condition="!$(TargetFramework.ToLower().StartsWith('net4'))">false</NETFRAMEWORK>
+    <NETFRAMEWORK Condition="'$(NETFRAMEWORK)'==''">true</NETFRAMEWORK>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <NoWarn>$(NoWarn);CS8032;CS8002;CS1668</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>false</Optimize>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <!-- Common Assembly Info Properties -->
+  <Import Project=".\AssemblyInfo.Shared.props"/>
+    
+</Project>
