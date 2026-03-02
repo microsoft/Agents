@@ -490,7 +490,7 @@ Semantic actions are sometimes used to indicate a change in which participant co
 
 ### Voice message
 
-Voice messages carry the final audio output of a voice modality interaction. They are sent by the Agent (server) to the client as the final response after processing a voice input stream. Voice input is delivered to the Agent as a sequence of [Media streaming events](#reserved-events-for-media-streaming) (`Media.Start`, `Media.Chunk`, `Media.End`). The session is managed via [session lifecycle commands](#session-lifecycle-commands). For the complete end-to-end interaction flow, see [Multimodal Interaction Flow](#multimodal-interaction-flow).
+Voice messages carry a complete voice payload within a single activity. They are **bidirectional**: the client can send a voice message to the Agent (for example, a user sending a short voice query that fits in one message), and the Agent can send a voice message to the client (for example, a complete spoken response). Use a voice message whenever the entire audio content fits in a single activity. When audio must be sent in real time or in multiple pieces, use [Media streaming events](#reserved-events-for-media-streaming) (`Media.Start`, `Media.Chunk`, `Media.End`) instead. The session is managed via [session lifecycle commands](#session-lifecycle-commands). For a complete end-to-end interaction flow, see [Multimodal Interaction Flow](#multimodal-interaction-flow).
 
 Voice messages use the standard `message` activity type with the `valueType` and `value` fields to carry encoded audio content.
 
@@ -687,7 +687,7 @@ Possible values for `contentType` are audio, video, text, screen, all or any oth
 
 ### Reserved Events for Media Streaming
 
-Media streaming events are used to facilitate real-time multimodal interactions, particularly for voice and audio streaming. The client streams audio input to the Agent using a sequence of `Media.Start`, `Media.Chunk`, and `Media.End` events. After processing, the Agent sends the final voice response as a [Voice message](#voice-message) (a `message` activity). For session lifecycle management and the complete end-to-end flow, see [Session Lifecycle Commands](#session-lifecycle-commands) and [Multimodal Interaction Flow](#multimodal-interaction-flow).
+Media streaming events are used to facilitate real-time multimodal interactions, particularly for voice and audio streaming. These events are **bidirectional**: the client can stream audio input to the Agent (for example, a user speaking), and the Agent can stream audio output back to the client (for example, a spoken response delivered in chunks). When the entire audio fits in a single activity, use a [Voice message](#voice-message) instead. For session lifecycle management and the complete end-to-end flow, see [Session Lifecycle Commands](#session-lifecycle-commands) and [Multimodal Interaction Flow](#multimodal-interaction-flow).
 
 These events use the `Media.*` prefix and work in conjunction with the [`streamInfo`](#streaminfo) entity for stream metadata and sequencing.
 
@@ -2184,7 +2184,7 @@ Voice streaming uses `event` activities with [Media.* events](#reserved-events-f
 }
 ```
 
-**Voice Message** - Final complete voice response (Server to Client):
+**Voice Message** - Complete voice response (bidirectional; Agent → Client shown here):
 ```json
 {
   "type": "message",
@@ -2429,6 +2429,8 @@ Server → Client:
 Barge-In:
   Client sends bargeIn → Server returns to listening
 ```
+
+> **Note on direction:** Both `Media.*` streaming events and `Voice message` activities are bidirectional. The flow above shows a typical pattern (client streams audio input; Agent responds with a voice message), but either party may stream media events or send a voice message in a single activity in either direction.
 
 #### Round-Trip Flow Example: Client and Server Interaction
 
