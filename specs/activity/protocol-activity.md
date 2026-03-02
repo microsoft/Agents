@@ -1820,47 +1820,14 @@ The `error` field contains the reason the original [command activity](#command-a
 
 # Appendix I - Changes
 
-# 2026-03-02 - guhiriya@microsoft.com
-
-Clarified bidirectionality and structure of multimodal voice/audio support, and improved cross-linking across all multimodal sections. Implements the review feedback from [issue #416](https://github.com/microsoft/Agents/issues/416).
-
-**Changes:**
-* Corrected `## Event activity` intro — `Media.*` streaming events are bidirectional (not client→Agent only)
-* Corrected `### Voice message` intro — voice messages are bidirectional (client→Agent short query **or** Agent→client spoken response)
-* Corrected `### Reserved Events for Media Streaming` intro — streaming events flow in either direction
-* Added cross-references so readers navigating any one multimodal section can find the complete picture: Message activity ↔ Voice message ↔ Media streaming events ↔ Session Lifecycle Commands ↔ Multimodal Interaction Flow
-* Added `Note on direction` callout to the Multimodal Interaction Flow diagram
-
-**Key clarification:**
-* Use **Voice message** (`type: "message"`) when the entire audio fits in a single activity (either direction)
-* Use **Media streaming events** (`Media.Start`, `Media.Chunk`, `Media.End`) when audio is sent in real time or in multiple pieces (either direction)
-
-Related: [#416](https://github.com/microsoft/Agents/issues/416)
-
----
-
 # 2025-02-05 - guhiriya@microsoft.com
-
-This entry implements the approved proposal from [issue #416](https://github.com/microsoft/Agents/issues/416) to extend the Activity Protocol schema for multimodal interactions with streaming support for voice/audio.
-
-**Changes:**
 * Added Reserved Events for Media Streaming (`Media.Start`, `Media.Chunk`, `Media.End`)
-* Added `Voice message` — a `message` activity carrying a complete voice payload via `valueType`/`value`
-* Extended `streaminfo` entity to support media streaming (stream identification and sequencing for `Media.*` events)
+* Documented usage of existing `streaminfo` entity for media streaming (no schema changes)
 * Added Session Lifecycle Commands (`session.init`, `session.update`, `session.end`) for multimodal interactions
-* Added normative requirements A5210–A5252 for media streaming events and voice messages
-* Added normative requirements A9260–A9262 for media streaming in `streaminfo`
-* Added normative requirements A9400–A9442 for session lifecycle commands
-* Bumped version to Provisional 3.4
-
-**Key design decisions (per AP Core Committee):**
-* No new activity types — uses existing `event`, `command`, `commandResult`, `message`
-* No new schema fields — uses existing `value`, `valueType`, `entities`
-* 100% backward compatible
-* Uses `streamInfo` entity for stream metadata and sequencing
-* Uses `Media.*` prefix for media streaming events
-
-Related: [#416](https://github.com/microsoft/Agents/issues/416)
+* Added normative requirements A5210-A5252 for media streaming events
+* Added normative requirements A9260-A9262 for media streaming in streaminfo
+* Added normative requirements A9400-A9442 for session lifecycle commands
+* Moved `Voice message` section from Event activity to Message activity (voice messages use `type: "message"`, not `type: "event"`)
 
 # 2025-09-30 - mattb-msft
 * Updated Channel Account definition to reflect current rules and usages. 
