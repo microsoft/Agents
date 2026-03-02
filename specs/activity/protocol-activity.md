@@ -334,7 +334,7 @@ Delivery mode `notification` has been deprecated and will be handled as `normal`
 
 ## Message activity
 
-Message activities represent content intended to be shown within a conversational interface. Message activities may contain text, speech, interactive cards, and binary or unknown attachments; typically channels require at most one of these for the message activity to be well-formed.
+Message activities represent content intended to be shown within a conversational interface. Message activities may contain text, speech, interactive cards, and binary or unknown attachments; typically channels require at most one of these for the message activity to be well-formed. For multimodal modalities such as voice and audio, the `valueType` and `value` fields carry modality-specific content (see [Voice message](#voice-message)).
 
 Message activities are identified by a `type` value of `message`.
 
@@ -490,7 +490,9 @@ Semantic actions are sometimes used to indicate a change in which participant co
 
 ### Voice message
 
-Voice messages carry the final audio output of a voice modality interaction. They use the standard `message` activity type with the `valueType` and `value` fields to carry encoded audio content.
+Voice messages carry the final audio output of a voice modality interaction. They are sent by the Agent (server) to the client as the final response after processing a voice input stream. Voice input is delivered to the Agent as a sequence of [Media streaming events](#reserved-events-for-media-streaming) (`Media.Start`, `Media.Chunk`, `Media.End`). The session is managed via [session lifecycle commands](#session-lifecycle-commands). For the complete end-to-end interaction flow, see [Multimodal Interaction Flow](#multimodal-interaction-flow).
+
+Voice messages use the standard `message` activity type with the `valueType` and `value` fields to carry encoded audio content.
 
 Voice messages are identified by a `type` value of `message` and a `valueType` of `application/vnd.microsoft.activity.voice+json`.
 
@@ -610,7 +612,7 @@ The `value` field contains parameters specific to this event, as defined by the 
 
 ## Event activity
 
-Event activities communicate programmatic information from a client or channel to an Agent. The meaning of an event activity is defined by the `name` field, which is meaningful within the scope of a channel. Event activities are designed to carry both interactive information (such as button clicks) and non-interactive information (such as a notification of a client automatically updating an embedded speech model).
+Event activities communicate programmatic information from a client or channel to an Agent. The meaning of an event activity is defined by the `name` field, which is meaningful within the scope of a channel. Event activities are designed to carry both interactive information (such as button clicks) and non-interactive information (such as a notification of a client automatically updating an embedded speech model). For real-time multimodal streaming (voice/audio), event activities with names `Media.Start`, `Media.Chunk`, and `Media.End` are used to stream audio from the client to the Agent (see [Reserved Events for Media Streaming](#reserved-events-for-media-streaming)).
 
 Event activities are the asynchronous counterpart to [invoke activities](#invoke-activity). Unlike invoke, event is designed to be extended by client application extensions.
 
@@ -685,7 +687,9 @@ Possible values for `contentType` are audio, video, text, screen, all or any oth
 
 ### Reserved Events for Media Streaming
 
-Media streaming events are used to facilitate real-time multimodal interactions, particularly for voice and audio streaming. These events use the `Media.*` prefix and work in conjunction with the [`streamInfo`](#streaminfo) entity for stream metadata and sequencing.
+Media streaming events are used to facilitate real-time multimodal interactions, particularly for voice and audio streaming. The client streams audio input to the Agent using a sequence of `Media.Start`, `Media.Chunk`, and `Media.End` events. After processing, the Agent sends the final voice response as a [Voice message](#voice-message) (a `message` activity). For session lifecycle management and the complete end-to-end flow, see [Session Lifecycle Commands](#session-lifecycle-commands) and [Multimodal Interaction Flow](#multimodal-interaction-flow).
+
+These events use the `Media.*` prefix and work in conjunction with the [`streamInfo`](#streaminfo) entity for stream metadata and sequencing.
 
 `A5210`: Media streaming events MUST use the `Media.*` prefix for their `name` field.
 
@@ -2283,7 +2287,7 @@ The Microsoft Telephony channel defines channel command activities in the namesp
 
 ## Session Lifecycle Commands
 
-Session lifecycle commands are used to manage multimodal streaming sessions, particularly for voice interactions. These commands follow request/response semantics with acknowledgments via `commandResult` activities.
+Session lifecycle commands are used to manage multimodal streaming sessions, particularly for voice interactions. These commands follow request/response semantics with acknowledgments via `commandResult` activities. They work together with [Media streaming events](#reserved-events-for-media-streaming) (audio input) and [Voice messages](#voice-message) (audio output) to enable a complete multimodal interaction.
 
 > **Note:** The `session.*` command names are reserved Activity Protocol commands for multimodal session management. Unlike application-defined commands (which must use the `application/*` namespace per A6301), these are protocol-level commands similar to other reserved event names.
 
