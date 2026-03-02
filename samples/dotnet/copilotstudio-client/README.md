@@ -1,5 +1,7 @@
 # Copilot Studio Client Console Sample
 
+*Please note - S2S is not currently supported for Copilot Studio. It is in active development, and once there is an ETA we will update this notice.*
+
 ## Instructions - Setup
 
 ### Prerequisite
