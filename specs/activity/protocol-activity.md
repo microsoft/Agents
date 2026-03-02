@@ -488,6 +488,51 @@ Semantic actions are sometimes used to indicate a change in which participant co
 
 `A3136`: Agents MAY use semantic action and [handoff activity](#handoff-activity) internally to coordinate conversational focus between components of the Agent.
 
+### Voice message
+
+Voice messages carry the final audio output of a voice modality interaction. They use the standard `message` activity type with the `valueType` and `value` fields to carry encoded audio content.
+
+Voice messages are identified by a `type` value of `message` and a `valueType` of `application/vnd.microsoft.activity.voice+json`.
+
+| Field       | Type   | Required | Description                                      |
+|-------------|--------|----------|--------------------------------------------------|
+| `type`      | string | Yes      | Must be `"message"`                              |
+| `valueType` | string | Yes      | Must be `"application/vnd.microsoft.activity.voice+json"` |
+| `value`     | object | Yes      | Contains the voice message content               |
+
+The `value` object for voice messages includes:
+
+| Property       | Type    | Required | Description                                    |
+|----------------|---------|----------|------------------------------------------------|
+| `contentType`  | string  | Yes      | MIME type of the audio, e.g., `"audio/webm"`   |
+| `contentUrl`   | string  | Yes      | Data URI or URL containing the audio data      |
+| `transcription`| string  | No       | Text transcription of the audio                |
+| `durationMs`   | integer | No       | Duration in milliseconds                       |
+| `timestamp`    | string  | No       | ISO 8601 timestamp                             |
+| `locale`       | string  | No       | Language/locale of the audio, e.g., `"en-US"`  |
+
+Example:
+```json
+{
+  "type": "message",
+  "valueType": "application/vnd.microsoft.activity.voice+json",
+  "value": {
+    "contentType": "audio/webm",
+    "contentUrl": "data:audio/webm;base64,...",
+    "transcription": "Book a flight to Paris",
+    "durationMs": 3400,
+    "timestamp": "2025-10-07T10:30:00Z",
+    "locale": "en-US"
+  }
+}
+```
+
+`A5250`: Voice message activities MUST use a `type` of `"message"` and include a `valueType` of `"application/vnd.microsoft.activity.voice+json"`.
+
+`A5251`: The `value` object MUST include `contentType` and `contentUrl` fields.
+
+`A5252`: Senders SHOULD include a `transcription` field to support accessibility and text-based processing.
+
 ## Contact relation update activity
 
 Contact relation update activities signal a change in the relationship between the recipient and a user within the channel. Contact relation update activities generally do not contain user-generated content. The relationship update described by a contact relation update activity exists between the user in the `from` field (often, but not always, the user initiating the update) and the user or Agent in the `recipient` field.
@@ -806,49 +851,6 @@ The Activity Protocol does **not** standardize request or audio state machines, 
   }
 }
 ```
-
-#### Voice Message
-
-A voice message is sent as a `message` activity using the `valueType` and `value` fields to carry the audio content. This is the final user-visible output for a voice modality interaction.
-
-| Field       | Type   | Required | Description                                      |
-|-------------|--------|----------|--------------------------------------------------|
-| `type`      | string | Yes      | Must be `"message"`                              |
-| `valueType` | string | Yes      | Must be `"application/vnd.microsoft.activity.voice+json"` |
-| `value`     | object | Yes      | Contains the voice message content               |
-
-The `value` object for voice messages includes:
-
-| Property       | Type    | Required | Description                                    |
-|----------------|---------|----------|------------------------------------------------|
-| `contentType`  | string  | Yes      | MIME type of the audio, e.g., `"audio/webm"`   |
-| `contentUrl`   | string  | Yes      | Data URI or URL containing the audio data      |
-| `transcription`| string  | No       | Text transcription of the audio                |
-| `durationMs`   | integer | No       | Duration in milliseconds                       |
-| `timestamp`    | string  | No       | ISO 8601 timestamp                             |
-| `locale`       | string  | No       | Language/locale of the audio, e.g., `"en-US"`  |
-
-Example:
-```json
-{
-  "type": "message",
-  "valueType": "application/vnd.microsoft.activity.voice+json",
-  "value": {
-    "contentType": "audio/webm",
-    "contentUrl": "data:audio/webm;base64,...",
-    "transcription": "Book a flight to Paris",
-    "durationMs": 3400,
-    "timestamp": "2025-10-07T10:30:00Z",
-    "locale": "en-US"
-  }
-}
-```
-
-`A5250`: Voice message activities MUST use a `type` of `"message"` and include a `valueType` of `"application/vnd.microsoft.activity.voice+json"`.
-
-`A5251`: The `value` object MUST include `contentType` and `contentUrl` fields.
-
-`A5252`: Senders SHOULD include a `transcription` field to support accessibility and text-based processing.
 
 #### Error Handling
 
@@ -1821,6 +1823,7 @@ The `error` field contains the reason the original [command activity](#command-a
 * Added normative requirements A5210-A5252 for media streaming events
 * Added normative requirements A9260-A9262 for media streaming in streaminfo
 * Added normative requirements A9400-A9442 for session lifecycle commands
+* Moved `Voice message` section from Event activity to Message activity (voice messages use `type: "message"`, not `type: "event"`)
 
 # 2025-09-30 - mattb-msft
 * Updated Channel Account definition to reflect current rules and usages. 
