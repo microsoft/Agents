@@ -612,7 +612,7 @@ The `value` field contains parameters specific to this event, as defined by the 
 
 ## Event activity
 
-Event activities communicate programmatic information from a client or channel to an Agent. The meaning of an event activity is defined by the `name` field, which is meaningful within the scope of a channel. Event activities are designed to carry both interactive information (such as button clicks) and non-interactive information (such as a notification of a client automatically updating an embedded speech model). For real-time multimodal streaming (voice/audio), event activities with names `Media.Start`, `Media.Chunk`, and `Media.End` are used to stream audio from the client to the Agent (see [Reserved Events for Media Streaming](#reserved-events-for-media-streaming)).
+Event activities communicate programmatic information from a client or channel to an Agent. The meaning of an event activity is defined by the `name` field, which is meaningful within the scope of a channel. Event activities are designed to carry both interactive information (such as button clicks) and non-interactive information (such as a notification of a client automatically updating an embedded speech model). For real-time multimodal streaming (voice/audio), event activities with names `Media.Start`, `Media.Chunk`, and `Media.End` are used to stream audio in either direction — from the client to the Agent or from the Agent to the client (see [Reserved Events for Media Streaming](#reserved-events-for-media-streaming)).
 
 Event activities are the asynchronous counterpart to [invoke activities](#invoke-activity). Unlike invoke, event is designed to be extended by client application extensions.
 
