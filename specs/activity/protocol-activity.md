@@ -689,11 +689,11 @@ Possible values for `contentType` are audio, video, text, screen, all or any oth
 
 Media streaming events are used to facilitate real-time multimodal interactions, particularly for voice and audio streaming. These events are **bidirectional**: the client can stream audio input to the Agent (for example, a user speaking), and the Agent can stream audio output back to the client (for example, a spoken response delivered in chunks). When the entire audio fits in a single activity, use a [Voice message](#voice-message) instead. For session lifecycle management and the complete end-to-end flow, see [Session Lifecycle Commands](#session-lifecycle-commands) and [Multimodal Interaction Flow](#multimodal-interaction-flow).
 
-These events use the `Media.*` prefix and work in conjunction with the [`streamInfo`](#streaminfo) entity for stream metadata and sequencing.
+These events use the `Media.*` prefix and work in conjunction with the [`streaminfo`](#streaminfo) entity for stream metadata and sequencing.
 
 `A5210`: Media streaming events MUST use the `Media.*` prefix for their `name` field.
 
-`A5211`: Media streaming events SHOULD include a [`streamInfo`](#streaminfo) entity to convey stream metadata.
+`A5211`: Media streaming events SHOULD include a [`streaminfo`](#streaminfo) entity to convey stream metadata.
 
 `A5212`: Media streaming events MAY use the `value` and `valueType` fields to carry modality-specific content.
 
@@ -707,7 +707,7 @@ The `Media.Start` event initiates a media streaming session. It establishes the 
 | `name`      | string | Yes      | Must be `"Media.Start"`                          |
 | `valueType` | string | No       | Identifies the schema of the `value` object, e.g., `"application/vnd.microsoft.activity.mediastart+json"` |
 | `value`     | object | No       | Contains media type and content type information |
-| `entities`  | array  | Yes      | Must include a [`streamInfo`](#streaminfo) entity with `streamType` of `"streaming"` |
+| `entities`  | array  | Yes      | Must include a [`streaminfo`](#streaminfo) entity with `streamType` of `"streaming"` |
 
 Example:
 ```json
@@ -721,7 +721,7 @@ Example:
   },
   "entities": [
     {
-      "type": "streamInfo",
+      "type": "streaminfo",
       "streamId": "abc123",
       "streamType": "streaming",
       "streamSequence": 1
@@ -730,13 +730,13 @@ Example:
 }
 ```
 
-`A5220`: Senders MUST include a [`streamInfo`](#streaminfo) entity in `Media.Start` events with a valid `streamId`.
+`A5220`: Senders MUST include a [`streaminfo`](#streaminfo) entity in `Media.Start` events with a valid `streamId`.
 
 `A5221`: The `streamSequence` in `Media.Start` SHOULD be `1` as it initiates the stream.
 
 #### Media.Chunk
 
-The `Media.Chunk` event sends a chunk of media data during an active streaming session. Chunks are sequenced using the `streamSequence` field in the [`streamInfo`](#streaminfo) entity.
+The `Media.Chunk` event sends a chunk of media data during an active streaming session. Chunks are sequenced using the `streamSequence` field in the [`streaminfo`](#streaminfo) entity.
 
 | Field       | Type   | Required | Description                                      |
 |-------------|--------|----------|--------------------------------------------------|
@@ -744,7 +744,7 @@ The `Media.Chunk` event sends a chunk of media data during an active streaming s
 | `name`      | string | Yes      | Must be `"Media.Chunk"`                          |
 | `valueType` | string | No       | Identifies the schema of the `value` object, e.g., `"application/vnd.microsoft.activity.audiochunk+json"` |
 | `value`     | object | Yes      | Contains the media chunk data                    |
-| `entities`  | array  | Yes      | Must include a [`streamInfo`](#streaminfo) entity |
+| `entities`  | array  | Yes      | Must include a [`streaminfo`](#streaminfo) entity |
 
 The `value` object for audio chunks typically includes:
 
@@ -771,7 +771,7 @@ Example:
   },
   "entities": [
     {
-      "type": "streamInfo",
+      "type": "streaminfo",
       "streamId": "abc123",
       "streamType": "streaming",
       "streamSequence": 2
@@ -780,7 +780,7 @@ Example:
 }
 ```
 
-`A5230`: Senders MUST include a [`streamInfo`](#streaminfo) entity in `Media.Chunk` events with the same `streamId` as the corresponding `Media.Start`.
+`A5230`: Senders MUST include a [`streaminfo`](#streaminfo) entity in `Media.Chunk` events with the same `streamId` as the corresponding `Media.Start`.
 
 `A5231`: The `streamSequence` MUST be incrementing for each chunk within the same stream.
 
@@ -795,7 +795,7 @@ The `Media.End` event signals the end of a media streaming session.
 | `type`      | string | Yes      | Must be `"event"`                                |
 | `name`      | string | Yes      | Must be `"Media.End"`                            |
 | `valueType` | string | No       | Identifies the schema, e.g., `"application/vnd.microsoft.activity.mediaend+json"` |
-| `entities`  | array  | Yes      | Must include a [`streamInfo`](#streaminfo) entity with `streamType` of `"final"` |
+| `entities`  | array  | Yes      | Must include a [`streaminfo`](#streaminfo) entity with `streamType` of `"final"` |
 
 Example:
 ```json
@@ -805,7 +805,7 @@ Example:
   "valueType": "application/vnd.microsoft.activity.mediaend+json",
   "entities": [
     {
-      "type": "streamInfo",
+      "type": "streaminfo",
       "streamId": "abc123",
       "streamType": "final",
       "streamSequence": 3
@@ -814,7 +814,7 @@ Example:
 }
 ```
 
-`A5240`: Senders MUST include a [`streamInfo`](#streaminfo) entity in `Media.End` events with `streamType` set to `"final"`.
+`A5240`: Senders MUST include a [`streaminfo`](#streaminfo) entity in `Media.End` events with `streamType` set to `"final"`.
 
 `A5241`: Receivers SHOULD clean up stream resources upon receiving `Media.End`.
 
