@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StreamingMessageAgent", "azure-ai-streaming\StreamingMessageAgent.csproj", "{6547D985-7762-488D-9ADC-1BC3FD62AF66}"
 EndProject
@@ -26,6 +26,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgentFrameworkWeather", "Agent Framework\AgentFrameworkWeather.csproj", "{812FEFD7-E6E1-D544-9367-915A49EC6FD7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenesysHandoff", "GenesysHandoff\GenesysHandoff.csproj", "{84EE4770-235D-45AB-9DF2-873EB8CE33B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiAgent", "multiagent\MultiAgent.csproj", "{81CCC64D-8774-B7F0-C7DF-F037B8B3B19E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +75,10 @@ Global
 		{84EE4770-235D-45AB-9DF2-873EB8CE33B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84EE4770-235D-45AB-9DF2-873EB8CE33B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84EE4770-235D-45AB-9DF2-873EB8CE33B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81CCC64D-8774-B7F0-C7DF-F037B8B3B19E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81CCC64D-8774-B7F0-C7DF-F037B8B3B19E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81CCC64D-8774-B7F0-C7DF-F037B8B3B19E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81CCC64D-8774-B7F0-C7DF-F037B8B3B19E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

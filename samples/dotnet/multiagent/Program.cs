@@ -1,14 +1,14 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using AutoSignIn;
 using Microsoft.Agents.Hosting.AspNetCore;
 using Microsoft.Agents.Storage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MultiAgent;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpClient();
 
@@ -17,7 +17,8 @@ builder.AddAgentApplicationOptions();
 
 // Add the AgentApplication, which contains the logic for responding to
 // user messages.
-builder.AddAgent<AuthAgent>();
+builder.AddAgent<Agent1>();
+builder.AddAgent<Agent2>();
 
 // Register IStorage.  For development, MemoryStorage is suitable.
 // For production Agents, persisted storage should be used so
@@ -27,16 +28,7 @@ builder.Services.AddSingleton<IStorage, MemoryStorage>();
 
 // Configure the HTTP request pipeline.
 
-// Add AspNet token validation for Azure Bot Service and Entra.  Authentication is
-// configured in the appsettings.json "TokenValidation" section.
-builder.Services.AddControllers();
-builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
-
 WebApplication app = builder.Build();
-
-// Enable AspNet authentication and authorization
-app.UseAuthentication();
-app.UseAuthorization();
 
 // Map GET "/"
 app.MapAgentRootEndpoint();

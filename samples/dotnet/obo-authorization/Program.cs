@@ -8,12 +8,10 @@ using Microsoft.Agents.Core.Models;
 using Microsoft.Agents.Hosting.AspNetCore;
 using Microsoft.Agents.Storage;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -100,7 +98,7 @@ builder.AddAgent(sp =>
                 }
             }
         }
-    }, autoSignInHandlers: ["mcs"]);
+    });
 
     // Called when the OAuth flow fails
     app.UserAuthorization.OnUserSignInFailure(async (turnContext, turnState, handlerName, response, initiatingActivity, cancellationToken) =>
@@ -125,19 +123,14 @@ WebApplication app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("/", () => "Microsoft Agents SDK Sample");
+// Map GET "/"
+app.MapAgentRootEndpoint();
 
-// This receives incoming messages from Azure Bot Service or other SDK Agents
-var incomingRoute = app.MapPost("/api/messages", async (HttpRequest request, HttpResponse response, IAgentHttpAdapter adapter, IAgent agent, CancellationToken cancellationToken) =>
-{
-    await adapter.ProcessAsync(request, response, agent, cancellationToken);
-});
+// Map the endpoints for all agents using the [AgentInterface] attribute.
+// If there is a single IAgent/AgentApplication, the endpoints will be mapped to (e.g. "/api/message").
+app.MapAgentApplicationEndpoints(requireAuth: !app.Environment.IsDevelopment());
 
-if (!app.Environment.IsDevelopment())
-{
-    incomingRoute.RequireAuthorization();
-}
-else
+if (app.Environment.IsDevelopment())
 {
     // Hardcoded for brevity and ease of testing. 
     // In production, this should be set in configuration.
