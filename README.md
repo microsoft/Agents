@@ -1,7 +1,7 @@
 # Microsoft 365 Agents SDK
 
 With the Microsoft 365 Agents SDK, you can create agents deployable to channels of your choice, such as Microsoft 365 Copilot, Microsoft Teams, Web & Custom Apps and more, with scaffolding to handle the required communication. Developers can use the AI Services of their choice, and make the agents they build available using the channel management capabilities of the SDK.
- 
+
 Developers need the flexibility to integrate agents from any provider or technology stack into their enterprise systems. The Agents SDK simplifies the implementation of agentic patterns using the AI of their choice, allowing them to select one or more services, models, or agents to meet their specific requirements.
 
 Use the Agents SDK to:
@@ -16,24 +16,24 @@ You can get started right here by scolling up and clicking the 'samples' folder 
 
 Microsoft 365 Copilot is one of many channels supported by this SDK, and a *Microsoft 365 Copilot subscription is *not* required* to get started with or use this SDK unless your working specifically with that channel (or others, that require a subscription/service to use their client).
 
-## C#, JavaScript & Python Repository links
+## C#, JavaScript, & Python Repository links
 
 The source for the client libraries exists for the most part in repositories for each language. This repository is meant to be a jumping off point into those language specific repositories. Issues related to a specific language should be opened in the corresponding repository but cross cutting issues can be opened in this repository.
 
-| Language    | Repo                             | 
-|:------------|:--------------------------------:|
-| General (This repo)     |[Agents Repository]               |   
-| C# /.NET    |[Agents-for-net Repository]       | 
-| JavaScript  |[Agents-for-js Repository]        | 
-| Python      |[Agents-for-python Repository]    
+| Language            | Repo                           |
+|:--------------------|:------------------------------:|
+| General (This repo) | [Agents Repository]            |
+| C# /.NET            | [Agents-for-net Repository]    |
+| JavaScript          | [Agents-for-js Repository]     |
+| Python              | [Agents-for-python Repository] |
 
 ## Documentation
 
-To learn more about the Agents SDK, you can read our official docs here: [Agents SDK Documentation](https://aka.ms/M365-Agents-SDK-Docs) 
+To learn more about the Agents SDK, you can read our official docs here: [Agents SDK Documentation](https://aka.ms/M365-Agents-SDK-Docs)
 
 ## Related SDKs and Agent Platforms
 
-* **Semantic Kernel**. [Semantic Kernel](https://learn.microsoft.com/en-us/semantic-kernel/overview/)
+- **Semantic Kernel**. [Semantic Kernel](https://learn.microsoft.com/en-us/semantic-kernel/overview/)
 is an SDK that integrates Large Language Models (LLMs) like
 [OpenAI](https://platform.openai.com/docs/introduction),
 [Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service),
@@ -43,9 +43,9 @@ by allowing you to define [plugins](https://learn.microsoft.com/en-us/semantic-k
 that can be chained together
 in just a [few lines of code](https://learn.microsoft.com/en-us/semantic-kernel/ai-orchestration/chaining-functions?tabs=Csharp#using-the-runasync-method-to-simplify-your-code).
 
-* **Azure AI Foundry**. Provides the core backend agent functionality, providing reasoning, retrieval augmentation, observability, among other core functions. Developers can leverage the Azure AI Agent Service or build their agent functionality with individual components from this SDK.
+- **Azure AI Foundry**. Provides the core backend agent functionality, providing reasoning, retrieval augmentation, observability, among other core functions. Developers can leverage the Azure AI Agent Service or build their agent functionality with individual components from this SDK.
 
-* **Copilot Studio**. Copilot Studio is an agent building platform that can be used with the Microsoft 365 Agents SDK to integrate your agent into your applications & create multi-agent patterns with Copilot Studio Agents. To get started, go to the samples folder in this repo and select the Copilot Studio Client sample in your chosen language.
+- **Copilot Studio**. Copilot Studio is an agent building platform that can be used with the Microsoft 365 Agents SDK to integrate your agent into your applications & create multi-agent patterns with Copilot Studio Agents. To get started, go to the samples folder in this repo and select the Copilot Studio Client sample in your chosen language.
 
 The Microsoft 365 Agents SDK brings together core components to allow for developers to create, manage and utilize AI Services and third-party SDKs to power orchestration and develop custom agent logic functionality.
 
@@ -55,15 +55,17 @@ Your use of other services in connection with the Microsoft 365 Agents SDK is go
 
 ## Contributing
 
-#### Note for Microsoft intenral developers: 
+### Note for Microsoft internal developers
+
 - Internal Micrsoft Developers should join the Core identity group [Agents SDK Contrib](https://coreidentity.microsoft.com/manage/Entitlement/entitlement/agentssdkint-upyj)
 
-#### Non-Microsoft internal developers:
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
+### Non-Microsoft internal developers
 
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
+- This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
+the rights to use your contribution. For details, visit <https://cla.opensource.microsoft.com>.
+
+- When you submit a pull request, a CLA bot will automatically determine whether you need to provide
 a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
 provided by the bot. You will only need to do this once across all repos using our CLA.
 
@@ -75,8 +77,8 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 To ensure a consistent development environment, we recommend using the following VS Code extensions:
 
-|Extension  |Description  |
-|---------|---------|
+|Extension | Description |
+|----------|-------------|
 |[ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)|Integrates [ESLint](https://eslint.org/) into VS Code. Allows you to find an fix problems in JavaScript code.|
 |[GitHub Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat)|[GitHub Copilot](https://code.visualstudio.com/docs/copilot/overview) is an AI peer programming tool that helps you write code faster and smarter.|
 |[GitHub Codespaces](https://marketplace.visualstudio.com/items?itemName=GitHub.codespaces)|[GitHub Codespaces](https://github.com/features/codespaces) provides cloud-hosted development environments for any activity - whether it's a long-term project, or a short-term task like reviewing a pull request.|
@@ -85,11 +87,10 @@ To ensure a consistent development environment, we recommend using the following
 
 These are listed in `.vscode/extensions.json`, so VS Code should prompt you to install them when you open the project.
 
-
 ## Trademarks
 
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
-trademarks or logos is subject to and must follow 
+This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft
+trademarks or logos is subject to and must follow
 [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
 Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
 Any use of third-party trademarks or logos are subject to those third-party's policies.
