@@ -1,0 +1,11 @@
+{
+  "type": "handoff",
+  "id": "handoff-1",
+  "timestamp": "2025-09-15T10:00:14.000Z",
+  "serviceUrl": "https://smba.trafficmanager.net/amer/",
+  "channelId": "custom-channel",
+  "from": { "id": "bot-id-1", "name": "TriageBot" },
+  "conversation": { "id": "conv-8" },
+  "recipient": { "id": "human-agent-system", "name": "Live Agent Hub" },
+  "value": { "reason": "User requested human agent", "transcript": [ "User: I need to speak to a person.", "Bot: OK, I'll connect you to a live agent." ] }
+}
