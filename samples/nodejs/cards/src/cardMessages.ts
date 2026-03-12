@@ -1,171 +1,137 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-import { ActionTypes, Activity, ActivityTypes, Attachment } from '@microsoft/agents-activity'
-import { CardFactory, TurnContext } from '@microsoft/agents-hosting'
+
+import { ActionTypes, Activity, ActivityTypes, Attachment } from '@microsoft/agents-activity';
+import { CardFactory, TurnContext } from '@microsoft/agents-hosting';
+import { O365ConnectorCard } from '@microsoft/agents-hosting';
+import O365ConnectorCardData from './resources/o365ConnectorCard.json';
+import ListCard from './resources/listCard.json';
+import CollectionsCard from './resources/collectionsCard.json';
+import AnimationCardJson from './resources/animationCard.json';
+import AudioCardJson from './resources/audioCard.json';
+import VideoCardJson from './resources/videoCard.json';
+import ReceiptCardJson from './resources/receiptCard.json';
 
 export class CardMessages {
-  static async sendIntroCard (context: TurnContext): Promise<void> {
-    // Note that some channels require different values to be used in order to get buttons to display text.
-    // In this code the web chat is accounted for with the 'title' parameter, but in other channels you may
-    // need to provide a value for other parameters like 'text' or 'displayText'.
-    const buttons = [
-      { type: ActionTypes.ImBack, title: '1. Adaptive Card', value: '1. Adaptive Card' },
-      { type: ActionTypes.ImBack, title: '2. Animation Card', value: '2. Animation Card' },
-      { type: ActionTypes.ImBack, title: '3. Audio Card', value: '3. Audio Card' },
-      { type: ActionTypes.ImBack, title: '4. Hero Card', value: '4. Hero Card' },
-      { type: ActionTypes.ImBack, title: '5. Receipt Card', value: '5. Receipt Card' },
-      { type: ActionTypes.ImBack, title: '6. Thumbnail Card', value: '6. Thumbnail Card' },
-      { type: ActionTypes.ImBack, title: '7. Video Card', value: '7. Video Card' },
-    ]
+    static async sendIntroCard(context: TurnContext): Promise<void> {
+        // Note that some channels require different values to be used in order to get buttons to display text.
+        // In this code the web chat is accounted for with the 'title' parameter, but in other channels you may
+        // need to provide a value for other parameters like 'text' or 'displayText'.
+        const buttons = [
+            { type: ActionTypes.ImBack, title: '1. Adaptive Card', value: '1. Adaptive Card' },
+            { type: ActionTypes.ImBack, title: '2. Hero Card', value: '2. Hero Card' },
+            { type: ActionTypes.ImBack, title: '3. List Card', value: '3. List Card' },
+            { type: ActionTypes.ImBack, title: '4. O365 Connector Card', value: '4. O365 Connector Card' },
+            { type: ActionTypes.ImBack, title: '5. Collection Card', value: '5. Collection Card' },
+            { type: ActionTypes.ImBack, title: '6. SignIn Card', value: '6. SignIn Card' },
+            { type: ActionTypes.ImBack, title: '7. Thumbnail Card', value: '7. Thumbnail Card' },
+            { type: ActionTypes.ImBack, title: '8. Animation Card', value: '8. Animation Card' },
+            { type: ActionTypes.ImBack, title: '9. Audio Card', value: '9. Audio Card' },
+            { type: ActionTypes.ImBack, title: '10. Video Card', value: '10. Video Card' },
+            { type: ActionTypes.ImBack, title: '11. Receipt Card', value: '11. Receipt Card' }
+        ];
 
-    const card = CardFactory.heroCard('', undefined,
-      buttons, { text: 'Select one of the following choices' })
+        const card = CardFactory.heroCard('', undefined,
+            buttons, { text: 'Please select a card from the options below:' });
 
-    await CardMessages.sendActivity(context, card)
-  }
+        await CardMessages.sendActivity(context, card);
+    }
 
-  static async sendAdaptiveCard (context: TurnContext, adaptiveCard: any): Promise<void> {
-    const card = CardFactory.adaptiveCard(adaptiveCard)
+    static async sendAdaptiveCard(context: TurnContext, adaptiveCard: object): Promise<void> {
+        const card = CardFactory.adaptiveCard(adaptiveCard);
+        await CardMessages.sendActivity(context, card);
+    }
 
-    await CardMessages.sendActivity(context, card)
-  }
+    static async sendAnimationCard(context: TurnContext): Promise<void> {
+        // Animation cards are not supported in Teams, using Adaptive Card instead
+        const card = CardFactory.adaptiveCard(AnimationCardJson);
+        await CardMessages.sendActivity(context, card);
+    }
 
-  static async sendAnimationCard (context: TurnContext): Promise<void> {
-    const card = CardFactory.animationCard(
-      'Microsoft Bot Framework',
-      [
-        { url: 'https://i.giphy.com/Ki55RUbOV5njy.gif' }
-      ],
-      [],
-      {
-        subtitle: 'Animation Card'
-      }
-    )
+    static async sendAudioCard(context: TurnContext): Promise<void> {
+        // Audio cards are not supported in Teams, using Adaptive Card instead
+        const card = CardFactory.adaptiveCard(AudioCardJson);
+        await CardMessages.sendActivity(context, card);
+    }
 
-    await CardMessages.sendActivity(context, card)
-  }
+    static async sendHeroCard(context: TurnContext): Promise<void> {
+        const card = CardFactory.heroCard(
+            'Agent Hero Card',
+            'Build and connect intelligent agents to interact with your users naturally wherever they are.',
+            CardFactory.images(['https://raw.githubusercontent.com/microsoft/botframework-sdk/main/icon.png']),
+            CardFactory.actions([
+                {
+                    type: ActionTypes.OpenUrl,
+                    title: 'Get started',
+                    value: 'https://docs.microsoft.com/en-us/azure/bot-service/'
+                }
+            ])
+        );
 
-  static async sendAudioCard (context: TurnContext): Promise<void> {
-    const card = CardFactory.audioCard(
-      'I am your father',
-      ['https://www.mediacollege.com/downloads/sound-effects/star-wars/darthvader/darthvader_yourfather.wav'],
-      CardFactory.actions([
-        {
-          type: ActionTypes.OpenUrl,
-          title: 'Read more',
-          value: 'https://en.wikipedia.org/wiki/The_Empire_Strikes_Back'
-        }
-      ]),
-      {
-        subtitle: 'Star Wars: Episode V - The Empire Strikes Back',
-        text: 'The Empire Strikes Back (also known as Star Wars: Episode V – The Empire Strikes Back) is a 1980 American epic space opera film directed by Irvin Kershner. Leigh Brackett and Lawrence Kasdan wrote the screenplay, with George Lucas writing the film\'s story and serving as executive producer. The second installment in the original Star Wars trilogy, it was produced by Gary Kurtz for Lucasfilm Ltd. and stars Mark Hamill, Harrison Ford, Carrie Fisher, Billy Dee Williams, Anthony Daniels, David Prowse, Kenny Baker, Peter Mayhew and Frank Oz.',
-        image: { url: 'https://upload.wikimedia.org/wikipedia/en/3/3c/SW_-_Empire_Strikes_Back.jpg' }
-      }
-    )
+        await CardMessages.sendActivity(context, card);
+    }
 
-    await CardMessages.sendActivity(context, card)
-  }
+    static async sendListCard(context: TurnContext): Promise<void> {
+        // List Card is a Teams-specific card sent as a raw attachment
+        await context.sendActivity(Activity.fromObject({
+            type: ActivityTypes.Message,
+            attachments: [ListCard as Attachment]
+        }));
+    }
 
-  static async sendHeroCard (context: TurnContext): Promise<void> {
-    const card = CardFactory.heroCard(
-      'Copilot Hero Card',
-      CardFactory.images(['https://blogs.microsoft.com/wp-content/uploads/prod/2023/09/Press-Image_FINAL_16x9-4.jpg']),
-      CardFactory.actions([
-        {
-          type: ActionTypes.OpenUrl,
-          title: 'Get started',
-          value: 'https://docs.microsoft.com/en-us/azure/bot-service/'
-        }
-      ])
-    )
+    static async sendO365ConnectorCard(context: TurnContext): Promise<void> {
+        const card = CardFactory.o365ConnectorCard(O365ConnectorCardData as unknown as O365ConnectorCard);
+        await CardMessages.sendActivity(context, card);
+    }
 
-    await CardMessages.sendActivity(context, card)
-  }
+    static async sendCollectionCard(context: TurnContext): Promise<void> {
+        const card = CardFactory.adaptiveCard(CollectionsCard);
+        await CardMessages.sendActivity(context, card);
+    }
 
-  static async sendReceiptCard (context: TurnContext): Promise<void> {
-    const card = CardFactory.receiptCard({
-      title: 'John Doe',
-      facts: [
-        {
-          key: 'Order Number',
-          value: '1234'
-        },
-        {
-          key: 'Payment Method',
-          value: 'VISA 5555-****'
-        }
-      ],
-      items: [
-        {
-          title: 'Data Transfer',
-          price: '$38.45',
-          quantity: 368,
-          image: { url: 'https://github.com/amido/azure-vector-icons/raw/master/renders/traffic-manager.png' }
-        },
-        {
-          title: 'App Service',
-          price: '$45.00',
-          quantity: 720,
-          image: { url: 'https://github.com/amido/azure-vector-icons/raw/master/renders/cloud-service.png' }
-        }
-      ],
-      tax: '$7.50',
-      total: '$90.95',
-      buttons: CardFactory.actions([
-        {
-          type: ActionTypes.OpenUrl,
-          title: 'More information',
-          value: 'https://azure.microsoft.com/en-us/pricing/details/bot-service/'
-        }
-      ])
-    })
+    static async sendSignInCard(context: TurnContext): Promise<void> {
+        const card = CardFactory.signinCard(
+            'Sign In',
+            'https://login.microsoftonline.com',
+            'Agent SignIn Card'
+        );
+        await CardMessages.sendActivity(context, card);
+    }
 
-    await CardMessages.sendActivity(context, card)
-  }
+    static async sendReceiptCard(context: TurnContext): Promise<void> {
+        // Receipt cards are not fully supported in Teams, using Adaptive Card instead
+        const card = CardFactory.adaptiveCard(ReceiptCardJson);
+        await CardMessages.sendActivity(context, card);
+    }
 
-  static async sendThumbnailCard (context: TurnContext) {
-    const card = CardFactory.thumbnailCard(
-      'Copilot Thumbnail Card',
-      [{ url: 'https://blogs.microsoft.com/wp-content/uploads/prod/2023/09/Press-Image_FINAL_16x9-4.jpg' }],
-      [{
-        type: ActionTypes.OpenUrl,
-        title: 'Get started',
-        value: 'https://docs.microsoft.com/en-us/azure/bot-service/'
-      }],
-      {
-        subtitle: 'Your bots — wherever your users are talking.',
-        text: 'Build and connect intelligent bots to interact with your users naturally wherever they are, from text/sms to Skype, Slack, Office 365 mail and other popular services.'
-      }
-    )
+    static async sendThumbnailCard(context: TurnContext): Promise<void> {
+        const card = CardFactory.thumbnailCard(
+            'Agent Thumbnail Card',
+            [{ url: 'https://raw.githubusercontent.com/microsoft/botframework-sdk/main/icon.png' }],
+            [{
+                type: ActionTypes.OpenUrl,
+                title: 'Get started',
+                value: 'https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/'
+            }],
+            {
+                subtitle: 'Microsoft 365 Agents SDK',
+                text: 'Build intelligent agents that interact with your users naturally wherever they are, using the Microsoft 365 Agents SDK.'
+            }
+        );
 
-    await CardMessages.sendActivity(context, card)
-  }
+        await CardMessages.sendActivity(context, card);
+    }
 
-  static async sendVideoCard (context: TurnContext) {
-    const card = CardFactory.videoCard(
-      '2018 Imagine Cup World Championship Intro',
-      [{ url: 'https://sec.ch9.ms/ch9/783d/d57287a5-185f-4df9-aa08-fcab699a783d/IC18WorldChampionshipIntro2.mp4' }],
-      [{
-        type: ActionTypes.OpenUrl,
-        title: 'Lean More',
-        value: 'https://channel9.msdn.com/Events/Imagine-Cup/World-Finals-2018/2018-Imagine-Cup-World-Championship-Intro'
-      }],
-      {
-        subtitle: 'by Microsoft',
-        text: 'Microsoft\'s Imagine Cup has empowered student developers around the world to create and innovate on the world stage for the past 16 years. These innovations will shape how we live, work and play.'
-      }
-    )
+    static async sendVideoCard(context: TurnContext): Promise<void> {
+        // Video cards are not supported in Teams, using Adaptive Card instead
+        const card = CardFactory.adaptiveCard(VideoCardJson);
+        await CardMessages.sendActivity(context, card);
+    }
 
-    await CardMessages.sendActivity(context, card)
-  }
-
-  private static async sendActivity (context: TurnContext, card: Attachment): Promise<void> {
-    await context.sendActivity(Activity.fromObject(
-      {
-        type: ActivityTypes.Message,
-        attachments: [card]
-      }
-    )
-    )
-  }
+    private static async sendActivity(context: TurnContext, card: Attachment): Promise<void> {
+        await context.sendActivity(Activity.fromObject({
+            type: ActivityTypes.Message,
+            attachments: [card]
+        }));
+    }
 }

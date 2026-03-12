@@ -1,28 +1,36 @@
 {
-  "name": "node-cards-agent",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Agents cards agent sample",
-  "author": "Microsoft",
-  "license": "MIT",
-  "main": "./lib/index.js",
-  "scripts": {
-    "prebuild": "npm ci",
-    "build": "tsc --build",
-    "prestart": "npm run build",
-    "start": "node --env-file .env ./dist/index.js",
-    "test-tool": "agentsplayground",
-    "test": "npm-run-all -p -r start test-tool"
+    "name": "node-cards-agent",
+    "version": "1.0.0",
+    "description": "Agent SDK Cards Sample for Microsoft Teams - Demonstrates various card types",
+    "author": "Microsoft",
+    "license": "MIT",
+    "main": "./dist/index.js",
+    "scripts": {
+        "prebuild": "npm ci",
+        "build": "tsc --build",
+        "prestart": "npm run build",
+        "dev:teamsfx": "npm run dev",
+        "dev": "node --inspect=9239 --require ts-node/register ./src/index.ts",
+        "start": "node --env-file .env ./dist/index.js",
+        "watch": "tsc --build --watch",
+        "lint": "eslint .",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/microsoft/agents"
   },
-  "dependencies": {
-    "@microsoft/agents-hosting": "^1.1.0",
-    "@microsoft/agents-hosting-express": "^1.1.0",
-    "express": "^5.1.0"
-  },
-  "devDependencies": {
-    "@microsoft/m365agentsplayground": "^0.2.16",
-    "@types/node": "^24.0.10",
-    "npm-run-all": "^4.1.5"
-  },
-  "keywords": []
+    "dependencies": {
+        "@microsoft/agents-activity": "^1.1.0",
+        "@microsoft/agents-hosting": "^1.1.0",
+        "@microsoft/agents-hosting-express": "^1.1.0",
+        "dotenv": "^8.2.0",
+        "express": "^5.1.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "typescript": "^5.0.0",
+        "ts-node": "^10.9.0",
+        "nodemon": "~2.0.4"
+    }
 }
