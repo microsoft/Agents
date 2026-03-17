@@ -34,28 +34,31 @@ The CopilotStudio Client requires a User Token to operate. For this sample, we a
 
 ## Create an Application Registration in Entra ID
 
-This step will require permissions to create application identities in your Azure tenant. For this sample, you will create a Native Client Application Identity, which does not have secrets.
+This step will require permissions to Create application identities in your Azure tenant. For this sample, you will be creating a Native Client Application Identity, which does not have secrets.
 
 1. Open https://portal.azure.com 
-2. Navigate to Entra Id
-3. Create a new App Registration in Entra ID 
+1. Navigate to Entra Id
+1. Create an new App Registration in Entra ID 
     1. Provide a Name
-    2. Choose "Accounts in this organization directory only"
-    3. In the "Select a Platform" list, Choose "Public Client/native (mobile & desktop) 
-    4. In the Redirect URI url box, type in `http://localhost` (**note: use HTTP, not HTTPS**)
-    5. Then click register.
-4. In your newly created application
+    1. Choose "Accounts in this organization directory only"
+    1. In the "Select a Platform" list, Choose "Public Client/native (mobile & desktop) 
+    1. In the Redirect URI url box, type in `http://localhost` (**note: use HTTP, not HTTPS**)
+    1. Then click register.
+1. In your newly created application
     1. On the Overview page, Note down for use later when configuring the example application:
-        1. The Application (client) ID
-        2. The Directory (tenant) ID
-    2. Go to API Permissions in `Manage` section
-    3. Click Add Permission
+        1. the Application (client) ID
+        1. the Directory (tenant) ID
+    1. Goto Manage
+    1. Goto API Permissions
+    1. Click Add Permission
         1. In the side panel that appears, Click the tab `API's my organization uses`
-        2. Search for `Power Platform API`.
+        1. Search for `Power Platform API`.
             1. *If you do not see `Power Platform API` see the note at the bottom of this section.*
-        3. In the *Delegated permissions* list, choose `CopilotStudio` and Check `CopilotStudio.Copilots.Invoke`
-        4. Click `Add Permissions`
-    4. (Optional) Click `Grant Admin consent for copilotsdk`
+        1. In the permissions list choose `Delegated Permissions`, `CopilotStudio` and Check `CopilotStudio.Copilots.Invoke`
+        1. Click `Add Permissions`
+    1. (Optional) Click `Grant Admin consent for copilotsdk`
+    1. On the Authentication page, under `Advanced settings`, make sure the `Enable the following mobile and desktop flows` toggle is set to `Yes`.
+    1. Close Azure Portal
 
 > [!TIP]
 > If you do not see `Power Platform API` in the list of API's your organization uses, you need to add the Power Platform API to your tenant. To do that, goto [Power Platform API Authentication](https://learn.microsoft.com/power-platform/admin/programmability-authentication-v2#step-2-configure-api-permissions) and follow the instructions on Step 2 to add the Power Platform Admin API to your Tenant
@@ -85,3 +88,4 @@ This should challenge you to login and connect to the Copilot Studio Hosted agen
 ## Further Reading
 
 For more information on logging configuration, see the logging section in the Quickstart Agent sample README.
+
