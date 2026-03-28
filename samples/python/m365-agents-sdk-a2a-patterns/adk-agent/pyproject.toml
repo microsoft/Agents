@@ -1,0 +1,54 @@
+[project]
+name = "brand-search-optimization"
+version = "0.1.0"
+description = "Brand Search Optimization ADK Agent Designed to enhance product titles for retail brand search. It retrieves top keywords, performs searches, and analyzes top results to provide suggestions for enriching product titles"
+authors = [{ name = "Nikhil Kulkarni", email = "nikhilkul@google.com" }]
+license = {text = "Apache License 2.0"}
+readme = "README.md"
+requires-python = ">=3.11"
+
+dependencies = [
+    "google-genai>=1.5.0,<2.0.0",
+    "selenium>=4.30.0,<5.0.0",
+    "webdriver-manager>=4.0.2,<5.0.0",
+    "google-cloud-bigquery>=3.31.0,<4.0.0",
+    "absl-py>=2.2.2,<3.0.0",
+    "google-cloud-aiplatform[agent-engines]>=1.93.0,<2.0.0",
+    "pillow>=11.1.0,<12.0.0",
+    "google-adk[a2a]>=1.0.0,<2.0.0",
+    "beautifulsoup4>=4.12.0,<5.0.0",
+    "lxml>=5.0.0,<6.0.0",
+    "google-search-results>=2.4.2,<3.0.0",
+    "uvicorn>=0.32.0,<1.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "google-adk[eval]>=1.0.0",
+    "pytest-asyncio>=0.26.0",
+    "pytest>=8.3.5",
+]
+
+[tool.ruff]
+# Point back to the Master template in the root
+extend = "../../../pyproject.toml"
+
+[tool.ruff.lint]
+# Ignores function complication rule
+ignore = ["C901"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+
+[tool.ruff.lint.isort]
+# Update "brand_search_optimization" to match your actual folder name if it differs
+known-first-party = ["brand_search_optimization", "app"]
+
+[tool.hatch.build.targets.wheel]
+# Ensures Hatchling bundles the correct source directories
+packages = ["brand_search_optimization", "app"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
