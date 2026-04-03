@@ -2,7 +2,7 @@ import pytest
 
 from microsoft_agents.testing import AgentClient
 
-from tests._common import (
+from src.common import (
     create_scenario,
     SDKVersion,
 )
