@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 import { PublicClientApplication, InteractionRequiredAuthError } from '@azure/msal-browser'
-import { ConnectionSettings } from '@microsoft/agents-copilotstudio-client'
+import { ConnectionSettings,  CopilotStudioClient} from '@microsoft/agents-copilotstudio-client'
 
 export async function acquireToken (settings: ConnectionSettings) {
   const msalInstance = new PublicClientApplication({
@@ -14,8 +14,9 @@ export async function acquireToken (settings: ConnectionSettings) {
   })
 
   await msalInstance.initialize()
+  const scopes = CopilotStudioClient.scopeFromSettings(settings); 
   const loginRequest = {
-    scopes: ['https://api.powerplatform.com/.default'],
+    scopes: [scopes],
     redirectUri: window.location.origin,
   }
   // When there are not accounts or the acquireTokenSilent fails,
