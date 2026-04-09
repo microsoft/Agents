@@ -1,0 +1,1 @@
+microsoft-agents-testing @ git+https://github.com/microsoft/Agents-for-python.git@main#subdirectory=dev/testing/microsoft-agents-testing

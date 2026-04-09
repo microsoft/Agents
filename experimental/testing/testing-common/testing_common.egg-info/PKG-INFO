@@ -1,0 +1,6 @@
+Metadata-Version: 2.4
+Name: testing-common
+Version: 0.1.0
+Summary: Shared utilities for Microsoft Agents e2e testing
+Requires-Python: >=3.13
+Requires-Dist: microsoft-agents-testing @ git+https://github.com/microsoft/Agents-for-python.git@main#subdirectory=dev/testing/microsoft-agents-testing

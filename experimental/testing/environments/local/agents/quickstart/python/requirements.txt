@@ -1,0 +1,4 @@
+python-dotenv
+microsoft-agents-activity==0.8.0
+microsoft-agents-authentication-msal==0.8.0
+microsoft-agents-hosting-aiohttp==0.8.0

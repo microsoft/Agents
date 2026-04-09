@@ -1,0 +1,25 @@
+name: agents-e2e-local
+
+# Self-contained azd config for the LOCAL test environment.
+# Run `azd provision` from this directory (environments/local/).
+#
+# azd env new e2e-local
+# azd provision
+#
+# Bicep target: infra/main.bicep (App Registration + Azure Bot + Key Vault).
+# Agents still run as local subprocesses — no App Service provisioned here.
+
+infra:
+  path: infra
+
+hooks:
+  postprovision:
+    windows:
+      shell: pwsh
+      run: scripts/postprovision.ps1
+      interactive: false
+  predown:
+    windows:
+      shell: pwsh
+      run: scripts/predown.ps1
+      interactive: false

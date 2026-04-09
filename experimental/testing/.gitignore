@@ -10,6 +10,8 @@
 *.sln.docstates
 target/
 
+.infra.json
+
 # Cake
 /.cake
 /version.txt
@@ -141,6 +143,9 @@ _TeamCity*
 
 # DotCover is a Code Coverage Tool
 *.dotCover
+
+.venv/
+venv/
 
 # AxoCover is a Code Coverage Tool
 .axoCover/*

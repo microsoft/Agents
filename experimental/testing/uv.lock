@@ -849,6 +849,21 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "microsoft-agents-testing" },
+    { name = "testing-common" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "microsoft-agents-testing", git = "https://github.com/microsoft/Agents-for-python.git?subdirectory=dev%2Ftesting%2Fmicrosoft-agents-testing&rev=main" },
+    { name = "testing-common", editable = "testing-common" },
+]
+
+[[package]]
+name = "testing-common"
+version = "0.1.0"
+source = { editable = "testing-common" }
+dependencies = [
+    { name = "microsoft-agents-testing" },
 ]
 
 [package.metadata]

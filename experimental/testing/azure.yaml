@@ -1,0 +1,12 @@
+name: agents-e2e-testing
+
+# azd manages environment isolation via `azd env new <name>` / `azd env select <name>`.
+# Provisioning is driven by infra/main.bicep (resource group scope).
+# After provisioning, the postprovision hook writes agent config files.
+
+hooks:
+  postprovision:
+    windows:
+      shell: pwsh
+      run: scripts/postprovision.ps1
+      interactive: false
