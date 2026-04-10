@@ -1,6 +1,8 @@
-# Enhanced task completion
+# Enhanced task completion for Microsoft Copilot Studio
 
 *Preview — This feature is currently experimental and is not intended for production use. Before enabling, review the current limitations and risks.*
+
+This feature is for Microsoft Copilot Studio.
 
 Enhanced task completion gives your agent the ability to work through complex tasks the way a human assistant would — by gathering information, asking clarifying questions, and taking action only when it has what it needs.
 
