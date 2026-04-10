@@ -1,6 +1,7 @@
 import asyncio
 import shutil
 import subprocess
+import sys
 
 from pathlib import Path
 
@@ -57,7 +58,7 @@ class SourceScenario(ExternalScenario):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 cwd=script_path.parent,
-                shell=True, # Needed to ensure the process group is correctly set up for termination
+                shell=sys.platform == "win32",
             )
 
             # wait for the agent to start running

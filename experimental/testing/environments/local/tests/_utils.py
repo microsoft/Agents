@@ -10,7 +10,7 @@ AGENT_NAME = "quickstart"
 AGENTS_DIR = Path(__file__).parent.parent.resolve() / "agents"
 
 def _create_scenario(sdk_version: SDKVersion) -> SourceScenario:
-    return create_scenario(AGENTS_DIR, AGENT_NAME, SDKVersion.PYTHON)
+    return create_scenario(AGENTS_DIR, AGENT_NAME, sdk_version)
 
 PYTHON_SCENARIO = _create_scenario(SDKVersion.PYTHON)
 NET_SCENARIO    = _create_scenario(SDKVersion.NET)
