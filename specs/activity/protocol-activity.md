@@ -1952,6 +1952,7 @@ Activity [entities](#entity) communicate extra metadata about the activity, such
 | number         | N/A                                     | Number                    |
 | clientInfo     | N/A                                     | Skype client info         |
 | streamInfo     | N/A                                     | Streaming text metadata   |
+| context        | N/A                                     | Screen and visual context metadata which can be used as Query context     |
 
 ### string and number
 
@@ -2199,6 +2200,45 @@ Voice streaming uses `event` activities with [Media.* events](#reserved-events-f
   }
 }
 ```
+
+### context
+The context entity contains contextual information between users and agents to improve understanding of ongoing conversations. This enables more relevant, personalized, and accurate responses, especially in multimodal interactions. By embedding context directly in the activity message, agents can leverage contextual information such as images, custom objects, and audio/video-related context. 
+Context can only be shared with activity type `message`, and it can be send from any channel. 
+There is no strict limit on the number of images that can be shared. However, it is recommended to keep the number as low as possible, as this directly impacts token consumption.
+
+| Property         | Type    | Required | Description                                                                     |
+|------------------|---------|----------|---------------------------------------------------------------------------------|
+| `type`           | string  | Yes      | Must be `"context"`                                                             |
+| `screenContext`  | object  | Yes      | Screen context details                                                          |
+
+The context entity in an activity message can contain a `screenContext` object. This can be a list of screenshots of the page the user is currently on. The images are shared either in base64-encoded format or as a URL.
+
+| Property         | Type             | Required | Description                                                                     |
+|------------------|------------------|----------|---------------------------------------------------------------------------------|
+| `images`         | array of string  | Yes      | An array of images either in base64-encoded format or as URL                    |
+
+`A9263`: If the context contains no elements, it MUST be ignored.
+
+`A9264`: If the context entity contains any syntactic errors, it MUST be ignored.
+
+`A9265`: If the `screenContext` object within a `context` entity contains no properties, it MUST be ignored.
+
+```
+  // Sending context information as part of the activity message
+  {
+    "type": "message",
+    "text": "What pizzas are available for $150?",
+    "entities": [
+      {
+        "type": "context",
+        "screenContext": {
+          "images": ["iVBORw0KGgoAAAANSUhEUgAAAAUA...", "https://example.com/product-page"] 
+        }
+      }
+    ]
+  }
+```
+
 
 # Appendix III - Protocols using the Invoke activity
 
