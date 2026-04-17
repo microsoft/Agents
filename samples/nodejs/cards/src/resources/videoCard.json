@@ -1,0 +1,55 @@
+{
+  "type": "AdaptiveCard",
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.4",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Video Card",
+      "weight": "Bolder",
+      "size": "Large"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Introduction to Microsoft Copilot",
+      "weight": "Bolder",
+      "spacing": "Medium"
+    },
+    {
+      "type": "TextBlock",
+      "text": "by Microsoft",
+      "isSubtle": true
+    },
+    {
+      "type": "Image",
+      "url": "https://raw.githubusercontent.com/microsoft/botframework-sdk/main/icon.png",
+      "altText": "Microsoft Copilot",
+      "size": "Large"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Learn how Microsoft Copilot can help you be more productive with AI-powered assistance across Microsoft 365, Azure, and more.",
+      "wrap": true,
+      "spacing": "Medium"
+    },
+    {
+      "type": "TextBlock",
+      "text": "🎬 Video cards are not natively supported in Teams. Click below to watch.",
+      "wrap": true,
+      "spacing": "Medium",
+      "isSubtle": true
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.OpenUrl",
+      "title": "▶️ Watch on Microsoft Learn",
+      "url": "https://learn.microsoft.com/en-us/shows/ai-show/"
+    },
+    {
+      "type": "Action.OpenUrl",
+      "title": "Learn More about Copilot",
+      "url": "https://www.microsoft.com/en-us/microsoft-copilot"
+    }
+  ]
+}
