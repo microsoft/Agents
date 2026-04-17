@@ -11,3 +11,4 @@
 |Copilot Studio Skill |Call the echo bot from a Copilot Studio skill |[copilotstudio-skill](copilotstudio-skill/README.md)|
 |RetrievalBot Sample with Semantic Kernel|A simple Retrieval Agent that is hosted on an Asp.net core web service. |[RetrievalBot](RetrievalBot/README.md)|
 |MultiAgent|Demonstrates multiple AgentApplication in the same host|[MultiAgent](multiagent/README.md)|
+|OpenTelemetry Agent|Configures OTel tracing, metrics, and logging with OTLP export|[otel](otel/README.md)|

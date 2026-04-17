@@ -10,6 +10,7 @@
 |Copilot Studio Client|Console app to consume a Copilot Studio Agent|[copilotstudio-client](copilotstudio-client/README.md)|
 |Cards Agent|Agent that uses rich cards to enhance conversation design |[cards](cards/README.md)|
 |Copilot Studio Skill|Call the echo bot from a Copilot Studio skill |[copilotstudio-skill](copilotstudio-skill/README.md)|
+|OpenTelemetry|Instrument an agent and consume telemetry via the Aspire dashboard|[opentelemetry](otel/README.md)|
 
 ## Important Notice - Import Changes
 
