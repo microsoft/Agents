@@ -44,7 +44,11 @@ param(
 
     [string]$Scenario = 'quickstart',
 
-    [string]$BotEndpoint = 'https://localhost:3978/api/messages'
+    [string]$BotEndpoint = 'https://localhost:3978/api/messages',
+
+    # Skip Blob Storage and Cosmos DB provisioning (faster for bot-only scenarios).
+    [switch]$NoBlobStorage,
+    [switch]$NoCosmosDb
 )
 
 Set-StrictMode -Version Latest
@@ -69,16 +73,23 @@ if (-not $DeployerPrincipalId) {
 
 # --- 3. Deploy Bicep ---
 Write-Host "Deploying $InfraDir/main.bicep..."
-$RawOutputs = az deployment group create `
-    --resource-group $ResourceGroup `
-    --name $DeploymentName `
-    --template-file "$InfraDir/main.bicep" `
-    --parameters environmentName=$EnvironmentName `
-                 location=$Location `
-                 botEndpoint=$BotEndpoint `
-                 deployerPrincipalId=$DeployerPrincipalId `
-    --query properties.outputs `
-    --output json | ConvertFrom-Json
+
+$BicepParams = @(
+    '--resource-group', $ResourceGroup,
+    '--name', $DeploymentName,
+    '--template-file', "$InfraDir/main.bicep",
+    '--parameters',
+        "environmentName=$EnvironmentName",
+        "location=$Location",
+        "botEndpoint=$BotEndpoint",
+        "deployerPrincipalId=$DeployerPrincipalId",
+        "deployBlobStorage=$(if ($NoBlobStorage) { 'false' } else { 'true' })",
+        "deployCosmosDb=$(if ($NoCosmosDb) { 'false' } else { 'true' })",
+    '--query', 'properties.outputs',
+    '--output', 'json'
+)
+
+$RawOutputs = az @BicepParams | ConvertFrom-Json
 
 if (-not $RawOutputs) {
     Write-Error "Deployment failed or returned no outputs."

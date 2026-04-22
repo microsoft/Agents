@@ -24,3 +24,5 @@ resource sp 'Microsoft.Graph/servicePrincipals@v1.0' = {
 
 output appId string = app.appId
 output tenantId string = tenant().tenantId
+// Object ID of the service principal — used to grant data-plane RBAC roles (storage, cosmos).
+output servicePrincipalId string = sp.id
