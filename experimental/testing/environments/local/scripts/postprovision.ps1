@@ -38,6 +38,12 @@ if ($missing) {
     $Outputs = @{}
     $json.PSObject.Properties | ForEach-Object { $Outputs[$_.Name] = $_.Value }
 } else {
+    # Optional outputs — present only when those modules are deployed; may be empty strings.
+    $Outputs.STORAGE_ACCOUNT_URL = $env:STORAGE_ACCOUNT_URL
+    $Outputs.BLOB_CONTAINER_NAME = $env:BLOB_CONTAINER_NAME
+    $Outputs.COSMOS_DB_ENDPOINT  = $env:COSMOS_DB_ENDPOINT
+    $Outputs.COSMOS_DB_DATABASE  = $env:COSMOS_DB_DATABASE
+    $Outputs.COSMOS_DB_CONTAINER = $env:COSMOS_DB_CONTAINER
     $Outputs | ConvertTo-Json | Out-File $OutputsFile -Encoding utf8
     Write-Host "Infra outputs written to $OutputsFile"
 }
@@ -63,17 +69,13 @@ if (-not $ClientSecret) {
     Write-Host "Client secret stored in Key Vault '$($Outputs.KEY_VAULT_NAME)'."
 }
 
-$Scenario = $env:AGENT_SCENARIO
-if (-not $Scenario) {
-    Write-Warning "AGENT_SCENARIO environment variable not set; defaulting to 'quickstart'"
-    $Scenario = 'quickstart'
-}
+$Scenario = if ($env:AGENT_SCENARIO) { $env:AGENT_SCENARIO } else { '*' }
 
 Write-Host "Injecting config (scenario=$Scenario)..."
 Push-Location $EnvDir
 try {
     $VarArgs = '--var', "AUTH_TYPE=ClientSecret", '--var', "CLIENT_SECRET=$ClientSecret", '--var', "UMI_CLIENT_ID="
-    $UvArgs = @('run', 'python', "$PSScriptRoot/inject_config.py",
+    $UvArgs = @('run', '--no-project', 'python', "$PSScriptRoot/inject_config.py",
                 '--scenario', $Scenario,
                 '--outputs-file', $OutputsFile) + $VarArgs
     uv @UvArgs

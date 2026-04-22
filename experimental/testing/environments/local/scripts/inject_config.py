@@ -48,8 +48,8 @@ TEMPLATE_MAP: dict[str, str] = {
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    source = parser.add_mutually_exclusive_group(required=True)
-    source.add_argument('--scenario', help='Agent scenario folder under environments/local/agents/. Discovers and processes all templates.')
+    source = parser.add_mutually_exclusive_group()
+    source.add_argument('--scenario', default='*', help='Agent scenario glob under environments/local/agents/ (default: *, all scenarios). Discovers and processes all templates.')
     source.add_argument('--template', type=Path, help='Single template file to process.')
     parser.add_argument('--output', type=Path, help='Output file (required with --template).')
     parser.add_argument(
@@ -80,10 +80,12 @@ def main() -> None:
     if args.template:
         _process_file(args.template, args.output, variables)
     else:
-        scenario_dir = Path(__file__).parent.parent / 'agents' / args.scenario
-        if not scenario_dir.is_dir():
-            sys.exit(f"Scenario directory not found: {scenario_dir}")
-        _discover_and_process(scenario_dir, variables)
+        agents_dir = Path(__file__).parent.parent / 'agents'
+        matches = sorted(p for p in agents_dir.glob(args.scenario) if p.is_dir())
+        if not matches:
+            sys.exit(f"No scenario directories matched: {args.scenario}")
+        for scenario_dir in matches:
+            _discover_and_process(scenario_dir, variables)
 
     print("Config injection complete.")
 
@@ -133,7 +135,7 @@ def _process_file(
 
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(rendered, encoding='utf-8')
-    print(f"  {template} → {output}")
+    print(f"  {template} -> {output}")
 
 
 def _resolve_path(data: dict[str, Any], path: str) -> Any:

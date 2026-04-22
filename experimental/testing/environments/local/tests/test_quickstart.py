@@ -6,6 +6,10 @@ from ._utils import (
     PYTHON_SCENARIO,
     NET_SCENARIO,
     JS_SCENARIO,
+    PYTHON_BLOB_SCENARIO,
+    NET_BLOB_SCENARIO,
+    JS_BLOB_SCENARIO,
+    PYTHON_COSMOS_SCENARIO,
 )
 
 class BaseTestQuickstart:
@@ -46,7 +50,6 @@ class BaseTestQuickstart:
 class TestQuickstartPython(BaseTestQuickstart):
     pass
 
-
 @pytest.mark.agent_test(NET_SCENARIO)
 class TestQuickstartNet(BaseTestQuickstart):
     pass
@@ -54,4 +57,22 @@ class TestQuickstartNet(BaseTestQuickstart):
 
 @pytest.mark.agent_test(JS_SCENARIO)
 class TestQuickstartJS(BaseTestQuickstart):
+    pass
+
+
+@pytest.mark.agent_test(PYTHON_BLOB_SCENARIO)
+class TestQuickstartPythonBlob(BaseTestQuickstart):
+    pass
+
+@pytest.mark.agent_test(NET_BLOB_SCENARIO)
+class TestQuickstartNetBlob(BaseTestQuickstart):
+    pass
+
+@pytest.mark.agent_test(JS_BLOB_SCENARIO)
+class TestQuickstartJSBlob(BaseTestQuickstart):
+    pass
+
+
+@pytest.mark.agent_test(PYTHON_COSMOS_SCENARIO)
+class TestQuickstartPythonCosmos(BaseTestQuickstart):
     pass

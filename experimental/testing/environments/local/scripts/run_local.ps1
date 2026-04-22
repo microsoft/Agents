@@ -33,7 +33,7 @@
     Azure region. Default: eastus.
 
 .PARAMETER Scenario
-    Agent scenario under environments/local/agents/. Default: quickstart.
+    Agent scenario glob under environments/local/agents/. Default: * (all scenarios).
 
 .PARAMETER TestPath
     pytest path to run inside the container. Default: environments/local/tests/
@@ -50,7 +50,7 @@ param(
 
     [string]$Location = "eastus",
 
-    [string]$Scenario = "quickstart",
+    [string]$Scenario = "*",
 
     [string]$TestPath = "environments/local/tests/",
 
@@ -84,12 +84,24 @@ try {
     # ------------------------------------------------------------------ #
     # 2. Pre-flight: verify agent configs exist                           #
     # ------------------------------------------------------------------ #
-    $requiredConfigs = @(
-        "$EnvDir/agents/$Scenario/python/.env",
-        "$EnvDir/agents/$Scenario/js/.env",
-        "$EnvDir/agents/$Scenario/net/appsettings.local.json"
-    )
-    $missing = $requiredConfigs | Where-Object { -not (Test-Path $_) }
+    $scenarioDirs = Get-ChildItem "$EnvDir/agents" -Directory | Where-Object { $_.Name -like $Scenario }
+    if (-not $scenarioDirs) {
+        Write-Error "No scenario directories matched: $Scenario"
+        exit 1
+    }
+    $missing = @()
+    foreach ($dir in $scenarioDirs) {
+        Get-ChildItem $dir.FullName -Recurse -Filter 'env.TEMPLATE' | ForEach-Object {
+            $out = Join-Path $_.DirectoryName '.env'
+            if (-not (Test-Path $out)) { $missing += $out }
+        }
+        Get-ChildItem $dir.FullName -Recurse -Filter 'appsettings.json' | ForEach-Object {
+            if (Select-String -Path $_.FullName -Pattern '\$\{\{' -Quiet) {
+                $out = Join-Path $_.DirectoryName 'appsettings.local.json'
+                if (-not (Test-Path $out)) { $missing += $out }
+            }
+        }
+    }
     if ($missing) {
         Write-Error (
             "Missing agent config files:`n" +
