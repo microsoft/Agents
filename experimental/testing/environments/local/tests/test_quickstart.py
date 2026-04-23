@@ -4,11 +4,11 @@ from microsoft_agents.testing import AgentClient
 
 from ._utils import (
     PYTHON_SCENARIO,
-    NET_SCENARIO,
-    JS_SCENARIO,
+    DOTNET_SCENARIO,
+    NODEJS_SCENARIO,
     PYTHON_BLOB_SCENARIO,
-    NET_BLOB_SCENARIO,
-    JS_BLOB_SCENARIO,
+    DOTNET_BLOB_SCENARIO,
+    NODEJS_BLOB_SCENARIO,
     PYTHON_COSMOS_SCENARIO,
 )
 
@@ -50,13 +50,13 @@ class BaseTestQuickstart:
 class TestQuickstartPython(BaseTestQuickstart):
     pass
 
-@pytest.mark.agent_test(NET_SCENARIO)
-class TestQuickstartNet(BaseTestQuickstart):
+@pytest.mark.agent_test(DOTNET_SCENARIO)
+class TestQuickstartDotNet(BaseTestQuickstart):
     pass
 
 
-@pytest.mark.agent_test(JS_SCENARIO)
-class TestQuickstartJS(BaseTestQuickstart):
+@pytest.mark.agent_test(NODEJS_SCENARIO)
+class TestQuickstartNodeJS(BaseTestQuickstart):
     pass
 
 
@@ -64,12 +64,12 @@ class TestQuickstartJS(BaseTestQuickstart):
 class TestQuickstartPythonBlob(BaseTestQuickstart):
     pass
 
-@pytest.mark.agent_test(NET_BLOB_SCENARIO)
-class TestQuickstartNetBlob(BaseTestQuickstart):
+@pytest.mark.agent_test(DOTNET_BLOB_SCENARIO)
+class TestQuickstartDotNetBlob(BaseTestQuickstart):
     pass
 
-@pytest.mark.agent_test(JS_BLOB_SCENARIO)
-class TestQuickstartJSBlob(BaseTestQuickstart):
+@pytest.mark.agent_test(NODEJS_BLOB_SCENARIO)
+class TestQuickstartNodeJSBlob(BaseTestQuickstart):
     pass
 
 

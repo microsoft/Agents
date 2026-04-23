@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    azd predown hook for the LOCAL environment.
+    azd predown hook
 
 .DESCRIPTION
     Runs before `azd down` deletes the resource group.
@@ -18,7 +18,14 @@ $ErrorActionPreference = 'Stop'
 
 $AppId = azd env get-value APP_ID 2>$null
 if (-not $AppId) {
-    Write-Warning "APP_ID not found in azd environment — skipping App Registration cleanup."
+    $DotEnvFile = Join-Path (Split-Path $PSScriptRoot -Parent) '.env'
+    if (Test-Path $DotEnvFile) {
+        $line = Get-Content $DotEnvFile | Where-Object { $_ -match '^APP_ID=' } | Select-Object -First 1
+        if ($line) { $AppId = ($line -split '=', 2)[1].Trim() }
+    }
+}
+if (-not $AppId) {
+    Write-Warning "APP_ID not found in azd environment or .env — skipping App Registration cleanup."
     exit 0
 }
 

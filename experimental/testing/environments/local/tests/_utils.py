@@ -23,11 +23,11 @@ def _create_scenario_with_storage(sdk_version: SDKVersion, storage_type: str) ->
     )
 
 PYTHON_SCENARIO = _create_scenario(SDKVersion.PYTHON)
-NET_SCENARIO    = _create_scenario(SDKVersion.NET)
-JS_SCENARIO     = _create_scenario(SDKVersion.JS)
+DOTNET_SCENARIO    = _create_scenario(SDKVersion.DOTNET)
+NODEJS_SCENARIO     = _create_scenario(SDKVersion.NODEJS)
 
 PYTHON_BLOB_SCENARIO = _create_scenario_with_storage(SDKVersion.PYTHON, BLOB_STORAGE)
-NET_BLOB_SCENARIO    = _create_scenario_with_storage(SDKVersion.NET, BLOB_STORAGE)
-JS_BLOB_SCENARIO     = _create_scenario_with_storage(SDKVersion.JS, BLOB_STORAGE)
+DOTNET_BLOB_SCENARIO    = _create_scenario_with_storage(SDKVersion.DOTNET, BLOB_STORAGE)
+NODEJS_BLOB_SCENARIO     = _create_scenario_with_storage(SDKVersion.NODEJS, BLOB_STORAGE)
 
 PYTHON_COSMOS_SCENARIO = _create_scenario_with_storage(SDKVersion.PYTHON, COSMOS_DB)

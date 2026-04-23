@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -rn \"src/agents\\\\|src\\\\\\\\\\\\\\\\agents\" c:/Users/robrandao/agents/root/experimental/testing --include=\"*.py\" --include=\"*.ps1\" --include=\"*.ts\" --include=\"*.json\" --include=\"*.toml\")",
+      "Bash(python3 -c ':*)",
+      "Bash(dotnet restore:*)",
+      "Bash(dotnet build:*)",
+      "Read(//c/Users/robrandao/agents/python/**)",
+      "Bash(pip index *)",
+      "Bash(python -c \"import microsoft_agents.storage.cosmos; help\\(microsoft_agents.storage.cosmos\\)\")"
+    ]
+  }
+}

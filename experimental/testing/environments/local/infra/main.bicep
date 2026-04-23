@@ -34,10 +34,10 @@ param botEndpoint string = 'https://localhost:3978/api/messages'
 @description('Principal ID of the user or service principal running this deployment. Grants Key Vault Secrets Officer so the provision script can write the client secret.')
 param deployerPrincipalId string = ''
 
-@description('Provision the Storage Account and blob container (required for quickstart_blob_storage scenario).')
+@description('Provision the Storage Account and blob container.')
 param deployBlobStorage bool = true
 
-@description('Provision the Cosmos DB account (required for quickstart_cosmos_db scenario).')
+@description('Provision the Cosmos DB account.')
 param deployCosmosDb bool = true
 
 var tags = { environment: environmentName }
@@ -92,7 +92,7 @@ module cosmos './modules/cosmos-db.bicep' = if (deployCosmosDb) {
 }
 
 // Written to .azure/<env>/.env by azd, or captured via --query properties.outputs.
-// inject_config.py reads infra-outputs.json (written by provision.ps1) to populate agent configs.
+// inject_config.py reads .env (written by postprovision.ps1) to populate agent configs.
 output APP_ID string = appReg.outputs.appId
 output TENANT_ID string = appReg.outputs.tenantId
 output KEY_VAULT_NAME string = kv.outputs.name

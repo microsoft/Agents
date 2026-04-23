@@ -10,7 +10,15 @@
 *.sln.docstates
 target/
 
-.infra.json
+launchSettings.json
+
+#local development for .NET
+appsettings.local.json
+appsettings.Development.json
+appsettings.Development*
+appsettings.Production.json
+**/[Aa]ppManifest/*.zip
+.deployment
 
 # Cake
 /.cake

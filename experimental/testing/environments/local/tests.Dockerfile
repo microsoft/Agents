@@ -4,8 +4,8 @@
 # run_agent.ps1), so Python, Node, .NET, and PowerShell are all present.
 # Nothing agent-specific is baked in — the repo is mounted at /repo at runtime.
 #
-# Build:  docker build -f environments/local/tests.Dockerfile -t agents-test .
-# Run:    docker run --rm -v "${PWD}:/repo" agents-test environments/local/tests/
+# Build:  docker build -f tests.Dockerfile -t agents-test .  (from environments/local/)
+# Run:    ./scripts/run_local.ps1
 
 # .NET SDK 8 + PowerShell are pre-installed in this image, eliminating the need
 # for the Microsoft package repo and its signing key.
