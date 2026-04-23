@@ -1,0 +1,15 @@
+{
+  "name": "microsoft-agents-sdk",
+  "owner": { "name": "Microsoft" },
+  "metadata": {
+    "description": "Claude Code skills for building agents with the Microsoft Agents SDK"
+  },
+  "plugins": [
+    {
+      "name": "agents-for-js",
+      "source": "./agent-plugins/agents-for-js",
+      "description": "Skills for building agents with the Microsoft 365 Agents SDK for TypeScript/JavaScript",
+      "version": "1.0.0"
+    }
+  ]
+}

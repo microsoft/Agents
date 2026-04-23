@@ -1,0 +1,11 @@
+{
+  "name": "agents-for-js",
+  "description": "Skills for building agents with the Microsoft 365 Agents SDK for TypeScript/JavaScript",
+  "version": "1.0.0",
+  "author": {
+    "name": "Microsoft"
+  },
+  "license": "MIT",
+  "keywords": ["microsoft", "agents", "teams", "copilot-studio", "m365"],
+  "skills": "skills/"
+}
