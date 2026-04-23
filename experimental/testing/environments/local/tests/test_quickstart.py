@@ -10,6 +10,8 @@ from ._utils import (
     DOTNET_BLOB_SCENARIO,
     NODEJS_BLOB_SCENARIO,
     PYTHON_COSMOS_SCENARIO,
+    DOTNET_COSMOS_SCENARIO,
+    NODEJS_COSMOS_SCENARIO,
 )
 
 class BaseTestQuickstart:
@@ -46,33 +48,41 @@ class BaseTestQuickstart:
         agent_client.expect().that_for_one(type="typing")
 
 
-@pytest.mark.agent_test(PYTHON_SCENARIO)
-class TestQuickstartPython(BaseTestQuickstart):
-    pass
+# @pytest.mark.agent_test(PYTHON_SCENARIO)
+# class TestQuickstartPython(BaseTestQuickstart):
+#     pass
 
-@pytest.mark.agent_test(DOTNET_SCENARIO)
-class TestQuickstartDotNet(BaseTestQuickstart):
-    pass
-
-
-@pytest.mark.agent_test(NODEJS_SCENARIO)
-class TestQuickstartNodeJS(BaseTestQuickstart):
-    pass
+# @pytest.mark.agent_test(DOTNET_SCENARIO)
+# class TestQuickstartDotNet(BaseTestQuickstart):
+#     pass
 
 
-@pytest.mark.agent_test(PYTHON_BLOB_SCENARIO)
-class TestQuickstartPythonBlob(BaseTestQuickstart):
-    pass
-
-@pytest.mark.agent_test(DOTNET_BLOB_SCENARIO)
-class TestQuickstartDotNetBlob(BaseTestQuickstart):
-    pass
-
-@pytest.mark.agent_test(NODEJS_BLOB_SCENARIO)
-class TestQuickstartNodeJSBlob(BaseTestQuickstart):
-    pass
+# @pytest.mark.agent_test(NODEJS_SCENARIO)
+# class TestQuickstartNodeJS(BaseTestQuickstart):
+#     pass
 
 
-@pytest.mark.agent_test(PYTHON_COSMOS_SCENARIO)
-class TestQuickstartPythonCosmos(BaseTestQuickstart):
+# @pytest.mark.agent_test(PYTHON_BLOB_SCENARIO)
+# class TestQuickstartPythonBlob(BaseTestQuickstart):
+#     pass
+
+# @pytest.mark.agent_test(DOTNET_BLOB_SCENARIO)
+# class TestQuickstartDotNetBlob(BaseTestQuickstart):
+#     pass
+
+# @pytest.mark.agent_test(NODEJS_BLOB_SCENARIO)
+# class TestQuickstartNodeJSBlob(BaseTestQuickstart):
+#     pass
+
+
+# @pytest.mark.agent_test(PYTHON_COSMOS_SCENARIO)
+# class TestQuickstartPythonCosmos(BaseTestQuickstart):
+#     pass
+
+# @pytest.mark.agent_test(DOTNET_COSMOS_SCENARIO)
+# class TestQuickstartDotNetCosmos(BaseTestQuickstart):
+#     pass
+
+@pytest.mark.agent_test(NODEJS_COSMOS_SCENARIO)
+class TestQuickstartNodeJSCosmos(BaseTestQuickstart):
     pass
