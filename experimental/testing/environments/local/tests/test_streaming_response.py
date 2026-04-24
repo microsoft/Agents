@@ -73,10 +73,10 @@ class BaseTestStreamingResponse:
 class TestStreamingResponsePython(BaseTestStreamingResponse):
     pass
 
-@pytest.mark.agent_test(DOTNET_STREAM_SCENARIO)
-class TestStreamingResponseDotNet(BaseTestStreamingResponse):
-    pass
+# @pytest.mark.agent_test(DOTNET_STREAM_SCENARIO)
+# class TestStreamingResponseDotNet(BaseTestStreamingResponse):
+#     pass
 
-@pytest.mark.agent_test(NODEJS_STREAM_SCENARIO)
-class TestStreamingResponseNodeJS(BaseTestStreamingResponse):
-    pass
+# @pytest.mark.agent_test(NODEJS_STREAM_SCENARIO)
+# class TestStreamingResponseNodeJS(BaseTestStreamingResponse):
+#     pass

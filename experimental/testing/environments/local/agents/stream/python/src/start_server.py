@@ -26,7 +26,7 @@ def start_server(
             adapter,
         )
 
-    APP = Application(middlewares=[jwt_authorization_middleware])
+    APP = Application()
     APP.router.add_post("/api/messages", entry_point)
 
     APP["agent_configuration"] = auth_configuration
