@@ -10,7 +10,9 @@ from ._utils import (
 )
 
 class BaseTestExpectReplies:
-    async def test_expect_replies_without_service_url(self, agent_client: AgentClient):
+
+    @pytest.mark.asyncio
+    async def test_expect_replies(self, agent_client: AgentClient):
         """Test sending an activity with expectReplies delivery mode without a service URL."""
 
         activity = Activity(

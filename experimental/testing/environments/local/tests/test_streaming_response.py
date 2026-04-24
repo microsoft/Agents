@@ -3,14 +3,15 @@ import pytest
 from microsoft_agents.activity import (
     Activity,
     ActivityTypes,
+    Channels,
     Entity
 )
 from microsoft_agents.testing import AgentClient
 
 from ._utils import (
     PYTHON_STREAM_SCENARIO,
-    DOTNET_STREAM_SCENARIO,
-    NODEJS_STREAM_SCENARIO,
+    # DOTNET_STREAM_SCENARIO,
+    # NODEJS_STREAM_SCENARIO,
 )
 
 FULL_TEXT = "This is a streaming response."
@@ -27,7 +28,7 @@ def get_streaminfo(activity: Activity) -> Entity:
 class BaseTestStreamingResponse:
     
     @pytest.mark.asyncio
-    async def test_basic_streaming_response_streaming_channel(agent_client: AgentClient):
+    async def test_basic_streaming_response_streaming_channel(self, agent_client: AgentClient):
 
         expected_len = len(FULL_TEXT.split())
 
