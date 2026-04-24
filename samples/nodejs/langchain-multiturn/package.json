@@ -15,17 +15,17 @@
   "type": "module",
   "description": "",
   "dependencies": {
-    "@langchain/langgraph": "^0.3.11",
-    "@langchain/openai": "^0.5.10",
-    "@microsoft/agents-hosting-express": "^1.1.0",
+    "@langchain/langgraph": "^1.2.9",
+    "@langchain/openai": "^1.4.4",
+    "@microsoft/agents-hosting-express": "^1.4.2",
     "express": "^5.1.0"
   },
   "devDependencies": {
-    "@microsoft/m365agentsplayground": "^0.2.16",
-    "@types/node": "^24.0.10",
-    "nodemon": "^3.1.9",
+    "@microsoft/m365agentsplayground": "^0.2.24",
+    "@types/node": "^25.6.0",
+    "nodemon": "^3.1.14",
     "npm-run-all": "^4.1.5",
-    "typescript": "^5.7.2"
+    "typescript": "^6.0.3"
   },
  "overrides": {
     "@microsoft/agents-activity": {
