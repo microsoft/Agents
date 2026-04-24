@@ -16,12 +16,12 @@
   },
   "dependencies": {
     "@microsoft/agents-hosting": "^1.1.0",
-    "@microsoft/agents-hosting-express": "^1.1.0",
+    "@microsoft/agents-hosting-express": "^1.4.2",
     "express": "^5.1.0"
   },
   "devDependencies": {
-    "@microsoft/m365agentsplayground": "^0.2.16",
-    "@types/node": "^24.0.10",
+    "@microsoft/m365agentsplayground": "^0.2.24",
+    "@types/node": "^25.6.0",
     "npm-run-all": "^4.1.5"
   },
   "keywords": []
