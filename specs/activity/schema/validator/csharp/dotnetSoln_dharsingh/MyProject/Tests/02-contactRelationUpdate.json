@@ -1,0 +1,11 @@
+{
+  "type": "contactRelationUpdate",
+  "id": "contact-relation-update-1",
+  "timestamp": "2025-09-15T10:00:02.000Z",
+  "serviceUrl": "https://smba.trafficmanager.net/amer/",
+  "channelId": "skype",
+  "from": { "id": "user-id-1", "name": "John Doe" },
+  "conversation": { "id": "conv-2" },
+  "recipient": { "id": "bot-id-1", "name": "WelcomeBot" },
+  "action": "add"
+}
