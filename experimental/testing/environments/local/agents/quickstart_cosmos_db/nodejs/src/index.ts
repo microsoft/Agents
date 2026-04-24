@@ -16,12 +16,27 @@ type ApplicationTurnState = TurnState<ConversationState>
 // For production Agents, persisted storage should be used so
 // that state survives Agent restarts, and operates correctly
 // in a cluster of Agent instances.
+
+if (!process.env.COSMOS_DB_DATABASE_ID) {
+  throw new Error('COSMOS_DB_DATABASE_ID environment variable is not set')
+}
+if (!process.env.COSMOS_DB_CONTAINER_ID) {
+  throw new Error('COSMOS_DB_CONTAINER_ID environment variable is not set')
+}
+if (!process.env.COSMOS_DB_ENDPOINT) {
+  throw new Error('COSMOS_DB_ENDPOINT environment variable is not set')
+}
+
+const credential = new DefaultAzureCredential()
 const storage = new CosmosDbPartitionedStorage({
-  databaseId: process.env.COSMOS_DB_DATABASE_ID,
-  containerId: process.env.COSMOS_DB_CONTAINER_ID,
+  databaseId: process.env.COSMOS_DB_DATABASE_ID ?? '',
+  containerId: process.env.COSMOS_DB_CONTAINER_ID ?? '',
   cosmosClientOptions: {
-    aadCredentials: new DefaultAzureCredential(),
-    endpoint: process.env.COSMOS_DB_ENDPOINT
+    endpoint: process.env.COSMOS_DB_ENDPOINT ?? '',
+    tokenProvider: async () => {
+      const token = await credential.getToken('https://cosmos.azure.com/.default')
+      return `type=aad&ver=1.0&sig=${token!.token}`
+    }
   }
 })
 

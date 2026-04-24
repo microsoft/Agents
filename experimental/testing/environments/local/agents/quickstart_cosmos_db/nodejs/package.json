@@ -7,18 +7,18 @@
   "license": "MIT",
   "main": "./dist/index.js",
   "scripts": {
-    "prebuild": "npm ci",
     "build": "tsc --build",
     "prestart": "npm run build",
     "prestart:anon": "npm run build",
     "start:anon": "node ./dist/index.js",
     "start": "node --env-file .env ./dist/index.js",
     "test-tool": "agentsplayground",
-    "test": "npm-run-all -p -r start:anon test-tool"
+    "test": "npm-run-all -p -r start test-tool"
   },
   "dependencies": {
     "@microsoft/agents-hosting-express": "^1.1.0",
-    "@microsoft/agents-hosting-storage-cosmos": "^1.1.0"
+    "@microsoft/agents-hosting-storage-cosmos": "^1.1.0",
+    "@azure/identity": "^4.0.0"
   },
   "devDependencies": {
     "@microsoft/m365agentsplayground": "^0.2.16",

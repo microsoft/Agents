@@ -7,7 +7,6 @@
   "license": "MIT",
   "main": "./dist/index.js",
   "scripts": {
-    "prebuild": "npm ci",
     "build": "tsc --build",
     "prestart": "npm run build",
     "prestart:anon": "npm run build",
