@@ -16,6 +16,9 @@
     # Skip Docker build (reuse existing image):
     ./scripts/run_local.ps1 -NoBuild
 
+    # Run only tests matching a keyword:
+    ./scripts/run_local.ps1 -Filter test_streaming_response
+
 .PARAMETER Scenario
     Agent scenario glob under agents/. Default: * (all scenarios).
 
@@ -24,13 +27,18 @@
 
 .PARAMETER NoBuild
     Skip the docker build step (reuse the existing agents-test image).
+
+.PARAMETER Filter
+    pytest -k expression to filter tests (e.g. test_streaming_response).
 #>
 param(
     [string]$Scenario = "*",
 
     [string]$TestPath = "tests/",
 
-    [switch]$NoBuild
+    [switch]$NoBuild,
+
+    [string]$Filter = ""
 )
 
 Set-StrictMode -Version Latest
@@ -81,11 +89,12 @@ try {
     # ------------------------------------------------------------------ #
     # 3. Run tests                                                        #
     # ------------------------------------------------------------------ #
-    Write-Host "Running tests: $TestPath"
+    $filterArgs = if ($Filter) { @("-k", $Filter) } else { @() }
+    Write-Host "Running tests: $TestPath$(if ($Filter) { " -k $Filter" })"
     docker run --rm `
         -v "${EnvDir}:/repo" `
         agents-test `
-        $TestPath
+        $TestPath @filterArgs
 
 } finally {
     Pop-Location
