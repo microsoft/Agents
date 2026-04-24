@@ -33,3 +33,14 @@ NODEJS_BLOB_SCENARIO = _create_scenario_with_storage(SDKVersion.NODEJS, BLOB_STO
 PYTHON_COSMOS_SCENARIO = _create_scenario_with_storage(SDKVersion.PYTHON, COSMOS_DB)
 DOTNET_COSMOS_SCENARIO = _create_scenario_with_storage(SDKVersion.DOTNET, COSMOS_DB)
 NODEJS_COSMOS_SCENARIO = _create_scenario_with_storage(SDKVersion.NODEJS, COSMOS_DB)
+
+def _create_stream_scenario(sdk_version: SDKVersion) -> SourceScenario:
+        return create_scenario(
+        AGENTS_DIR,
+        "stream",
+        sdk_version,
+    )
+
+PYTHON_STREAM_SCENARIO = _create_stream_scenario(SDKVersion.PYTHON)
+DOTNET_STREAM_SCENARIO = _create_stream_scenario(SDKVersion.DOTNET)
+NODEJS_STREAM_SCENARIO = _create_stream_scenario(SDKVersion.NODEJS)
