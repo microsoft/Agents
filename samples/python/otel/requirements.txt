@@ -1,0 +1,14 @@
+python-dotenv
+aiohttp
+microsoft-agents-hosting-aiohttp
+microsoft-agents-hosting-core
+microsoft-agents-authentication-msal
+microsoft-agents-activity
+opentelemetry-instrumentation-aiohttp-server
+opentelemetry-instrumentation-aiohttp-client
+opentelemetry-instrumentation-requests
+opentelemetry-exporter-otlp
+opentelemetry-sdk
+opentelemetry-api
+opentelemetry-instrumentation-logging
+opentelemetry-instrumentation
