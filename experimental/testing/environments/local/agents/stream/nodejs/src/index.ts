@@ -26,16 +26,10 @@ const agentApp = new AgentApplication<ApplicationTurnState>({
   fileDownloaders: [downloader]
 })
 
-// Display a welcome message when members are added
-agentApp.onConversationUpdate('membersAdded', async (context: TurnContext, state: ApplicationTurnState) => {
-  await context.sendActivity('Hello and Welcome!')
-})
-
-
 const FULL_TEXT = "This is a streaming response."
 const CHUNKS = FULL_TEXT.split(" ")
 
-agentApp.onStream(async (context: TurnContext, state: ApplicationTurnState) => {
+agentApp.onMessage("/stream", async (context: TurnContext, state: ApplicationTurnState) => {
   
   await context.streamingResponse.queueInformativeUpdate("Starting stream...")
   await sleep(1000)

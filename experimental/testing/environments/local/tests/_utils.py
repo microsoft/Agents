@@ -45,4 +45,4 @@ def _create_stream_scenario(sdk_version: SDKVersion) -> SourceScenario:
 
 PYTHON_STREAM_SCENARIO = _create_stream_scenario(SDKVersion.PYTHON)
 DOTNET_STREAM_SCENARIO = _create_stream_scenario(SDKVersion.DOTNET)
-# NODEJS_STREAM_SCENARIO = _create_stream_scenario(SDKVersion.NODEJS)
+NODEJS_STREAM_SCENARIO = _create_stream_scenario(SDKVersion.NODEJS)
