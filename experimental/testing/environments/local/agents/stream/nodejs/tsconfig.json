@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+      "incremental": true,
+      "lib": ["ES2021"],
+      "target": "es2019",
+      "module": "commonjs",
+      "declaration": true,
+      "sourceMap": true,
+      "composite": true,
+      "strict": true,
+      "moduleResolution": "node",
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "resolveJsonModule": true,
+      "rootDir": "src",
+      "outDir": "dist",
+      "tsBuildInfoFile": "dist/.tsbuildinfo"
+  }
+}

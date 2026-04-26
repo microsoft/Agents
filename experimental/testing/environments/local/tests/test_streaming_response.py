@@ -11,7 +11,7 @@ from microsoft_agents.testing import AgentClient
 from ._utils import (
     PYTHON_STREAM_SCENARIO,
     DOTNET_STREAM_SCENARIO,
-    # NODEJS_STREAM_SCENARIO,
+    NODEJS_STREAM_SCENARIO,
 )
 
 FULL_TEXT = "This is a streaming response."
@@ -70,14 +70,14 @@ class BaseTestStreamingResponse:
         assert final_streaminfo.stream_type == "final"
         assert stream_activities[-1].text == FULL_TEXT.replace(" ", "")
 
-# @pytest.mark.agent_test(PYTHON_STREAM_SCENARIO)
-# class TestStreamingResponsePython(BaseTestStreamingResponse):
-#     pass
+@pytest.mark.agent_test(PYTHON_STREAM_SCENARIO)
+class TestStreamingResponsePython(BaseTestStreamingResponse):
+    pass
 
 @pytest.mark.agent_test(DOTNET_STREAM_SCENARIO)
 class TestStreamingResponseDotNet(BaseTestStreamingResponse):
     pass
 
-# @pytest.mark.agent_test(NODEJS_STREAM_SCENARIO)
-# class TestStreamingResponseNodeJS(BaseTestStreamingResponse):
-#     pass
+@pytest.mark.agent_test(NODEJS_STREAM_SCENARIO)
+class TestStreamingResponseNodeJS(BaseTestStreamingResponse):
+    pass
