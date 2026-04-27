@@ -9,9 +9,9 @@ from microsoft_agents.activity import (
 from microsoft_agents.testing import AgentClient, ExternalScenario
 
 from ._utils import (
-    PYTHON_STREAM_SCENARIO,
-    DOTNET_STREAM_SCENARIO,
-    NODEJS_STREAM_SCENARIO,
+    PYTHON_SCENARIO,
+    DOTNET_SCENARIO,
+    NODEJS_SCENARIO,
 )
 
 FULL_TEXT = "This is a streaming response."
@@ -70,20 +70,20 @@ class BaseTestStreamingResponse:
         assert final_streaminfo.stream_type == "final"
         assert stream_activities[-1].text == FULL_TEXT.replace(" ", "")
 
-# @pytest.mark.agent_test(PYTHON_STREAM_SCENARIO)
-# class TestStreamingResponsePython(BaseTestStreamingResponse):
-#     pass
+@pytest.mark.agent_test(PYTHON_SCENARIO)
+class TestStreamingResponsePython(BaseTestStreamingResponse):
+    pass
 
-@pytest.mark.agent_test(DOTNET_STREAM_SCENARIO)
+@pytest.mark.agent_test(DOTNET_SCENARIO)
 class TestStreamingResponseDotNet(BaseTestStreamingResponse):
     pass
 
-# @pytest.mark.agent_test(NODEJS_STREAM_SCENARIO)
-# class TestStreamingResponseNodeJS(BaseTestStreamingResponse):
-#     pass
+@pytest.mark.agent_test(NODEJS_SCENARIO)
+class TestStreamingResponseNodeJS(BaseTestStreamingResponse):
+    pass
 
 # EXTERNAL_SCENARIO = ExternalScenario("http://localhost:3978/api/messages")
 
 # @pytest.mark.agent_test(EXTERNAL_SCENARIO)
 # class TestStreamingResponseExternalScenario(BaseTestStreamingResponse):
-#     pas
+#     pass

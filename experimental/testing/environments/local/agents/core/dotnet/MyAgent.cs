@@ -5,6 +5,7 @@ using Microsoft.Agents.Builder;
 using Microsoft.Agents.Builder.App;
 using Microsoft.Agents.Builder.State;
 using Microsoft.Agents.Core.Models;
+using System;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Collections.Generic;
@@ -19,11 +20,13 @@ public class MyAgent : AgentApplication
 
     public MyAgent(AgentApplicationOptions options) : base(options)
     {
-        OnMessage("/stream", OnStreamAsync);
-        OnActivity(ActivityTypes.Message, OnMessageAsync, rank: RouteRank.Last);
+        OnMessage("/stream", SendStream);
+        OnMessage("/error", TriggerErrorAsync);
+        OnActivity(ActivityTypes.Message, EchoMessage, rank: RouteRank.Last);
+        OnTurnError(HandleTurnError);
     }
 
-    private async Task OnStreamAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
+    private async Task SendStream(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
     {
         turnContext.StreamingResponse.QueueInformativeUpdateAsync("Starting stream...");
 
@@ -40,8 +43,18 @@ public class MyAgent : AgentApplication
         await turnContext.StreamingResponse.EndStreamAsync();
     }
 
-    private async Task OnMessageAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
+    private async Task TriggerErrorAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
     {
-        await turnContext.SendActivityAsync($"you said: {turnContext.Activity.Text}", cancellationToken: cancellationToken);
+        throw new Exception("This is a triggered error for testing purposes.");
+    }
+
+    private async Task EchoMessage(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
+    {
+        await turnContext.SendActivityAsync($"You said: {turnContext.Activity.Text}", cancellationToken: cancellationToken);
+    }
+
+    private async Task HandleTurnError(ITurnContext turnContext, ITurnState turnState, Exception exception, CancellationToken cancellationToken)
+    {
+        await turnContext.SendActivityAsync("The bot encountered an error or bug.", cancellationToken: cancellationToken);
     }
 }

@@ -30,6 +30,7 @@ class BaseTestExpectReplies:
 
         assert len(res) > 0
         assert isinstance(res[0], Activity)
+        assert res[0].text == "You said: hi"
 
 @pytest.mark.agent_test(PYTHON_SCENARIO)
 class TestExpectRepliesPython(BaseTestExpectReplies):
@@ -38,7 +39,6 @@ class TestExpectRepliesPython(BaseTestExpectReplies):
 @pytest.mark.agent_test(DOTNET_SCENARIO)
 class TestExpectRepliesDotNet(BaseTestExpectReplies):
     pass
-
 
 @pytest.mark.agent_test(NODEJS_SCENARIO)
 class TestExpectRepliesNodeJS(BaseTestExpectReplies):

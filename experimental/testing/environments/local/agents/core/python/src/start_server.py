@@ -24,9 +24,9 @@ def start_server(
             req,
             agent,
             adapter,
-        )
+        ) or Response(status=500, text="Failed to process the agent request.")
 
-    APP = Application()
+    APP = Application(middlewares=[jwt_authorization_middleware])
     APP.router.add_post("/api/messages", entry_point)
 
     APP["agent_configuration"] = auth_configuration
@@ -34,6 +34,6 @@ def start_server(
     APP["adapter"] = agent_application.adapter
 
     try:
-        run_app(APP, host="localhost", port=environ.get("PORT", 3978))
+        run_app(APP, host="localhost", port=int(environ.get("PORT", 3978)))
     except Exception as error:
         raise error

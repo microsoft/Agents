@@ -2,12 +2,11 @@
 # Licensed under the MIT License.
 
 import asyncio
-import re
 import sys
 import traceback
 from dotenv import load_dotenv
-
 from os import environ
+
 from microsoft_agents.hosting.aiohttp import CloudAdapter
 from microsoft_agents.hosting.core import (
     Authorization,
@@ -40,11 +39,12 @@ async def on_members_added(context: TurnContext, _state: TurnState):
     )
     return True
 
-FULL_TEXT = "This is a streaming response."
-CHUNKS = FULL_TEXT.split()
-
 @AGENT_APP.message("/stream")
 async def on_stream(context: TurnContext, _state: TurnState):
+
+    FULL_TEXT = "This is a streaming response."
+    CHUNKS = FULL_TEXT.split()
+
     assert context.streaming_response is not None
 
     context.streaming_response.queue_informative_update("Starting stream...")
@@ -58,11 +58,13 @@ async def on_stream(context: TurnContext, _state: TurnState):
     await context.streaming_response.end_stream()
 
 
+@AGENT_APP.message("/error")
+async def on_error_command(context: TurnContext, _state: TurnState):
+    raise Exception("This is a test error triggered by the /error command.")
+
 @AGENT_APP.activity("message")
 async def on_message(context: TurnContext, _state: TurnState):
-    await context.send_activity(f"you said: {context.activity.text}")
-
-    
+    await context.send_activity(f"You said: {context.activity.text}")
 
 @AGENT_APP.error
 async def on_error(context: TurnContext, error: Exception):

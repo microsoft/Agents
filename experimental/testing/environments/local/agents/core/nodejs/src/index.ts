@@ -29,14 +29,37 @@ agentApp.onConversationUpdate('membersAdded', async (context: TurnContext, state
   await context.sendActivity('Hello and Welcome!')
 })
 
+agentApp.onMessage("/stream", async (context: TurnContext, state: ApplicationTurnState) => {
+
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+  const FULL_TEXT = "This is a streaming response."
+  const CHUNKS = FULL_TEXT.split(" ")
+  
+  await context.streamingResponse.queueInformativeUpdate("Starting stream...")
+  await sleep(1000)
+
+  for (let i: number = 0; i < CHUNKS.length; i++) {
+    await context.streamingResponse.queueTextChunk(CHUNKS[i])
+    if (i < CHUNKS.length - 1) {
+      // in this SDK, 1000ms between queueTextChunk calls does not guarantee that each chunk will have its own Activity
+      await sleep(1500)
+    }
+  }
+
+  await context.streamingResponse.endStream()
+})
+
+agentApp.onMessage('/error', async (context: TurnContext, state: ApplicationTurnState) => {
+  throw new Error('This is a test error triggered by the /error command')
+})
+
 // Listen for ANY message to be received. MUST BE AFTER ANY OTHER MESSAGE HANDLERS
 agentApp.onActivity(ActivityTypes.Message, async (context: TurnContext, state: ApplicationTurnState) => {
-  // Increment count state
-  let count = state.conversation.count ?? 0
-  state.conversation.count = ++count
+  await context.sendActivity(`You said: ${context.activity.text}`)
+})
 
-  // Echo back users message
-  await context.sendActivity(`[${count}] You said: ${context.activity.text}`)
+agentApp.onError(async (context: TurnContext, error: Error) => {
+  await context.sendActivity('The bot encountered an error or bug.')
 })
 
 startServer(agentApp)

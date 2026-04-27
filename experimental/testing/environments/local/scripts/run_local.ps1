@@ -30,6 +30,9 @@
 
 .PARAMETER Filter
     pytest -k expression to filter tests (e.g. test_streaming_response).
+
+.PARAMETER Interactive
+    Attach a TTY to the container for interactive debugging (e.g. breakpoint()).
 #>
 param(
     [string]$Scenario = "*",
@@ -38,7 +41,9 @@ param(
 
     [switch]$NoBuild,
 
-    [string]$Filter = ""
+    [string]$Filter = "",
+
+    [switch]$Interactive
 )
 
 Set-StrictMode -Version Latest
@@ -91,10 +96,10 @@ try {
     # ------------------------------------------------------------------ #
     $filterArgs = if ($Filter) { @("-k", $Filter) } else { @() }
     Write-Host "Running tests: $TestPath$(if ($Filter) { " -k $Filter" })"
-    docker run --rm `
-        -v "${EnvDir}:/repo" `
-        agents-test `
-        $TestPath @filterArgs
+    $dockerArgs = @("run", "--rm")
+    if ($Interactive) { $dockerArgs += "-it" }
+    $dockerArgs += @("-v", "${EnvDir}:/repo", "agents-test", $TestPath) + $filterArgs
+    & docker @dockerArgs
 
 } finally {
     Pop-Location
