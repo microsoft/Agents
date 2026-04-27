@@ -103,3 +103,11 @@ Any use of third-party trademarks or logos are subject to those third-party's po
 [.NET Documentation]: https://learn.microsoft.com/en-us/dotnet/api/?view=m365-agents-sdk&preserve-view=true
 [JavaScript Documentation]: https://learn.microsoft.com/en-us/javascript/api/overview/agents-overview?view=agents-sdk-js-latest&preserve-view=true
 [Python Documentation]: https://learn.microsoft.com/en-us/python/api/agent-sdk-python/agents-overview?view=agent-sdk-python-latest&preserve-view=true
+
+## 💰 Bounty Contribution
+
+- **Task:** Support gRPC Session Lifecycle and Tool Invocation via Activity Protocol Extensi
+- **Reward:** $3
+- **Source:** GitHub-Paid
+- **Date:** 2026-04-27
+
