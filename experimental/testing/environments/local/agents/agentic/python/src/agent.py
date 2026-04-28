@@ -41,31 +41,34 @@ AGENT_APP = AgentApplication[TurnState](
 )
 
 
-@AGENT_APP.activity("message", auth_handlers=["AGENTIC"])
-async def on_message(context: TurnContext, _state: TurnState):
+# @AGENT_APP.message("/me", auth_handlers=["AGENTIC"])
+# async def on_message(context: TurnContext, _state: TurnState):
 
-    aau_token = await AGENT_APP.auth.get_token(context, "AGENTIC")
-    decoded = jwt.decode(aau_token.token, options={"verify_signature": False})
-    decoded["length"] = len(aau_token.token)
+#     aau_token = await AGENT_APP.auth.get_token(context, "AGENTIC")
+#     decoded = jwt.decode(aau_token.token, options={"verify_signature": False})
+#     decoded["length"] = len(aau_token.token)
 
-    relative_path = os.path.abspath(os.path.dirname(__file__))
-    template_path = os.path.join(relative_path, "JWTDecodeCard.json")
+#     relative_path = os.path.abspath(os.path.dirname(__file__))
+#     template_path = os.path.join(relative_path, "JWTDecodeCard.json")
 
-    card = load_adaptive_card(template_path)
-    populated_card = update_card_data(card, decoded)
+#     card = load_adaptive_card(template_path)
+#     populated_card = update_card_data(card, decoded)
 
-    attachment = MessageFactory.attachment(
-        Attachment(
-            content_type="application/vnd.microsoft.card.adaptive",
-            content=populated_card,
-        )
-    )
-    await context.send_activity(attachment)
+#     attachment = MessageFactory.attachment(
+#         Attachment(
+#             content_type="application/vnd.microsoft.card.adaptive",
+#             content=populated_card,
+#         )
+#     )
+#     await context.send_activity(attachment)
 
-    await context.send_activity(
-        f"Acquired agentic user token with length: {len(aau_token.token)}"
-    )
+#     await context.send_activity(
+#         f"Acquired agentic user token with length: {len(aau_token.token)}"
+#     )
 
+@AGENT_APP.activity("message")
+async def on_message_activity(context: TurnContext, _state: TurnState):
+    await context.send_activity(f"You said: {context.activity.text}")
 
 @AGENT_APP.error
 async def on_error(context: TurnContext, error: Exception):

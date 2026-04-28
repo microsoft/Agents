@@ -9,6 +9,7 @@ from testing_common import (
 CORE_AGENT_NAME = "core"
 QUICKSTART_AGENT_BASE_NAME = "quickstart"
 STREAM_AGENT_NAME = "stream"
+AGENTIC_AGENT_NAME = "agentic"
 
 AGENTS_DIR = Path(__file__).parent.parent.resolve() / "agents"
 
@@ -36,3 +37,9 @@ NODEJS_BLOB_SCENARIO = _create_quickstart_scenario_with_storage(SDKVersion.NODEJ
 PYTHON_COSMOS_SCENARIO = _create_quickstart_scenario_with_storage(SDKVersion.PYTHON, COSMOS_DB)
 DOTNET_COSMOS_SCENARIO = _create_quickstart_scenario_with_storage(SDKVersion.DOTNET, COSMOS_DB)
 NODEJS_COSMOS_SCENARIO = _create_quickstart_scenario_with_storage(SDKVersion.NODEJS, COSMOS_DB)
+
+PYTHON_AGENTIC_SCENARIO = create_scenario(
+    AGENTS_DIR,
+    AGENTIC_AGENT_NAME,
+    SDKVersion.PYTHON
+)
