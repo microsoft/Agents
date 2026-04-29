@@ -1,0 +1,54 @@
+{
+  "type": "AdaptiveCard",
+  "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.6",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Agentic Message Received - Token Decode",
+      "wrap": true,
+      "weight": "Bolder"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Token Decode:",
+      "wrap": true
+    },
+    {
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "width": "stretch",
+          "items": [
+            {
+              "type": "FactSet",
+              "facts": [
+                {
+                  "title": "Token Length",
+                  "value": "${length}"
+                },
+                {
+                  "title": "Name",
+                  "value": "${nameclaim}"
+                },
+                {
+                  "title": "Upn",
+                  "value": "${upnclaim}"
+                },
+                {
+                  "title": "Oid",
+                  "value": "${oidclaim}"
+                },
+                {
+                  "title": "Tid",
+                  "value": "${tidclaim}"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
