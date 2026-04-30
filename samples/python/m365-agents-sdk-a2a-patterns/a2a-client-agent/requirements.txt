@@ -1,0 +1,16 @@
+# M365 Agents SDK
+python-dotenv
+aiohttp
+microsoft-agents-hosting-aiohttp
+microsoft-agents-hosting-core
+microsoft-agents-authentication-msal
+microsoft-agents-activity
+
+# A2A client
+httpx
+httpx-sse
+
+# Azure OpenAI (LLM orchestration via Semantic Kernel)
+semantic-kernel>=1.40.0
+openai>=1.30.0
+pydantic>=2.0,<2.12

@@ -1,0 +1,121 @@
+[
+  {
+    "name": "eval_data_set_google_shopping",
+    "data": [
+      {
+        "query": "hello",
+        "expected_tool_use": [],
+        "expected_intermediate_agent_responses": [],
+        "reference": "Hi there! To get started, could you please provide the brand name you'd like to optimize for?"
+      },
+      {
+        "query": "BSOAgentTestBrand",
+        "expected_tool_use": [
+          {
+            "tool_name": "transfer_to_agent",
+            "tool_input": {
+              "agent_name": "keyword_finding_agent"
+            }
+          },
+          {
+            "tool_name": "get_product_details_for_brand",
+            "tool_input": {}
+          }
+        ],
+        "expected_intermediate_agent_responses": [
+          {
+            "author": "brand_search_optimization",
+            "text": "Okay, great. Now that I have the brand name, I'll start by finding some relevant keywords.\n\n"
+          }
+        ],
+        "reference": "| Title | Description | Attributes | Brand |\n|---|---|---|---|\n| Kids' Joggers | Comfortable and supportive running shoes for active kids. Breathable mesh upper keeps feet cool, while the durable outsole provides excellent traction. | Size: 10 Toddler, Color: Blue/Green | BSOAgentTestBrand |\n| Light-Up Sneakers | Fun and stylish sneakers with light-up features that kids will love. Supportive and comfortable for all-day play. | Size: 13 Toddler, Color: Silver | BSOAgentTestBrand |\n| School Shoes | Versatile and comfortable shoes perfect for everyday wear at school. Durable construction with a supportive design. | Size: 12 Preschool, Color: Black | BSOAgentTestBrand |\n\nHere are some keywords shoppers might use:\n\n*   running shoes\n*   active shoes\n*   kids shoes\n*   sneakers\n*   light up sneakers\n*   school shoes\n*   toddler shoes\n*   preschool shoes\n*   joggers\n*   kids joggers\n\nHere is the ranked list\n\n| Keywords |\n|---|---|\n| running shoes |\n| active shoes |\n| kids shoes |\n| sneakers |\n| light up sneakers |\n| school shoes |\n| toddler shoes |\n| preschool shoes |\n| joggers |\n| kids joggers |\n"
+      },
+      {
+        "query": "can you search websites",
+        "expected_tool_use": [
+          {
+            "tool_name": "transfer_to_agent",
+            "tool_input": {
+              "agent_name": "search_results_agent"
+            }
+          }
+        ],
+        "expected_intermediate_agent_responses": [
+          {
+            "author": "keyword_finding_agent",
+            "text": "I am designed to find keywords for a given brand based on product details. To search websites for information, I would need to transfer you to a different agent. Would you like me to do that?\n"
+          }
+        ],
+        "reference": "Which website do you want to visit?\n"
+      },
+      {
+        "query": "google shopping",
+        "expected_tool_use": [],
+        "expected_intermediate_agent_responses": [],
+        "reference": "What keyword are you looking for?\n"
+      },
+      {
+        "query": "kids shoes",
+        "expected_tool_use": [
+          {
+            "tool_name": "go_to_url",
+            "tool_input": {
+              "url": "https://www.google.com/search?q=kids shoes"
+            }
+          },
+          {
+            "tool_name": "click_element_with_text",
+            "tool_input": {
+              "text": "Shopping"
+            }
+          },
+          {
+            "tool_name": "get_page_source",
+            "tool_input": {}
+          }
+        ],
+        "expected_intermediate_agent_responses": [],
+        "reference": "Okay, I have analyzed the webpage and here are the top 3 products that matched your search query:\n\n*   **Nike Kids\\' Flex Runner 3 Shoes**\n*   **Kids adidas Racer TR23 Shoes Kids**\n*   **Nike Kids\\' Court Borough Low Recraft Shoes**\n\nCould you please tell me if you want more information on any of these products or if you have another question?\n"
+      },
+      {
+        "query": "this is good",
+        "expected_tool_use": [
+          {
+            "tool_name": "transfer_to_agent",
+            "tool_input": {
+              "agent_name": "brand_search_optimization"
+            }
+          },
+          {
+            "tool_name": "transfer_to_agent",
+            "tool_input": {
+              "agent_name": "comparison_root_agent"
+            }
+          },
+          {
+            "tool_name": "transfer_to_agent",
+            "tool_input": {
+              "agent_name": "comparison_generator_agent"
+            }
+          },
+          {
+            "tool_name": "transfer_to_agent",
+            "tool_input": {
+              "agent_name": "comparison_generator_agent"
+            }
+          }
+        ],
+        "expected_intermediate_agent_responses": [
+          {
+            "author": "brand_search_optimization",
+            "text": "Great! Now that I have the search results for \"kids shoes,\" I will run a comparison of the titles.\n\n"
+          }
+        ],
+        "reference": "I can compare the titles gathered from the search results with the titles of the products for the brand \"BSOAgentTestBrand\".\nHere's a comparison report:\n\n| **BSOAgentTestBrand Titles** | **Search Result Titles** | **Analysis & Suggestions** |\n|---|---|---|\n| Kids' Joggers | Nike Kids' Flex Runner 3 Shoes | **Missing Keywords:** \"Nike\" \"Flex Runner 3\" ; Consider including competitor brands or related keywords like 'sneakers' or 'running shoes' in the title.  |\n| Light-Up Sneakers | Kids adidas Racer TR23 Shoes Kids | **Missing Keywords:** \"Adidas\" \"Racer TR23\" \"Shoes\"; Including specific model names can improve targeting of users searching for those models.|\n| School Shoes | Nike Kids' Court Borough Low Recraft Shoes | **Missing Keywords:** \"Nike\" \"Court Borough\" \"Low\" \"Recraft\" ; Consider a title that more closely matches common search terms for the specific product type. |\n\n**Summary of Suggestions:**\n\n*   **Incorporate Brand Names:** Add brand names (Nike, Adidas) to the titles.\n*   **Include Model Names:** Use specific model names (Flex Runner 3, Racer TR23, Court Borough, Low, Recraft) in the titles.\n*   **Add Keywords:** Consider adding keywords like \"sneakers,\" \"running shoes,\" \"light up,\" or \"school\" to titles where relevant to improve general search visibility.\n"
+      }
+    ],
+    "initial_state": {
+      "session": {}
+    }
+  }
+]
