@@ -1,0 +1,106 @@
+<#
+.SYNOPSIS
+    Run the test suite in Docker.
+
+.DESCRIPTION
+    1. Verifies that agent .env files exist (fail-fast if azd provision hasn't run).
+    2. Builds tests.Dockerfile (tagged agents-test).
+    3. Runs pytest inside the container.
+
+    Run from anywhere — the script resolves all paths from its own location.
+
+.EXAMPLE
+    # Run tests:
+    ./scripts/run_local.ps1
+
+    # Skip Docker build (reuse existing image):
+    ./scripts/run_local.ps1 -NoBuild
+
+    # Run only tests matching a keyword:
+    ./scripts/run_local.ps1 -Filter test_streaming_response
+
+.PARAMETER Scenario
+    Agent scenario glob under agents/. Default: * (all scenarios).
+
+.PARAMETER TestPath
+    pytest path to run inside the container. Default: tests/
+
+.PARAMETER NoBuild
+    Skip the docker build step (reuse the existing agents-test image).
+
+.PARAMETER Filter
+    pytest -k expression to filter tests (e.g. test_streaming_response).
+
+.PARAMETER Interactive
+    Attach a TTY to the container for interactive debugging (e.g. breakpoint()).
+#>
+param(
+    [string]$Scenario = "*",
+
+    [string]$TestPath = "tests/",
+
+    [switch]$NoBuild,
+
+    [string]$Filter = "",
+
+    [switch]$Interactive
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+$EnvDir = (Resolve-Path "$PSScriptRoot/..").Path
+
+Push-Location $EnvDir
+try {
+    # ------------------------------------------------------------------ #
+    # 1. Pre-flight: verify agent configs exist                           #
+    # ------------------------------------------------------------------ #
+    $scenarioDirs = Get-ChildItem "$EnvDir/agents" -Directory | Where-Object { $_.Name -like $Scenario }
+    if (-not $scenarioDirs) {
+        Write-Error "No scenario directories matched: $Scenario"
+        exit 1
+    }
+    $missing = @()
+    foreach ($dir in $scenarioDirs) {
+        Get-ChildItem $dir.FullName -Recurse -Filter 'env.TEMPLATE' | ForEach-Object {
+            $out = Join-Path $_.DirectoryName '.env'
+            if (-not (Test-Path $out)) { $missing += $out }
+        }
+        Get-ChildItem $dir.FullName -Recurse -Filter 'appsettings.json' | ForEach-Object {
+            if (Select-String -Path $_.FullName -Pattern '\$\{\{' -Quiet) {
+                $out = Join-Path $_.DirectoryName 'appsettings.local.json'
+                if (-not (Test-Path $out)) { $missing += $out }
+            }
+        }
+    }
+    if ($missing) {
+        Write-Error (
+            "Missing agent config files:`n" +
+            ($missing -join "`n") +
+            "`n`nRun 'azd provision' first."
+        )
+        exit 1
+    }
+
+    # ------------------------------------------------------------------ #
+    # 2. Build Docker image                                               #
+    # ------------------------------------------------------------------ #
+    if (-not $NoBuild) {
+        Write-Host "Building agents-test image..."
+        docker build -f tests.Dockerfile -t agents-test .
+    }
+
+    # ------------------------------------------------------------------ #
+    # 3. Run tests                                                        #
+    # ------------------------------------------------------------------ #
+    $filterArgs = if ($Filter) { @("-k", $Filter) } else { @() }
+    Write-Host "Running tests: $TestPath$(if ($Filter) { " -k $Filter" })"
+    $dockerArgs = @("run", "--rm")
+    if ($Interactive) { $dockerArgs += "-it" }
+    $dockerArgs += @("-v", "${EnvDir}:/repo", "agents-test", $TestPath) + $filterArgs
+    & docker @dockerArgs
+
+} finally {
+    Pop-Location
+}

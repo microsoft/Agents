@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "testing-common"
+version = "0.1.0"
+description = "Shared utilities for Microsoft Agents e2e testing"
+requires-python = ">=3.13"
+dependencies = [
+    "microsoft-agents-testing @ git+https://github.com/microsoft/Agents-for-python.git@main#subdirectory=dev/testing/microsoft-agents-testing",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["testing_common*"]
