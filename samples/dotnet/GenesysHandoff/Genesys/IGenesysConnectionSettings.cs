@@ -1,4 +1,7 @@
-﻿namespace GenesysHandoff.Genesys
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+namespace GenesysHandoff.Genesys
 {
     public interface IGenesysConnectionSettings
     {
@@ -35,5 +38,10 @@
         /// When set, incoming webhook requests will be validated using HMAC-SHA256 signature verification.
         /// </remarks>
         public string? WebhookSignatureSecret { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether the Genesys WebSocket notification service is enabled for detecting agent disconnections.
+        /// </summary>
+        public bool EnableNotifications { get; set; }
     }
 }

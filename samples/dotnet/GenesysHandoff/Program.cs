@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Net.Http;
+using System;
 using System.Threading;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,14 +32,38 @@ builder.Services.AddSingleton<CopilotClientFactory>();
 builder.Services.AddSingleton<ActivityResponseProcessor>();
 builder.Services.AddSingleton<ConversationStateManager>();
 
-// Register GenesysService as a singleton.
-GenesysService? genesysService = null;
-builder.Services.AddSingleton(sp =>
+// Register Genesys services.
+var genesysSettings = new GenesysConnectionSetting(builder.Configuration.GetSection("Genesys"));
+
+
+if (string.IsNullOrWhiteSpace(genesysSettings.WebhookSignatureSecret))
 {
-    var settings = new GenesysConnectionSetting(builder.Configuration.GetSection("Genesys"));
-    genesysService = new GenesysService(settings, sp.GetService<IHttpClientFactory>()!, sp.GetService<IStorage>()!);
-    return genesysService;
-});
+    throw new InvalidOperationException(
+        "Genesys:WebhookSignatureSecret must be configured. " +
+        "The /api/outbound endpoint is anonymous and requires webhook signature validation to prevent unauthorized access.");
+}
+
+// Register settings as a shared singleton.
+builder.Services.AddSingleton<IGenesysConnectionSettings>(genesysSettings);
+
+// Register the shared token provider for Genesys Cloud authentication.
+builder.Services.AddSingleton<GenesysTokenProvider>();
+
+// GenesysMessageSender — outbound messages to Genesys.
+builder.Services.AddSingleton<GenesysMessageSender>();
+
+// GenesysWebhookHandler — inbound webhook handling.
+builder.Services.AddSingleton<GenesysWebhookHandler>();
+
+// ConversationMappingStore — shared mapping of Genesys ↔ MCS conversation IDs.
+builder.Services.AddSingleton<ConversationMappingStore>();
+
+// Conditionally register the notification service for agent disconnect detection.
+if (genesysSettings.EnableNotifications)
+{
+    builder.Services.AddSingleton<GenesysNotificationService>();
+    builder.Services.AddHostedService(sp => sp.GetRequiredService<GenesysNotificationService>());
+}
 
 // Add the AgentApplication, which contains the logic for responding to
 // user messages.
@@ -66,25 +90,27 @@ app.MapAgentRootEndpoint();
 app.MapAgentApplicationEndpoints(requireAuth: !app.Environment.IsDevelopment());
 
 // This receives outbound proactive messages from Genesys to be sent to users
-var genesysOutboundRoute = app.MapPost("/api/outbound", async (HttpRequest request, HttpResponse response, IChannelAdapter channelAdapter, CancellationToken cancellationToken) =>
+var genesysOutboundRoute = app.MapPost("/api/outbound", async (HttpRequest request, HttpResponse response, IChannelAdapter channelAdapter, GenesysWebhookHandler webhookHandler, CancellationToken cancellationToken) =>
 {
-    if (genesysService == null)
+    var result = await webhookHandler.HandleAsync(request, channelAdapter, cancellationToken);
+    switch (result)
     {
-        response.StatusCode = StatusCodes.Status500InternalServerError;
-        await response.WriteAsync("GenesysClient not initialized", cancellationToken);
-        return;
+        case WebhookResult.Unauthorized:
+            response.StatusCode = StatusCodes.Status401Unauthorized;
+            await response.WriteAsync("Webhook signature validation failed.", cancellationToken);
+            break;
+        case WebhookResult.Accepted:
+            response.StatusCode = StatusCodes.Status200OK;
+            await response.WriteAsync("Request accepted.", cancellationToken);
+            break;
+        case WebhookResult.MessageSent:
+            response.StatusCode = StatusCodes.Status200OK;
+            await response.WriteAsync("Message sent.", cancellationToken);
+            break;
     }
+}).AllowAnonymous();
 
-    await genesysService.RetrieveMessageFromGenesysAsync(request, channelAdapter, cancellationToken);
-    response.StatusCode = StatusCodes.Status200OK;
-    await response.WriteAsync("Proactive message sent.", cancellationToken);
-});
-
-if (!app.Environment.IsDevelopment())
-{
-    genesysOutboundRoute.RequireAuthorization();
-}
-else
+if (app.Environment.IsDevelopment())
 {
     // Hardcoded for brevity and ease of testing. 
     // In production, this should be set in configuration.

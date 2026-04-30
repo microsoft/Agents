@@ -14,8 +14,8 @@
   "dependencies": {
     "@azure/msal-browser": "^4.13.1",
     "@microsoft/agents-copilotstudio-client": "^1.1.0",
-    "botframework-webchat": "4.18.1-main.20251101.54e519d",
-    "botframework-webchat-fluent-theme": "4.18.1-main.20251101.54e519d",
+    "botframework-webchat": "4.18.1-main.20251219.4ef3594",
+    "botframework-webchat-fluent-theme": "4.18.1-main.20251219.4ef3594",
     "react": "16.8.6",
     "react-dom": "16.8.6"
   },

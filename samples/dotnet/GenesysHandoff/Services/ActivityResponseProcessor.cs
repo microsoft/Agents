@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using Microsoft.Agents.Core.Models;
 using Microsoft.Agents.Core.Serialization;
 using Microsoft.Extensions.Logging;
@@ -86,6 +89,45 @@ namespace GenesysHandoff.Services
                 string.IsNullOrEmpty(logContext) ? "" : $" ({logContext})");
 
             return responseActivity;
+        }
+
+        /// <summary>
+        /// Creates an invoke response activity from the incoming Copilot Studio invoke response,
+        /// preserving the original status code and body.
+        /// </summary>
+        /// <param name="incomingActivity">The invoke response activity received from the Copilot Studio client.</param>
+        /// <param name="logContext">Optional context string to include in the log message for tracking purposes.</param>
+        /// <returns>An invoke response activity with the original status and body from CPS.</returns>
+        internal IActivity CreateInvokeResponseActivity(IActivity incomingActivity, string logContext = "")
+        {
+            ArgumentNullException.ThrowIfNull(incomingActivity);
+
+            _logger.LogInformation("InvokeResponse received from Copilot client{LogContext}",
+                string.IsNullOrEmpty(logContext) ? "" : $" ({logContext})");
+
+            var invokeResponse = incomingActivity.Value as InvokeResponse;
+            if (invokeResponse == null && incomingActivity.Value != null)
+            {
+                try
+                {
+                    invokeResponse = ProtocolJsonSerializer.ToObject<InvokeResponse>(
+                        ProtocolJsonSerializer.ToJson(incomingActivity.Value));
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to deserialize InvokeResponse from activity value. Defaulting to status 200.");
+                }
+            }
+
+            return new Activity
+            {
+                Type = ActivityTypes.InvokeResponse,
+                Value = new InvokeResponse
+                {
+                    Status = invokeResponse?.Status ?? 200,
+                    Body = invokeResponse?.Body,
+                }
+            };
         }
     }
 }
