@@ -76,9 +76,22 @@ $Outputs.AUTH_TYPE     = 'ClientSecret'
 $Outputs.CLIENT_SECRET = $ClientSecret
 $Outputs.UMI_CLIENT_ID = ''
 
-$envLines = $Outputs.GetEnumerator() | Where-Object { $null -ne $_.Value } | Sort-Object Key |
-    ForEach-Object { "$($_.Key)=$($_.Value)" }
-$envLines | Out-File $DotEnvFile -Encoding utf8
+# Merge infra outputs into the existing .env, preserving keys not managed here
+# (e.g. AGENT_BLUEPRINT_ID and other agentic identity values written by deploy_agentic.ps1).
+$existing = @{}
+if (Test-Path $DotEnvFile) {
+    foreach ($line in Get-Content $DotEnvFile) {
+        $line = $line.Trim()
+        if ($line -and -not $line.StartsWith('#') -and $line -match '^([^=]+)=(.*)$') {
+            $existing[$Matches[1].Trim()] = $Matches[2].Trim()
+        }
+    }
+}
+foreach ($kv in $Outputs.GetEnumerator()) {
+    if ($null -ne $kv.Value) { $existing[$kv.Key] = $kv.Value }
+}
+$existing.GetEnumerator() | Sort-Object Key | ForEach-Object { "$($_.Key)=$($_.Value)" } |
+    Out-File $DotEnvFile -Encoding utf8
 Write-Host "Outputs written to $DotEnvFile"
 
 Write-Host "Injecting config..."

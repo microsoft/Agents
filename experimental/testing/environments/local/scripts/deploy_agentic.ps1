@@ -70,7 +70,7 @@ Connect-MgGraph -Scopes "AgentIdentityBlueprint.Create",
 
 Write-Host "Connected to Microsoft Graph."
 
-$me   = Invoke-MgGraphRequest -Uri "https://graph.microsoft.com/v1.0/me?`$select=id,displayName"
+$me   = Invoke-MgGraphRequest -Uri "https://graph.microsoft.com/v1.0/me?`$select=id,displayName,userPrincipalName"
 Write-Host "Signed in as : $($me.displayName) ($($me.id))"
 
 # ---------------------------------------------------------------------------
@@ -193,5 +193,5 @@ if ($BlueprintScopeId) {
     }
 }
 
-Write-Host "Deploying agent identity..."
+Write-Host "Deploying agent identity if it does not already exist..."
 & "$PSScriptRoot/deploy_agent_identity.ps1" -SponsorId $me.id
