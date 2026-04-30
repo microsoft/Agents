@@ -45,19 +45,13 @@ else
         apiKey: builder.Configuration.GetSection("AIServices:OpenAI").GetValue<string>("ApiKey")!);
 }
 
-// Add AgentApplicationOptions from config.
-builder.AddAgentApplicationOptions();
-
 // Add basic bot functionality
 builder.AddAgent<Retrieval>();
 
 builder.Services.AddSingleton<IStorage>(new MemoryStorage());
 builder.Services.AddSingleton<ConversationState>();
 
-// Configure the HTTP request pipeline.
-
 // Add AspNet token validation
-builder.Services.AddControllers();
 builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
 
 var app = builder.Build();
@@ -72,13 +66,6 @@ app.MapAgentRootEndpoint();
 // Map the endpoints for all agents using the [AgentInterface] attribute.
 // If there is a single IAgent/AgentApplication, the endpoints will be mapped to (e.g. "/api/message").
 app.MapAgentApplicationEndpoints(requireAuth: !app.Environment.IsDevelopment());
-
-if (app.Environment.IsDevelopment())
-{
-    // Hardcoded for brevity and ease of testing. 
-    // In production, this should be set in configuration.
-    app.Urls.Add($"http://localhost:3978");
-}
 
 app.Run();
 

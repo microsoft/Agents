@@ -1,5 +1,3 @@
-launchSettings.json
-
 #local development
 appsettings.local.json
 appsettings.Development.json

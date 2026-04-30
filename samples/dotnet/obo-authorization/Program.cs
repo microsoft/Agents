@@ -18,9 +18,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpClient();
 
-// Add AgentApplicationOptions from appsettings section "AgentApplication".
-builder.AddAgentApplicationOptions();
-
 // Register IStorage.  For development, MemoryStorage is suitable.
 // For production Agents, persisted storage should be used so
 // that state survives Agent restarts, and operates correctly
@@ -67,7 +64,7 @@ builder.AddAgent(sp =>
     // UserAuthorization.ExchangeTurnTokenAsync.
     // NOTE:  This is a slightly unusual way to handle incoming Activities (but perfectly) valid.  For this sample,
     // we just want to proxy messages to/from a Copilot Studio Agent.
-    app.OnActivity((turnContext, cancellationToken) => Task.FromResult(true), async (turnContext, turnState, cancellationToken) =>
+    app.AddRoute((turnContext, cancellationToken) => Task.FromResult(true), async (turnContext, turnState, cancellationToken) =>
     {
         
         var mcsConversationId = turnState.Conversation.GetValue<string>(MCSConversationPropertyName);
@@ -110,11 +107,8 @@ builder.AddAgent(sp =>
 });
 
 
-// Configure the HTTP request pipeline.
-
 // Add AspNet token validation for Azure Bot Service and Entra.  Authentication is
 // configured in the appsettings.json "TokenValidation" section.
-builder.Services.AddControllers();
 builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
 
 WebApplication app = builder.Build();
@@ -129,12 +123,5 @@ app.MapAgentRootEndpoint();
 // Map the endpoints for all agents using the [AgentInterface] attribute.
 // If there is a single IAgent/AgentApplication, the endpoints will be mapped to (e.g. "/api/message").
 app.MapAgentApplicationEndpoints(requireAuth: !app.Environment.IsDevelopment());
-
-if (app.Environment.IsDevelopment())
-{
-    // Hardcoded for brevity and ease of testing. 
-    // In production, this should be set in configuration.
-    app.Urls.Add($"http://localhost:3978");
-}
 
 app.Run();

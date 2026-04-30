@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using AgentFrameworkWeather;
 using AgentFrameworkWeather.Agent;
 using Azure;
 using Azure.AI.OpenAI;
@@ -29,9 +28,6 @@ builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
 // that state survives Agent restarts, and operate correctly
 // in a cluster of Agent instances.
 builder.Services.AddSingleton<IStorage, MemoryStorage>();
-
-// Add AgentApplicationOptions from config.
-builder.AddAgentApplicationOptions();
 
 // Add the bot (which is transient)
 builder.AddAgent<WeatherAgent>();
@@ -65,8 +61,6 @@ builder.Services.AddSingleton<IChatClient>(sp => {
 // Uncomment to add transcript logging middleware to log all conversations to files
 builder.Services.AddSingleton<Microsoft.Agents.Builder.IMiddleware[]>([new TranscriptLoggerMiddleware(new FileTranscriptLogger())]);
 
-// Configure the HTTP request pipeline.
-
 var app = builder.Build();
 
 app.UseRouting();
@@ -84,10 +78,6 @@ if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Playg
 {
     app.UseDeveloperExceptionPage();
     app.MapControllers().AllowAnonymous();
-
-    // Hard coded for brevity and ease of testing. 
-    // In production, this should be set in configuration.
-    app.Urls.Add($"http://localhost:3978");
 }
 else
 {

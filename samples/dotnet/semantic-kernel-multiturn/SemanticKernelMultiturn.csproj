@@ -5,7 +5,6 @@
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<NoWarn>$(NoWarn);SKEXP0010</NoWarn>
-		<UserSecretsId>b842df34-390f-490d-9dc0-73909363ad16</UserSecretsId>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
@@ -17,14 +16,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Azure.Identity" Version="1.17.1" />
+		<PackageReference Include="Azure.Identity" Version="1.21.0" />
 		<PackageReference Include="AdaptiveCards" Version="3.1.0"/>
 		<PackageReference Include="Microsoft.SemanticKernel.Agents.AzureAI" Version="1.73.0-preview"/>
-		<PackageReference Include="Microsoft.SemanticKernel.Agents.Core" Version="1.73.0" />
-		<PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureOpenAI" Version="1.73.0" />
-		<PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.73.0" />
-		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.4.*" />
-		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.4.*" />
+		<PackageReference Include="Microsoft.SemanticKernel.Agents.Core" Version="1.74.0" />
+		<PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureOpenAI" Version="1.74.0" />
+		<PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.74.0" />
+		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.5.*" />
+		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.5.*" />
 	</ItemGroup>
 
 </Project>

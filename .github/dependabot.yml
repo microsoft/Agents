@@ -1,0 +1,61 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directories:
+      - "/"
+      - "/samples/nodejs/auto-signin"
+      - "/samples/nodejs/azure-ai-streaming"
+      - "/samples/nodejs/cards"
+      - "/samples/nodejs/copilotstudio-client"
+      - "/samples/nodejs/copilotstudio-skill"
+      - "/samples/nodejs/copilotstudio-webchat-react"
+      - "/samples/nodejs/langchain-multiturn"
+      - "/samples/nodejs/multi-turn-prompt"
+      - "/samples/nodejs/obo-authorization"
+      - "/samples/nodejs/quickstart"
+    schedule:
+      interval: "weekly"
+    groups:
+      npm-all:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "pip"
+    directories:
+      - "/samples/python/auto-signin"
+      - "/samples/python/azureai-streaming"
+      - "/samples/python/cards"
+      - "/samples/python/copilotstudio-client"
+      - "/samples/python/copilotstudio-skill"
+      - "/samples/python/obo-authorization"
+      - "/samples/python/quickstart"
+      - "/samples/python/semantic-kernel-multiturn"
+    schedule:
+      interval: "weekly"
+    groups:
+      pip-all:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "nuget"
+    directories:
+      - "/samples/dotnet/Agent Framework"
+      - "/samples/dotnet/auto-signin"
+      - "/samples/dotnet/azure-ai-streaming"
+      - "/samples/dotnet/copilotstudio-client"
+      - "/samples/dotnet/copilotstudio-skill"
+      - "/samples/dotnet/GenesysHandoff"
+      - "/samples/dotnet/multiagent"
+      - "/samples/dotnet/obo-authorization"
+      - "/samples/dotnet/quickstart"
+      - "/samples/dotnet/RetrievalBot"
+      - "/samples/dotnet/RetrievalBot/dotnet/src/Microsoft.Agents.M365Copilot.Beta"
+      - "/samples/dotnet/RetrievalBot/dotnet/tests/Microsoft.Agents.M365Copilot.Beta.Tests"
+      - "/samples/dotnet/semantic-kernel-multiturn"
+      - "/specs/manifest/schemas/SchemaManifestTests"
+    schedule:
+      interval: "weekly"
+    groups:
+      nuget-all:
+        patterns:
+          - "*"

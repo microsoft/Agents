@@ -75,20 +75,20 @@ namespace GenesysHandoff.Services
         /// <summary>
         /// Gets the icon name from the appearance image, defaulting to Image if the value is unknown or invalid.
         /// </summary>
-        private static ClientCitationsIconNameEnum GetIconNameOrDefault(ClientCitationsIconNameEnum? iconName)
+        private static ClientCitationIconName GetIconNameOrDefault(ClientCitationIconName? iconName)
         {
             if (iconName == null)
             {
-                return ClientCitationsIconNameEnum.Image;
+                return ClientCitationIconName.Image;
             }
 
             // Check if the enum value is defined, otherwise use default
-            if (!Enum.IsDefined(typeof(ClientCitationsIconNameEnum), iconName.Value))
+            if (!Enum.IsDefined(typeof(ClientCitationIconName), iconName))
             {
-                return ClientCitationsIconNameEnum.Image;
+                return ClientCitationIconName.Image;
             }
 
-            return iconName.Value;
+            return iconName;
         }
     }
 }

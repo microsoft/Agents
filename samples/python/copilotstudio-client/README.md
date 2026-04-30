@@ -54,7 +54,11 @@ This step will require permissions to create application identities in your Azur
         2. Search for `Power Platform API`.
             1. *If you do not see `Power Platform API` see the note at the bottom of this section.*
         3. In the *Delegated permissions* list, choose `CopilotStudio` and Check `CopilotStudio.Copilots.Invoke`
-        4. Click `Add Permissions`
+        4. Click `Add permissions`
+    3. Click Add Permission again
+        1. Click on `Microsoft Graph`.
+        2. In the *Delegated permissions* list, choose 'User' and Check `User.Read`
+        3. Click `Add permissions` 
     4. (Optional) Click `Grant Admin consent for copilotsdk`
 
 > [!TIP]
@@ -74,7 +78,10 @@ With the above information, you can now run the client `CopilostStudioClient` sa
   COPILOTSTUDIOAGENT__AGENTAPPID="" # App ID of the App Registration used to login, this should be in the same tenant as the CopilotStudio environment.
 ```
 
-3. After installing the dependencies with `pip install -r requirements.txt`, run the CopilotStudioClient sample using
+3. (Optional but recommended) Set up virtual environment and activate it.
+
+
+4. After installing the dependencies with `pip install -r requirements.txt`, run the CopilotStudioClient sample using
 
 ```sh
 python -m src.main

@@ -52,7 +52,7 @@ The sample uses the bot OAuth capabilities in [Azure Bot Service](https://docs.b
     ```
 
     ```env
-    graph_connectionName=
+    AgentApplication__UserAuthorization__Handlers__graph__Settings__azureBotOAuthConnectionName=
     ```
       
 
