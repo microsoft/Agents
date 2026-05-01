@@ -31,6 +31,8 @@ public class MyAgent : AgentApplication
         var handler = new JwtSecurityTokenHandler();
         var jwt = handler.ReadJwtToken(aauToken);
 
+        await turnContext.SendActivityAsync($"Acquired agentic user token with length: {aauToken.Length}");
+
         // Send back an adaptive card with token details. 
         var template = new AdaptiveCardTemplate(System.IO.File.ReadAllText("JWTDecodeCard.json"));
         var payloadData = new

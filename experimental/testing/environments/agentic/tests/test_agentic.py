@@ -46,8 +46,6 @@ class BaseTestAgentic:
             )
         )
 
-        breakpoint()
-
         await agent_client.send(activity, wait=5)
         responses = agent_client.recent()
 

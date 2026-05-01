@@ -14,5 +14,5 @@ def create_agentic_scenario(sdk_version: SDKVersion) -> SourceScenario:
     return create_scenario(AGENTS_DIR, AGENTIC_AGENT_NAME, sdk_version)
 
 PYTHON_SCENARIO = create_agentic_scenario(SDKVersion.PYTHON)
-# DOTNET_SCENARIO = create_agentic_scenario(SDKVersion.DOTNET)
+DOTNET_SCENARIO = create_agentic_scenario(SDKVersion.DOTNET)
 # NODEJS_SCENARIO = create_agentic_scenario(SDKVersion.NODEJS)
