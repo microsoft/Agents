@@ -13,7 +13,7 @@ from dotenv import dotenv_values
 ENVIRONMENT = dotenv_values(".env")
 
 from ._utils import (
-    PYTHON_AGENTIC_SCENARIO
+    PYTHON_SCENARIO
 )
 
 class BaseTestAgentic:
@@ -38,22 +38,24 @@ class BaseTestAgentic:
                 id="user"
             ),
             recipient=dict(
-                role=RoleTypes.agentic_identity,
-                agentic_app_id=ENVIRONMENT.get("AGENT_IDENTITY_ID"),
+                role=RoleTypes.agentic_user,
+                agentic_app_id=ENVIRONMENT.get("AGENT_INSTANCE_ID"),
+                agentic_user_id=ENVIRONMENT.get("AGENT_USER_ID"),
+                upn=ENVIRONMENT.get("AGENT_UPN"),
                 tenant_id=ENVIRONMENT.get("TENANT_ID")
             )
         )
 
+        breakpoint()
+
         await agent_client.send(activity, wait=5)
         responses = agent_client.recent()
-
-        breakpoint()
 
         assert len(responses) == 2
         assert len(agent_client.history()) == 2
         agent_client.expect().that_for_one(type="message", text="~Acquired agentic user token with length:")
 
-# @pytest.mark.agent_test(PYTHON_AGENTIC_SCENARIO)
+# @pytest.mark.agent_test(PYTHON_SCENARIO)
 # class TestAgenticPython(BaseTestAgentic):
 #     pass
 

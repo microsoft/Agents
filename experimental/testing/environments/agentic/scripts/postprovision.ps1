@@ -25,6 +25,7 @@ $Outputs = @{
     KEY_VAULT_NAME = $env:KEY_VAULT_NAME
     KEY_VAULT_URI  = $env:KEY_VAULT_URI
     BOT_NAME       = $env:BOT_NAME
+    A365_APP_ID    = $env:A365_APP_ID
 }
 
 $missing = $Outputs.GetEnumerator() | Where-Object { -not $_.Value }
@@ -94,10 +95,13 @@ $existing.GetEnumerator() | Sort-Object Key | ForEach-Object { "$($_.Key)=$($_.V
     Out-File $DotEnvFile -Encoding utf8
 Write-Host "Outputs written to $DotEnvFile"
 
-Write-Host "Injecting config..."
-Push-Location $EnvDir
-try {
-    uv run --no-project python "$PSScriptRoot/inject_config.py" --vars-file $DotEnvFile
-} finally {
-    Pop-Location
-}
+# Write-Host "Injecting config..."
+# Push-Location $EnvDir
+# try {
+#     uv run --no-project python "$PSScriptRoot/inject_config.py" --vars-file $DotEnvFile
+# } finally {
+#     Pop-Location
+# }
+
+Write-Host "Configuring A365 CLI app registration..."
+& "$PSScriptRoot/pre_setup_a365.ps1"

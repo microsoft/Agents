@@ -43,7 +43,6 @@ AGENT_APP = AgentApplication[TurnState](
 @AGENT_APP.message("/agentic", auth_handlers=["AGENTIC"])
 async def on_message(context: TurnContext, _state: TurnState):
 
-    breakpoint()
     aau_token = await AGENT_APP.auth.get_token(context, "AGENTIC")
     decoded = jwt.decode(aau_token.token, options={"verify_signature": False})
     decoded["length"] = len(aau_token.token)

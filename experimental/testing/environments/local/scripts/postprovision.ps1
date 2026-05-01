@@ -101,6 +101,3 @@ try {
 } finally {
     Pop-Location
 }
-
-Write-Host "Deploying agentic identity..."
-& "$PSScriptRoot/deploy_agentic.ps1"
