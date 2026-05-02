@@ -19,6 +19,6 @@
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
-    "globals": "^16.1.0"
+    "globals": "^17.6.0"
   }
 }

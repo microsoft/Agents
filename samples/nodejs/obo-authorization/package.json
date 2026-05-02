@@ -15,6 +15,6 @@
     "@microsoft/agents-hosting-express": "^1.5.1"
   },
   "devDependencies": {
-    "@microsoft/microsoft-graph-types": "^2.40.0"
+    "@microsoft/microsoft-graph-types": "^2.43.1"
   }
 }
