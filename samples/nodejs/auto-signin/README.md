@@ -26,36 +26,37 @@ The sample uses the bot OAuth capabilities in [Azure Bot Service](https://docs.b
 
 1. Create a second Azure Bot **OAuth Connection** using the _GitHub_ provider.
 
-  > To configure OAuth for GitHub you need a GitHub account, under settings/developer settings/OAuth apps, create a new OAuth app, and set the callback URL to `https://token.botframework.com/.auth/web/redirect`. Then you will need to provide the clientId and clientSecret, and the required scopes: `user repo`
+   > To configure OAuth for GitHub you need a GitHub account, under settings/developer settings/OAuth apps, create a new OAuth app, and set the callback URL to `https://token.botframework.com/.auth/web/redirect`. Then you will need to provide the clientId and clientSecret, and the required scopes: `user repo`
 
 1. Configuring the token connection in the Agent settings
    > The instructions for this sample are for a SingleTenant Azure Bot using ClientSecrets.  The token connection configuration will vary if a different type of Azure Bot was configured.  For more information see [MSAL Authentication provider](https://learn.microsoft.com/microsoft-365/agents-sdk/azure-bot-authentication-for-javascript)
 
   1. Open the `env.TEMPLATE` file in the root of the sample project, rename it to `.env` and configure the following values:
-      1. Set the **connections__serviceConnection__settings__clientId** to the AppId of the bot identity.
-      2. Set the **connections__serviceConnection__settings__clientSecret** to the Secret that was created for your identity. *This is the `Secret Value` shown in the AppRegistration*.
-      3. Set the **connections__serviceConnection__settings__tenantId** to the Tenant Id where your application is registered.
+       1. Set the **connections__serviceConnection__settings__clientId** to the AppId of the bot identity.
+       2. Set the **connections__serviceConnection__settings__clientSecret** to the Secret that was created for your identity. *This is the `Secret Value` shown in the AppRegistration*.
+       3. Set the **connections__serviceConnection__settings__tenantId** to the Tenant Id where your application is registered.
   
 
 1. Configure the UserAuthorization handlers
-   1. Open the `.env` file and add the name of the OAuth Connections, note the prefix must match the name of the auth handlers in the code, so for:
+   1. Open the `.env` file and add the name of the OAuth Connections.
 
-    ```ts
-    class AutoSignInDemo extends AgentApplication<TurnState> {
-      constructor () {
-        super({
-          storage: new MemoryStorage(),
-          authorization: {
-            graph: { text: 'Sign in with Microsoft Graph', title: 'Graph Sign In' },
-          }
-        })
+     ```env
+     AgentApplication__UserAuthorization__Handlers__graph__Settings__title=Graph Sign In
+     AgentApplication__UserAuthorization__Handlers__graph__Settings__text=Sign in with Microsoft Graph   
+     AgentApplication__UserAuthorization__Handlers__graph__Settings__azureBotOAuthConnectionName=<the oAuth connection you configured earlier>
+     ```
+
+1. Run the bot from a terminal with `npm start`
+
+1. Test locally via `m365agentsplayground`, to interact with your bot running on `localhost:3978`. You need to specify the command line parameters matching the `.env` file.
+
+    ```bash
+    npm run test-tool -- --client-id <clientId> --client-secret <clientSecret> --tenant-id <tenantId>
     ```
 
-    ```env
-    AgentApplication__UserAuthorization__Handlers__graph__Settings__azureBotOAuthConnectionName=
-    ```
-      
+    The tool will open a web browser showing the Microsoft 365 Agents Playground, ready to send messages to your bot.      
 
+### Or test remotely
 1. Run `dev tunnels`. Please follow [Create and host a dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) and host the tunnel with anonymous user access command as shown below:
 
    ```bash
@@ -64,9 +65,9 @@ The sample uses the bot OAuth capabilities in [Azure Bot Service](https://docs.b
 
 1. Update your Azure Bot ``Messaging endpoint`` with the tunnel Url:  `{tunnel-url}/api/messages`
 
-1. Run the bot from a terminal with `npm start`
-
 1. Test via "Test in WebChat"" on your Azure Bot in the Azure Portal.
+
+
 
 <!-- ## Running this Agent in Teams
 

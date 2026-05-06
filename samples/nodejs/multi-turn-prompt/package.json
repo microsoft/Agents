@@ -23,7 +23,7 @@
         "express": "^5.1.0"
     },
     "devDependencies": {
-        "@microsoft/m365agentsplayground": "^0.2.16",
+        "@microsoft/m365agentsplayground": "^0.2.24",
         "@types/express": "^5.0.6",
         "@types/node": "^22.13.4",
         "esbuild": "^0.25.9",

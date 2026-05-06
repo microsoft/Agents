@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc -b",
     "prestart": "npm run build",
-    "start": "node --env-file .env dist/index.js"
+    "start": "node --env-file .env dist/index.js",
+    "test-tool": "agentsplayground"
   },
   "author": "",
   "license": "ISC",
@@ -18,6 +19,7 @@
     "express": "^5.1.0"
   },
   "devDependencies": {
-    "@microsoft/microsoft-graph-types": "^2.40.0"
+    "@microsoft/microsoft-graph-types": "^2.40.0",
+    "@microsoft/m365agentsplayground": "^0.2.24"
   }
 }

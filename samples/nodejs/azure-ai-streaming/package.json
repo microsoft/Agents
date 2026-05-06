@@ -11,7 +11,7 @@
     "start": "node --env-file .env dist/index.js"
   },
   "devDependencies": {
-    "@microsoft/m365agentsplayground": "^0.2.16",
+    "@microsoft/m365agentsplayground": "^0.2.24",
     "typescript": "^5.7.2"
   }
 }

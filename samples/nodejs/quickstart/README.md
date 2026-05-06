@@ -27,43 +27,44 @@ npm install
 
 1. Start the application
 
-```sh
-npm run build
-npm run start:anon
-```
+    ```sh
+    npm run build
+    npm run start:anon
+    ```
 
-At this point you should see the message 
+    At this point you should see the message 
 
-```text
-Server listening to port 3978 for appId  debug undefined
-```
+    ```text
+    Server listening to port 3978 for appId  debug undefined
+    ```
 
-The agent is ready to accept messages.
+    The agent is ready to accept messages.
 
 ### Interact with the bot from the Teams App Test Tool
 
 To interact with the bot you need a chat client, during the install phase we have acquired the `teams-test-app-tool` than can be used to interact with your bot running in `localhost:3978`
 
 > [!Important]
-> The test tool only supports anonymous mode, that means without any `clientId`.
+> Older versions of the test tool only supported anonymous mode, that means without any `clientId`.
+> Current versions support client secret auth `npm run test-tool -- --client-id <appID> --client-secret <secret> --tenant-id <tenantID>`
 
 1. Start the test tool with 
 
-```bash
-npm run test-tool
-```
+    ```bash
+    npm run test-tool
+    ```
 
-The tool will open a web browser showing the Teams App Test Tool, ready to send messages to your bot.
+    The tool will open a web browser showing the Teams App Test Tool, ready to send messages to your bot.
 
-Alternatively you can run the next command to start the bot and the test tool with a single command (make sure you stop the bot started previously):
+    Alternatively you can run the next command to start the bot and the test tool with a single command (make sure you stop the bot started previously):
 
-```bash
-npm test
-```
+    ```bash
+    npm test
+    ```
 
-Refresh the browser to start a new conversation with the Echo bot.
+    Refresh the browser to start a new conversation with the Echo bot.
 
-You should see a message from the agent: `Hello and Welcome!`
+    You should see a message from the agent: `Hello and Welcome!`
 
 
 ### Interact with the agent with WebChat UI using Azure Bot Service
