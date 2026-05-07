@@ -1,12 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from telemetry import configure_otel_providers
+from .telemetry import configure_otel_providers
 
-configure_otel_providers(service_name="quickstart_agent")
+configure_otel_providers(service_name="otel_quickstart_agent")
 
-from agent import AGENT_APP, CONNECTION_MANAGER
-from start_server import start_server
+from .agent import AGENT_APP, CONNECTION_MANAGER
+from .start_server import start_server
 
 start_server(
     agent_application=AGENT_APP,
