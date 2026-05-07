@@ -13,7 +13,7 @@ class AutoSignInDemo extends AgentApplication<TurnState> {
       storage: new MemoryStorage()
     })
     this.authorization.onSignInFailure(this._singinFailure)
-    
+
     // the `graph` handler is configured in the .env file, under AgentApplication__UserAuthorization__Handlers__graph__*
     this.onMessage('-me', this._profileRequest, ['graph'])
     this.onMessage('-logout', this._logout)
