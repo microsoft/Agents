@@ -14,3 +14,5 @@
 |GenesysHandoff|Demonstrates how a Microsoft Copilot Studio Agent (bot) can seamlessly **hand off a conversation to a live agent** in **Genesys Cloud**.|[GenesysHandoff](genesys-handoff/README.md)|
 |Proactive|Demonstrates the basics of a proactive conversation using in-code and Http triggers.|[Proactive](proactive/README.md)|
 |OpenTelemetry Agent|Configures OTel tracing, metrics, and logging with OTLP export|[otel](otel/README.md)|
+|Agent Framework|Weather agent built with Microsoft Agent Framework SDK|[Agent Framework](Agent%20Framework/README.md)|
+|Copilot SDK|Dungeon Scribe RPG agent powered by the GitHub Copilot SDK|[copilot-sdk](copilot-sdk/README.md)|

@@ -11,6 +11,8 @@
 |Cards Agent|Agent that uses rich cards to enhance conversation design |[cards](cards/README.md)|
 |Copilot Studio Skill|Call the echo bot from a Copilot Studio skill |[copilotstudio-skill](copilotstudio-skill/README.md)|
 |OpenTelemetry|Instrument an agent and consume telemetry via the Aspire dashboard|[opentelemetry](otel/README.md)|
+|Agent Framework|Weather agent built with Microsoft Agent Framework SDK|[agent-framework](agent-framework/README.md)|
+|Copilot SDK|Dungeon Scribe RPG agent powered by the GitHub Copilot SDK|[copilot-sdk](copilot-sdk/README.md)|
 
 ## Important Notice - Import Changes
 
