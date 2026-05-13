@@ -2,13 +2,13 @@
 
 This is a sample of a simple weather-forecasting Agent that is hosted on a Python web service. This Agent accepts a request asking for a weather forecast and responds to the users with an Adaptive Card.
 
-This Agent Sample is intended to introduce you the basics of integrating Semantic Kernel with the Microsoft 365 Agents SDK in order to build powerful Agents. It can also be used as a the base for a custom Agent that you choose to develop.
+This Agent Sample is intended to introduce you to the basics of integrating Semantic Kernel with the Microsoft 365 Agents SDK in order to build powerful Agents. It can also be used as the base for a custom Agent that you choose to develop.
 
 ***Note:*** This sample requires JSON output from the model which works best from newer versions of the model such as `gpt-4o-mini`.
 
 ## Prerequisites
 
--  [Python](https://www.python.org/) version 3.9 or higher
+-  [Python](https://www.python.org/) version 3.10 or higher
 -  [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) (for local development)
 - You will need an Azure OpenAI, with the preferred model of `gpt-4o-mini`.
 

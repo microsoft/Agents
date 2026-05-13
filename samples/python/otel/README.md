@@ -6,7 +6,7 @@ The sample exports telemetry via OTLP (gRPC) to a configurable endpoint and auto
 
 ## Prerequisites
 
-- [Python](https://www.python.org/) version 3.9 or higher
+- [Python](https://www.python.org/) version 3.10 or higher
 - [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) (for local development)
 - [Docker](https://www.docker.com/) (to run the Aspire Dashboard for local telemetry visualization)
 
