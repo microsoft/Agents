@@ -15,10 +15,13 @@ The M365 Agents SDK provides built-in instrumentation to help developers monitor
   - [TurnContext Spans](#turncontext-spans)
   - [ConnectorClient Spans](#connectorclient-spans)
   - [AgentClient Spans](#agentclient-spans)
+  - [Proactive Spans](#proactive-spans)
   - [Storage Spans](#storage-spans)
   - [Authentication Spans](#authentication-spans)
   - [Authorization Spans](#authorization-spans)
   - [UserTokenClient Spans](#usertokenclient-spans)
+  - [Dialog Spans](#dialog-spans)
+  - [Copilot Studio Client Spans](#copilot-studio-client-spans)
   - [Error Handling in Spans](#error-handling-in-spans)
   - [Disabling Span Categories](#disabling-span-categories)
 - [Metrics](#javascript-metrics)
@@ -26,6 +29,9 @@ The M365 Agents SDK provides built-in instrumentation to help developers monitor
   - [Request Counters](#request-counters)
   - [Turn Counters](#turn-counters)
   - [Duration Histograms](#duration-histograms)
+  - [Dialog Metrics](#dialog-metrics)
+  - [Proactive Metrics](#proactive-metrics)
+  - [Copilot Studio Client Metrics](#copilot-studio-client-metrics)
 
 ### C# Telemetry
 - [System.Diagnostics Integration](#systemdiagnostics-integration)
@@ -143,9 +149,15 @@ Span for sending one or more activities to a conversation.
 | Attribute | Type | Description |
 |-----------|------|-------------|
 | `activity.count` | number | Number of activities being sent |
-| `activity.conversation_id` | string | The target conversation identifier |
-| `activity.type` | string | The type of each activity (set per activity) |
-| `activity.id` | string | The activity identifier (set per activity) |
+
+**Span Events (per activity):**
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `activity.id` | string | The activity identifier |
+| `activity.type` | string | The type of activity |
+| `activity.channel_id` | string | The channel identifier |
+| `activity.conversation_id` | string | The conversation identifier |
 
 ---
 
@@ -216,9 +228,9 @@ Main execution span for the AgentApplication.
 
 | Attribute | Type | Description |
 |-----------|------|-------------|
-| `route.authorized` | boolean | Whether the request was authorized |
 | `activity.type` | string | The type of activity being processed |
-| `activity.id` | string | The activity identifier |
+| `activity.channel_id` | string | The channel identifier |
+| `route.authorized` | boolean | Whether the request was authorized |
 | `route.matched` | boolean | Whether a route handler matched the activity |
 
 **Child Spans:**
@@ -277,9 +289,14 @@ Span for sending activities through the turn context.
 | Attribute | Type | Description |
 |-----------|------|-------------|
 | `activity.count` | number | Number of activities being sent |
-| `activity.type` | string | The type of each activity (set per activity) |
-| `activity.delivery_mode` | string | The delivery mode of each activity (set per activity) |
-| `activity.id` | string | The activity identifier (set per activity) |
+
+**Span Events (per activity):**
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `activity.id` | string | The activity identifier |
+| `activity.type` | string | The type of activity |
+| `activity.delivery_mode` | string | The delivery mode of the activity |
 
 ---
 
@@ -411,6 +428,7 @@ Span for reading items from storage.
 
 | Attribute | Type | Description |
 |-----------|------|-------------|
+| `storage.operation` | string | Always `"read"` |
 | `storage.key.count` | number | Number of keys being read |
 
 ---
@@ -421,6 +439,7 @@ Span for writing items to storage.
 
 | Attribute | Type | Description |
 |-----------|------|-------------|
+| `storage.operation` | string | Always `"write"` |
 | `storage.key.count` | number | Number of keys being written |
 
 ---
@@ -431,6 +450,7 @@ Span for deleting items from storage.
 
 | Attribute | Type | Description |
 |-----------|------|-------------|
+| `storage.operation` | string | Always `"delete"` |
 | `storage.key.count` | number | Number of keys being deleted |
 
 ---
@@ -506,8 +526,18 @@ Span for retrieving an Azure Bot Service authorization token.
 |-----------|------|-------------|
 | `auth.handler.id` | string | The authorization handler identifier |
 | `auth.connection.name` | string | The connection name used |
-| `auth.flow` | string | The authentication flow (e.g., "obo") |
-| `auth.scopes` | string[] | The authentication scopes (when OBO flow is used) |
+
+---
+
+#### agents.authorization.azure_bot_obo_token
+
+Span for retrieving an Azure Bot Service token using the on-behalf-of flow.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `auth.handler.id` | string | The authorization handler identifier |
+| `auth.connection.name` | string | The connection name used |
+| `auth.scopes` | string[] | The authentication scopes requested |
 
 ---
 
@@ -564,6 +594,16 @@ Span for signing out a user.
 
 ---
 
+#### agents.user_token_client.get_sign_in_resource
+
+Span for getting a sign-in resource URL.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `auth.connection.name` | string | The connection name |
+
+---
+
 
 #### agents.user_token_client.exchange_token
 
@@ -612,6 +652,272 @@ Span for getting AAD tokens.
 
 ---
 
+### Proactive Spans
+
+Proactive spans cover operations for sending messages and managing conversations outside of a user-initiated turn.
+
+#### agents.proactive.store_conversation
+
+Span for storing a conversation reference for later proactive use.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `activity.conversation_id` | string | The conversation identifier |
+
+---
+
+#### agents.proactive.get_conversation
+
+Span for retrieving a stored conversation reference.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `activity.conversation_id` | string | The conversation identifier |
+| `proactive.conversation_found` | boolean | Whether the conversation was found |
+
+---
+
+#### agents.proactive.get_conversation_or_throw
+
+Span for retrieving a stored conversation reference, throwing if not found.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `activity.conversation_id` | string | The conversation identifier |
+
+---
+
+#### agents.proactive.delete_conversation
+
+Span for deleting a stored conversation reference.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `activity.conversation_id` | string | The conversation identifier |
+
+---
+
+#### agents.proactive.send_activity
+
+Span for sending a proactive activity to a conversation.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `activity.channel_id` | string | The channel identifier |
+| `activity.type` | string | The type of activity |
+| `activity.conversation_id` | string | The conversation identifier |
+
+---
+
+#### agents.proactive.continue_conversation
+
+Span for continuing a conversation proactively with a callback.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `activity.channel_id` | string | The channel identifier |
+| `proactive.has_auto_sign_in` | boolean | Whether auto sign-in is configured |
+| `activity.conversation_id` | string | The conversation identifier |
+
+---
+
+#### agents.proactive.create_conversation
+
+Span for creating a new proactive conversation.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `activity.channel_id` | string | The channel identifier |
+| `proactive.store_conversation` | boolean | Whether the conversation should be stored |
+| `proactive.has_handler` | boolean | Whether a handler callback was provided |
+| `proactive.members_count` | number | Number of members in the conversation |
+
+---
+
+### Dialog Spans
+
+Dialog spans are emitted by the `@microsoft/agents-hosting-dialogs` package for dialog lifecycle operations.
+
+#### agents.dialogs.run
+
+Main execution span for running a dialog set.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `dialog.root_id` | string | The root dialog identifier |
+| `activity.type` | string | The type of activity being processed |
+| `activity.channel_id` | string | The channel identifier |
+| `activity.conversation_id` | string | The conversation identifier |
+| `dialog.status` | string | The dialog turn status |
+| `dialog.attempt_count` | number | Number of dialog attempts |
+
+---
+
+#### agents.dialogs.context.begin
+
+Span for beginning a new dialog.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `activity.type` | string | The type of activity |
+| `activity.conversation_id` | string | The conversation identifier |
+| `dialog.id` | string | The dialog identifier |
+| `dialog.name` | string | The dialog name |
+| `dialog.parent_id` | string | The parent dialog identifier |
+| `dialog.status` | string | The dialog turn status |
+
+---
+
+#### agents.dialogs.context.continue
+
+Span for continuing an active dialog.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `activity.type` | string | The type of activity |
+| `activity.conversation_id` | string | The conversation identifier |
+| `dialog.id` | string | The dialog identifier |
+| `dialog.name` | string | The dialog name |
+| `dialog.status` | string | The dialog turn status |
+
+---
+
+#### agents.dialogs.context.end
+
+Span for ending a dialog.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `activity.type` | string | The type of activity |
+| `activity.conversation_id` | string | The conversation identifier |
+| `dialog.id` | string | The dialog identifier |
+| `dialog.name` | string | The dialog name |
+| `dialog.status` | string | The dialog turn status |
+
+---
+
+#### agents.dialogs.context.replace
+
+Span for replacing the current dialog with a new one.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `activity.type` | string | The type of activity |
+| `activity.conversation_id` | string | The conversation identifier |
+| `dialog.id` | string | The current dialog identifier |
+| `dialog.name` | string | The current dialog name |
+| `dialog.replacement_id` | string | The replacement dialog identifier |
+| `dialog.replacement_name` | string | The replacement dialog name |
+| `dialog.status` | string | The dialog turn status |
+
+---
+
+#### agents.dialogs.context.cancel_all
+
+Span for canceling all active dialogs.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `activity.type` | string | The type of activity |
+| `activity.conversation_id` | string | The conversation identifier |
+| `dialog.cancel_parents` | boolean | Whether parent dialogs should also be canceled |
+| `dialog.event_name` | string | The cancellation event name |
+| `dialog.id` | string | The dialog identifier |
+| `dialog.name` | string | The dialog name |
+| `dialog.status` | string | The dialog turn status |
+
+---
+
+### Copilot Studio Client Spans
+
+Copilot Studio Client spans are emitted by the `@microsoft/agents-copilotstudio-client` package for Direct-to-Engine communication.
+
+#### agents.copilot_client.start_conversation
+
+Span for starting a new conversation with a Copilot Studio agent.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `copilot.emit_start_event` | boolean | Whether a start event was emitted (conditional) |
+| `copilot.request` | string | The request identifier (conditional) |
+
+---
+
+#### agents.copilot_client.send_activity
+
+Span for sending an activity to a Copilot Studio agent.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `copilot.activity.type` | string | The type of activity |
+| `copilot.activity.conversation_id` | string | The conversation identifier |
+
+---
+
+#### agents.copilot_client.post_request
+
+Span for making an HTTP request to the Copilot Studio API.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `copilot.post_request.url` | string | The request URL |
+| `copilot.post_request.method` | string | The HTTP method |
+
+**Span Events (per response activity):**
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `copilot.post_request.activity.type` | string | The type of response activity |
+| `copilot.post_request.activity.conversation_id` | string | The conversation identifier |
+
+---
+
+#### agents.copilot_client.webchat.create_connection
+
+Span for creating a WebChat connection to a Copilot Studio agent.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `copilot.webchat.show_typing` | boolean | Whether typing indicators are shown |
+
+**Span Events (per received activity):**
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `copilot.webchat.activity.type` | string | The type of received activity |
+| `copilot.webchat.activity.conversation_id` | string | The conversation identifier |
+
+---
+
+#### agents.copilot_client.execute_streaming
+
+Span for executing a streaming request to a Copilot Studio agent.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `copilot.activity.type` | string | The type of activity |
+| `copilot.activity.conversation_id` | string | The conversation identifier |
+
+---
+
+#### agents.copilot_client.subscribe_async
+
+Span for subscribing to async events from a Copilot Studio agent.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `copilot.subscribe_async.conversation_id` | string | The conversation identifier |
+| `copilot.subscribe_async.last_received_event_id` | string | The last received event ID |
+
+**Span Events (per received event):**
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `copilot.subscribe_async.event.id` | string | The event identifier |
+| `copilot.subscribe_async.event.activity.type` | string | The type of activity in the event |
+
+---
+
 
 ## Error Handling in Spans
 
@@ -644,6 +950,7 @@ Valid category names are:
 - `STORAGE`
 - `AUTHENTICATION`
 - `AUTHORIZATION`
+- `DIALOGS`
 
 When a span category is disabled, the trace helper still executes your callback with an active non-recording span so your code path and span API calls remain safe, but no telemetry is emitted for that span.
 
@@ -885,6 +1192,156 @@ Histograms track the distribution of operation durations.
 
 ---
 
+### Dialog Metrics
+
+Metrics for dialog lifecycle operations from `@microsoft/agents-hosting-dialogs`.
+
+#### agents.dialogs.context.count
+
+**Type:** Counter
+**Unit:** operation
+**Description:** Total number of dialog context operations (begin, continue, end, replace, cancel).
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `dialog.operation` | string | The dialog operation type |
+| `dialog.id` | string | The dialog identifier |
+
+---
+
+#### agents.dialogs.context.duration
+
+**Type:** Histogram
+**Unit:** ms
+**Description:** Duration of dialog context operations in milliseconds.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `dialog.operation` | string | The dialog operation type |
+| `dialog.id` | string | The dialog identifier |
+
+---
+
+### Proactive Metrics
+
+Metrics for proactive messaging operations.
+
+#### agents.proactive.operation.count
+
+**Type:** Counter
+**Unit:** operation
+**Description:** Total number of proactive operations (store, get, delete, send, continue, create).
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `proactive.operation` | string | The proactive operation type |
+
+---
+
+#### agents.proactive.operation.duration
+
+**Type:** Histogram
+**Unit:** ms
+**Description:** Duration of proactive operations in milliseconds.
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `proactive.operation` | string | The proactive operation type |
+
+---
+
+### Copilot Studio Client Metrics
+
+Metrics for the `@microsoft/agents-copilotstudio-client` package.
+
+#### agents.copilot_client.activities.received
+
+**Type:** Counter
+**Unit:** activities
+**Description:** Total number of activities received from a Copilot Studio agent.
+
+---
+
+#### agents.copilot_client.activities.sent
+
+**Type:** Counter
+**Unit:** activities
+**Description:** Total number of activities sent to a Copilot Studio agent.
+
+---
+
+#### agents.copilot_client.conversations.started
+
+**Type:** Counter
+**Unit:** conversations
+**Description:** Total number of conversations started with Copilot Studio agents.
+
+---
+
+#### agents.copilot_client.webchat.connection.count
+
+**Type:** Counter
+**Unit:** connections
+**Description:** Total number of WebChat connections created.
+
+---
+
+#### agents.copilot_client.request.count
+
+**Type:** Counter
+**Unit:** request
+**Description:** Total number of HTTP requests to the Copilot Studio API.
+
+---
+
+#### agents.copilot_client.request.error.count
+
+**Type:** Counter
+**Unit:** request
+**Description:** Total number of failed HTTP requests to the Copilot Studio API.
+
+---
+
+#### agents.copilot_client.request.duration
+
+**Type:** Histogram
+**Unit:** ms
+**Description:** Duration of HTTP requests to the Copilot Studio API in milliseconds.
+
+---
+
+#### agents.copilot_client.stream.duration
+
+**Type:** Histogram
+**Unit:** ms
+**Description:** Duration of streaming operations in milliseconds.
+
+---
+
+#### agents.copilot_client.execute_streaming.count
+
+**Type:** Counter
+**Unit:** operation
+**Description:** Total number of streaming execution operations.
+
+---
+
+#### agents.copilot_client.subscribe_async.count
+
+**Type:** Counter
+**Unit:** operation
+**Description:** Total number of async subscription operations.
+
+---
+
+#### agents.copilot_client.subscribe_event.count
+
+**Type:** Counter
+**Unit:** events
+**Description:** Total number of events received via async subscriptions.
+
+---
+
 ## JavaScript Span Constants Reference
 
 All span names are available as constants in the `@microsoft/agents-telemetry` package:
@@ -935,21 +1392,48 @@ SpanNames.AUTHENTICATION_GET_AGENTIC_INSTANCE_TOKEN  // 'agents.authentication.g
 SpanNames.AUTHENTICATION_GET_AGENTIC_USER_TOKEN      // 'agents.authentication.get_agentic_user_token'
 
 // Authorization
-SpanNames.AUTHORIZATION_AGENTIC_TOKEN      // 'agents.authorization.agentic_token'
-SpanNames.AUTHORIZATION_AZURE_BOT_TOKEN    // 'agents.authorization.azure_bot_token'
-SpanNames.AUTHORIZATION_AZURE_BOT_SIGNIN   // 'agents.authorization.azure_bot_signin'
-SpanNames.AUTHORIZATION_AZURE_BOT_SIGNOUT  // 'agents.authorization.azure_bot_signout'
+SpanNames.AUTHORIZATION_AGENTIC_TOKEN          // 'agents.authorization.agentic_token'
+SpanNames.AUTHORIZATION_AZURE_BOT_TOKEN        // 'agents.authorization.azure_bot_token'
+SpanNames.AUTHORIZATION_AZURE_BOT_OBO_TOKEN    // 'agents.authorization.azure_bot_obo_token'
+SpanNames.AUTHORIZATION_AZURE_BOT_SIGNIN       // 'agents.authorization.azure_bot_signin'
+SpanNames.AUTHORIZATION_AZURE_BOT_SIGNOUT      // 'agents.authorization.azure_bot_signout'
 
 // UserTokenClient
 SpanNames.USER_TOKEN_CLIENT_GET_USER_TOKEN              // 'agents.user_token_client.get_user_token'
 SpanNames.USER_TOKEN_CLIENT_SIGN_OUT                    // 'agents.user_token_client.sign_out'
+SpanNames.USER_TOKEN_CLIENT_GET_SIGN_IN_RESOURCE        // 'agents.user_token_client.get_sign_in_resource'
 SpanNames.USER_TOKEN_CLIENT_EXCHANGE_TOKEN               // 'agents.user_token_client.exchange_token'
 SpanNames.USER_TOKEN_CLIENT_GET_TOKEN_OR_SIGN_IN_RESOURCE // 'agents.user_token_client.get_token_or_sign_in_resource'
 SpanNames.USER_TOKEN_CLIENT_GET_TOKEN_STATUS             // 'agents.user_token_client.get_token_status'
 SpanNames.USER_TOKEN_CLIENT_GET_AAD_TOKENS               // 'agents.user_token_client.get_aad_tokens'
 
+// Proactive
+SpanNames.PROACTIVE_STORE_CONVERSATION       // 'agents.proactive.store_conversation'
+SpanNames.PROACTIVE_GET_CONVERSATION         // 'agents.proactive.get_conversation'
+SpanNames.PROACTIVE_GET_CONVERSATION_OR_THROW // 'agents.proactive.get_conversation_or_throw'
+SpanNames.PROACTIVE_DELETE_CONVERSATION      // 'agents.proactive.delete_conversation'
+SpanNames.PROACTIVE_SEND_ACTIVITY            // 'agents.proactive.send_activity'
+SpanNames.PROACTIVE_CONTINUE_CONVERSATION    // 'agents.proactive.continue_conversation'
+SpanNames.PROACTIVE_CREATE_CONVERSATION      // 'agents.proactive.create_conversation'
+
 // TurnContext
 SpanNames.TURN_SEND_ACTIVITIES         // 'agents.turn.send_activities'
+
+// Dialogs
+SpanNames.DIALOGS_RUN                  // 'agents.dialogs.run'
+SpanNames.DIALOGS_CONTEXT_BEGIN        // 'agents.dialogs.context.begin'
+SpanNames.DIALOGS_CONTEXT_CONTINUE     // 'agents.dialogs.context.continue'
+SpanNames.DIALOGS_CONTEXT_END          // 'agents.dialogs.context.end'
+SpanNames.DIALOGS_CONTEXT_REPLACE      // 'agents.dialogs.context.replace'
+SpanNames.DIALOGS_CONTEXT_CANCEL_ALL   // 'agents.dialogs.context.cancel_all'
+
+// Copilot Studio Client
+SpanNames.COPILOT_START_CONVERSATION   // 'agents.copilot_client.start_conversation'
+SpanNames.COPILOT_SEND_ACTIVITY        // 'agents.copilot_client.send_activity'
+SpanNames.COPILOT_POST_REQUEST         // 'agents.copilot_client.post_request'
+SpanNames.COPILOT_CREATE_CONNECTION    // 'agents.copilot_client.webchat.create_connection'
+SpanNames.COPILOT_EXECUTE_STREAMING    // 'agents.copilot_client.execute_streaming'
+SpanNames.COPILOT_SUBSCRIBE_ASYNC      // 'agents.copilot_client.subscribe_async'
 ```
 
 ---
@@ -983,16 +1467,37 @@ MetricNames.TURNS_COUNT                   // 'agents.turn.count'
 MetricNames.TURNS_ERRORS                  // 'agents.turn.error.count'
 MetricNames.TURN_DURATION                 // 'agents.turn.duration'
 
+// Dialog metrics
+MetricNames.DIALOGS_CONTEXT_COUNT         // 'agents.dialogs.context.count'
+MetricNames.DIALOGS_CONTEXT_DURATION      // 'agents.dialogs.context.duration'
+
 // Storage metrics
 MetricNames.STORAGE_OPERATION_DURATION    // 'agents.storage.operation.duration'
 
 // Authentication metrics
-MetricNames.AUTH_TOKEN_REQUEST_COUNT    // 'agents.auth.token.request.count'
+MetricNames.AUTH_TOKEN_REQUEST_COUNT      // 'agents.auth.token.request.count'
 MetricNames.AUTH_TOKEN_DURATION           // 'agents.auth.token.duration'
 
 // UserTokenClient metrics
 MetricNames.USER_TOKEN_CLIENT_REQUESTS          // 'agents.user_token_client.request.count'
 MetricNames.USER_TOKEN_CLIENT_REQUEST_DURATION  // 'agents.user_token_client.request.duration'
+
+// Proactive metrics
+MetricNames.PROACTIVE_OPERATION_COUNT     // 'agents.proactive.operation.count'
+MetricNames.PROACTIVE_OPERATION_DURATION  // 'agents.proactive.operation.duration'
+
+// Copilot Studio Client metrics
+MetricNames.CSC_ACTIVITIES_RECEIVED       // 'agents.copilot_client.activities.received'
+MetricNames.CSC_ACTIVITIES_SENT           // 'agents.copilot_client.activities.sent'
+MetricNames.CSC_CONVERSATIONS_STARTED     // 'agents.copilot_client.conversations.started'
+MetricNames.CSC_WEBCHAT_CONNECTIONS       // 'agents.copilot_client.webchat.connection.count'
+MetricNames.CSC_REQUEST_COUNT             // 'agents.copilot_client.request.count'
+MetricNames.CSC_REQUEST_ERRORS            // 'agents.copilot_client.request.error.count'
+MetricNames.CSC_STREAM_DURATION           // 'agents.copilot_client.stream.duration'
+MetricNames.CSC_REQUEST_DURATION          // 'agents.copilot_client.request.duration'
+MetricNames.CSC_EXECUTE_STREAMING         // 'agents.copilot_client.execute_streaming.count'
+MetricNames.CSC_SUBSCRIBE_ASYNC           // 'agents.copilot_client.subscribe_async.count'
+MetricNames.CSC_SUBSCRIBE_EVENT           // 'agents.copilot_client.subscribe_event.count'
 ```
 
 ---
