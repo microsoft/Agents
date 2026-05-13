@@ -6,11 +6,11 @@ import { defineTool } from '@github/copilot-sdk'
 
 const inventories = new Map<string, string[]>()
 
-export function createInventoryTool(conversationId: string) {
+export function createInventoryTool (conversationId: string) {
   return defineTool('manage_inventory', {
     description: "Manage the adventurer's inventory - add, remove, or list items",
     parameters: z.object({
-      action: z.enum(['add', 'remove', 'list']).describe("Action to perform"),
+      action: z.enum(['add', 'remove', 'list']).describe('Action to perform'),
       item: z.string().optional().describe('Item name (required for add/remove)'),
     }),
     handler: async ({ action, item }) => {

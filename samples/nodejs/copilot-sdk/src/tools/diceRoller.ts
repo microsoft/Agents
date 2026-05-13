@@ -4,7 +4,7 @@
 import { z } from 'zod'
 import { defineTool } from '@github/copilot-sdk'
 
-export function createRollDiceTool() {
+export function createRollDiceTool () {
   return defineTool('roll_dice', {
     description: 'Roll dice using standard notation (e.g., 2d6+3, 1d20, 4d8-1)',
     parameters: z.object({

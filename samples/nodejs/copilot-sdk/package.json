@@ -8,7 +8,6 @@
   "main": "./dist/index.js",
   "type": "module",
   "scripts": {
-    "prebuild": "npm ci",
     "build": "tsc --build",
     "prestart": "npm run build",
     "prestart:anon": "npm run build",
@@ -20,7 +19,7 @@
   "dependencies": {
     "@microsoft/agents-hosting-express": "^1.5.1",
     "@github/copilot-sdk": "^0.3.0",
-    "zod": "^4.3.6"
+    "zod": "~4.4.3"
   },
   "devDependencies": {
     "@microsoft/m365agentsplayground": "^0.2.16",

@@ -16,33 +16,49 @@ When managing inventory, always use the manage_inventory tool.
 Keep responses concise but flavorful. Use emoji sparingly for emphasis (🎲⚔️🗡️🐉🏰📦🎒🗺️).`
 
 let copilotClient: CopilotClient | null = null
-// Reuse Copilot sessions per conversation for multi-turn context
+// Reuse Copilot sessions per user+conversation for multi-turn context
 const sessions = new Map<string, CopilotSession>()
+const sessionInitPromises = new Map<string, Promise<CopilotSession>>()
 
-async function getCopilotClient(): Promise<CopilotClient> {
+function getCopilotClient (): CopilotClient {
   if (!copilotClient) {
     copilotClient = new CopilotClient()
   }
   return copilotClient
 }
 
-async function getOrCreateSession(client: CopilotClient, conversationId: string): Promise<CopilotSession> {
-  const existing = sessions.get(conversationId)
+async function getOrCreateSession (client: CopilotClient, sessionKey: string, gitHubToken?: string): Promise<CopilotSession> {
+  const existing = sessions.get(sessionKey)
   if (existing) return existing
 
-  const model = process.env.COPILOT_MODEL ?? 'gpt-4.1'
-  const rollDice = createRollDiceTool()
-  const inventoryTool = createInventoryTool(conversationId)
+  // Prevent duplicate session creation for the same key
+  const pending = sessionInitPromises.get(sessionKey)
+  if (pending) return pending
 
-  const session = await client.createSession({
-    model,
-    onPermissionRequest: approveAll,
-    tools: [rollDice, inventoryTool],
-    systemMessage: { content: DUNGEON_SCRIBE_PERSONA },
-  })
+  const promise = (async () => {
+    try {
+      const model = process.env.COPILOT_MODEL ?? 'gpt-4.1'
+      const rollDice = createRollDiceTool()
+      const inventoryTool = createInventoryTool(sessionKey)
 
-  sessions.set(conversationId, session)
-  return session
+      const session = await client.createSession({
+        model,
+        onPermissionRequest: approveAll,
+        tools: [rollDice, inventoryTool],
+        streaming: true,
+        gitHubToken,
+        systemMessage: { content: DUNGEON_SCRIBE_PERSONA },
+      })
+
+      sessions.set(sessionKey, session)
+      return session
+    } finally {
+      sessionInitPromises.delete(sessionKey)
+    }
+  })()
+
+  sessionInitPromises.set(sessionKey, promise)
+  return promise
 }
 
 const storage = new MemoryStorage()
@@ -60,34 +76,90 @@ agentApp.onConversationUpdate('membersAdded', async (context: TurnContext, _stat
   )
 })
 
+// Sign-out command to reset the GitHub OAuth token
+agentApp.onMessage('-signout', async (context: TurnContext, state: TurnState) => {
+  await agentApp.authorization.signOut(context, state)
+  // Remove cached sessions for this user so a fresh token is used on next sign-in
+  const userId = context.activity.from?.id ?? 'anonymous'
+  for (const key of sessions.keys()) {
+    if (key.startsWith(`${userId}:`)) {
+      sessions.delete(key)
+    }
+  }
+  await context.sendActivity('📜 *The Scribe closes the scroll…* You have been signed out. Send any message to sign in again.')
+})
+
+agentApp.authorization.onSignInFailure(async (context: TurnContext, _state: TurnState, authId?: string, err?: string) => {
+  await context.sendActivity(`⚠️ *The Scribe cannot verify your identity.* Sign-in failed for '${authId ?? 'unknown'}': ${err ?? 'unknown error'}`)
+})
+
 agentApp.onActivity(ActivityTypes.Message, async (context: TurnContext, _state: TurnState) => {
   const userText = context.activity.text
   if (!userText) return
 
+  // Let streaming-capable clients know we're working on a response
+  context.streamingResponse.queueInformativeUpdate('The gods confer… stand fast a moment.')
+
+  // Get the user's GitHub OAuth token (acquired by AutoSignIn via Azure Bot OAuth Connection)
+  const tokenResponse = await agentApp.authorization.getToken(context, 'github')
+  const gitHubToken = tokenResponse?.token
+
+  // Key sessions by user + conversation so each user gets their own Copilot identity
+  const userId = context.activity.from?.id ?? 'anonymous'
   const conversationId = context.activity.conversation?.id ?? 'default'
+  const sessionKey = `${userId}:${conversationId}`
 
   try {
-    const client = await getCopilotClient()
-    const session = await getOrCreateSession(client, conversationId)
+    const client = getCopilotClient()
+    const session = await getOrCreateSession(client, sessionKey, gitHubToken)
 
-    const response = await session.sendAndWait({ prompt: userText })
+    let anyDeltas = false
 
-    if (response?.data?.content) {
-      await context.sendActivity(response.data.content)
-    } else {
+    const done = new Promise<void>((resolve, reject) => {
+      let settled = false
+      const unsubscribe = session.on((event) => {
+        if (settled) return
+        switch (event.type) {
+          case 'assistant.message_delta': {
+            const delta = (event as any).data?.deltaContent
+            if (delta && delta.length > 0) {
+              anyDeltas = true
+              context.streamingResponse.queueTextChunk(delta)
+            }
+            break
+          }
+          case 'session.idle':
+            settled = true
+            unsubscribe()
+            resolve()
+            break
+          case 'session.error':
+            settled = true
+            unsubscribe()
+            reject(new Error(`Session error: ${(event as any).data?.message ?? 'unknown error'}`))
+            break
+        }
+      })
+    })
+
+    await session.send({ prompt: userText })
+    await done
+
+    if (!anyDeltas) {
       await context.sendActivity(
         "📜 *The Scribe's quill hesitates...* I couldn't conjure a response. Try again?"
       )
     }
   } catch (err) {
     // Discard the cached session on error so it gets recreated next turn
-    sessions.delete(conversationId)
+    sessions.delete(sessionKey)
     console.error('Copilot SDK error:', err)
     await context.sendActivity(
       '⚠️ *A magical disturbance disrupts the Scribe\'s work.* ' +
-      'Please ensure the Copilot CLI is installed and you are logged in.\n\n' +
-      'Run: `npm install -g @github/copilot && copilot auth login`'
+      'Verify that you signed in with a GitHub account that has an active Copilot subscription, then try again.'
     )
+  } finally {
+    await context.streamingResponse.endStream()
   }
 })
 
