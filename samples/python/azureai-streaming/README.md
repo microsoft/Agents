@@ -4,7 +4,7 @@ This is a sample of a simple Agent that is hosted on a Python web service. The s
 
 ## Prerequisites
 
--  [Python](https://www.python.org/) version 3.9 or higher
+-  [Python](https://www.python.org/) version 3.10 or higher
 -  [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) (for local development)
 - You will need an Azure OpenAI, with the preferred model of `gpt-4o-mini`.
 

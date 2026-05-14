@@ -10,12 +10,11 @@ import { ActivityTypes } from '@microsoft/agents-activity'
 class AutoSignInDemo extends AgentApplication<TurnState> {
   constructor () {
     super({
-      storage: new MemoryStorage(),
-      authorization: {
-        graph: { text: 'Sign in with Microsoft Graph', title: 'Graph Sign In' },
-      }
+      storage: new MemoryStorage()
     })
     this.authorization.onSignInFailure(this._singinFailure)
+
+    // the `graph` handler is configured in the .env file, under AgentApplication__UserAuthorization__Handlers__graph__*
     this.onMessage('-me', this._profileRequest, ['graph'])
     this.onMessage('-logout', this._logout)
     this.onActivity(ActivityTypes.Message, this._message)

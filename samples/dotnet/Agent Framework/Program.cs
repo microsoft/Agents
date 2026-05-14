@@ -19,6 +19,10 @@ builder.Configuration.AddUserSecrets(Assembly.GetExecutingAssembly());
 builder.Services.AddControllers();
 builder.Services.AddHttpClient("WebClient", client => client.Timeout = TimeSpan.FromSeconds(600));
 builder.Services.AddHttpContextAccessor();
+
+// Configure defaults for Aspire dashboard
+builder.ConfigureOtelProviders();
+
 builder.Logging.AddConsole();
 
 // Add AspNet token validation
@@ -29,9 +33,6 @@ builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
 // that state survives Agent restarts, and operate correctly
 // in a cluster of Agent instances.
 builder.Services.AddSingleton<IStorage, MemoryStorage>();
-
-// Add AgentApplicationOptions from config.
-builder.AddAgentApplicationOptions();
 
 // Add the bot (which is transient)
 builder.AddAgent<WeatherAgent>();
@@ -67,31 +68,21 @@ builder.Services.AddSingleton<Microsoft.Agents.Builder.IMiddleware[]>([new Trans
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-}
-
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Map GET "/"
+app.MapAgentRootEndpoint();
 
-// Map the /api/messages endpoint to the AgentApplication
-app.MapPost("/api/messages", async (HttpRequest request, HttpResponse response, IAgentHttpAdapter adapter, IAgent agent, CancellationToken cancellationToken) =>
-{
-    await adapter.ProcessAsync(request, response, agent, cancellationToken);
-});
+// Map the endpoints for all agents using the [AgentInterface] attribute.
+// If there is a single IAgent/AgentApplication, the endpoints will be mapped to (e.g. "/api/message").
+app.MapAgentApplicationEndpoints(requireAuth: !(app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Playground"));
 
 if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Playground")
 {
-    app.MapGet("/", () => "Agent Framework Example Weather Agent");
     app.UseDeveloperExceptionPage();
     app.MapControllers().AllowAnonymous();
-
-    // Hard coded for brevity and ease of testing. 
-    // In production, this should be set in configuration.
-    app.Urls.Add($"http://localhost:3978");
 }
 else
 {

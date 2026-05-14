@@ -2,7 +2,7 @@
 
 This Agent has been created using [Microsoft 365 Agents SDK](https://github.com/microsoft/agents-for-python), it shows how to use Auto SignIn user authorization in your Agent.
 
-This sample uses different routes, and some are configured to use an auth handler (more than one handler can be applied to a route). Below is an abbreviate version of the decorators used to configure the routes, which are really commands to the Agent:
+This sample uses different routes, and some are configured to use an auth handler (more than one handler can be applied to a route). Below is an abbreviated version of the decorators used to configure the routes, which are really commands to the Agent:
 
 ```python
   @AGENT_APP.message("/status")
@@ -13,7 +13,7 @@ This sample uses different routes, and some are configured to use an auth handle
 
 ## Prerequisites
 
--  [Python](https://www.python.org/) version 3.9 or higher
+-  [Python](https://www.python.org/) version 3.10 or higher
 -  [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) (for local development)
 
 ## Local Setup
@@ -43,7 +43,7 @@ This sample uses different routes, and some are configured to use an auth handle
     @AGENT_APP.message("me", auth_handlers=["GRAPH"])
     ```
 
-    you should have one pair of items for `GRAPH` and aonther for `GITHUB`
+    you should have one pair of items for `GRAPH` and another for `GITHUB`
 
     ```env
       AGENTAPPLICATION__USERAUTHORIZATION__HANDLERS__GRAPH__SETTINGS__AZUREBOTOAUTHCONNECTIONNAME=
@@ -96,7 +96,7 @@ The agent is ready to accept messages.
 
 1. When the conversation starts, you will be greeted with a welcome message, and another message informing the token status. 
 1. Sending `/me` will trigger the OAuth flow and display additional information about you.
-1. Note that if running this in Teams and SSO is setup, you shouldn't see any "sign in" prompts.  This is true in this sample since we are only requesting a basic set of scopes that Teams doesn't require additional consent for.
+1. Note that if running this in Teams and SSO is set up, you shouldn't see any "sign in" prompts.  This is true in this sample since we are only requesting a basic set of scopes that Teams doesn't require additional consent for.
 
 ### Using the Agent in Teams
 For Auto Sign-In in Teams, additional steps are needed to [Enable SSO for a Teams app](https://learn.microsoft.com/en-us/microsoftteams/platform/bots/how-to/authentication/bot-sso-overview)

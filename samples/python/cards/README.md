@@ -4,7 +4,7 @@ This is a sample of a simple Agent hosted on a Python web service. This serves a
 
 ## Prerequisites
 
--  [Python](https://www.python.org/) version 3.9 or higher
+-  [Python](https://www.python.org/) version 3.10 or higher
 -  [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) (for local development)
 
 ## Local Setup

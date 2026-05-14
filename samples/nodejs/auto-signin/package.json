@@ -6,18 +6,20 @@
   "scripts": {
     "build": "tsc -b",
     "prestart": "npm run build",
-    "start": "node --env-file .env dist/index.js"
+    "start": "node --env-file .env dist/index.js",
+    "test-tool": "agentsplayground"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@microsoft/agents-hosting-express": "^1.1.0",
+    "@microsoft/agents-hosting-express": "^1.5.1",
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "adaptivecards-templating": "^2.3.1",
     "express": "^5.1.0"
   },
   "devDependencies": {
-    "@microsoft/microsoft-graph-types": "^2.40.0"
+    "@microsoft/microsoft-graph-types": "^2.40.0",
+    "@microsoft/m365agentsplayground": "^0.2.24"
   }
 }

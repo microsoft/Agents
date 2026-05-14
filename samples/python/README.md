@@ -6,10 +6,13 @@
 |Auto Sign In|Simple OAuth agent using Graph and GitHub|[auto-signin](auto-signin/README.md)|
 |OBO Authorization|OBO flow to access a Copilot Studio Agent|[obo-authorization](obo-authorization/README.md)|
 |Semantic Kernel Integration|A weather agent built with Semantic Kernel|[semantic-kernel-multiturn](semantic-kernel-multiturn/README.md)|
-|Streaming Agent|Streams OpenAI responses|[azure-ai-streaming](azure-ai-streaming/README.md)|
+|Streaming Agent|Streams OpenAI responses|[azureai-streaming](azureai-streaming/README.md)|
 |Copilot Studio Client|Console app to consume a Copilot Studio Agent|[copilotstudio-client](copilotstudio-client/README.md)|
 |Cards Agent|Agent that uses rich cards to enhance conversation design |[cards](cards/README.md)|
 |Copilot Studio Skill|Call the echo bot from a Copilot Studio skill |[copilotstudio-skill](copilotstudio-skill/README.md)|
+|OpenTelemetry|Instrument an agent and consume telemetry via the Aspire dashboard|[opentelemetry](otel/README.md)|
+|Agent Framework|Weather agent built with Microsoft Agent Framework SDK|[agent-framework](agent-framework/README.md)|
+|Copilot SDK|Dungeon Scribe RPG agent powered by the GitHub Copilot SDK|[copilot-sdk](copilot-sdk/README.md)|
 
 ## Important Notice - Import Changes
 

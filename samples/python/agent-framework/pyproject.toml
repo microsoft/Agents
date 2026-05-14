@@ -1,0 +1,7 @@
+[project]
+name = "agent-framework"
+version = "0.1.0"
+description = "Agents SDK with Agent Framework Weather Sample"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []

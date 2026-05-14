@@ -396,4 +396,5 @@ dist/
 static/
 devTools/
 node_modules/
+*.tsbuildinfo
 

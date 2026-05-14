@@ -17,7 +17,7 @@ import { MsalCachePlugin } from './msalCachePlugin.js'
 async function acquireToken (settings: ConnectionSettings): Promise<string> {
   const msalConfig = {
     auth: {
-      clientId: settings.appClientId,
+      clientId: settings.appClientId!,
       authority: `https://login.microsoftonline.com/${settings.tenantId}`,
     },
     cache: {

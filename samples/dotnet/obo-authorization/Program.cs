@@ -8,20 +8,15 @@ using Microsoft.Agents.Core.Models;
 using Microsoft.Agents.Hosting.AspNetCore;
 using Microsoft.Agents.Storage;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpClient();
-
-// Add AgentApplicationOptions from appsettings section "AgentApplication".
-builder.AddAgentApplicationOptions();
 
 // Register IStorage.  For development, MemoryStorage is suitable.
 // For production Agents, persisted storage should be used so
@@ -69,7 +64,7 @@ builder.AddAgent(sp =>
     // UserAuthorization.ExchangeTurnTokenAsync.
     // NOTE:  This is a slightly unusual way to handle incoming Activities (but perfectly) valid.  For this sample,
     // we just want to proxy messages to/from a Copilot Studio Agent.
-    app.OnActivity((turnContext, cancellationToken) => Task.FromResult(true), async (turnContext, turnState, cancellationToken) =>
+    app.AddRoute((turnContext, cancellationToken) => Task.FromResult(true), async (turnContext, turnState, cancellationToken) =>
     {
         
         var mcsConversationId = turnState.Conversation.GetValue<string>(MCSConversationPropertyName);
@@ -100,7 +95,7 @@ builder.AddAgent(sp =>
                 }
             }
         }
-    }, autoSignInHandlers: ["mcs"]);
+    });
 
     // Called when the OAuth flow fails
     app.UserAuthorization.OnUserSignInFailure(async (turnContext, turnState, handlerName, response, initiatingActivity, cancellationToken) =>
@@ -112,11 +107,8 @@ builder.AddAgent(sp =>
 });
 
 
-// Configure the HTTP request pipeline.
-
 // Add AspNet token validation for Azure Bot Service and Entra.  Authentication is
 // configured in the appsettings.json "TokenValidation" section.
-builder.Services.AddControllers();
 builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
 
 WebApplication app = builder.Build();
@@ -125,23 +117,11 @@ WebApplication app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("/", () => "Microsoft Agents SDK Sample");
+// Map GET "/"
+app.MapAgentRootEndpoint();
 
-// This receives incoming messages from Azure Bot Service or other SDK Agents
-var incomingRoute = app.MapPost("/api/messages", async (HttpRequest request, HttpResponse response, IAgentHttpAdapter adapter, IAgent agent, CancellationToken cancellationToken) =>
-{
-    await adapter.ProcessAsync(request, response, agent, cancellationToken);
-});
-
-if (!app.Environment.IsDevelopment())
-{
-    incomingRoute.RequireAuthorization();
-}
-else
-{
-    // Hardcoded for brevity and ease of testing. 
-    // In production, this should be set in configuration.
-    app.Urls.Add($"http://localhost:3978");
-}
+// Map the endpoints for all agents using the [AgentInterface] attribute.
+// If there is a single IAgent/AgentApplication, the endpoints will be mapped to (e.g. "/api/message").
+app.MapAgentApplicationEndpoints(requireAuth: !app.Environment.IsDevelopment());
 
 app.Run();

@@ -1,19 +1,21 @@
 # CopilotStudio Client
 
+*Please note - S2S is not currently supported for Copilot Studio. It is in active development, and once there is an ETA we will update this notice.*
+
 ## Prerequisite
 
 To set up this sample, you will need the following:
 
-1. [Python](https://www.python.org/) version 3.9 or higher
+1. [Python](https://www.python.org/) version 3.10 or higher
 2. An Agent Created in Microsoft Copilot Studio or access to an existing Agent.
 3. Ability to Create an Application Identity in Azure for a Public Client/Native App Registration Or access to an existing Public Client/Native App registration with the `CopilotStudio.Copilots.Invoke` API Permission assigned. 
 
 ## Prerequisites
 
-- [Python](https://www.python.org/) version 3.9 or higher
+- [Python](https://www.python.org/) version 3.10 or higher
 - [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) (for local development)
 - An Agent created in Microsoft CopilotStudio or access to an existing Agent.
-- Ability to create an Application Identity in Azure for a public client/native App Registration or access to an existing one with the `CopilotStudio.Copilots.Invoke` API persmission assigned.
+- Ability to create an Application Identity in Azure for a public client/native App Registration or access to an existing one with the `CopilotStudio.Copilots.Invoke` API permission assigned.
 
 ## Authentication
 
@@ -26,7 +28,7 @@ The CopilotStudio Client requires a User Token to operate. For this sample, we a
 
 1. Create an Agent in [Copilot Studio](https://copilotstudio.microsoft.com)
     1. Publish your newly created Copilot
-    2. Goto Settings => Advanced => Metadata and copy the following values, You will need them later:
+    2. Go to Settings => Advanced => Metadata and copy the following values, You will need them later:
         1. Schema name
         2. Environment Id
 
@@ -52,7 +54,11 @@ This step will require permissions to create application identities in your Azur
         2. Search for `Power Platform API`.
             1. *If you do not see `Power Platform API` see the note at the bottom of this section.*
         3. In the *Delegated permissions* list, choose `CopilotStudio` and Check `CopilotStudio.Copilots.Invoke`
-        4. Click `Add Permissions`
+        4. Click `Add permissions`
+    3. Click Add Permission again
+        1. Click on `Microsoft Graph`.
+        2. In the *Delegated permissions* list, choose 'User' and Check `User.Read`
+        3. Click `Add permissions` 
     4. (Optional) Click `Grant Admin consent for copilotsdk`
 
 > [!TIP]
@@ -60,7 +66,7 @@ This step will require permissions to create application identities in your Azur
 
 ## Instructions - Configure the Example Application
 
-With the above information, you can now run the client `CopilostStudioClient` sample.
+With the above information, you can now run the client `CopilotStudioClient` sample.
 
 1. Open the `env.TEMPLATE` file and rename it to `.env`.
 2. Configure the values based on what was recorded during the setup phase.
@@ -72,7 +78,10 @@ With the above information, you can now run the client `CopilostStudioClient` sa
   COPILOTSTUDIOAGENT__AGENTAPPID="" # App ID of the App Registration used to login, this should be in the same tenant as the CopilotStudio environment.
 ```
 
-3. After installing the dependencies with `pip install -r requirements.txt`, run the CopilotStudioClient sample using
+3. (Optional but recommended) Set up virtual environment and activate it.
+
+
+4. After installing the dependencies with `pip install -r requirements.txt`, run the CopilotStudioClient sample using
 
 ```sh
 python -m src.main

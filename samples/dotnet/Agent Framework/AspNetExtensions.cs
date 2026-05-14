@@ -4,53 +4,66 @@
 using Microsoft.Agents.Authentication;
 using Microsoft.Agents.Core;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Validators;
+using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
-
-namespace AgentFrameworkWeather;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 public static class AspNetExtensions
 {
     private static readonly ConcurrentDictionary<string, ConfigurationManager<OpenIdConnectConfiguration>> _openIdMetadataCache = new();
 
     /// <summary>
-    /// Adds token validation typical for ABS/SMBA and Bot-to-bot.
-    /// default to Azure Public Cloud.
+    /// Adds JWT bearer token validation for Azure Bot Service and agent-to-agent requests, reading settings from configuration.
     /// </summary>
-    /// <param name="services"></param>
-    /// <param name="configuration"></param>
-    /// <param name="tokenValidationSectionName">Name of the config section to read.</param>
-    /// <param name="logger">Optional logger to use for authentication event logging.</param>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add authentication services to.</param>
+    /// <param name="configuration">The application configuration containing a <see cref="TokenValidationOptions"/> section.</param>
+    /// <param name="tokenValidationSectionName">
+    /// Name of the configuration section to read <see cref="TokenValidationOptions"/> from.  Defaults to <c>"TokenValidation"</c>.
+    /// </param>
     /// <remarks>
-    /// Configuration:
+    /// <para>
+    /// If the configuration section is absent or contains <c>"Enabled": false</c>, authentication is not configured and
+    /// all requests will be treated as unauthenticated.  This is useful for local development only.
+    /// </para>
+    /// <para>
+    /// Minimum configuration for Azure Public cloud:
     /// <code>
-    ///   "TokenValidation": {
-    ///     "Audiences": [
-    ///       "{required:bot-appid}"
-    ///     ],
-    ///     "TenantId": "{recommended:tenant-id}",
-    ///     "ValidIssuers": [
-    ///       "{default:Public-AzureBotService}"
-    ///     ],
-    ///     "IsGov": {optional:false},
-    ///     "AzureBotServiceOpenIdMetadataUrl": optional,
-    ///     "OpenIdMetadataUrl": optional,
-    ///     "AzureBotServiceTokenHandling": "{optional:true}"
-    ///     "OpenIdMetadataRefresh": "optional-12:00:00"
-    ///   }
+    /// "TokenValidation": {
+    ///   "Audiences": [ "{{ClientId}}" ],
+    ///   "TenantId": "{{TenantId}}"
+    /// }
     /// </code>
-    /// 
-    /// `IsGov` can be omitted, in which case public Azure Bot Service and Azure Cloud metadata urls are used.
-    /// `ValidIssuers` can be omitted, in which case the Public Azure Bot Service issuers are used.
-    /// `TenantId` can be omitted if the Agent is not being called by another Agent.  Otherwise it is used to add other known issuers.  Only when `ValidIssuers` is omitted.
-    /// `AzureBotServiceOpenIdMetadataUrl` can be omitted.  In which case default values in combination with `IsGov` is used.
-    /// `OpenIdMetadataUrl` can be omitted.  In which case default values in combination with `IsGov` is used.
-    /// `AzureBotServiceTokenHandling` defaults to true and should always be true until Azure Bot Service sends Entra ID token.
+    /// </para>
+    /// <para>
+    /// Minimum configuration for Azure Government cloud — add <c>"IsGov": true</c>:
+    /// <code>
+    /// "TokenValidation": {
+    ///   "Audiences": [ "{{ClientId}}" ],
+    ///   "TenantId": "{{TenantId}}",
+    ///   "IsGov": true
+    /// }
+    /// </code>
+    /// Setting <c>IsGov</c> automatically selects the correct government-cloud issuer URLs and OpenID metadata
+    /// endpoints.  See <see cref="TokenValidationOptions.IsGov"/> for the full list of defaults that are applied.
+    /// </para>
+    /// <para>
+    /// For China or other sovereign clouds, omit <c>IsGov</c> and set
+    /// <see cref="TokenValidationOptions.AzureBotServiceOpenIdMetadataUrl"/>,
+    /// <see cref="TokenValidationOptions.OpenIdMetadataUrl"/>, and
+    /// <see cref="TokenValidationOptions.ValidIssuers"/> explicitly.
+    /// See <see cref="TokenValidationOptions"/> for the full set of available settings.
+    /// </para>
     /// </remarks>
     public static void AddAgentAspNetAuthentication(this IServiceCollection services, IConfiguration configuration, string tokenValidationSectionName = "TokenValidation")
     {
@@ -67,11 +80,14 @@ public static class AspNetExtensions
     }
 
     /// <summary>
-    /// Adds AspNet token validation typical for ABS/SMBA and agent-to-agent.
+    /// Adds JWT bearer token validation for Azure Bot Service and agent-to-agent requests using the supplied options.
     /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add authentication services to.</param>
+    /// <param name="validationOptions">The fully populated <see cref="TokenValidationOptions"/> to use.</param>
     public static void AddAgentAspNetAuthentication(this IServiceCollection services, TokenValidationOptions validationOptions)
     {
         AssertionHelpers.ThrowIfNull(validationOptions, nameof(validationOptions));
+        services.AddControllers();
 
         // Must have at least one Audience.
         if (validationOptions.Audiences == null || validationOptions.Audiences.Count == 0)
@@ -91,21 +107,39 @@ public static class AspNetExtensions
         // If ValidIssuers is empty, default for ABS Public Cloud
         if (validationOptions.ValidIssuers == null || validationOptions.ValidIssuers.Count == 0)
         {
-            validationOptions.ValidIssuers =
-            [
-                "https://api.botframework.com",
-                "https://sts.windows.net/d6d49420-f39b-4df7-a1dc-d59a935871db/",
-                "https://login.microsoftonline.com/d6d49420-f39b-4df7-a1dc-d59a935871db/v2.0",
-                "https://sts.windows.net/f8cdef31-a31e-4b4a-93e4-5f571e91255a/",
-                "https://login.microsoftonline.com/f8cdef31-a31e-4b4a-93e4-5f571e91255a/v2.0",
-                "https://sts.windows.net/69e9b82d-4842-4902-8d1e-abc5b98a55e8/",
-                "https://login.microsoftonline.com/69e9b82d-4842-4902-8d1e-abc5b98a55e8/v2.0",
-            ];
-
-            if (!string.IsNullOrEmpty(validationOptions.TenantId) && Guid.TryParse(validationOptions.TenantId, out _))
+            if (validationOptions.IsGov)
             {
-                validationOptions.ValidIssuers.Add(string.Format(CultureInfo.InvariantCulture, AuthenticationConstants.ValidTokenIssuerUrlTemplateV1, validationOptions.TenantId));
-                validationOptions.ValidIssuers.Add(string.Format(CultureInfo.InvariantCulture, AuthenticationConstants.ValidTokenIssuerUrlTemplateV2, validationOptions.TenantId));
+                validationOptions.ValidIssuers =
+                [
+                    AuthenticationConstants.GovBotFrameworkTokenIssuer,
+                    "https://sts.windows.net/cab8a31a-1906-4287-a0d8-4eef66b95f6e/",
+                    "https://login.microsoftonline.us/cab8a31a-1906-4287-a0d8-4eef66b95f6e/v2.0"
+                ];
+
+                if (!string.IsNullOrEmpty(validationOptions.TenantId) && Guid.TryParse(validationOptions.TenantId, out _))
+                {
+                    validationOptions.ValidIssuers.Add(string.Format(CultureInfo.InvariantCulture, AuthenticationConstants.ValidTokenIssuerUrlTemplateV1, validationOptions.TenantId));
+                    validationOptions.ValidIssuers.Add(string.Format(CultureInfo.InvariantCulture, AuthenticationConstants.ValidGovernmentTokenIssuerUrlTemplateV2, validationOptions.TenantId));
+                }
+            }
+            else
+            {
+                validationOptions.ValidIssuers =
+                [
+                    AuthenticationConstants.BotFrameworkTokenIssuer,
+                    "https://sts.windows.net/d6d49420-f39b-4df7-a1dc-d59a935871db/",
+                    "https://login.microsoftonline.com/d6d49420-f39b-4df7-a1dc-d59a935871db/v2.0",
+                    "https://sts.windows.net/f8cdef31-a31e-4b4a-93e4-5f571e91255a/",
+                    "https://login.microsoftonline.com/f8cdef31-a31e-4b4a-93e4-5f571e91255a/v2.0",
+                    "https://sts.windows.net/69e9b82d-4842-4902-8d1e-abc5b98a55e8/",
+                    "https://login.microsoftonline.com/69e9b82d-4842-4902-8d1e-abc5b98a55e8/v2.0",
+                ];
+
+                if (!string.IsNullOrEmpty(validationOptions.TenantId) && Guid.TryParse(validationOptions.TenantId, out _))
+                {
+                    validationOptions.ValidIssuers.Add(string.Format(CultureInfo.InvariantCulture, AuthenticationConstants.ValidTokenIssuerUrlTemplateV1, validationOptions.TenantId));
+                    validationOptions.ValidIssuers.Add(string.Format(CultureInfo.InvariantCulture, AuthenticationConstants.ValidTokenIssuerUrlTemplateV2, validationOptions.TenantId));
+                }
             }
         }
 
@@ -173,7 +207,10 @@ public static class AspNetExtensions
                     JwtSecurityToken token = new(parts[1]);
                     string issuer = token.Claims.FirstOrDefault(claim => claim.Type == AuthenticationConstants.IssuerClaim)?.Value!;
 
-                    if (validationOptions.AzureBotServiceTokenHandling && AuthenticationConstants.BotFrameworkTokenIssuer.Equals(issuer))
+                    if (validationOptions.AzureBotServiceTokenHandling 
+                        && (AuthenticationConstants.BotFrameworkTokenIssuer.Equals(issuer, StringComparison.OrdinalIgnoreCase) 
+                        || AuthenticationConstants.GovBotFrameworkTokenIssuer.Equals(issuer, StringComparison.OrdinalIgnoreCase)
+                        || AuthenticationConstants.ChinaBotFrameworkTokenIssuer.Equals(issuer, StringComparison.OrdinalIgnoreCase)))
                     {
                         // Use the Azure Bot authority for this configuration manager
                         context.Options.TokenValidationParameters.ConfigurationManager = _openIdMetadataCache.GetOrAdd(validationOptions.AzureBotServiceOpenIdMetadataUrl, key =>
@@ -214,46 +251,91 @@ public static class AspNetExtensions
         });
     }
 
+    /// <summary>
+    /// Settings that control JWT bearer token validation for Azure Bot Service and agent-to-agent requests.
+    /// Read from the <c>TokenValidation</c> configuration section by <see cref="AddAgentAspNetAuthentication(IServiceCollection, IConfiguration, string)"/>.
+    /// </summary>
+    /// <remarks>
+    /// An <c>Enabled</c> key may also appear in the same configuration section.  When set to <c>false</c>,
+    /// authentication is disabled entirely and this class is not read.  This key is not a property of
+    /// <see cref="TokenValidationOptions"/> because it is evaluated before deserialization.
+    /// </remarks>
     public class TokenValidationOptions
     {
+        /// <summary>
+        /// One or more Client IDs of the Azure Bot registration.  At least one value is required.
+        /// </summary>
         public IList<string>? Audiences { get; set; }
 
         /// <summary>
-        /// TenantId of the Azure Bot.  Optional but recommended. 
+        /// Tenant ID of the Azure Bot.  Optional but recommended.
+        /// When provided, tenant-specific issuer URLs are added to <see cref="ValidIssuers"/> automatically.
         /// </summary>
         public string? TenantId { get; set; }
 
         /// <summary>
-        /// Additional valid issuers.  Optional, in which case the Public Azure Bot Service issuers are used.
+        /// Override the list of trusted token issuers.  Optional.
+        /// When omitted, default issuers are derived from <see cref="IsGov"/> and <see cref="TenantId"/>.
+        /// For Public cloud the defaults include the Azure Bot Service issuer and common Microsoft tenant issuers.
+        /// For Gov cloud the defaults include <see cref="AuthenticationConstants.GovBotFrameworkTokenIssuer"/> plus
+        /// tenant-specific issuer URLs built from <see cref="AuthenticationConstants.ValidTokenIssuerUrlTemplateV1"/>
+        /// and <see cref="AuthenticationConstants.ValidGovernmentTokenIssuerUrlTemplateV2"/>.
+        /// For China or other clouds all issuers must be set explicitly since there is no corresponding <c>IsChina</c> flag.
         /// </summary>
         public IList<string>? ValidIssuers { get; set; }
 
         /// <summary>
-        /// Can be omitted, in which case public Azure Bot Service and Azure Cloud metadata urls are used.
+        /// Set to <c>true</c> for Azure Government (USGov) cloud deployments.  Defaults to <c>false</c> (Public cloud).
+        /// When <c>true</c>, the following defaults are applied to any property that is not set explicitly:
+        /// <list type="bullet">
+        /// <item><description>
+        /// <see cref="AzureBotServiceOpenIdMetadataUrl"/> →
+        /// <see cref="AuthenticationConstants.GovAzureBotServiceOpenIdMetadataUrl"/>
+        /// (<c>https://login.botframework.azure.us/v1/.well-known/openidconfiguration</c>)
+        /// </description></item>
+        /// <item><description>
+        /// <see cref="OpenIdMetadataUrl"/> →
+        /// <see cref="AuthenticationConstants.GovOpenIdMetadataUrl"/>
+        /// (<c>https://login.microsoftonline.us/cab8a31a-1906-4287-a0d8-4eef66b95f6e/v2.0/.well-known/openid-configuration</c>)
+        /// </description></item>
+        /// <item><description>
+        /// <see cref="ValidIssuers"/> →
+        /// <see cref="AuthenticationConstants.GovBotFrameworkTokenIssuer"/> (<c>https://api.botframework.us</c>),
+        /// plus tenant-specific v1 and v2 issuer URLs when <see cref="TenantId"/> is provided.
+        /// </description></item>
+        /// </list>
+        /// For China or other sovereign clouds, leave this <c>false</c> and set all URLs and issuers explicitly.
         /// </summary>
         public bool IsGov { get; set; } = false;
 
         /// <summary>
-        /// Azure Bot Service OpenIdMetadataUrl.  Optional, in which case default value depends on IsGov.
+        /// OpenID Connect metadata URL used to validate tokens issued by Azure Bot Service.  Optional.
+        /// When omitted, defaults to <see cref="AuthenticationConstants.PublicAzureBotServiceOpenIdMetadataUrl"/> when
+        /// <see cref="IsGov"/> is <c>false</c>, or <see cref="AuthenticationConstants.GovAzureBotServiceOpenIdMetadataUrl"/>
+        /// when <see cref="IsGov"/> is <c>true</c>.
+        /// Set explicitly for China or other sovereign clouds.
         /// </summary>
-        /// <see cref="AuthenticationConstants.PublicAzureBotServiceOpenIdMetadataUrl"/>
-        /// <see cref="AuthenticationConstants.GovAzureBotServiceOpenIdMetadataUrl"/>
         public string? AzureBotServiceOpenIdMetadataUrl { get; set; }
 
         /// <summary>
-        /// Entra OpenIdMetadataUrl.  Optional, in which case default value depends on IsGov.
+        /// OpenID Connect metadata URL used to validate Entra ID (AAD) tokens.  Optional.
+        /// When omitted, defaults to <see cref="AuthenticationConstants.PublicOpenIdMetadataUrl"/> when
+        /// <see cref="IsGov"/> is <c>false</c>, or <see cref="AuthenticationConstants.GovOpenIdMetadataUrl"/>
+        /// when <see cref="IsGov"/> is <c>true</c>.
+        /// Set explicitly for China or other sovereign clouds.
         /// </summary>
-        /// <see cref="AuthenticationConstants.PublicOpenIdMetadataUrl"/>
-        /// <see cref="AuthenticationConstants.GovOpenIdMetadataUrl"/>
         public string? OpenIdMetadataUrl { get; set; }
 
         /// <summary>
-        /// Determines if Azure Bot Service tokens are handled.  Defaults to true and should always be true until Azure Bot Service sends Entra ID token.
+        /// Enables special handling for tokens issued directly by Azure Bot Service (as opposed to Entra ID tokens).
+        /// Defaults to <c>true</c> and should remain <c>true</c> until Azure Bot Service sends Entra ID tokens exclusively.
+        /// When <c>true</c>, the <see cref="AzureBotServiceOpenIdMetadataUrl"/> endpoint is used for ABS token validation
+        /// and <see cref="OpenIdMetadataUrl"/> is used for all other tokens.
         /// </summary>
         public bool AzureBotServiceTokenHandling { get; set; } = true;
 
         /// <summary>
-        /// OpenIdMetadata refresh interval.  Defaults to 12 hours.
+        /// How frequently the OpenID Connect metadata is refreshed from the identity provider.  Defaults to 12 hours.
         /// </summary>
         public TimeSpan? OpenIdMetadataRefresh { get; set; }
     }

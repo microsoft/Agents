@@ -7,15 +7,13 @@ import { AgentApplication, MemoryStorage, MessageFactory, TurnContext, TurnState
 class OboApp extends AgentApplication<TurnState> {
   constructor () {
     super({
-      storage: new MemoryStorage(),
-      authorization: {
-        graph: { text: 'Sign in with Microsoft Graph', title: 'Graph Sign In' }
-      }
+      storage: new MemoryStorage()
     })
     this.onConversationUpdate('membersAdded', this._status)
     this.authorization.onSignInSuccess(this._singinSuccess)
     this.onMessage('/status', this._status)
     this.onMessage('/logout', this._logout)
+    // the `graph` handler is configured in the .env file, under AgentApplication__UserAuthorization__Handlers__graph__*
     this.onActivity('message', this._message, ['graph'])
   }
 

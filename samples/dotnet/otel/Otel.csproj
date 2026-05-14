@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="wwwroot\**" />
+		<Content Remove="wwwroot\**" />
+		<EmbeddedResource Remove="wwwroot\**" />
+		<None Remove="wwwroot\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Properties\launchSettings.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.5.*" />
+		<PackageReference Include="Microsoft.Agents.Builder" Version="1.5.*" />
+		<PackageReference Include="Microsoft.Agents.Core" Version="1.5.*" />
+		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.5.*" />
+		<PackageReference Include="Microsoft.Agents.Storage" Version="1.5.*" />
+
+		<!-- OpenTelemetry packages - versions managed centrally -->
+		<PackageReference Include="OpenTelemetry" Version="1.15.3" />
+		<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.15.1" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.1" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.15.1" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.1" />
+		<!-- OpenTelemetry Exporters -->
+		<PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.15.1" />
+		<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.3" />
+		<!-- Azure Monitor (Application Insights) Exporter -->
+		<PackageReference Include="Azure.Monitor.OpenTelemetry.Exporter" Version="1.7.0"/>
+
+	</ItemGroup>
+
+</Project>

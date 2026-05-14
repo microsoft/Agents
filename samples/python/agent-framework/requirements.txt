@@ -1,0 +1,9 @@
+python-dotenv
+aiohttp
+pydantic
+agent-framework-core
+agent-framework-openai
+microsoft-agents-activity
+microsoft-agents-hosting-core
+microsoft-agents-hosting-aiohttp
+microsoft-agents-authentication-msal
