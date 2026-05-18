@@ -6,26 +6,41 @@ on:
     branches:
       - main
 
+env:
+  NODE_MINVERSION: '20'
+
 jobs:
-  build:
+  build-dotnet:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js 22
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install Node dependencies
-        run: npm ci
-
       - name: Build dotnet Samples
         working-directory: ./samples/dotnet
         run: |
           dotnet build
+
+  build-node:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        # NOTE: keep first entry in sync with env.NODE_MINVERSION
+        node-version: [20, 'latest']
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Node dependencies
+        run: npm ci
 
       - name: Run lint
         run: npm run lint
@@ -42,25 +57,25 @@ jobs:
           npm ci
           npm run build
 
-      - name: build Node QuickStart
+      - name: Build Node QuickStart
         working-directory: ./samples/nodejs/quickstart
         run: |
           npm ci
           npm run build
 
-      - name: Build  Node Cards Agent
+      - name: Build Node Cards Agent
         working-directory: ./samples/nodejs/cards/
         run: |
           npm ci
           npm run build
 
-      - name: Build  iamge Node Skill Agent
+      - name: Build Node Skill Agent
         working-directory: ./samples/nodejs/copilotstudio-skill/
         run: |
           npm ci
           npm run build
 
-      - name: Build Node langChain Agent
+      - name: Build Node LangChain Agent
         working-directory: ./samples/nodejs/langchain-multiturn/
         run: |
           npm ci
@@ -72,7 +87,7 @@ jobs:
           npm ci
           npm run build
 
-      - name: Build Node auto signin Agent
+      - name: Build Node Auto Signin Agent
         working-directory: ./samples/nodejs/auto-signin/
         run: |
           npm ci
@@ -80,6 +95,18 @@ jobs:
 
       - name: Build Node OBO Agent
         working-directory: ./samples/nodejs/obo-authorization/
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build Node Copilot SDK sample
+        working-directory: ./samples/nodejs/copilot-sdk/
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build Node Multi-Turn Prompt Agent
+        working-directory: ./samples/nodejs/multi-turn-prompt/
         run: |
           npm ci
           npm run build
