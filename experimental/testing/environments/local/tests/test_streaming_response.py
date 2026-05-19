@@ -6,13 +6,9 @@ from microsoft_agents.activity import (
     Channels,
     Entity
 )
-from microsoft_agents.testing import AgentClient, ExternalScenario
+from microsoft_agents.testing import AgentClient
 
-from ._utils import (
-    PYTHON_SCENARIO,
-    DOTNET_SCENARIO,
-    NODEJS_SCENARIO,
-)
+from ._agent_client_mixin import AgentClientMixin
 
 FULL_TEXT = "This is a streaming response."
 CHUNKS = FULL_TEXT.split()
@@ -25,7 +21,7 @@ def get_streaminfo(activity: Activity) -> Entity:
             return entity
     raise ValueError("No streaminfo entity found")
 
-class BaseTestStreamingResponse:
+class BaseTestStreamingResponse(AgentClientMixin):
     
     @pytest.mark.asyncio
     async def test_basic_streaming_response_streaming_channel(self, agent_client: AgentClient):
@@ -69,18 +65,6 @@ class BaseTestStreamingResponse:
         # assert final_streaminfo.stream_sequence == len(stream_activities) -> true only for Python
         assert final_streaminfo.stream_type == "final"
         assert stream_activities[-1].text == FULL_TEXT.replace(" ", "")
-
-@pytest.mark.agent_test(PYTHON_SCENARIO)
-class TestStreamingResponsePython(BaseTestStreamingResponse):
-    pass
-
-@pytest.mark.agent_test(DOTNET_SCENARIO)
-class TestStreamingResponseDotNet(BaseTestStreamingResponse):
-    pass
-
-@pytest.mark.agent_test(NODEJS_SCENARIO)
-class TestStreamingResponseNodeJS(BaseTestStreamingResponse):
-    pass
 
 # EXTERNAL_SCENARIO = ExternalScenario("http://localhost:3978/api/messages")
 

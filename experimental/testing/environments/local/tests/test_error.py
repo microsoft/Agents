@@ -1,15 +1,10 @@
 import pytest
 
-from microsoft_agents.activity import Activity
 from microsoft_agents.testing import AgentClient
 
-from ._utils import (
-    PYTHON_SCENARIO,
-    DOTNET_SCENARIO,
-    NODEJS_SCENARIO,
-)
+from ._agent_client_mixin import AgentClientMixin
 
-class BaseTestError:
+class BaseTestError(AgentClientMixin):
 
     @pytest.mark.asyncio
     async def test_error(self, agent_client: AgentClient):
@@ -21,15 +16,3 @@ class BaseTestError:
             type="message",
             text="The bot encountered an error or bug."
         )
-
-@pytest.mark.agent_test(PYTHON_SCENARIO)
-class TestErrorPython(BaseTestError):
-    pass
-
-@pytest.mark.agent_test(DOTNET_SCENARIO)
-class TestErrorDotNet(BaseTestError):
-    pass
-
-@pytest.mark.agent_test(NODEJS_SCENARIO)
-class TestErrorNodeJS(BaseTestError):
-    pass
