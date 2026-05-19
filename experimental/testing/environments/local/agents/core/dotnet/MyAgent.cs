@@ -22,6 +22,7 @@ public class MyAgent : AgentApplication
     {
         OnMessage("/stream", SendStream);
         OnMessage("/error", TriggerErrorAsync);
+        OnConversationUpdate(ConversationUpdateEvents.MembersAdded, OnConversationUpdate);
         OnActivity(ActivityTypes.Message, EchoMessage, rank: RouteRank.Last);
         OnTurnError(HandleTurnError);
     }
@@ -41,6 +42,11 @@ public class MyAgent : AgentApplication
             }
         }
         await turnContext.StreamingResponse.EndStreamAsync();
+    }
+
+    private async Task OnConversationUpdate(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
+    {
+        await turnContext.SendActivityAsync("Welcome", cancellationToken: cancellationToken);
     }
 
     private async Task TriggerErrorAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)

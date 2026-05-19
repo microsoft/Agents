@@ -13,6 +13,7 @@ class BaseTestExpectReplies(AgentClientMixin):
 
         activity = Activity.model_validate(dict(
             type="message",
+            id="test-activity-id",
             text="hi",
             conversation={"id": "conv-id"},
             channel_id="test",

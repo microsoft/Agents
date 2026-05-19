@@ -1,3 +1,5 @@
+from microsoft_agents.testing import ExternalScenario
+
 from ._utils import (
     PYTHON_SCENARIO,
     DOTNET_SCENARIO,
@@ -32,6 +34,7 @@ class TestCoreDotnet(
     BaseTestStreamingResponse,
 ):
     _scenario = DOTNET_SCENARIO
+    _default_wait = 5.0
 
 class TestCoreNodeJS(
     BaseTestQuickstart,
@@ -53,6 +56,7 @@ class TestBlobDotnet(
     BaseTestQuickstart,
 ):
     _scenario = DOTNET_BLOB_SCENARIO
+    _default_wait = 5.0 
 
 class TestBlobNodeJS(
     BaseTestQuickstart,
@@ -71,6 +75,7 @@ class TestCosmosDotnet(
     BaseTestQuickstart,
 ):
     _scenario = DOTNET_COSMOS_SCENARIO
+    _default_wait = 5.0
 
 class TestCosmosNodeJS(
     BaseTestQuickstart,

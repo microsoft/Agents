@@ -16,13 +16,14 @@ BLOB_STORAGE = "blob_storage"
 COSMOS_DB = "cosmos_db"
 
 def _create_core_scenario(sdk_version: SDKVersion) -> Scenario:
-    return create_scenario(AGENTS_DIR, CORE_AGENT_NAME, sdk_version)
+    return create_scenario(AGENTS_DIR, CORE_AGENT_NAME, sdk_version, delay=5.0)
 
 def _create_quickstart_scenario_with_storage(sdk_version: SDKVersion, storage_type: str) -> Scenario:
     return create_scenario(
         AGENTS_DIR,
         f"{QUICKSTART_AGENT_BASE_NAME}_{storage_type}",
         sdk_version,
+        delay=5.0,
     )
 
 PYTHON_SCENARIO = _create_core_scenario(SDKVersion.PYTHON)
