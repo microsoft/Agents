@@ -47,19 +47,43 @@ async def on_members_added(context: TurnContext, _state: TurnState):
     )
     return True
 
+@AGENT_APP.message("/stream")
+async def on_stream(context: TurnContext, _state: TurnState):
 
-@AGENT_APP.message(re.compile(r"^hello$"))
-async def on_hello(context: TurnContext, _state: TurnState):
-    await context.send_activity("Hello!")
+    FULL_TEXT = "This is a streaming response."
+    CHUNKS = FULL_TEXT.split()
 
+    assert context.streaming_response is not None
+
+    context.streaming_response.queue_informative_update("Starting stream...")
+    await asyncio.sleep(1.0)  # Simulate delay before starting stream
+
+    for chunk in CHUNKS[:-1]:
+        context.streaming_response.queue_text_chunk(chunk)
+        await asyncio.sleep(1.0)  # Simulate delay between chunks
+
+    context.streaming_response.queue_text_chunk(CHUNKS[-1])
+    await context.streaming_response.end_stream()
+
+@AGENT_APP.message("/language")
+async def on_language_command(context: TurnContext, _state: TurnState):
+    await context.send_activity("PYTHON")
+
+@AGENT_APP.message("/error")
+async def on_error_command(context: TurnContext, _state: TurnState):
+    raise Exception("This is a test error triggered by the /error command.")
 
 @AGENT_APP.activity("message")
 async def on_message(context: TurnContext, _state: TurnState):
-    await context.send_activity(f"you said: {context.activity.text}")
-
+    await context.send_activity(f"You said: {context.activity.text}")
 
 @AGENT_APP.error
 async def on_error(context: TurnContext, error: Exception):
+    # This check writes out errors to console log .vs. app insights.
+    # NOTE: In production environment, you should consider logging this to Azure
+    #       application insights.
     print(f"\n [on_turn_error] unhandled error: {error}", file=sys.stderr)
     traceback.print_exc()
+
+    # Send a message to the user
     await context.send_activity("The bot encountered an error or bug.")

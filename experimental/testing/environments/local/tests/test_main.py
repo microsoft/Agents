@@ -36,11 +36,11 @@ class TestCorePython(
         agent_client.expect().that_for_one(type="message", text="PYTHON")
 
 class TestCoreDotnet(
-    # BaseTestQuickstart,
-    # BaseTestError,
-    # BaseTestExpectReplies,
-    # BaseTestStreamingResponse,
-    AgentClientMixin
+    BaseTestQuickstart,
+    BaseTestError,
+    BaseTestExpectReplies,
+    BaseTestStreamingResponse,
+    # AgentClientMixin
 ):
     _scenario = DOTNET_SCENARIO
 
@@ -50,11 +50,11 @@ class TestCoreDotnet(
         agent_client.expect().that_for_one(type="message", text="DOTNET")
 
 class TestCoreNodeJS(
-    # BaseTestQuickstart,
-    # BaseTestError,
-    # BaseTestExpectReplies,
-    # BaseTestStreamingResponse,
-    AgentClientMixin
+    BaseTestQuickstart,
+    BaseTestError,
+    BaseTestExpectReplies,
+    BaseTestStreamingResponse,
+    # AgentClientMixin
 ):
     _scenario = NODEJS_SCENARIO
 

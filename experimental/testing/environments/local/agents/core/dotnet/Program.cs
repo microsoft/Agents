@@ -11,7 +11,7 @@ using Microsoft.Extensions.Hosting;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.ConfigureOtelProviders();
+// builder.ConfigureOtelProviders();
 
 builder.Services.AddHttpClient();
 
