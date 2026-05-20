@@ -17,13 +17,20 @@
     Reads a365.config.json and a365.generated.config.json from the working directory.
 
     Run from environments/agentic/:
-        .\scripts\setup_a365.ps1
+        .\scripts\setup_a365.ps1 -AgentName my-agent-name
+
+    If -AgentName is omitted, the script prompts for it.
 #>
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory = $true)]
+    [ValidateNotNullOrEmpty()]
+    [string]$AgentName
+)
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $EnvDir              = (Resolve-Path "$PSScriptRoot/..").Path
-$AgentName           = 'rb-agents-e2e-agentic-agent'
 $ConfigPath          = Join-Path $EnvDir 'a365.config.json'
 $GeneratedConfigPath = Join-Path $EnvDir 'a365.generated.config.json'
 $DotEnvFile          = Join-Path $EnvDir '.env'
@@ -67,17 +74,21 @@ try {
     a365 create-instance --verbose --agent-name $AgentName
     if ($LASTEXITCODE -ne 0) { throw "a365 create-instance failed." }
 
-    # ── 5. Copy blueprint identity values from generated config into .env ────
+    # ── 5. Copy agent identity values from config files into .env ────────────
     # downstream agent config (env.TEMPLATE, appsettings.json) references these
-    # as ${{ AGENT_BLUEPRINT_ID }} and ${{ AGENT_BLUEPRINT_SECRET }}.
-    Write-Host "Writing AGENT_BLUEPRINT_ID / AGENT_BLUEPRINT_SECRET to $DotEnvFile..."
+    # as ${{ AGENT_BLUEPRINT_ID }}, ${{ AGENT_BLUEPRINT_SECRET }}, etc.
+    Write-Host "Writing agent identity values to $DotEnvFile..."
     $Generated = Get-Content $GeneratedConfigPath -Raw | ConvertFrom-Json
-    $BlueprintValues = @{
+    $Config    = Get-Content $ConfigPath          -Raw | ConvertFrom-Json
+    $AgentValues = [ordered]@{
         AGENT_BLUEPRINT_ID     = $Generated.agentBlueprintObjectId
         AGENT_BLUEPRINT_SECRET = $Generated.agentBlueprintClientSecret
+        AGENT_INSTANCE_ID      = $Generated.AgenticAppId
+        AGENT_USER_ID          = $Generated.AgenticUserId
+        AGENT_UPN              = $Config.agentUserPrincipalName
     }
-    foreach ($kv in $BlueprintValues.GetEnumerator()) {
-        if (-not $kv.Value) { throw "$($kv.Key) is missing from $GeneratedConfigPath." }
+    foreach ($kv in $AgentValues.GetEnumerator()) {
+        if (-not $kv.Value) { throw "$($kv.Key) is missing from config files." }
     }
 
     $existing = [ordered]@{}
@@ -89,7 +100,7 @@ try {
             }
         }
     }
-    foreach ($kv in $BlueprintValues.GetEnumerator()) { $existing[$kv.Key] = $kv.Value }
+    foreach ($kv in $AgentValues.GetEnumerator()) { $existing[$kv.Key] = $kv.Value }
     $existing.GetEnumerator() | Sort-Object Key | ForEach-Object { "$($_.Key)=$($_.Value)" } |
         Out-File $DotEnvFile -Encoding utf8
 
