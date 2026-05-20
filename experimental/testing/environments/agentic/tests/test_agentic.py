@@ -12,11 +12,13 @@ from dotenv import dotenv_values
 
 ENVIRONMENT = dotenv_values(".env")
 
+from ._agent_client_mixin import AgentClientMixin
 from ._utils import (
-    PYTHON_SCENARIO
+    PYTHON_SCENARIO,
+    DOTNET_SCENARIO,
 )
 
-class BaseTestAgentic:
+class BaseTestAgentic(AgentClientMixin):
 
     # @pytest.mark.asyncio
     # async def test_echo(self, agent_client: AgentClient):
@@ -53,12 +55,14 @@ class BaseTestAgentic:
         assert len(agent_client.history()) == 2
         agent_client.expect().that_for_one(type="message", text="~Acquired agentic user token with length:")
 
-# @pytest.mark.agent_test(PYTHON_SCENARIO)
 # class TestAgenticPython(BaseTestAgentic):
+#     _scenario = PYTHON_SCENARIO
+
+# @pytest.mark.agent_test(DOTNET_SCENARIO)
+# class TestAgenticDotNet(BaseTestAgentic):
 #     pass
 
 EXTERNAL_SCENARIO = ExternalScenario("http://localhost:3978/api/messages")
 
-@pytest.mark.agent_test(EXTERNAL_SCENARIO)
 class TestStreamingResponseExternalScenario(BaseTestAgentic):
-    pass
+    _scenario = EXTERNAL_SCENARIO

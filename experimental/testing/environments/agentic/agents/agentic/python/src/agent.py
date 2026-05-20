@@ -47,19 +47,19 @@ async def on_message(context: TurnContext, _state: TurnState):
     decoded = jwt.decode(aau_token.token, options={"verify_signature": False})
     decoded["length"] = len(aau_token.token)
 
-    # relative_path = os.path.abspath(os.path.dirname(__file__))
-    # template_path = os.path.join(relative_path, "JWTDecodeCard.json")
+    relative_path = os.path.abspath(os.path.dirname(__file__))
+    template_path = os.path.join(relative_path, "JWTDecodeCard.json")
 
-    # card = load_adaptive_card(template_path)
-    # populated_card = update_card_data(card, decoded)
+    card = load_adaptive_card(template_path)
+    populated_card = update_card_data(card, decoded)
 
-    # attachment = MessageFactory.attachment(
-    #     Attachment(
-    #         content_type="application/vnd.microsoft.card.adaptive",
-    #         content=populated_card,
-    #     )
-    # )
-    # await context.send_activity(attachment)
+    attachment = MessageFactory.attachment(
+        Attachment(
+            content_type="application/vnd.microsoft.card.adaptive",
+            content=populated_card,
+        )
+    )
+    await context.send_activity(attachment)
 
     await context.send_activity(
         f"Acquired agentic user token with length: {len(aau_token.token)}"

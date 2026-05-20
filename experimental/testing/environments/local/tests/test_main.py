@@ -1,5 +1,7 @@
-from microsoft_agents.testing import ExternalScenario
+from microsoft_agents.testing import AgentClient
+import pytest
 
+from ._agent_client_mixin import AgentClientMixin
 from ._utils import (
     PYTHON_SCENARIO,
     DOTNET_SCENARIO,
@@ -24,26 +26,42 @@ class TestCorePython(
     BaseTestError,
     BaseTestExpectReplies,
     BaseTestStreamingResponse,
+    # AgentClientMixin
 ):
     _scenario = PYTHON_SCENARIO
 
+    @pytest.mark.asyncio
+    async def test_language_command(self, agent_client: AgentClient):
+        await agent_client.send("/language", wait=2.0)
+        agent_client.expect().that_for_one(type="message", text="PYTHON")
+
 class TestCoreDotnet(
-    BaseTestQuickstart,
-    BaseTestError,
-    BaseTestExpectReplies,
-    BaseTestStreamingResponse,
+    # BaseTestQuickstart,
+    # BaseTestError,
+    # BaseTestExpectReplies,
+    # BaseTestStreamingResponse,
+    AgentClientMixin
 ):
     _scenario = DOTNET_SCENARIO
-    _default_wait = 5.0
+
+    @pytest.mark.asyncio
+    async def test_language_command(self, agent_client: AgentClient):
+        await agent_client.send("/language", wait=5.0)
+        agent_client.expect().that_for_one(type="message", text="DOTNET")
 
 class TestCoreNodeJS(
-    BaseTestQuickstart,
-    BaseTestError,
-    BaseTestExpectReplies,
-    BaseTestStreamingResponse,
+    # BaseTestQuickstart,
+    # BaseTestError,
+    # BaseTestExpectReplies,
+    # BaseTestStreamingResponse,
+    AgentClientMixin
 ):
     _scenario = NODEJS_SCENARIO
 
+    @pytest.mark.asyncio
+    async def test_language_command(self, agent_client: AgentClient):
+        await agent_client.send("/language", wait=5.0)
+        agent_client.expect().that_for_one(type="message", text="NODEJS")
 
 # Agents with Blob Storage
 

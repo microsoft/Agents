@@ -22,6 +22,10 @@ public class MyAgent : AgentApplication
     {
         OnMessage("/stream", SendStream);
         OnMessage("/error", TriggerErrorAsync);
+        OnMessage("/language", async (turnContext, turnState, cancellationToken) =>
+        {
+            await turnContext.SendActivityAsync("DOTNET", cancellationToken: cancellationToken);
+        });
         OnConversationUpdate(ConversationUpdateEvents.MembersAdded, OnConversationUpdate);
         OnActivity(ActivityTypes.Message, EchoMessage, rank: RouteRank.Last);
         OnTurnError(HandleTurnError);
@@ -29,7 +33,7 @@ public class MyAgent : AgentApplication
 
     private async Task SendStream(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
     {
-        turnContext.StreamingResponse.QueueInformativeUpdateAsync("Starting stream...");
+        await turnContext.StreamingResponse.QueueInformativeUpdateAsync("Starting stream...");
 
         await Task.Delay(1000); // Simulate delay before starting stream
 

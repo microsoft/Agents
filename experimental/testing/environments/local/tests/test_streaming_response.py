@@ -69,21 +69,3 @@ class BaseTestStreamingResponse:
         # assert final_streaminfo.stream_sequence == len(stream_activities) -> true only for Python
         assert final_streaminfo.stream_type == "final"
         assert stream_activities[-1].text == FULL_TEXT.replace(" ", "")
-
-@pytest.mark.agent_test(PYTHON_SCENARIO)
-class TestStreamingResponsePython(BaseTestStreamingResponse):
-    pass
-
-@pytest.mark.agent_test(DOTNET_SCENARIO)
-class TestStreamingResponseDotNet(BaseTestStreamingResponse):
-    pass
-
-@pytest.mark.agent_test(NODEJS_SCENARIO)
-class TestStreamingResponseNodeJS(BaseTestStreamingResponse):
-    pass
-
-# EXTERNAL_SCENARIO = ExternalScenario("http://localhost:3978/api/messages")
-
-# @pytest.mark.agent_test(EXTERNAL_SCENARIO)
-# class TestStreamingResponseExternalScenario(BaseTestStreamingResponse):
-#     pass

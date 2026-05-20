@@ -22,28 +22,76 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-$EnvDir = (Resolve-Path "$PSScriptRoot/..").Path
+$EnvDir              = (Resolve-Path "$PSScriptRoot/..").Path
+$AgentName           = 'rb-agents-e2e-agentic-agent'
+$ConfigPath          = Join-Path $EnvDir 'a365.config.json'
+$GeneratedConfigPath = Join-Path $EnvDir 'a365.generated.config.json'
+$DotEnvFile          = Join-Path $EnvDir '.env'
 Push-Location $EnvDir
 
 try {
     # ── 1. Blueprint, permissions, and agent registration ────────────────────
     Write-Host "Running a365 setup..."
-    a365 setup all --verbose --agent-name "agents-e2e-agentic-agent"
+    a365 setup all --verbose --agent-name $AgentName
     if ($LASTEXITCODE -ne 0) { throw "a365 setup all failed." }
 
-    # # ── 2. Publish the agent ─────────────────────────────────────────────────
+    # ── 2. Inject agent user fields required by create-instance ──────────────
+    # `a365 setup all` writes a365.config.json without these fields, but
+    # `a365 create-instance` needs them to create the Azure AD agent user.
+    Write-Host "Adding agent user fields to a365.config.json..."
+
+    $TenantDomain = az rest --method GET `
+        --uri 'https://graph.microsoft.com/v1.0/domains' `
+        --query 'value[?isDefault].id | [0]' --output tsv
+    if ($LASTEXITCODE -ne 0 -or -not $TenantDomain) {
+        throw "Could not resolve the tenant's default verified domain via Graph."
+    }
+
+    $Config = Get-Content $ConfigPath -Raw | ConvertFrom-Json
+    $Config | Add-Member -NotePropertyName 'agentUserDisplayName'   -NotePropertyValue "$AgentName User"            -Force
+    $Config | Add-Member -NotePropertyName 'agentUserPrincipalName' -NotePropertyValue "$AgentName@$TenantDomain"   -Force
+    $Config | Add-Member -NotePropertyName 'agentUserUsageLocation' -NotePropertyValue 'US'                         -Force
+    $Config | ConvertTo-Json -Depth 10 | Set-Content $ConfigPath -Encoding utf8NoBOM
+
+    # # ── 3. Publish the agent ─────────────────────────────────────────────────
     # # Required prerequisite before create-instance can run.
     # Write-Host "Publishing agent..."
     # a365 publish
     # if ($LASTEXITCODE -ne 0) { throw "a365 publish failed." }
 
-    # ── 3. Create agent identity and agent user ──────────────────────────────
+    # ── 4. Create agent identity and agent user ──────────────────────────────
     # Creates the Entra service principal (agent identity) and the Azure AD
     # agent user account. Skips license assignment — run create-instance licenses
     # separately once Agent 365 licenses are available in the tenant.
     Write-Host "Creating agent instance (identity + user, no licenses)..."
-    a365 create-instance --verbose --agent-name "agents-e2e-agentic-agent"
+    a365 create-instance --verbose --agent-name $AgentName
     if ($LASTEXITCODE -ne 0) { throw "a365 create-instance failed." }
+
+    # ── 5. Copy blueprint identity values from generated config into .env ────
+    # downstream agent config (env.TEMPLATE, appsettings.json) references these
+    # as ${{ AGENT_BLUEPRINT_ID }} and ${{ AGENT_BLUEPRINT_SECRET }}.
+    Write-Host "Writing AGENT_BLUEPRINT_ID / AGENT_BLUEPRINT_SECRET to $DotEnvFile..."
+    $Generated = Get-Content $GeneratedConfigPath -Raw | ConvertFrom-Json
+    $BlueprintValues = @{
+        AGENT_BLUEPRINT_ID     = $Generated.agentBlueprintObjectId
+        AGENT_BLUEPRINT_SECRET = $Generated.agentBlueprintClientSecret
+    }
+    foreach ($kv in $BlueprintValues.GetEnumerator()) {
+        if (-not $kv.Value) { throw "$($kv.Key) is missing from $GeneratedConfigPath." }
+    }
+
+    $existing = [ordered]@{}
+    if (Test-Path $DotEnvFile) {
+        foreach ($line in Get-Content $DotEnvFile) {
+            $trimmed = $line.Trim()
+            if ($trimmed -and -not $trimmed.StartsWith('#') -and $trimmed -match '^([^=]+)=(.*)$') {
+                $existing[$Matches[1].Trim()] = $Matches[2].Trim()
+            }
+        }
+    }
+    foreach ($kv in $BlueprintValues.GetEnumerator()) { $existing[$kv.Key] = $kv.Value }
+    $existing.GetEnumerator() | Sort-Object Key | ForEach-Object { "$($_.Key)=$($_.Value)" } |
+        Out-File $DotEnvFile -Encoding utf8
 
     Write-Host ""
     Write-Host "Agent instance created. To assign licenses when available:"

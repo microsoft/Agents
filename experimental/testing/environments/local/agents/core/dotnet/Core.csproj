@@ -8,8 +8,21 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.4.*" />
-		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.4.*" />
+		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.5.*" />
+		<PackageReference Include="Microsoft.Agents.Builder" Version="1.5.*" />
+		<PackageReference Include="Microsoft.Agents.Core" Version="1.5.*" />
+		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.5.*" />
+		<PackageReference Include="Microsoft.Agents.Storage" Version="1.5.*" />
+
+				<!-- OpenTelemetry packages - versions managed centrally -->
+		<PackageReference Include="OpenTelemetry" Version="1.15.3" />
+		<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.15.1" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.1" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.15.1" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.1" />
+		<!-- OpenTelemetry Exporters -->
+		<PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.15.1" />
+		<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.3" />
 	</ItemGroup>
 
 </Project>

@@ -3,10 +3,7 @@ name = "agents-local-tests"
 version = "0.1.0"
 requires-python = ">=3.13"
 dependencies = [
-    "testing-common",
     "pytest",
     "pytest-asyncio",
+    "microsoft-agents-testing @ git+https://github.com/microsoft/Agents-for-python.git@users/robrandao/testing-host#subdirectory=dev/testing/microsoft-agents-testing",
 ]
-
-[tool.uv.sources]
-testing-common = { path = "testing-common", editable = true }

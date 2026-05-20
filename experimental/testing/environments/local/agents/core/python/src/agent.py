@@ -57,6 +57,9 @@ async def on_stream(context: TurnContext, _state: TurnState):
     context.streaming_response.queue_text_chunk(CHUNKS[-1])
     await context.streaming_response.end_stream()
 
+@AGENT_APP.message("/language")
+async def on_language_command(context: TurnContext, _state: TurnState):
+    await context.send_activity("PYTHON")
 
 @AGENT_APP.message("/error")
 async def on_error_command(context: TurnContext, _state: TurnState):

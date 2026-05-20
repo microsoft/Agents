@@ -49,6 +49,10 @@ agentApp.onMessage("/stream", async (context: TurnContext, state: ApplicationTur
   await context.streamingResponse.endStream()
 })
 
+agentApp.onMessage("/language", async (context: TurnContext, state: ApplicationTurnState) => {
+  await context.sendActivity("NODEJS")
+})
+
 agentApp.onMessage('/error', async (context: TurnContext, state: ApplicationTurnState) => {
   throw new Error('This is a test error triggered by the /error command')
 })

@@ -16,6 +16,11 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+# ── A365 cleanup (blueprint + instance in Entra) ─────────────────────────────
+# Done first so the A365 CLI can still read .env / generated config before any
+# resource group teardown removes Key Vault entries it depends on.
+& "$PSScriptRoot/cleanup_a365.ps1"
+
 $AppId = azd env get-value APP_ID 2>$null
 if (-not $AppId) {
     $DotEnvFile = Join-Path (Split-Path $PSScriptRoot -Parent) '.env'

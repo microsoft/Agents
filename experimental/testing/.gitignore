@@ -12,6 +12,9 @@ target/
 
 launchSettings.json
 
+a365.config.json
+a365.generated.config.json
+
 #local development for .NET
 appsettings.local.json
 appsettings.Development.json

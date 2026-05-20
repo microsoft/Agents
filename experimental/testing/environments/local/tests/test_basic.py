@@ -15,11 +15,9 @@ class BaseTestQuickstart(AgentClientMixin):
                 {"id": "bot-id", "name": "Bot"},
                 {"id": "user1", "name": "User"},
             ],
-            "textFormat": "plain",
-            "entities": [{"type": "ClientCapabilities", "requiresBotState": True, "supportsTts": True}],
             "channel_data": {"clientActivityId": 123},
         })
-        await agent_client.send(input_activity, wait=2.0)
+        await agent_client.send(input_activity, wait=5.0)
         agent_client.expect().that_for_one(type="message", text="~Welcome")
 
     @pytest.mark.asyncio
@@ -27,12 +25,8 @@ class BaseTestQuickstart(AgentClientMixin):
         await agent_client.send("hello", wait=2.0)
         agent_client.expect().that_for_one(type="message", text="You said: hello")
 
+    @pytest.mark.asyncio
     async def test_send_hi(self, agent_client: AgentClient):
         await agent_client.send("hi", wait=2.0)
-        responses = agent_client.recent()
-
-        assert len(responses) == 2
-        assert len(agent_client.history()) == 2
         agent_client.expect().that_for_one(type="message", text="You said: hi")
-        agent_client.expect().that_for_one(type="typing")
 

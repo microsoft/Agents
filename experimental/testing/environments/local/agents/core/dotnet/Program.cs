@@ -11,6 +11,8 @@ using Microsoft.Extensions.Hosting;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+builder.ConfigureOtelProviders();
+
 builder.Services.AddHttpClient();
 
 // Add AgentApplicationOptions from appsettings section "AgentApplication".
