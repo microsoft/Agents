@@ -26,14 +26,16 @@ jobs:
       - id: check_samples
         name: Check if files in samples folder
         run: |
+          ZERO_SHA='0000000000000000000000000000000000000000'
+
           # Get changed files
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
             # For PRs, compare against base branch
             CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }}...HEAD)
           else
             # For push events, compare against previous commit
             # A zero SHA means there is no prior commit to diff against, such as branch creation.
-            if [[ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]] && git rev-parse --verify "${{ github.event.before }}^{commit}" >/dev/null 2>&1; then
+            if [[ "${{ github.event.before }}" != "$ZERO_SHA" ]] && git rev-parse --verify "${{ github.event.before }}^{commit}" >/dev/null 2>&1; then
               CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
             else
               CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
