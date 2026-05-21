@@ -32,7 +32,11 @@ jobs:
             CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
           else
             # For push events, compare against previous commit
-            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+            if git rev-parse --verify "${{ github.event.before }}^{commit}" >/dev/null 2>&1; then
+              CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+            else
+              CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
+            fi
           fi
           
           # Check if any files are in samples folder
