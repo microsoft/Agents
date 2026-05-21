@@ -18,6 +18,11 @@ jobs:
     outputs:
       samples_changed: ${{ steps.check_samples.outputs.samples_changed }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - id: check_samples
         name: Check if files in samples folder
         run: |
