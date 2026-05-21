@@ -1,5 +1,3 @@
-name: cd-samples
-
 on:
   workflow_dispatch:
   push:
@@ -16,6 +14,7 @@ env:
 
 jobs:
   build-dotnet:
+    name: cd-samples-net
     runs-on: ubuntu-latest
 
     steps:
@@ -28,6 +27,7 @@ jobs:
           dotnet build
 
   build-node:
+    name: cd-samples-node
     runs-on: ubuntu-latest
 
     strategy:
@@ -61,6 +61,7 @@ jobs:
           done
 
   build-python:
+    name: cd-samples-python
     runs-on: ubuntu-latest
 
     strategy:
