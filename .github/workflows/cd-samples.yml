@@ -2,9 +2,10 @@ name: cd-samples
 
 on:
   workflow_dispatch:
+  push:
+    paths: ["samples/**" ]
   pull_request:
-    branches:
-      - main
+    paths: ["samples/**" ]
 
 permissions:
   contents: read
