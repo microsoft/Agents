@@ -1,3 +1,4 @@
+name: cd-samples
 on:
   workflow_dispatch:
   push:
