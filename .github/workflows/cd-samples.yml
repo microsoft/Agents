@@ -35,7 +35,7 @@ jobs:
           else
             # For push events, compare against previous commit
             # A zero SHA means there is no prior commit to diff against, such as branch creation.
-            if [[ "${{ github.event.before }}" != "$ZERO_SHA" ]] && git rev-parse --verify "${{ github.event.before }}^{commit}" >/dev/null 2>&1; then
+            if [[ "${{ github.event.before }}" != "$ZERO_SHA" ]] && git rev-parse --verify "${{ github.event.before }}" >/dev/null 2>&1; then
               CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
             else
               CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
