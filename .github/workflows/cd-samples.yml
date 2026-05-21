@@ -29,7 +29,7 @@ jobs:
           # Get changed files
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             # For PRs, compare against base branch
-            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }})
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
           else
             # For push events, compare against previous commit
             CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
