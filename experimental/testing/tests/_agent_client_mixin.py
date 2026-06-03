@@ -3,18 +3,8 @@ import pytest
 from microsoft_agents.testing import (
     AgentClient,
     Scenario,
-    ConversationTranscriptFormatter,
-    ActivityTranscriptFormatter,
-    DetailLevel,
+    JsonTranscriptFormatter,
 )
-from microsoft_agents.testing.transcript_formatter import (
-    TimeFormat,
-    print_conversation,
-    print_activities,
-    DEFAULT_ACTIVITY_FIELDS,
-    EXTENDED_ACTIVITY_FIELDS,
-)
-
 
 class AgentClientMixin:
 
@@ -34,5 +24,9 @@ class AgentClientMixin:
 
         if request.session.testsfailed:
             # If the test failed, print the transcript for debugging
-            logger = ActivityTranscriptFormatter(fields=EXTENDED_ACTIVITY_FIELDS, time_format=TimeFormat.RELATIVE)
-            logger.print(_agent_client.transcript)
+            formatter = JsonTranscriptFormatter(
+                model_dump_args={
+                    "exclude_none": True
+                }
+            )
+            print(f"\n\n{formatter.format(_agent_client.transcript)}")
