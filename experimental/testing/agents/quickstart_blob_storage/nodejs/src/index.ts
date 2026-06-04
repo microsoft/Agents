@@ -4,7 +4,7 @@ import { DefaultAzureCredential } from '@azure/identity';
 import { ActivityTypes } from '@microsoft/agents-activity';
 import { AgentApplication, AttachmentDownloader, TurnContext, TurnState } from '@microsoft/agents-hosting';
 import { startServer } from '@microsoft/agents-hosting-express';
-import { BlobStorage } from '@microsoft/agents-hosting-storage-blob';
+import { BlobsStorage } from '@microsoft/agents-hosting-storage-blob';
 // Create custom conversation state properties.  This is
 // used to store customer properties in conversation state.
 interface ConversationState {
@@ -16,11 +16,16 @@ type ApplicationTurnState = TurnState<ConversationState>
 // For production Agents, persisted storage should be used so
 // that state survives Agent restarts, and operates correctly
 // in a cluster of Agent instances.
-const storage = new BlobStorage({
-  containerName: process.env.BLOB_CONTAINER_NAME,
-  url: process.env.BLOB_STORAGE_ACCOUNT_URL,
-  credential: new DefaultAzureCredential()
-})
+
+const CONTAINER_NAME = process.env.BLOB_CONTAINER_NAME ?? "";
+
+const storage = new BlobsStorage(
+  CONTAINER_NAME,
+  undefined,
+  undefined,
+  process.env.BLOB_STORAGE_ACCOUNT_URL + CONTAINER_NAME,
+  new DefaultAzureCredential()
+)
 
 const downloader = new AttachmentDownloader()
 

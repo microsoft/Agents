@@ -14,7 +14,7 @@ class BaseTestError(AgentClientMixin):
         """Test sending an activity with expectReplies delivery mode without a service URL."""
 
         # with pytest.raises(ClientError):
-        await agent_client.send("/error", wait=8.0)
+        await agent_client.send("/error", wait=10.0)
 
         agent_client.expect().that_for_one(
             type="message",

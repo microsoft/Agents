@@ -17,7 +17,8 @@
   },
   "dependencies": {
     "@microsoft/agents-hosting-express": "^1.1.0",
-    "@microsoft/agents-hosting-storage-blob": "^1.1.0"
+    "@microsoft/agents-hosting-storage-blob": "^1.1.0",
+    "@azure/identity": "^4.0.0"
   },
   "devDependencies": {
     "@microsoft/m365agentsplayground": "^0.2.16",

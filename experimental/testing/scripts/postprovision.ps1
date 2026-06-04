@@ -76,6 +76,11 @@ $Outputs.AUTH_TYPE     = 'ClientSecret'
 $Outputs.CLIENT_SECRET = $ClientSecret
 $Outputs.UMI_CLIENT_ID = ''
 
+# Service connection settings for pytest tests.
+$Outputs.CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTID     = $Outputs.APP_ID
+$Outputs.CONNECTIONS__SERVICE_CONNECTION__SETTINGS__TENANTID     = $Outputs.TENANT_ID
+$Outputs.CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTSECRET = $ClientSecret
+
 # Merge infra outputs into the existing .env, preserving keys not managed here
 # (e.g. AGENT_BLUEPRINT_ID and other agentic identity values written by deploy_agentic.ps1).
 $existing = @{}

@@ -74,7 +74,6 @@ class TestBlobDotnet(
     BaseTestQuickstart,
 ):
     _scenario = DOTNET_BLOB_SCENARIO
-    _default_wait = 5.0 
 
 class TestBlobNodeJS(
     BaseTestQuickstart,
@@ -93,7 +92,6 @@ class TestCosmosDotnet(
     BaseTestQuickstart,
 ):
     _scenario = DOTNET_COSMOS_SCENARIO
-    _default_wait = 5.0
 
 class TestCosmosNodeJS(
     BaseTestQuickstart,
