@@ -8,5 +8,5 @@ uv sync
 uv run pytest -vs
 
 if (-not ${no-teardown}) {
-    azd down --force --purge
+    azd down -e "rb-e2e-local" --force --purge
 }
