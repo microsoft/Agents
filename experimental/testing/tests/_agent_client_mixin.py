@@ -9,7 +9,6 @@ from microsoft_agents.testing import (
 class AgentClientMixin:
 
     _scenario: Scenario
-    _wait_multiplier: float = 1.0
 
     @pytest.fixture(scope="class")
     async def _agent_client(self):

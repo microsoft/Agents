@@ -2,7 +2,7 @@ from microsoft_agents.testing import AgentClient
 import pytest
 
 from ._agent_client_mixin import AgentClientMixin
-from ._utils import (
+from ._scenarios import (
     PYTHON_SCENARIO,
     DOTNET_SCENARIO,
     NODEJS_SCENARIO,

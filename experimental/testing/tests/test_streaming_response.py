@@ -8,11 +8,7 @@ from microsoft_agents.activity import (
 )
 from microsoft_agents.testing import AgentClient
 
-from ._utils import (
-    PYTHON_SCENARIO,
-    DOTNET_SCENARIO,
-    NODEJS_SCENARIO,
-)
+from ._agent_client_mixin import AgentClientMixin
 
 FULL_TEXT = "This is a streaming response."
 CHUNKS = FULL_TEXT.split()
@@ -25,7 +21,7 @@ def get_streaminfo(activity: Activity) -> Entity:
             return entity
     raise ValueError("No streaminfo entity found")
 
-class BaseTestStreamingResponse:
+class BaseTestStreamingResponse(AgentClientMixin):
     
     @pytest.mark.asyncio
     async def test_basic_streaming_response_streaming_channel(self, agent_client: AgentClient):

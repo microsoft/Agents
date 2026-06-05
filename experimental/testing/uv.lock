@@ -497,7 +497,7 @@ wheels = [
 [[package]]
 name = "microsoft-agents-testing"
 version = "0.0.0"
-source = { git = "https://github.com/microsoft/Agents-for-python.git?subdirectory=dev%2Ftesting%2Fmicrosoft-agents-testing&rev=users%2Frobrandao%2Ftesting-host#ce16c893ac72bf2d0ae0179e194d5f527bdcc931" }
+source = { git = "https://github.com/microsoft/Agents-for-python.git?subdirectory=dev%2Ftesting%2Fmicrosoft-agents-testing&rev=users%2Frobrandao%2Ftesting-host#fe754b89fced6ef61e609f5bdbd51bf0242db44c" }
 dependencies = [
     { name = "aiohttp" },
     { name = "click" },
