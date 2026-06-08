@@ -158,6 +158,8 @@ The `channelId` field establishes the channel and authoritative store for the ac
 
 `A2022`: A channel MAY ignore or reject any activity it receives without an expected `channelId` value.
 
+`A2023`: Senders SHOULD use [`entities`](#entities) to carry channel-specific sub-channel metadata rather than encoding it into `channelId`.
+
 ### ID
 
 The `id` field establishes the identity for the activity once it has been recorded in the channel. Activities in-flight that have not yet been recorded do not have identities. Not all activities are assigned identities (for example, a [typing activity](#typing-activity) may never be assigned an `id`.) The value of the `id` field is of type string.
@@ -276,6 +278,19 @@ The `entities` field contains a flat list of metadata objects pertaining to this
 `A2104`: Receivers MUST ignore entities whose types they do not understand.
 
 `A2105`: Receivers SHOULD ignore entities whose type they understand but are unable to process due to e.g. syntactic errors.
+
+`A2106`: Senders SHOULD use entities to communicate sub-channel context.
+Example:
+```json
+{
+  "entities": [
+    {
+      "type": "ProductInfo",
+      "id": "sub-channel value"
+    }
+  ]
+}
+```
 
 ### Channel data
 
@@ -2329,6 +2344,8 @@ The Microsoft Telephony channel defines channel command activities in the namesp
 
 Session lifecycle commands are used to manage multimodal streaming sessions, particularly for voice interactions. These commands follow request/response semantics with acknowledgments via `commandResult` activities. They work together with [Media streaming events](#reserved-events-for-media-streaming) (audio input) and [Voice messages](#voice-message) (audio output) to enable a complete multimodal interaction.
 
+These lifecycle commands can be utilised in non-streaming voice sessions too by clients to retrieve real-time model settings & agent capability negotiation, agent tool invocation workflows, and DTMF user input processing representations. Find more details in [Non-streaming voice sessions](#session-interation-profiles-for-non-streaming-voice-informative)
+
 > **Note:** The `session.*` command names are reserved Activity Protocol commands for multimodal session management. Unlike application-defined commands (which must use the `application/*` namespace per A6301), these are protocol-level commands similar to other reserved event names.
 
 ### session.init
@@ -2527,6 +2544,338 @@ server  → message:  valueType: "application/vnd.microsoft.activity.voice+json"
 `A9441`: Session lifecycle commands are required only for real-time streaming modalities (voice, video).
 
 `A9442`: The `listening` state MAY be embedded in the `session.init` response, making a separate `session.update(listening)` optional.
+
+## Session interation profiles for non-streaming voice (Informative)
+
+### session.init
+
+**Request:**
+```json
+{
+  "type": "command",
+  "id": "cmd1",
+  "name": "session.init",
+  "value": {
+    "sessionId": "sess_123"
+  }
+}
+```
+
+**Response (commandResult):**
+```json
+{
+  "type": "commandResult",
+  "replyToId": "cmd1",
+  "speak": "\u003cspeak version=\"1.0\" xml:lang=\"en-US\" xmlns:mstts=\"http://www.w3.org/2001/mstts\" xmlns=\"http://www.w3.org/2001/10/synthesis\"\u003e\u003cvoice name=\"en-US-ChristopherNeural\" xmlns=\"\"\u003e\u003cprosody rate=\"0%\" pitch=\"0%\"\u003eHello and thank you for calling Agent. How may I help you today?\u003c/prosody\u003e\u003c/voice\u003e\u003c/speak\u003e",
+  "value": {
+    "realtimeGptModelSettings": {
+      "userInstruction": {
+        "role": "user",
+        "content": "You are a cheerful and enthusiastic virtual assistant "
+      },
+      "systemInstruction": {
+        "role": "system",
+        "content": "follow this decision flow exactly"
+      },
+      "tools": [
+        {
+          "name": "UniversalSearchTool",
+          "description": "This powerful tool can search ...",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "explanation_of_tool_call": {
+                "type": "string",
+                "description": "Provide a 1-3 sentence explanation of why this action is needed, using a passive tone. For example, 'This action needs to be done to ...'. Please consider any provided instructions about using this tool and consider them in your provided sentences."
+              },
+              "user_query": {
+                "type": "string",
+                "description": "The exact question or query posed by the user regarding this request."
+              }
+            },
+            "required": [
+              "explanation_of_tool_call",
+              "user_query"
+            ]
+          },
+          "strict": true,
+          "category": "PREBUILT"
+        }
+      ],
+      "toolChoice": "auto",
+      "modelParameters": {
+        "model": "gpt-x",
+        "modalities": [
+          "text",
+          "audio"
+        ],
+        "voiceFont": "shimmer",
+        "temperature": "0.8",
+        "speakingSpeed": "1",
+        "inputAudioFormat": "pcm16",
+        "outputAudioFormat": "pcm16",
+        "inputAudioNoiseReduction": "near_field",
+        "inputAudioTranscription": {
+          "model": "whisper-1"
+        },
+        "maxResponseOutputTokens": 1000,
+        "turnDetectionSettings": {
+          "threshold": "0.5",
+          "prefixPaddingMs": "300",
+          "silenceDurationMs": "500",
+          "eagerness": "medium"
+        }
+      },
+      "supportedLanguages": [
+        "en-US"
+      ],
+      "latencyMessage": {
+        "uri": "",
+        "text": "Hmm...Hold on a moment. I need to give it some thought.",
+        "delay": 500,
+        "minimum": 5000
+      },
+      "primaryLanguage": "en-US",
+      "knowledgeSettings": {
+        "useGeneralKnowledge": false,
+        "useWebSearch": false
+      }
+    },
+    "agentInfo": {
+      "botSchemaName": "bot-schema",
+      "AMDSupported": true,
+      "dtmfSettings": {
+        "allowDtmfInput": true,
+        "interdigitTimeout": 3000,
+        "termTimeout": "2000ms"
+      },
+      "silenceDetectionSettings": {
+        "silenceDetectionTimeout": 7000
+      },
+      "collectionSettings": {
+        "timeout": "5000ms",
+        "completeTimeout": "0ms",
+        "incompleteTimeout": "1500ms",
+        "maxSpeechTimeout": "0ms"
+      },
+      "speechSettings": {
+        "sensitivity": "0.5",
+        "bargeInType": "speech",
+        "bargeInEnabled": true,
+        "speedVsAccuracy": "0.5"
+      }
+    }
+  }
+}
+```
+
+### process conversation message requests
+
+Handle user input in custom ASR format-
+**Request:**
+```json
+{
+  "type": "message",
+  "text": "New York",
+  "valueType": "application/vnd.microsoft.activity.asraasresult+json",
+  "value": {
+    "confidence": 0.9152545,
+    "minimallyFormattedText": "new york"
+  }
+}
+```
+
+Handle user input in dtmf format-
+```json
+{
+  "type": "message",
+  "text": "4",
+  "valueType": "application/vnd.microsoft.activity.triggerdtmfkeypress+json",
+  "value": {
+    "dtmfMappingKey": "Num4"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "type": "message",
+  "speak": "\u003cspeak version=\"1.0\" xml:lang=\"en-US\" xmlns:mstts=\"http://www.w3.org/2001/mstts\" xmlns=\"http://www.w3.org/2001/10/synthesis\"\u003e\u003cvoice name=\"en-US-AvaMultilingualNeural\" xmlns=\"\"\u003e\u003cprosody rate=\"0%\" pitch=\"0%\"\u003eYou have selected option for news coverage.\u003c/prosody\u003e\u003c/voice\u003e\u003c/speak\u003e",
+  "value": {
+    "recognitionSettings": {
+      "dtmfMappings": [
+        {
+          "id": "TriggerDtmfKeyPressInfo",
+          "value": "Num4",
+          "dtmfKey": "4"
+        },
+        {
+          "id": "TriggerDtmfKeyPressInfo",
+          "value": "StarKey",
+          "dtmfKey": "*"
+        }
+      ]
+    }
+  }
+}
+```
+
+Handle tool call command-
+**Request:**
+```json
+{
+  "type": "command",
+  "id": "cmd1",
+  "text": "We can go ahead and create the order.",
+  "name": "session.tool-call",
+  "value": {
+    "toolCalls": [
+      {
+        "toolId": "CreateOrderTool",
+        "thought": "This action needs to be done to create an order once the customer has confirmed.",
+        "inputs": { "items": [ { "id": 123 } ] },
+        "outputs": { },
+        "callId": "call_xxx"
+      }
+    ],
+    "userQuery": "We can go ahead and create the order.",
+    "userIntent": "create order based on the customer’s request"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "type": "commandResult",
+  "replyToId": "cmd1",
+  "value": {
+    "toolCallOutputs": [
+      {
+        "callId": "call_xxx",
+        "output": [
+          {
+            "name": "message",
+            "value": "Your order with ID 789 has been created.",
+            "description": ""
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### session.update
+
+Handle on demand updates for partial context, transcripts.
+
+**Request:**
+```json
+{
+  "type": "command",
+  "id": "cmd1",
+  "name": "session.update",
+  "conversation": {
+    "id": "abc123"
+  },
+  "valueType": "application/vnd.microsoft.activity.speechtospeechupdatetranscript+json",
+  "value": {
+    "incomingActivities": [
+      {
+        ...Activity...
+      },
+      {
+        ...Activity...
+      }
+    ]
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "type": "commandResult",
+  "replyToId": "cmd1",
+  "conversation": {
+    "id": "abc123"
+  },
+  "valueType": "application/vnd.microsoft.activity.speechtospeechupdatetranscript+json"
+}
+```
+
+### session.status
+
+Retrieves session metadata.
+
+**Request:**
+```json
+{
+  "type": "command",
+  "id": "cmd1",
+  "name": "session.status",
+  "conversation": {
+    "id": "abc123"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "type": "commandResult",
+  "replyToId": "cmd1",
+  "conversation": {
+    "id": "abc123"
+  },
+  "value": {
+    "sessionRemainingSec": 2
+  }
+}
+```
+
+### other dialog events
+
+End user has not provided any input-
+```json
+{
+  "type": "event",
+  "name": "DialogNoInput",
+  "text": "002 no-input-timeout"
+}
+```
+
+End user provided unrecognizable input-
+```json
+{
+  "type": "event",
+  "name": "DialogUnrecognizedInput",
+  "value": {
+    "bargeInContext": {
+      "messageId": "xxx192",
+      "messageDuration": 20
+    }
+  }
+}
+```
+
+Error when processing dialog ([different from rejecting commands](#patterns-for-rejecting-commands))-
+```json
+{
+  "type": "event",
+  "name": "DialogError",
+  "text": "Response Finished Failed with a critical error",
+  "value": {
+    "exception": {
+      "errorCode": "inference_rate_limit_exceeded",
+      "errorMessage": "Error due to rate limit threshold excess",
+      "httpStatusCode": 429
+    }
+  }
+}
+```
 
 ## Patterns for rejecting commands
 
