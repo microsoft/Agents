@@ -2344,7 +2344,7 @@ The Microsoft Telephony channel defines channel command activities in the namesp
 
 Session lifecycle commands are used to manage multimodal streaming sessions, particularly for voice interactions. These commands follow request/response semantics with acknowledgments via `commandResult` activities. They work together with [Media streaming events](#reserved-events-for-media-streaming) (audio input) and [Voice messages](#voice-message) (audio output) to enable a complete multimodal interaction.
 
-These lifecycle commands can be utilised in non-streaming voice sessions too by clients to retrieve real-time model settings & agent capability negotiation, agent tool invocation workflows, and DTMF user input processing representations. Find more details in [Non-streaming voice sessions](#session-interation-profiles-for-non-streaming-voice-informative)
+These lifecycle commands can be utilised in non-streaming voice sessions too by clients to retrieve real-time model settings & agent capability negotiation, agent tool invocation workflows, and DTMF user input processing representations. Find more details in [Non-streaming voice and digital sessions](#session-interation-profiles-for-non-streaming-voice-and-digital-channels-informative)
 
 > **Note:** The `session.*` command names are reserved Activity Protocol commands for multimodal session management. Unlike application-defined commands (which must use the `application/*` namespace per A6301), these are protocol-level commands similar to other reserved event names.
 
@@ -2545,7 +2545,7 @@ server  → message:  valueType: "application/vnd.microsoft.activity.voice+json"
 
 `A9442`: The `listening` state MAY be embedded in the `session.init` response, making a separate `session.update(listening)` optional.
 
-## Session interation profiles for non-streaming voice (Informative)
+## Session interation profiles for non-streaming voice and digital channels (Informative)
 
 ### session.init
 
@@ -2566,6 +2566,7 @@ server  → message:  valueType: "application/vnd.microsoft.activity.voice+json"
 {
   "type": "commandResult",
   "replyToId": "cmd1",
+  "text": "Hello and thank you for calling Agent. How may I help you today?", // `speak` or `text` parameter to be used depending on voice or text-based conversations
   "speak": "\u003cspeak version=\"1.0\" xml:lang=\"en-US\" xmlns:mstts=\"http://www.w3.org/2001/mstts\" xmlns=\"http://www.w3.org/2001/10/synthesis\"\u003e\u003cvoice name=\"en-US-ChristopherNeural\" xmlns=\"\"\u003e\u003cprosody rate=\"0%\" pitch=\"0%\"\u003eHello and thank you for calling Agent. How may I help you today?\u003c/prosody\u003e\u003c/voice\u003e\u003c/speak\u003e",
   "value": {
     "realtimeGptModelSettings": {
