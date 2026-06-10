@@ -21,7 +21,7 @@
 
 ## Prerequisites
 
-- [Node.js 18 or later](https://nodejs.org/)
+- [Node.js 20 or later](https://nodejs.org/)
 - An Azure Storage account with a Blob container, or [Azurite](https://learn.microsoft.com/azure/storage/common/storage-use-azurite) for local emulation
 - An Azure Bot registration (required to connect a channel; not required for local emulator testing with [Agents Playground](https://learn.microsoft.com/azure/bot-service/bot-service-overview))
 
@@ -82,7 +82,7 @@ npm start
 ## Next steps
 
 - **Cloud deployment with managed identity:** Replace the connection-string constructor with  
-  `new BlobsStorage(containerName, undefined, undefined, 'https://<account>.blob.core.windows.net', new DefaultAzureCredential())` from `@azure/identity`.  
+  `new BlobsStorage(containerName, undefined, undefined, \`https://<account>.blob.core.windows.net/${containerName}\`, new DefaultAzureCredential())` from `@azure/identity`.  
   Assign the `Storage Blob Data Contributor` role to your agent's managed identity on the container.  
   See [Authorize access to blobs using managed identities](https://learn.microsoft.com/azure/storage/blobs/authorize-managed-identity).
 
