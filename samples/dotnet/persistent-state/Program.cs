@@ -14,10 +14,6 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpClient();
 
-// Add the AgentApplication, which contains the logic for responding to
-// user messages.
-builder.AddAgent<MyAgent>();
-
 // Register IStorage backed by Azure Blob Storage so that conversation state
 // persists across Agent restarts and scales correctly in a cluster.
 //
@@ -32,6 +28,10 @@ string containerName = builder.Configuration["AZURE_BLOB_STORAGE_CONTAINER_NAME"
     ?? "agents-persistent-state";
 
 builder.Services.AddSingleton<IStorage>(new BlobsStorage(connectionString, containerName));
+
+// Add the AgentApplication, which contains the logic for responding to
+// user messages.
+builder.AddAgent<MyAgent>();
 
 // Add AspNet token validation for Azure Bot Service and Entra.  Authentication is
 // configured in the appsettings.json "TokenValidation" section.

@@ -38,9 +38,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CopilotSdk", "copilot-sdk\C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlackAgent", "slackagent\SlackAgent.csproj", "{74277777-C4F9-2F3E-162A-02D8A8E4B702}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "persistent-state", "persistent-state", "{1A7EC4A9-7FBF-852D-259A-AE3D2D6005ED}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistentState", "persistent-state\PersistentState.csproj", "{C40EE44E-A349-4B48-9556-AEA743E23092}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PersistentState", "persistent-state\PersistentState.csproj", "{C40EE44E-A349-4B48-9556-AEA743E23092}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -249,7 +247,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{C40EE44E-A349-4B48-9556-AEA743E23092} = {1A7EC4A9-7FBF-852D-259A-AE3D2D6005ED}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {12345678-1234-5678-9012-123456789012}
