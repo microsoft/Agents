@@ -603,8 +603,14 @@ function buildKit(pillarKey, focusRaw, seed) {
     if (i === 0) {
       textObj = { line: hook, note: b.note };
     } else {
-      const fn = chosenOnscreen[(i - 1) % chosenOnscreen.length];
-      const o = fn(focus);
+      // chosenOnscreen'i sırayla dene; odak boş olduğunda cap(f) gibi
+      // ifadeler boş satır üretebilir — boş olmayan ilk satırı seç.
+      let o = null;
+      for (let k = 0; k < chosenOnscreen.length; k++) {
+        const cand = chosenOnscreen[(i - 1 + k) % chosenOnscreen.length](focus);
+        if (cand.line && cand.line.length) { o = cand; break; }
+      }
+      if (!o) o = { line: hook, note: chosenOnscreen[(i - 1) % chosenOnscreen.length](focus).note };
       textObj = { line: o.line, note: b.note + " — " + o.note };
     }
     return { t: b.t, line: textObj.line, note: textObj.note };
