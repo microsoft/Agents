@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>STUDIO — Haftalık Viral İçerik Motoru</title>
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --bg-elev: #141417;
+    --bg-card: #17171b;
+    --line: #26262c;
+    --line-soft: #1d1d22;
+    --ink: #f4f2ee;
+    --ink-dim: #9b9aa3;
+    --ink-faint: #7a7a85;
+    --accent: #e7c98f;        /* warm film gold */
+    --accent-soft: #b9a06e;
+    --radius: 14px;
+    --serif: "Times New Roman", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { background: var(--bg); }
+
+  body {
+    font-family: var(--sans);
+    color: var(--ink);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    padding: 0 0 80px;
+  }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+
+  /* ---------- Header ---------- */
+  header.top {
+    padding: 46px 0 30px;
+    border-bottom: 1px solid var(--line-soft);
+    margin-bottom: 38px;
+  }
+  .brandline { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .brandline h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 38px;
+    letter-spacing: 0.32em;
+    text-indent: 0.32em;
+  }
+  .brandline .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block; }
+  .tagline {
+    color: var(--ink-dim);
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .sub {
+    margin-top: 14px;
+    color: var(--ink-faint);
+    font-size: 14px;
+    max-width: 620px;
+  }
+
+  /* ---------- Pillars selector ---------- */
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::before { content: ""; width: 18px; height: 1px; background: var(--accent-soft); }
+
+  .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .pillar {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 22px 20px;
+    cursor: pointer;
+    transition: border-color .25s, transform .25s, background .25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .pillar:hover { transform: translateY(-3px); border-color: var(--accent-soft); }
+  .pillar:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+  .pillar.active { border-color: var(--accent); background: var(--bg-elev); }
+  .pillar.active::after {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent);
+  }
+  .pillar .pnum {
+    font-family: var(--serif); font-size: 13px; color: var(--accent);
+    letter-spacing: 0.2em;
+  }
+  .pillar .pname {
+    font-family: var(--serif); font-size: 21px; margin: 6px 0 4px; font-weight: 400;
+  }
+  .pillar .pen { color: var(--ink-faint); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; }
+  .pillar .pdesc { color: var(--ink-dim); font-size: 12.5px; margin-top: 12px; }
+  .pillar .pfmt {
+    margin-top: 14px; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent-soft); border-top: 1px solid var(--line-soft); padding-top: 10px;
+  }
+
+  /* ---------- Input ---------- */
+  .input-block { margin: 38px 0 8px; }
+  .input-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .focus-field {
+    flex: 1; min-width: 280px;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    color: var(--ink);
+    font-size: 16px;
+    font-family: var(--sans);
+    padding: 18px 20px;
+    transition: border-color .2s;
+  }
+  .focus-field::placeholder { color: var(--ink-faint); }
+  .focus-field:focus { outline: none; border-color: var(--accent); }
+
+  .btn {
+    background: var(--accent);
+    color: #14110a;
+    border: none;
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    padding: 0 30px;
+    cursor: pointer;
+    transition: filter .2s, transform .1s;
+    text-transform: uppercase;
+  }
+  .input-row .btn { min-height: 54px; }
+  .btn:hover { filter: brightness(1.08); }
+  .btn:active { transform: scale(.98); }
+  .btn.ghost {
+    background: transparent; color: var(--ink-dim); border: 1px solid var(--line);
+    text-transform: none; letter-spacing: 0; font-weight: 500; padding: 12px 18px; font-size: 13px;
+  }
+  .btn.ghost:hover { border-color: var(--accent-soft); color: var(--ink); filter: none; }
+
+  .hint { margin-top: 12px; color: var(--ink-faint); font-size: 12.5px; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .chip {
+    background: var(--bg-elev); border: 1px solid var(--line-soft); color: var(--ink-dim);
+    font-size: 12px; padding: 7px 13px; border-radius: 100px; cursor: pointer; transition: .2s;
+  }
+  .chip:hover { border-color: var(--accent-soft); color: var(--ink); }
+
+  /* ---------- Output ---------- */
+  #output { margin-top: 44px; display: none; }
+  #output.show { display: block; animation: rise .5s ease; }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+  .out-head {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    border-bottom: 1px solid var(--line-soft); padding-bottom: 18px; margin-bottom: 26px; flex-wrap: wrap; gap: 14px;
+  }
+  .out-head .meta-pillar { font-family: var(--serif); font-size: 26px; }
+  .out-head .meta-focus { color: var(--ink-dim); font-size: 13px; margin-top: 4px; }
+  .out-head .meta-tag {
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent);
+    border: 1px solid var(--accent-soft); border-radius: 100px; padding: 7px 15px;
+  }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .card {
+    background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 22px 22px 20px; position: relative;
+  }
+  .card.full { grid-column: 1 / -1; }
+  .card h3 {
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-faint);
+    margin-bottom: 14px; display: flex; align-items: center; gap: 8px; font-weight: 600;
+  }
+  .card h3 .ic { color: var(--accent); font-family: var(--serif); }
+
+  .copy-btn {
+    position: absolute; top: 16px; right: 16px; background: transparent; border: 1px solid var(--line);
+    color: var(--ink-faint); font-size: 10.5px; letter-spacing: 0.08em; padding: 5px 11px; border-radius: 8px;
+    cursor: pointer; transition: .2s; text-transform: uppercase;
+  }
+  .copy-btn:hover { border-color: var(--accent-soft); color: var(--ink); }
+  .copy-btn.done { color: var(--accent); border-color: var(--accent); }
+
+  .onscreen-track { display: flex; flex-direction: column; gap: 10px; }
+  .beat {
+    display: grid; grid-template-columns: 58px 1fr; gap: 14px; align-items: start;
+    padding: 11px 0; border-bottom: 1px dashed var(--line-soft);
+  }
+  .beat:last-child { border-bottom: none; }
+  .beat .t { color: var(--accent-soft); font-size: 11px; font-family: var(--serif); letter-spacing: 0.06em; padding-top: 3px; }
+  .beat .txt { }
+  .beat .txt .line { font-size: 16px; font-weight: 600; letter-spacing: 0.01em; }
+  .beat .txt .line.kinetic { text-transform: uppercase; letter-spacing: 0.04em; }
+  .beat .txt .line.cinematic { font-family: var(--serif); font-weight: 400; font-size: 18px; font-style: italic; letter-spacing: 0.02em; }
+  .beat .txt .note { color: var(--ink-faint); font-size: 11.5px; margin-top: 3px; }
+
+  .caption-body { font-size: 14.5px; color: var(--ink); white-space: pre-wrap; line-height: 1.7; }
+  .caption-body .hk { font-weight: 600; }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 7px; }
+  .tag {
+    background: var(--bg-elev); border: 1px solid var(--line-soft); color: var(--ink-dim);
+    font-size: 12px; padding: 5px 11px; border-radius: 7px;
+  }
+  .tag.core { color: var(--accent); border-color: var(--accent-soft); }
+
+  .idea-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .idea-list li { display: grid; grid-template-columns: 26px 1fr; gap: 10px; align-items: start; font-size: 14px; }
+  .idea-list li .n { color: var(--accent); font-family: var(--serif); font-size: 15px; }
+  .idea-list li .lbl { color: var(--ink-faint); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; display:block; margin-bottom:2px;}
+
+  .spec-row { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 4px; }
+  .spec { }
+  .spec .k { color: var(--ink-faint); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.14em; }
+  .spec .v { font-size: 14.5px; margin-top: 2px; color: var(--ink); }
+
+  .empty {
+    text-align: center; color: var(--ink-faint); padding: 60px 20px; border: 1px dashed var(--line);
+    border-radius: var(--radius); font-size: 14px; margin-top: 20px;
+  }
+  .empty .big { font-family: var(--serif); font-size: 22px; color: var(--ink-dim); display: block; margin-bottom: 8px; }
+
+  footer {
+    margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--line-soft);
+    color: var(--ink-faint); font-size: 12px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+  }
+
+  /* toast */
+  #toast {
+    position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--accent); color: #14110a; font-size: 13px; font-weight: 600;
+    padding: 11px 22px; border-radius: 100px; opacity: 0; pointer-events: none; transition: .3s;
+    letter-spacing: 0.03em;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 820px) {
+    .pillars { grid-template-columns: 1fr; }
+    .grid { grid-template-columns: 1fr; }
+    .brandline h1 { font-size: 30px; }
+  }
+
+  @media (max-width: 480px) {
+    .wrap { padding: 0 18px; }
+    .focus-field { min-width: 0; }
+    .input-row .btn { width: 100%; padding: 0 20px; }
+    .brandline h1 { font-size: 26px; letter-spacing: 0.22em; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brandline">
+      <h1>STUDIO</h1>
+      <span class="dot"></span>
+      <span class="tagline">Haftalık Viral İçerik Motoru</span>
+    </div>
+    <p class="sub">Türkiye merkezli, global standartlarda bir videographer için. Bir pillar seç, haftanın <strong style="color:var(--ink-dim)">odak fikrini</strong> yaz — on-screen caption, Instagram caption, hashtag ve içerik fikrini sinematik & kinetik kurgu mantığıyla üret.</p>
+  </header>
+
+  <!-- PILLARS -->
+  <div class="section-label">Üç İçerik Sütunu — Pillars</div>
+  <div class="pillars" id="pillars"></div>
+
+  <!-- INPUT -->
+  <div class="input-block">
+    <div class="section-label">Haftanın Odak Fikri</div>
+    <div class="input-row">
+      <input id="focus" class="focus-field" type="text"
+        aria-label="Haftanın odak fikri"
+        placeholder="Örn: otantik bir kafenin sabah ritüeli" autocomplete="off" />
+      <button class="btn" id="generate">Üret</button>
+    </div>
+    <div class="chips" id="examples"></div>
+    <p class="hint" id="hint">Aktif pillar'a göre örnek fikirler değişir. Fikri kendi cümlenle yaz; motor onu kurguya yerleştirir.</p>
+  </div>
+
+  <!-- OUTPUT -->
+  <div id="output">
+    <div class="out-head">
+      <div>
+        <div class="meta-pillar" id="m-pillar"></div>
+        <div class="meta-focus" id="m-focus"></div>
+      </div>
+      <div class="meta-tag" id="m-format"></div>
+    </div>
+    <div class="grid">
+      <div class="card full" id="c-idea"></div>
+      <div class="card" id="c-onscreen"></div>
+      <div class="card" id="c-caption"></div>
+      <div class="card full" id="c-tags"></div>
+    </div>
+    <div style="margin-top:18px; display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn ghost" id="regen">↻ Aynı fikre yeni varyasyon</button>
+      <button class="btn ghost" id="copyall">❏ Tüm kiti kopyala</button>
+    </div>
+  </div>
+
+  <div class="empty" id="empty">
+    <span class="big">Kadraj hazır.</span>
+    Bir pillar seç, odak fikrini yaz ve <em>Üret</em>'e bas.
+  </div>
+
+  <footer>
+    <span>STUDIO — Videographer İçerik Motoru</span>
+    <span id="seedinfo"></span>
+  </footer>
+</div>
+
+<div id="toast">Kopyalandı</div>
+
+<script>
+/* =========================================================================
+   STUDIO — Türkiye merkezli videographer için haftalık viral içerik motoru
+   Tamamı client-side. Odak fikrini pillar bazlı kurgu çerçevelerine yerleştirir.
+   ========================================================================= */
+
+/* ---------- Yardımcılar ---------- */
+function pick(arr, rng) { return arr[Math.floor(rng() * arr.length)]; }
+function shuffle(arr, rng) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+/* mulberry32 — tohumlanabilir RNG (regen'de varyasyon üretmek için) */
+function makeRng(seed) {
+  let t = seed >>> 0;
+  return function () {
+    t += 0x6D2B79F5;
+    let r = Math.imul(t ^ (t >>> 15), 1 | t);
+    r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
+    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+  };
+}
+/* Odak fikrini cümle içine yerleştirmek için küçük temizleyici */
+function clean(s) { return s.trim().replace(/\s+/g, " "); }
+function lower(s) { return clean(s).toLocaleLowerCase("tr"); }
+function cap(s) { s = clean(s); return s.charAt(0).toLocaleUpperCase("tr") + s.slice(1); }
+
+/* =========================================================================
+   PILLAR TANIMLARI
+   ========================================================================= */
+const PILLARS = {
+  cuts: {
+    num: "01",
+    name: "Quick Cuts",
+    en: "İş Vitrini · Showreel",
+    desc: "Çektiğin işlerin ritmik, müzik senkronlu kesitleri — otantik kafe, ürün, mekân, etkinlik. Kanıt ve estetik bir arada.",
+    fmt: "Video Carousel · Reels · Kinetik Text",
+    format: "VIDEO CAROUSEL / REELS",
+    textStyle: "kinetic",
+    length: "12–22 sn",
+    audio: "Beat'i net trend ses veya lo-fi/elektronik; cut'lar beat'e otursun",
+    examples: [
+      "otantik bir kafenin sabah ritüeli",
+      "el yapımı seramik atölyesi",
+      "gece şehir ışıklarında ürün çekimi",
+      "bir butik otelin lobi turu"
+    ],
+    hooks: [
+      f => `${cap(f)} — 0 bütçe, sinema hissi`,
+      f => `Bunu telefonla mı çektim sanıyorsun?`,
+      f => `${cap(f)} böyle çekilir 👇`,
+      f => `3 saniyede içine çekmezse sileceksin`,
+      f => `Müşteri "vay" dedi. İşte neden:`,
+      f => `${cap(f)}: ham görüntü vs final`
+    ],
+    beats: [
+      { t: "0–1 sn", note: "Açılış kadrajı + en güçlü görsel; ses-kapalı için text aynı anda" },
+      { t: "1–4 sn", note: "Hızlı 2-3 cut, hareket/whip pan ile pattern interrupt" },
+      { t: "orta", note: "Detay makro + atmosfer; ritim beat'e kilitli" },
+      { t: "kapanış", note: "En tatmin edici final kare; logo/isim sade" }
+    ],
+    onscreen: [
+      f => ({ line: cap(f), note: "Mekân/iş adı — büyük, sade, alt-üçlük" }),
+      f => ({ line: "BİR HAFTA SONU", note: "Bağlam etiketi" }),
+      f => ({ line: "TEK ÇEKİM", note: "Teknik flex" }),
+      f => ({ line: "SES AÇ 🔊", note: "Etkileşim tetikleyici" }),
+      f => ({ line: "SENİN MEKÂNIN DA BÖYLE GÖRÜNEBİLİR", note: "Dönüşüm vaadi / CTA köprüsü" })
+    ],
+    captionLead: [
+      f => `${cap(f)} için kamerayı eline aldığında hikâye çoktan başlamış oluyor.`,
+      f => `${cap(f)} bir mekândan çok bir his — onu kadraja almak işim.`,
+      f => `Herkes ${lower(f)} görüyor; ben ışığın o mekânda nasıl dolaştığını görüyorum.`
+    ],
+    captionBody: [
+      `Bu kurguda amaç cilalı reklam değil; izleyiciyi 3 saniyede içeri çeken ritim. Cut'ları beat'e oturttum, sesi kapalı izleyen için her kareyi okunur tuttum.`,
+      `Hızlı kesimler dikkat dağıtmak için değil — gözü tam görmesi gereken yere taşımak için. Her cut bir nefes, her nefes bir his.`,
+      `Markanın değil, anın peşindeyim. İzleyici "ben de oraya gitmek istiyorum" dediğinde video işini yapmış demektir.`
+    ],
+    ctas: [
+      "Mekânın / markan için böyle bir kesit ister misin? DM 📩",
+      "Kaydet — bir sonraki çekimde referansın olsun.",
+      "Yorumda \"konum\" yaz, formatı paylaşayım.",
+      "Bunu görmesi gereken birine gönder."
+    ],
+    coreTags: ["#videographer", "#reels", "#cinematography", "#contentcreator"],
+    nicheTags: ["#filmmaking", "#brandvideo", "#videoediting", "#colorgrading", "#brollchallenge", "#cinematicvideo", "#shotoniphone", "#socialmediavideo"],
+    trTags: ["#videografi", "#videoçekim", "#tanıtımvideosu", "#sosyalmedyaiçerik", "#markavideosu", "#esnafdostu"],
+    locTags: ["#istanbul", "#turkey", "#türkiye", "#istanbulvideographer", "#anadolu"]
+  },
+
+  craft: {
+    num: "02",
+    name: "Behind the Frame",
+    en: "Süreç & Teknik · BTS",
+    desc: "Nasıl çektin, hangi karar, hangi ekipman, before/after color grade. Güven ve otorite inşa eden değer sütunu.",
+    fmt: "Carousel · On-Screen · Save-odaklı",
+    format: "CAROUSEL (SÜREÇ)",
+    textStyle: "kinetic",
+    length: "8–10 slide · 1080×1350",
+    audio: "Sakin anlatım veya yumuşak ambient; carousel sessiz de okunur",
+    examples: [
+      "tek lambayla sinematik portre ışığı",
+      "before / after color grade",
+      "düşük bütçeyle gimbal hareketi",
+      "ses-kapalı izlenen videolar için kurgu"
+    ],
+    hooks: [
+      f => `${cap(f)} — kimsenin söylemediği 3 şey`,
+      f => `${cap(f)} konusunda en çok yapılan hata`,
+      f => `Bunu bilseydim 1 yıl kazanırdım: ${lower(f)}`,
+      f => `${cap(f)}: pahalı ekipman değil, bu kararlar`,
+      f => `Yeni başlayan herkesin ${lower(f)} hakkında yanlış bildiği`
+    ],
+    beats: [
+      { t: "Slide 1", note: "KAPAK: 5–8 kelimelik vaat + merak boşluğu (en kritik slayt)" },
+      { t: "Slide 2", note: "Problem / yanlış inanış" },
+      { t: "Slide 3", note: "Dönüm noktası — algoritma swipe sinyalini burada okur" },
+      { t: "Slide 4–7", note: "Adımlar / before-after / kare örnekleri" },
+      { t: "Slide 8+", note: "Özet + kaydet/DM CTA — etkileşim 8. slayttan sonra tekrar yükselir" }
+    ],
+    onscreen: [
+      f => ({ line: cap(f), note: "Kapak başlığı — kalın, kısa, vaat içeren" }),
+      f => ({ line: "ÇOĞU KİŞİ BUNU ATLIYOR", note: "Problem framing — slide 2" }),
+      f => ({ line: "ASIL SIR BURADA →", note: "Slide 3 swipe tetikleyici" }),
+      f => ({ line: "ÖNCE / SONRA", note: "Kanıt slaytı" }),
+      f => ({ line: "KAYDET → SONRAKİ ÇEKİMDE DENE", note: "Save odaklı CTA" })
+    ],
+    captionLead: [
+      f => `${cap(f)} herkesin sandığından daha basit — ama kimse adımları göstermiyor.`,
+      f => `${cap(f)} için pahalı ekipman gerekmiyor; doğru kararlar gerekiyor.`,
+      f => `${cap(f)} sorusunu en çok DM'den alıyorum. İşte tüm süreç:`
+    ],
+    captionBody: [
+      `Carousel'i bilerek adım adım kurdum: her slayt tek bir fikir taşıyor, böylece kaydedip çekim anında geri dönebilirsin. Cilayı değil, tekrarlanabilir sistemi paylaşıyorum.`,
+      `Bunu öğrenmek bana yıllar aldı; sana birkaç dakikada veriyorum. Sıkışırsan slaytları sırayla uygula — her biri bir sonrakine bağlanıyor.`,
+      `Amaç "vay ne güzel" değil, "bunu ben de yapabilirim" dedirtmek. Kaydetmek, beğeniden çok daha değerli bir sinyal — algoritma da öyle düşünüyor.`
+    ],
+    ctas: [
+      "Kaydet ki bir sonraki çekimde elinin altında olsun. 🔖",
+      "Hangi adım kafa karıştırdı? Yorumda sor.",
+      "Bu seriden daha fazlası için takip et.",
+      "Bunu öğrenmesi gereken bir ekip arkadaşına gönder. 📩"
+    ],
+    coreTags: ["#videographer", "#filmmakingtips", "#videoediting", "#cinematography"],
+    nicheTags: ["#colorgrading", "#davinciresolve", "#premierepro", "#lighting", "#bts", "#videographytips", "#cameramovement", "#editingtips", "#filmmaker101"],
+    trTags: ["#videografi", "#videoçekimi", "#kurguteknikleri", "#renkayarı", "#çekimteknikleri", "#videoegitim"],
+    locTags: ["#istanbul", "#türkiye", "#turkishfilmmaker"]
+  },
+
+  story: {
+    num: "03",
+    name: "Cinematic Story",
+    en: "İmza Estetik · Atmosfer",
+    desc: "Mood odaklı, atmosferik sinematik parçalar; Türkiye'nin dokusu, kişisel bakış ve imza estetik. Duygusal bağ ve marka sütunu.",
+    fmt: "Cinematic Reels · Sinematik Text · POV",
+    format: "CINEMATIC REELS",
+    textStyle: "cinematic",
+    length: "18–30 sn",
+    audio: "Sinematik/ambient skor; diyalog yerine atmosfer ve nefes",
+    examples: [
+      "yağmurdan sonra İstanbul sokakları",
+      "gün doğumunda Anadolu",
+      "bir zanaatkârın elleri",
+      "şehrin uyanmadan önceki son anı"
+    ],
+    hooks: [
+      f => `${cap(f)}.`,
+      f => `Bazı yerler ışığını kendi saklar — ${lower(f)} gibi.`,
+      f => `Bunu çekmek için saat 05:00'te oradaydım: ${lower(f)}`,
+      f => `Herkes geçip gidiyor. Ben durup ${lower(f)} izledim.`,
+      f => `${cap(f)} — ses aç, tam ekran izle.`
+    ],
+    beats: [
+      { t: "0–2 sn", note: "Yavaş açılan atmosfer kadrajı; tek satır sinematik text, yumuşak fade-in" },
+      { t: "gelişme", note: "Kademeli reveal — ışık, doku, hareket; metin nadir ve sakin" },
+      { t: "doruk", note: "En güçlü kare; ses zirveye çıkar, text kaybolur" },
+      { t: "kapanış", note: "Nefes alan son kare + imza/isim, sessiz fade-out" }
+    ],
+    onscreen: [
+      f => ({ line: cap(f) + ".", note: "Açılış — tek satır, italik serif, yavaş beliren" }),
+      f => ({ line: "saat 05:24", note: "Zaman/yer damgası — sinematik dokunuş" }),
+      f => ({ line: "kal biraz.", note: "İzleyiciyi tutan minimal davet" }),
+      f => ({ line: "—", note: "Görüntü konuşsun: kasıtlı sessizlik" }),
+      f => ({ line: "İstanbul, kayıt dışı", note: "İmza kapanış etiketi" })
+    ],
+    captionLead: [
+      f => `${cap(f)}. Bazı anları açıklamak değil, hissettirmek istiyorum.`,
+      f => `Kamerayı ${lower(f)} için kaldırdığımda zaman bir an için yavaşladı.`,
+      f => `${cap(f)} — ve ben tam orada, doğru ışığı bekliyordum.`
+    ],
+    captionBody: [
+      `Bu parçada kurgu minimal, ritim yavaş; çünkü bazı sahneler hız değil sabır ister. Her kareyi nefes alabilsin diye bıraktım. Tam ekran ve sesle izlersen aradaki farkı duyarsın.`,
+      `Reklam değil, bir bakış. Türkiye'nin dokusunu küçük anlarda arıyorum — büyük olan zaten herkesin gördüğü. Burada benim imzam atmosferin kendisi.`,
+      `İçerik üretmek bazen susmayı bilmektir. Bu videoda metni geri çektim ki görüntü ve ses öne çıksın. Senin de kazaen rastladığın o sahnelerden biri olsun istedim.`
+    ],
+    ctas: [
+      "Bu anı hatırlatan birine gönder. 🤍",
+      "Kaydet — moodboard'una eklenecek bir kare.",
+      "Bir sonraki sinematik parça için takip et.",
+      "Markan için bu tonda bir film mi? DM. 📩"
+    ],
+    coreTags: ["#cinematography", "#cinematic", "#videographer", "#visualstorytelling"],
+    nicheTags: ["#moodyfilm", "#cinematicvideo", "#filmmaking", "#cinematicshots", "#colorgrading", "#aesthetic", "#bnw", "#streetcinematography", "#ambientvideo"],
+    trTags: ["#sinematik", "#videografi", "#istanbulsokakları", "#anadolu", "#atmosfer", "#görselhikaye"],
+    locTags: ["#istanbul", "#turkey", "#türkiye", "#visitturkey", "#goturkey", "#istanbulstreets"]
+  }
+};
+
+/* =========================================================================
+   STATE
+   ========================================================================= */
+let activePillar = "cuts";
+let lastResult = null;
+
+/* =========================================================================
+   RENDER: PILLAR KARTLARI
+   ========================================================================= */
+function renderPillars() {
+  const host = document.getElementById("pillars");
+  host.innerHTML = "";
+  Object.entries(PILLARS).forEach(([key, p]) => {
+    const el = document.createElement("div");
+    el.className = "pillar" + (key === activePillar ? " active" : "");
+    el.dataset.key = key;
+    el.setAttribute("role", "button");
+    el.setAttribute("tabindex", "0");
+    el.setAttribute("aria-pressed", key === activePillar ? "true" : "false");
+    el.innerHTML =
+      `<div class="pnum">${p.num}</div>
+       <div class="pname">${p.name}</div>
+       <div class="pen">${p.en}</div>
+       <div class="pdesc">${p.desc}</div>
+       <div class="pfmt">${p.fmt}</div>`;
+    const choose = () => {
+      activePillar = key;
+      renderPillars();
+      renderExamples();
+    };
+    el.addEventListener("click", choose);
+    el.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); choose(); }
+    });
+    host.appendChild(el);
+  });
+}
+
+function renderExamples() {
+  const p = PILLARS[activePillar];
+  const host = document.getElementById("examples");
+  host.innerHTML = "";
+  p.examples.forEach(ex => {
+    const c = document.createElement("span");
+    c.className = "chip";
+    c.textContent = ex;
+    c.addEventListener("click", () => {
+      document.getElementById("focus").value = ex;
+      document.getElementById("focus").focus();
+    });
+    host.appendChild(c);
+  });
+}
+
+/* =========================================================================
+   ÜRETİM ÇEKİRDEĞİ
+   ========================================================================= */
+function buildKit(pillarKey, focusRaw, seed) {
+  const p = PILLARS[pillarKey];
+  const rng = makeRng(seed);
+  const focus = clean(focusRaw);
+
+  const hook = pick(p.hooks, rng)(focus);
+
+  // on-screen text track: hook frame + pillar beat'lerine eşlenen text
+  const chosenOnscreen = shuffle(p.onscreen, rng).slice(0, Math.min(4, p.beats.length));
+  const track = p.beats.map((b, i) => {
+    let textObj;
+    if (i === 0) {
+      textObj = { line: hook, note: b.note };
+    } else {
+      const fn = chosenOnscreen[(i - 1) % chosenOnscreen.length];
+      const o = fn(focus);
+      textObj = { line: o.line, note: b.note + " — " + o.note };
+    }
+    return { t: b.t, line: textObj.line, note: textObj.note };
+  });
+
+  // Instagram caption
+  const lead = pick(p.captionLead, rng)(focus);
+  const body = pick(p.captionBody, rng);
+  const cta = pick(p.ctas, rng);
+  const caption = { hook, lead, body, cta };
+
+  // hashtag set: core (hep) + niş + tr + lokasyon, ~14-18 adet karışık
+  const core = p.coreTags;
+  const niche = shuffle(p.nicheTags, rng).slice(0, 5);
+  const tr = shuffle(p.trTags, rng).slice(0, 4);
+  const loc = shuffle(p.locTags, rng).slice(0, 3);
+  const tags = { core, rest: shuffle([...niche, ...tr, ...loc], rng) };
+
+  // içerik fikri / yapı
+  const idea = buildIdea(p, focus, rng);
+
+  return { pillarKey, p, focus, hook, track, caption, tags, idea, seed };
+}
+
+function buildIdea(p, focus, rng) {
+  const concepts = {
+    "Quick Cuts": [
+      `"${cap(focus)}" temasını 3 mikro-sahneye böl: geniş atmosfer → detay makro → insan/aksiyon. Beat senkronlu 4-6 cut.`,
+      `${cap(focus)} için tek lokasyonda 6 farklı kadraj topla, en güçlü 4'ünü beat'e dizip ritmik bir kesit kur.`
+    ],
+    "Behind the Frame": [
+      `"${cap(focus)}" konusunu 8 slaytlık bir öğretiye çevir: kapak vaadi → yanlış inanış → 4 adım → before/after → CTA.`,
+      `${cap(focus)} sürecini ekran kayıtları + kare örnekleriyle göster; her slayt tek bir uygulanabilir karar içersin.`
+    ],
+    "Cinematic Story": [
+      `"${cap(focus)}" üzerine 25 sn'lik atmosfer parçası: tek mekânın ruhunu yavaş reveal ile kur, metni geri çek, sesi öne al.`,
+      `${cap(focus)} için "altın saat + sabır" yaklaşımı; 3-4 uzun kadraj, minimum cut, maksimum his.`
+    ]
+  };
+  const shotlists = {
+    "Quick Cuts": [
+      "Geniş açılış (mekânın kimliği)",
+      "Whip pan ile detaya geçiş",
+      "Makro doku / el / buhar / ışık",
+      "İnsan aksiyonu (servis, dokunuş, gülümseme)",
+      "Beat-drop'ta en güçlü final kare"
+    ],
+    "Behind the Frame": [
+      "Kapak: vaat + merak boşluğu",
+      "Problem / yaygın hata",
+      "Dönüm kararı (slide 3)",
+      "Adım adım uygulama + before/after",
+      "Özet + Kaydet/DM çağrısı"
+    ],
+    "Cinematic Story": [
+      "Yavaş fade-in atmosfer kadrajı",
+      "Işık/doku üzerinde push-in",
+      "İnsan veya hareket: tek anlamlı detay",
+      "Doruk kare (ses zirvesi)",
+      "Nefes alan kapanış + imza"
+    ]
+  };
+  return {
+    concept: pick(concepts[p.name], rng),
+    shots: shotlists[p.name],
+    format: p.format,
+    length: p.length,
+    audio: p.audio,
+    textStyle: p.textStyle === "cinematic" ? "Sinematik (sakin, italik serif, yavaş fade)" : "Kinetik (büyük, kalın, beat senkronlu)"
+  };
+}
+
+/* =========================================================================
+   RENDER: OUTPUT
+   ========================================================================= */
+function renderOutput(r) {
+  document.getElementById("empty").style.display = "none";
+  const out = document.getElementById("output");
+  out.classList.add("show");
+
+  document.getElementById("m-pillar").textContent = r.p.num + " — " + r.p.name;
+  document.getElementById("m-focus").textContent = "Odak: " + r.focus;
+  document.getElementById("m-format").textContent = r.p.format;
+  document.getElementById("seedinfo").textContent = "varyasyon #" + (r.seed % 1000);
+
+  // --- İçerik fikri ---
+  const idea = r.idea;
+  document.getElementById("c-idea").innerHTML =
+    `<h3><span class="ic">◆</span> İçerik Fikri & Kurgu</h3>
+     <button class="copy-btn" data-copy="idea">Kopyala</button>
+     <p style="font-size:15px;line-height:1.65;margin-bottom:16px;">${escapeHtml(idea.concept)}</p>
+     <div class="spec-row" style="margin-bottom:18px;">
+       <div class="spec"><div class="k">Format</div><div class="v">${idea.format}</div></div>
+       <div class="spec"><div class="k">Süre / Yapı</div><div class="v">${idea.length}</div></div>
+       <div class="spec"><div class="k">Text Stili</div><div class="v">${idea.textStyle}</div></div>
+       <div class="spec"><div class="k">Ses</div><div class="v">${idea.audio}</div></div>
+     </div>
+     <div class="k" style="color:var(--ink-faint);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px;">Shot List / Slayt Akışı</div>
+     <ul class="idea-list">
+       ${idea.shots.map((s, i) => `<li><span class="n">${i + 1}</span><span>${s}</span></li>`).join("")}
+     </ul>`;
+
+  // --- On-screen track ---
+  const styleClass = r.p.textStyle; // kinetic | cinematic
+  document.getElementById("c-onscreen").innerHTML =
+    `<h3><span class="ic">▤</span> On-Screen Caption · ${styleClass === "cinematic" ? "Sinematik" : "Kinetik"} Text</h3>
+     <button class="copy-btn" data-copy="onscreen">Kopyala</button>
+     <div class="onscreen-track">
+       ${r.track.map(b =>
+         `<div class="beat">
+            <div class="t">${b.t}</div>
+            <div class="txt">
+              <div class="line ${styleClass}">${escapeHtml(b.line)}</div>
+              <div class="note">${b.note}</div>
+            </div>
+          </div>`).join("")}
+     </div>`;
+
+  // --- Instagram caption ---
+  const c = r.caption;
+  document.getElementById("c-caption").innerHTML =
+    `<h3><span class="ic">✎</span> Instagram Caption</h3>
+     <button class="copy-btn" data-copy="caption">Kopyala</button>
+     <div class="caption-body"><span class="hk">${escapeHtml(c.hook)}</span>
+
+${escapeHtml(c.lead)}
+
+${escapeHtml(c.body)}
+
+${escapeHtml(c.cta)}</div>`;
+
+  // --- Hashtags ---
+  const allTags = [...r.tags.core, ...r.tags.rest];
+  document.getElementById("c-tags").innerHTML =
+    `<h3><span class="ic">#</span> Hashtag Seti · ${allTags.length} etiket (çekirdek + niş + TR + lokasyon)</h3>
+     <button class="copy-btn" data-copy="tags">Kopyala</button>
+     <div class="tags">
+       ${r.tags.core.map(t => `<span class="tag core">${t}</span>`).join("")}
+       ${r.tags.rest.map(t => `<span class="tag">${t}</span>`).join("")}
+     </div>`;
+
+  bindCopyButtons(r);
+  out.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+}
+
+/* =========================================================================
+   KOPYALAMA
+   ========================================================================= */
+function plainKit(r, which) {
+  const c = r.caption;
+  const tags = [...r.tags.core, ...r.tags.rest].join(" ");
+  const onscreen = r.track.map(b => `[${b.t}] ${b.line}  (${b.note})`).join("\n");
+  const idea = r.idea;
+  const ideaTxt =
+`İÇERİK FİKRİ — ${r.p.name}
+${idea.concept}
+Format: ${idea.format} | Süre: ${idea.length} | Text: ${idea.textStyle}
+Ses: ${idea.audio}
+Shot List:
+${idea.shots.map((s, i) => `${i + 1}. ${s}`).join("\n")}`;
+  const captionTxt = `${c.hook}\n\n${c.lead}\n\n${c.body}\n\n${c.cta}`;
+
+  if (which === "idea") return ideaTxt;
+  if (which === "onscreen") return `ON-SCREEN CAPTION (${r.p.textStyle})\n${onscreen}`;
+  if (which === "caption") return captionTxt;
+  if (which === "tags") return tags;
+
+  // tümü
+  return `■ ${r.p.num} ${r.p.name} — Odak: ${r.focus}
+${"=".repeat(48)}
+
+${ideaTxt}
+
+ON-SCREEN CAPTION (${r.p.textStyle}):
+${onscreen}
+
+INSTAGRAM CAPTION:
+${captionTxt}
+
+HASHTAG:
+${tags}`;
+}
+
+function bindCopyButtons(r) {
+  document.querySelectorAll(".copy-btn").forEach(btn => {
+    btn.onclick = () => {
+      copyText(plainKit(r, btn.dataset.copy));
+      btn.classList.add("done");
+      btn.textContent = "✓";
+      setTimeout(() => { btn.classList.remove("done"); btn.textContent = "Kopyala"; }, 1400);
+    };
+  });
+}
+
+function copyText(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(showToast, () => fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+}
+function fallbackCopy(text) {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand("copy"); showToast(); } catch (e) {}
+  document.body.removeChild(ta);
+}
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg || "Kopyalandı";
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 1600);
+}
+
+/* =========================================================================
+   AKSİYONLAR
+   ========================================================================= */
+function generate(newSeed) {
+  const focus = document.getElementById("focus").value;
+  if (!clean(focus)) {
+    document.getElementById("focus").focus();
+    showToast("Önce odak fikrini yaz");
+    return;
+  }
+  const seed = newSeed != null ? newSeed : (Date.now() ^ Math.floor(Math.random() * 1e9));
+  lastResult = buildKit(activePillar, focus, seed);
+  renderOutput(lastResult);
+}
+
+document.getElementById("generate").addEventListener("click", () => generate());
+document.getElementById("focus").addEventListener("keydown", e => {
+  if (e.key === "Enter") generate();
+});
+document.getElementById("regen").addEventListener("click", () => {
+  generate((Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0);
+});
+document.getElementById("copyall").addEventListener("click", () => {
+  if (lastResult) { copyText(plainKit(lastResult, "all")); }
+});
+
+/* INIT */
+renderPillars();
+renderExamples();
+</script>
+</body>
+</html>
