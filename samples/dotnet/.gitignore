@@ -1,7 +1,0 @@
-#local development
-appsettings.local.json
-appsettings.Development.json
-appsettings.Development*
-appsettings.Production.json
-**/[Aa]ppManifest/*.zip
-.deployment

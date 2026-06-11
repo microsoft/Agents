@@ -1,1 +1,0 @@
-This directory contains helpful scripts to set up the resources necessary to run some of the SDK samples.
