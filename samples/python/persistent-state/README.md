@@ -103,4 +103,4 @@ python -m src.main
 
 - **State at scale:** Review [Azure Blob Storage scalability targets](https://learn.microsoft.com/azure/storage/common/scalability-targets-standard-account) and consider [Cosmos DB partitioned storage](https://learn.microsoft.com/azure/cosmos-db/introduction) for higher-throughput scenarios.
 
-- **Next starter sample:** [Semantic Kernel integration](../semantic-kernel-multiturn/README.md) — learn how to use Semantic Kernel to manage multi-turn conversation flows.
+- **Next starter sample:** [Copilot SDK](../copilot-sdk/README.md) — learn how to build more advanced agents using the Copilot SDK.

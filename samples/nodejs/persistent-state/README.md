@@ -90,4 +90,4 @@ npm start
 
 - **State at scale:** Review [Azure Blob Storage scalability targets](https://learn.microsoft.com/azure/storage/common/scalability-targets-standard-account) and consider [Cosmos DB partitioned storage](https://learn.microsoft.com/azure/cosmos-db/introduction) for higher-throughput scenarios.
 
-- **Next starter sample:** [Multi-turn prompt](../multi-turn-prompt/README.md) — learn how to guide a user through a multi-step conversation flow.
+- **Next starter sample:** [Copilot SDK](../copilot-sdk/README.md) — learn how to build more advanced agents using the Copilot SDK.
