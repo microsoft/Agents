@@ -255,68 +255,362 @@
     .input-row .btn { width: 100%; padding: 0 20px; }
     .brandline h1 { font-size: 26px; letter-spacing: 0.22em; }
   }
+
+  /* =====================================================================
+     SITE — çok bölümlü web sitesi katmanı (motor aynen korunur)
+     ===================================================================== */
+  html { scroll-behavior: smooth; scroll-padding-top: 78px; }
+  body { padding-bottom: 0; }
+  ::selection { background: var(--accent); color: #14110a; }
+
+  /* ince film grain */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: .035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- Nav ---------- */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 64px;
+    display: flex; align-items: center;
+    border-bottom: 1px solid transparent; transition: background .3s, border-color .3s, backdrop-filter .3s;
+  }
+  .nav.scrolled {
+    background: rgba(13,13,15,.72); backdrop-filter: blur(14px) saturate(140%);
+    border-bottom-color: var(--line-soft);
+  }
+  .nav-inner { max-width: 1120px; margin: 0 auto; padding: 0 28px; width: 100%; display: flex; align-items: center; justify-content: space-between; }
+  .nav-logo { font-family: var(--serif); font-size: 18px; letter-spacing: 0.34em; text-indent: 0.34em; color: var(--ink); text-decoration: none; }
+  .nav-logo b { color: var(--accent); font-weight: 400; }
+  .nav-links { display: flex; align-items: center; gap: 30px; }
+  .nav-links a {
+    color: var(--ink-dim); text-decoration: none; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    transition: color .2s; position: relative;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links a.cta {
+    color: var(--accent); border: 1px solid var(--accent-soft); border-radius: 100px; padding: 8px 16px;
+  }
+  .nav-links a.cta:hover { background: var(--accent); color: #14110a; }
+  .nav-burger { display: none; background: none; border: none; color: var(--ink); cursor: pointer; padding: 8px; }
+  .nav-burger span { display: block; width: 22px; height: 1.5px; background: var(--ink); margin: 5px 0; transition: .3s; }
+
+  /* ---------- Section frame ---------- */
+  .site { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+  .site-section { padding: 96px 0; border-top: 1px solid var(--line-soft); }
+  .kicker {
+    display: inline-flex; align-items: center; gap: 12px; font-size: 11px; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--accent-soft); margin-bottom: 22px;
+  }
+  .kicker::before { content: ""; width: 26px; height: 1px; background: var(--accent-soft); }
+  .sec-title { font-family: var(--serif); font-weight: 400; font-size: clamp(28px, 4.2vw, 46px); line-height: 1.08; letter-spacing: -0.01em; }
+  .sec-lead { color: var(--ink-dim); font-size: 16px; max-width: 600px; margin-top: 18px; line-height: 1.65; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative; min-height: 92vh; display: flex; align-items: center; overflow: hidden;
+    background:
+      radial-gradient(1100px 520px at 78% -8%, rgba(231,201,143,.10), transparent 60%),
+      radial-gradient(800px 600px at 8% 108%, rgba(231,201,143,.05), transparent 55%);
+  }
+  .hero-inner { max-width: 1120px; margin: 0 auto; padding: 120px 28px 80px; width: 100%; position: relative; z-index: 2; }
+  .hero .display {
+    font-family: var(--serif); font-weight: 400; font-size: clamp(40px, 8vw, 92px); line-height: 1.02;
+    letter-spacing: -0.02em; max-width: 16ch; margin: 8px 0 0;
+  }
+  .hero .display em { font-style: italic; color: var(--accent); }
+  .hero-sub { color: var(--ink-dim); font-size: clamp(15px, 1.6vw, 18px); max-width: 560px; margin-top: 28px; line-height: 1.7; }
+  .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 38px; }
+  .btn.lg { padding: 16px 30px; border-radius: 100px; font-size: 13px; }
+  .btn.line {
+    background: transparent; color: var(--ink); border: 1px solid var(--line); text-transform: uppercase;
+    letter-spacing: 0.06em; font-weight: 600; font-size: 13px; padding: 16px 28px; border-radius: 100px; cursor: pointer;
+    transition: border-color .2s, color .2s;
+  }
+  .btn.line:hover { border-color: var(--accent); color: var(--accent); filter: none; }
+  a.btn { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+  .hero-corner { position: absolute; width: 46px; height: 46px; border: 1px solid var(--line); z-index: 2; }
+  .hero-corner.tl { top: 88px; left: 22px; border-right: none; border-bottom: none; }
+  .hero-corner.br { bottom: 30px; right: 22px; border-left: none; border-top: none; }
+  .hero-scroll { position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); color: var(--ink-faint); font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; z-index: 2; }
+
+  /* ---------- Marquee ---------- */
+  .marquee { overflow: hidden; border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft); padding: 18px 0; background: var(--bg-elev); }
+  .marquee-track { display: flex; gap: 0; white-space: nowrap; width: max-content; animation: marq 32s linear infinite; }
+  .marquee-track span { font-family: var(--serif); font-size: 20px; letter-spacing: 0.08em; color: var(--ink-dim); padding: 0 26px; text-transform: uppercase; }
+  .marquee-track span::after { content: "✦"; color: var(--accent-soft); margin-left: 52px; font-size: 12px; vertical-align: middle; }
+  @keyframes marq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
+
+  /* ---------- Stats ---------- */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+  .stat { padding: 8px 26px 8px 0; border-left: 1px solid var(--line-soft); padding-left: 26px; }
+  .stat:first-child { border-left: none; padding-left: 0; }
+  .stat .num { font-family: var(--serif); font-size: clamp(30px, 4vw, 44px); color: var(--accent); line-height: 1; }
+  .stat .lbl { color: var(--ink-dim); font-size: 13px; margin-top: 12px; line-height: 1.5; }
+
+  /* ---------- Showcase (pillars editorial) ---------- */
+  .showcase-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 52px; }
+  .show-card {
+    position: relative; background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 34px 28px 30px; overflow: hidden; transition: border-color .3s, transform .3s;
+  }
+  .show-card:hover { border-color: var(--accent-soft); transform: translateY(-4px); }
+  .show-card .watermark { position: absolute; top: -18px; right: 6px; font-family: var(--serif); font-size: 120px; color: var(--line); line-height: 1; pointer-events: none; user-select: none; }
+  .show-card .sc-name { font-family: var(--serif); font-size: 27px; position: relative; }
+  .show-card .sc-en { color: var(--accent-soft); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; margin-top: 6px; }
+  .show-card .sc-desc { color: var(--ink-dim); font-size: 14px; margin-top: 18px; line-height: 1.6; }
+  .show-card .sc-fmt { margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line-soft); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint); }
+  .show-card .sc-fmt b { color: var(--accent); font-weight: 600; }
+
+  /* ---------- Engine wrapper ---------- */
+  .engine-tool { margin-top: 46px; }
+  .engine-tool .section-label:first-child { margin-top: 0; }
+
+  /* ---------- Principles ---------- */
+  .principles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 52px; }
+  .principle { background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 24px; transition: border-color .3s; }
+  .principle:hover { border-color: var(--accent-soft); }
+  .principle .pi { font-family: var(--serif); font-size: 13px; color: var(--accent); letter-spacing: 0.1em; }
+  .principle .pt { font-size: 16px; font-weight: 600; margin-top: 10px; }
+  .principle .pp { color: var(--ink-dim); font-size: 13.5px; margin-top: 8px; line-height: 1.6; }
+
+  /* ---------- Workflow ---------- */
+  .flow { margin-top: 52px; display: grid; gap: 0; }
+  .flow-step { display: grid; grid-template-columns: 150px 1fr; gap: 28px; padding: 26px 0; border-top: 1px solid var(--line-soft); align-items: baseline; }
+  .flow-step:last-child { border-bottom: 1px solid var(--line-soft); }
+  .flow-day { font-family: var(--serif); font-size: 19px; color: var(--accent); }
+  .flow-day .sub { display: block; color: var(--ink-faint); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; margin-top: 4px; font-family: var(--sans); }
+  .flow-body .ft { font-size: 16px; font-weight: 600; }
+  .flow-body .fp { color: var(--ink-dim); font-size: 14px; margin-top: 6px; line-height: 1.6; }
+
+  /* ---------- CTA band + footer ---------- */
+  .cta-band { text-align: center; padding: 110px 0 100px; position: relative;
+    background: radial-gradient(700px 360px at 50% 0%, rgba(231,201,143,.08), transparent 65%); }
+  .cta-band h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(30px, 5vw, 56px); line-height: 1.1; }
+  .cta-band h2 em { font-style: italic; color: var(--accent); }
+  .cta-band p { color: var(--ink-dim); font-size: 16px; margin: 18px auto 0; max-width: 480px; }
+  .cta-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 34px; }
+
+  .site-footer { border-top: 1px solid var(--line-soft); padding: 40px 0; }
+  .site-footer .sf-inner { max-width: 1120px; margin: 0 auto; padding: 0 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  .site-footer .sf-logo { font-family: var(--serif); letter-spacing: 0.3em; text-indent: 0.3em; font-size: 15px; }
+  .site-footer .sf-note { color: var(--ink-faint); font-size: 12px; }
+
+  /* ---------- Reveal on scroll ---------- */
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 860px) {
+    .nav-links { position: fixed; top: 64px; left: 0; right: 0; flex-direction: column; align-items: flex-start;
+      gap: 0; background: rgba(13,13,15,.96); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line-soft);
+      padding: 8px 28px 20px; transform: translateY(-130%); transition: transform .35s ease; }
+    .nav-links.open { transform: translateY(0); }
+    .nav-links a { width: 100%; padding: 14px 0; font-size: 13px; border-bottom: 1px solid var(--line-soft); }
+    .nav-links a.cta { width: max-content; border-bottom: 1px solid var(--accent-soft); margin-top: 10px; }
+    .nav-burger { display: block; }
+    .showcase-grid, .principles, .stats { grid-template-columns: 1fr 1fr; }
+    .site-section { padding: 72px 0; }
+  }
+  @media (max-width: 560px) {
+    .showcase-grid, .principles, .stats { grid-template-columns: 1fr; }
+    .stat { border-left: none; padding-left: 0; border-top: 1px solid var(--line-soft); padding-top: 20px; }
+    .stat:first-child { border-top: none; padding-top: 8px; }
+    .flow-step { grid-template-columns: 1fr; gap: 8px; }
+    .hero-inner { padding-top: 100px; }
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <header class="top">
-    <div class="brandline">
-      <h1>STUDIO</h1>
-      <span class="dot"></span>
-      <span class="tagline">Haftalık Viral İçerik Motoru</span>
+<!-- ============================ NAV ============================ -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#top" class="nav-logo">STU<b>·</b>DIO</a>
+    <div class="nav-links" id="navLinks">
+      <a href="#sutunlar">Sütunlar</a>
+      <a href="#motor">Motor</a>
+      <a href="#strateji">Strateji</a>
+      <a href="#akis">Akış</a>
+      <a href="#iletisim" class="cta">İletişim</a>
     </div>
-    <p class="sub">Türkiye merkezli, global standartlarda bir videographer için. Bir pillar seç, haftanın <strong style="color:var(--ink-dim)">odak fikrini</strong> yaz — on-screen caption, Instagram caption, hashtag ve içerik fikrini sinematik & kinetik kurgu mantığıyla üret.</p>
-  </header>
-
-  <!-- PILLARS -->
-  <div class="section-label">Üç İçerik Sütunu — Pillars</div>
-  <div class="pillars" id="pillars"></div>
-
-  <!-- INPUT -->
-  <div class="input-block">
-    <div class="section-label">Haftanın Odak Fikri</div>
-    <div class="input-row">
-      <input id="focus" class="focus-field" type="text"
-        aria-label="Haftanın odak fikri"
-        placeholder="Örn: otantik bir kafenin sabah ritüeli" autocomplete="off" />
-      <button class="btn" id="generate">Üret</button>
-    </div>
-    <div class="chips" id="examples"></div>
-    <p class="hint" id="hint">Aktif pillar'a göre örnek fikirler değişir. Fikri kendi cümlenle yaz; motor onu kurguya yerleştirir.</p>
+    <button class="nav-burger" id="burger" aria-label="Menüyü aç/kapat" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
+</nav>
 
-  <!-- OUTPUT -->
-  <div id="output">
-    <div class="out-head">
-      <div>
-        <div class="meta-pillar" id="m-pillar"></div>
-        <div class="meta-focus" id="m-focus"></div>
-      </div>
-      <div class="meta-tag" id="m-format"></div>
-    </div>
-    <div class="grid">
-      <div class="card full" id="c-idea"></div>
-      <div class="card" id="c-onscreen"></div>
-      <div class="card" id="c-caption"></div>
-      <div class="card full" id="c-tags"></div>
-    </div>
-    <div style="margin-top:18px; display:flex; gap:10px; flex-wrap:wrap;">
-      <button class="btn ghost" id="regen">↻ Aynı fikre yeni varyasyon</button>
-      <button class="btn ghost" id="copyall">❏ Tüm kiti kopyala</button>
+<!-- ============================ HERO ============================ -->
+<header class="hero" id="top">
+  <span class="hero-corner tl" aria-hidden="true"></span>
+  <span class="hero-corner br" aria-hidden="true"></span>
+  <div class="hero-inner">
+    <span class="kicker">Türkiye · Global Standart Videographer</span>
+    <h1 class="display">Sıradan anları <em>sinema hissinde</em> içeriğe çeviren sistem.</h1>
+    <p class="hero-sub">Üç içerik sütunu, haftalık bir motor. Odak fikrini yaz; on-screen caption, Instagram caption, hashtag ve kurgu fikrini saniyeler içinde al — sinematik & kinetik kurgu mantığıyla.</p>
+    <div class="hero-ctas">
+      <a href="#motor" class="btn lg">Motoru Aç</a>
+      <a href="#sutunlar" class="btn line">Sütunları Gör</a>
     </div>
   </div>
+  <span class="hero-scroll" aria-hidden="true">↓ Kaydır</span>
+</header>
 
-  <div class="empty" id="empty">
-    <span class="big">Kadraj hazır.</span>
-    Bir pillar seç, odak fikrini yaz ve <em>Üret</em>'e bas.
+<!-- ============================ MARQUEE ============================ -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>Otantik Kafe</span><span>Ürün</span><span>Mekân Turu</span><span>Etkinlik</span><span>Atölye</span><span>Gastronomi</span><span>Sokak</span><span>Gün Doğumu</span><span>Marka Filmi</span>
+    <span>Otantik Kafe</span><span>Ürün</span><span>Mekân Turu</span><span>Etkinlik</span><span>Atölye</span><span>Gastronomi</span><span>Sokak</span><span>Gün Doğumu</span><span>Marka Filmi</span>
   </div>
-
-  <footer>
-    <span>STUDIO — Videographer İçerik Motoru</span>
-    <span id="seedinfo"></span>
-  </footer>
 </div>
+
+<!-- ============================ STATS ============================ -->
+<section class="site-section" style="border-top:none; padding-top:64px;">
+  <div class="site">
+    <div class="stats reveal">
+      <div class="stat"><div class="num">1–3 sn</div><div class="lbl">Hook ilk saniyelerde dağıtımı belirler</div></div>
+      <div class="stat"><div class="num">%80</div><div class="lbl">Viral kliplerin çoğu altyazı / text kullanır</div></div>
+      <div class="stat"><div class="num">8–19 sn</div><div class="lbl">Reels için tamamlanma getiren tatlı nokta</div></div>
+      <div class="stat"><div class="num">1.4×</div><div class="lbl">Carousel'in statik posta göre erişimi</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ SHOWCASE ============================ -->
+<section class="site-section" id="sutunlar">
+  <div class="site">
+    <span class="kicker reveal">Üç İçerik Sütunu</span>
+    <h2 class="sec-title reveal">Her sütunun ayrı bir işi var.</h2>
+    <p class="sec-lead reveal">Biri kanıtlar, biri öğretir, biri bağ kurar. Birlikte; tutarlı ama çeşitli, ayırt edilebilir bir hesap kurarlar.</p>
+    <div class="showcase-grid">
+      <article class="show-card reveal">
+        <span class="watermark" aria-hidden="true">01</span>
+        <div class="sc-name">Quick Cuts</div>
+        <div class="sc-en">İş Vitrini · Showreel</div>
+        <p class="sc-desc">Çektiğin işlerin ritmik, müzik senkronlu kesitleri — otantik kafe, ürün, mekân, etkinlik. Kanıt ve estetik bir arada.</p>
+        <div class="sc-fmt"><b>Format</b> — Video Carousel · Reels · Kinetik</div>
+      </article>
+      <article class="show-card reveal">
+        <span class="watermark" aria-hidden="true">02</span>
+        <div class="sc-name">Behind the Frame</div>
+        <div class="sc-en">Süreç & Teknik · BTS</div>
+        <p class="sc-desc">Nasıl çektin, hangi karar, hangi ekipman, before/after color grade. Güven ve otorite inşa eden değer sütunu.</p>
+        <div class="sc-fmt"><b>Format</b> — Carousel · Save odaklı</div>
+      </article>
+      <article class="show-card reveal">
+        <span class="watermark" aria-hidden="true">03</span>
+        <div class="sc-name">Cinematic Story</div>
+        <div class="sc-en">İmza Estetik · Atmosfer</div>
+        <p class="sc-desc">Mood odaklı atmosferik parçalar; Türkiye'nin dokusu, kişisel bakış, imza estetik. Duygusal bağ ve marka sütunu.</p>
+        <div class="sc-fmt"><b>Format</b> — Cinematic Reels · Sinematik</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ ENGINE (motor) ============================ -->
+<section class="site-section" id="motor">
+  <div class="site">
+    <span class="kicker reveal">İçerik Motoru</span>
+    <h2 class="sec-title reveal">Odak fikrini yaz, kit'i al.</h2>
+    <p class="sec-lead reveal">Bir sütun seç, haftanın odak fikrini elle yaz. Motor; içerik fikri & shot list, on-screen caption (kinetik/sinematik), Instagram caption ve hashtag setini üretir.</p>
+
+    <div class="engine-tool reveal">
+      <div class="section-label">1 · Sütunu Seç</div>
+      <div class="pillars" id="pillars"></div>
+
+      <div class="input-block">
+        <div class="section-label">2 · Haftanın Odak Fikri</div>
+        <div class="input-row">
+          <input id="focus" class="focus-field" type="text"
+            aria-label="Haftanın odak fikri"
+            placeholder="Örn: otantik bir kafenin sabah ritüeli" autocomplete="off" />
+          <button class="btn" id="generate">Üret</button>
+        </div>
+        <div class="chips" id="examples"></div>
+        <p class="hint" id="hint">Aktif sütuna göre örnek fikirler değişir. Fikri kendi cümlenle yaz; motor onu kurguya yerleştirir.</p>
+      </div>
+
+      <div id="output">
+        <div class="out-head">
+          <div>
+            <div class="meta-pillar" id="m-pillar"></div>
+            <div class="meta-focus" id="m-focus"></div>
+          </div>
+          <div class="meta-tag" id="m-format"></div>
+        </div>
+        <div class="grid">
+          <div class="card full" id="c-idea"></div>
+          <div class="card" id="c-onscreen"></div>
+          <div class="card" id="c-caption"></div>
+          <div class="card full" id="c-tags"></div>
+        </div>
+        <div style="margin-top:18px; display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn ghost" id="regen">↻ Aynı fikre yeni varyasyon</button>
+          <button class="btn ghost" id="copyall">❏ Tüm kiti kopyala</button>
+        </div>
+      </div>
+
+      <div class="empty" id="empty">
+        <span class="big">Kadraj hazır.</span>
+        Bir sütun seç, odak fikrini yaz ve <em>Üret</em>'e bas.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ STRATEGY ============================ -->
+<section class="site-section" id="strateji">
+  <div class="site">
+    <span class="kicker reveal">Viral Mantık · 2026</span>
+    <h2 class="sec-title reveal">Motorun arkasındaki ilkeler.</h2>
+    <p class="sec-lead reveal">Her çıktı bu altı ilke üzerine kurulur — güncel algoritma davranışına göre.</p>
+    <div class="principles">
+      <div class="principle reveal"><div class="pi">01 — Hook</div><div class="pt">İlk 1–3 saniye</div><div class="pp">İzleyicinin yarısı 3 sn'de düşer. En güçlü kareyi ya da sonucu ilk karede göster.</div></div>
+      <div class="principle reveal"><div class="pi">02 — Ses-kapalı</div><div class="pt">Her zaman text overlay</div><div class="pp">İzleyiciler sessiz izliyor; viral kliplerin ~%80'i altyazı kullanır. Hook'u yazıyla pekiştir.</div></div>
+      <div class="principle reveal"><div class="pi">03 — Ritim</div><div class="pt">2–3 sn'de pattern interrupt</div><div class="pp">Jump cut'la ölü anı at; görseli, açıyı ya da metni sık değiştir. Her saniye iş görsün.</div></div>
+      <div class="principle reveal"><div class="pi">04 — Özgünlük</div><div class="pt">Originality Score</div><div class="pp">Watermark'lı repost ve birebir kopyalar erişimi düşürür. Kurgu ve bakış sana ait olsun.</div></div>
+      <div class="principle reveal"><div class="pi">05 — Paylaşım</div><div class="pt">DM / sends sinyali</div><div class="pp">Dağıtımın en ağır sinyali DM ile paylaşım. CTA'ları "birine gönder / DM" üzerine kur.</div></div>
+      <div class="principle reveal"><div class="pi">06 — Carousel</div><div class="pt">Kapak + 3. slayt</div><div class="pp">Kapak vaadi ağırlığın ~%80'i; 3. slayda swipe algoritmanın okuduğu sinyaldir.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ WORKFLOW ============================ -->
+<section class="site-section" id="akis">
+  <div class="site">
+    <span class="kicker reveal">Haftalık Akış</span>
+    <h2 class="sec-title reveal">Tek bir ritüel, dört adım.</h2>
+    <div class="flow">
+      <div class="flow-step reveal"><div class="flow-day">Pazartesi<span class="sub">Planla</span></div><div class="flow-body"><div class="ft">Haftanın 4 odak fikrini belirle</div><div class="fp">Motorla dört kiti üret; on-screen track'leri ve hashtag setlerini hazır et.</div></div></div>
+      <div class="flow-step reveal"><div class="flow-day">Salı–Cuma<span class="sub">Çek & Kurgula</span></div><div class="flow-body"><div class="ft">Sahaya in, kurguyu kapat</div><div class="fp">On-screen track'i kurgu kılavuzu olarak kullan; cut'ları beat'e kilitle.</div></div></div>
+      <div class="flow-step reveal"><div class="flow-day">Yayın<span class="sub">Dağıt</span></div><div class="flow-body"><div class="ft">2 Quick Cuts · 1 Behind · 1 Cinematic</div><div class="fp">Sütunları haftaya dengeli yay. Tutarlılık, tek bir mükemmel videodan daha çok büyütür.</div></div></div>
+      <div class="flow-step reveal"><div class="flow-day">Pazar<span class="sub">Oku & Ayarla</span></div><div class="flow-body"><div class="ft">Metrikleri oku</div><div class="fp">3 sn tutunma, kaydetme, DM paylaşımı — sonraki haftayı bu üç sinyale göre ayarla.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ CTA + FOOTER ============================ -->
+<section class="cta-band" id="iletisim">
+  <div class="site">
+    <span class="kicker reveal" style="display:inline-flex;">İletişim</span>
+    <h2 class="reveal">Markan için <em>bir film mi?</em></h2>
+    <p class="reveal">Mekânın, ürünün ya da hikâyen için sinematik bir içerik konuşalım.</p>
+    <div class="cta-actions reveal">
+      <a href="mailto:merhaba@studio.tr" class="btn lg">E-posta gönder</a>
+      <a href="https://instagram.com" target="_blank" rel="noopener" class="btn line">Instagram'da DM</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="sf-inner">
+    <span class="sf-logo">STUDIO</span>
+    <span class="sf-note">Videographer İçerik Motoru · <span id="seedinfo">hazır</span></span>
+  </div>
+</footer>
 
 <div id="toast">Kopyalandı</div>
 
@@ -864,6 +1158,52 @@ document.getElementById("copyall").addEventListener("click", () => {
 /* INIT */
 renderPillars();
 renderExamples();
+</script>
+
+<script>
+/* =========================================================================
+   SITE CHROME — nav, mobil menü, scroll-reveal (motordan bağımsız)
+   ========================================================================= */
+(function () {
+  var nav = document.getElementById("nav");
+  var burger = document.getElementById("burger");
+  var navLinks = document.getElementById("navLinks");
+
+  // nav arka planı scroll'da belirsin
+  function onScroll() {
+    if (window.scrollY > 24) nav.classList.add("scrolled");
+    else nav.classList.remove("scrolled");
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  // mobil menü aç/kapat
+  if (burger) {
+    burger.addEventListener("click", function () {
+      var open = navLinks.classList.toggle("open");
+      burger.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    navLinks.querySelectorAll("a").forEach(function (a) {
+      a.addEventListener("click", function () {
+        navLinks.classList.remove("open");
+        burger.setAttribute("aria-expanded", "false");
+      });
+    });
+  }
+
+  // scroll-reveal
+  var reveals = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+    reveals.forEach(function (el) { io.observe(el); });
+  } else {
+    reveals.forEach(function (el) { el.classList.add("in"); });
+  }
+})();
 </script>
 </body>
 </html>
