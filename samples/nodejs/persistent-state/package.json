@@ -14,7 +14,7 @@
     "start:anon": "node ./dist/index.js",
     "start": "node --env-file .env ./dist/index.js",
     "test-tool": "agentsplayground",
-    "test": "npm-run-all -p -r start:anon test-tool"
+    "test": "npm-run-all -p -r start test-tool"
   },
   "dependencies": {
     "@microsoft/agents-hosting-express": "^1.5.1",

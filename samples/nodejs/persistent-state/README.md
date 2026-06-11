@@ -21,7 +21,7 @@
 
 ## Prerequisites
 
-- [Node.js 20 or later](https://nodejs.org/)
+- [Node.js 20.6 or later](https://nodejs.org/)
 - An Azure Storage account with a Blob container, or [Azurite](https://learn.microsoft.com/azure/storage/common/storage-use-azurite) for local emulation
 - An Azure Bot registration (required to connect a channel; not required for local emulator testing with [Agents Playground](https://learn.microsoft.com/azure/bot-service/bot-service-overview))
 
