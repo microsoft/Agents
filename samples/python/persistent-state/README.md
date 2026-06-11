@@ -34,7 +34,13 @@
    npx azurite --silent
    ```
 
-2. Create a `.env` file in the `samples/python/persistent-state` directory:
+2. Copy `env.TEMPLATE` to `.env` in the `samples/python/persistent-state` directory and fill in the values:
+
+   ```bash
+   cp samples/python/persistent-state/env.TEMPLATE samples/python/persistent-state/.env
+   ```
+
+   Then edit `.env`:
 
    ```env
    # Required — Azure Storage connection string

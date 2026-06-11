@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import os
 import sys
 import traceback
 from dotenv import load_dotenv
@@ -24,7 +23,7 @@ agents_sdk_config = load_configuration_from_env(environ)
 # Read Azure Blob Storage configuration from environment variables.
 # Set AZURE_BLOB_STORAGE_CONNECTION_STRING in your .env file or environment.
 # For local development with Azurite, use: UseDevelopmentStorage=true
-_connection_string = os.environ.get("AZURE_BLOB_STORAGE_CONNECTION_STRING")
+_connection_string = environ.get("AZURE_BLOB_STORAGE_CONNECTION_STRING")
 if not _connection_string:
     raise RuntimeError(
         "AZURE_BLOB_STORAGE_CONNECTION_STRING is required. "
@@ -32,7 +31,7 @@ if not _connection_string:
         "For local development with Azurite, use: UseDevelopmentStorage=true"
     )
 
-_container_name = os.environ.get(
+_container_name = environ.get(
     "AZURE_BLOB_STORAGE_CONTAINER_NAME", "agents-persistent-state"
 )
 
