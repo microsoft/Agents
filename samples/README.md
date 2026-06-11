@@ -46,11 +46,10 @@ The repository currently emphasizes Tier 1 and Tier 2 samples. Before labeling a
 
 ## Starter gaps to prioritize
 
-The current catalog has strong coverage for quickstarts, authentication, OpenTelemetry, streaming, Copilot Studio integration, and orchestration scenarios. The next starter samples that would most improve the path from "hello world" to production are:
+The current catalog has strong coverage for quickstarts, authentication, OpenTelemetry, streaming, Copilot Studio integration, orchestration scenarios, and **persistent state** ([.NET](dotnet/persistent-state/README.md), [JavaScript](nodejs/persistent-state/README.md), [Python](python/persistent-state/README.md)). The next starter samples that would most improve the path from "hello world" to production are:
 
 | Gap | Why it matters |
 |-----|----------------|
-| Persistent state starter | Shows how to replace in-memory or process-local state with durable storage. |
 | Configuration and secret management starter | Shows local development settings separately from cloud-hosted secret storage. |
 | Error handling, retry, and throttling starter | Shows realistic handling for downstream API failures and rate limits. |
 | Health and readiness starter | Shows the endpoints and checks needed by hosting platforms and deployment pipelines. |

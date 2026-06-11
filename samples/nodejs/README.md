@@ -17,3 +17,4 @@ These samples are Tier 1 or Tier 2 starter samples unless a README explicitly la
 |Copilot Studio Skill|Tier 2: Scenario starter|Call the echo bot from a Copilot Studio skill |[copilotstudio-skill](copilotstudio-skill/README.md)|
 |Copilot SDK|Tier 2: Scenario starter|Dungeon Scribe RPG agent powered by the GitHub Copilot SDK|[copilot-sdk](copilot-sdk/README.md)|
 |OTel Agent|Tier 2: Scenario starter|Agent with OTel instrumentation |[otel](otel/README.md)|
+|Persistent State|Tier 2: Scenario starter|Durable conversation state backed by Azure Blob Storage|[persistent-state](persistent-state/README.md)|

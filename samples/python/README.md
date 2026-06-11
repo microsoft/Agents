@@ -14,6 +14,7 @@ These samples are Tier 1 or Tier 2 starter samples unless a README explicitly la
 |Copilot Studio Skill|Tier 2: Scenario starter|Call the echo bot from a Copilot Studio skill |[copilotstudio-skill](copilotstudio-skill/README.md)|
 |OpenTelemetry|Tier 2: Scenario starter|Instrument an agent and consume telemetry via the Aspire dashboard|[opentelemetry](otel/README.md)|
 |Agent Framework|Tier 2: Scenario starter|Weather agent built with Microsoft Agent Framework SDK|[agent-framework](agent-framework/README.md)|
+|Persistent State|Tier 2: Scenario starter|Durable conversation state backed by Azure Blob Storage|[persistent-state](persistent-state/README.md)|
 |Copilot SDK|Tier 2: Scenario starter|Dungeon Scribe RPG agent powered by the GitHub Copilot SDK|[copilot-sdk](copilot-sdk/README.md)|
 
 ## Important Notice - Import Changes

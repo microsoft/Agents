@@ -17,4 +17,5 @@ These samples are Tier 1 or Tier 2 starter samples unless a README explicitly la
 |Proactive|Tier 2: Scenario starter|Demonstrates the basics of a proactive conversation using in-code and Http triggers.|[Proactive](proactive/README.md)|
 |OpenTelemetry Agent|Tier 2: Scenario starter|Configures OTel tracing, metrics, and logging with OTLP export|[otel](otel/README.md)|
 |Agent Framework|Tier 2: Scenario starter|Weather agent built with Microsoft Agent Framework SDK|[Agent Framework](Agent%20Framework/README.md)|
+|Persistent State|Tier 2: Scenario starter|Durable conversation state backed by Azure Blob Storage|[persistent-state](persistent-state/README.md)|
 |Copilot SDK|Tier 2: Scenario starter|Dungeon Scribe RPG agent powered by the GitHub Copilot SDK|[copilot-sdk](copilot-sdk/README.md)|
