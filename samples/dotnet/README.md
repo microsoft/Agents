@@ -16,3 +16,4 @@
 |OpenTelemetry Agent|Configures OTel tracing, metrics, and logging with OTLP export|[otel](otel/README.md)|
 |Agent Framework|Weather agent built with Microsoft Agent Framework SDK|[Agent Framework](Agent%20Framework/README.md)|
 |Copilot SDK|Dungeon Scribe RPG agent powered by the GitHub Copilot SDK|[copilot-sdk](copilot-sdk/README.md)|
+|Named Pipe Agent|Pipe-only echo agent for the DirectLine App Service extension (DirectLineFlex)|[named-pipe-agent](named-pipe-agent/README.md)|
