@@ -96,4 +96,4 @@ dotnet run
 
 - **State at scale:** Review [Azure Blob Storage scalability targets](https://learn.microsoft.com/azure/storage/common/scalability-targets-standard-account) and consider [Cosmos DB partitioned storage](https://learn.microsoft.com/azure/cosmos-db/introduction) for higher-throughput scenarios.
 
-- **Next starter sample:** [Multi-agent](../multiagent/README.md) — learn how to route conversations across multiple specialized agents.
+- **Next starter sample:** [Copilot SDK](../copilot-sdk/README.md) — learn how to build more advanced agents using the Copilot SDK.
