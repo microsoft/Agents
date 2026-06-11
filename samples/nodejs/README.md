@@ -15,6 +15,6 @@ These samples are Tier 1 or Tier 2 starter samples unless a README explicitly la
 |Cards Agent|Tier 2: Scenario starter|Agent that uses rich cards to enhance conversation design |[cards](cards/README.md)|
 |Multi-turn Prompt |Tier 2: Scenario starter|Multi-turn dialog flow using prompts and state management |[multi-turn-prompt](multi-turn-prompt/README.md)|
 |Copilot Studio Skill|Tier 2: Scenario starter|Call the echo bot from a Copilot Studio skill |[copilotstudio-skill](copilotstudio-skill/README.md)|
+|Persistent State|Tier 2: Scenario starter|Durable conversation state backed by Azure Blob Storage|[persistent-state](persistent-state/README.md)|
 |Copilot SDK|Tier 2: Scenario starter|Dungeon Scribe RPG agent powered by the GitHub Copilot SDK|[copilot-sdk](copilot-sdk/README.md)|
 |OTel Agent|Tier 2: Scenario starter|Agent with OTel instrumentation |[otel](otel/README.md)|
-|Persistent State|Tier 2: Scenario starter|Durable conversation state backed by Azure Blob Storage|[persistent-state](persistent-state/README.md)|
