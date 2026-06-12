@@ -22,7 +22,7 @@ Compared to [quickstart](../quickstart/README.md), this sample:
     node --version
     ```
 
-- **Windows** — named pipes are a Windows-only transport.
+- **Windows** — this sample is intended for Windows deployment targets (the DirectLine App Service extension / DirectLineFlex that connects to it is Windows-only).
 
 ## Running locally
 
