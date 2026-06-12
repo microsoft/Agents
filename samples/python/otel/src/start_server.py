@@ -10,7 +10,10 @@ from microsoft_agents.hosting.aiohttp import (
     CloudAdapter,
     jwt_authorization_middleware,
 )
-from aiohttp.web import Request, Response, Application, run_app
+from aiohttp import web
+from aiohttp.web import Request, Response
+
+from .instrumentation import instrument_aiohttp_server
 
 logger = logging.getLogger(__name__)
 
@@ -30,11 +33,13 @@ def start_server(
             adapter,
         )
 
-    APP = Application(middlewares=[jwt_authorization_middleware])
+    instrument_aiohttp_server()
+
+    APP = web.Application(middlewares=[jwt_authorization_middleware])
     APP.router.add_post("/api/messages", entry_point)
 
     APP["agent_configuration"] = auth_configuration
     APP["agent_app"] = agent_application
     APP["adapter"] = agent_application.adapter
 
-    run_app(APP, host="localhost", port=int(environ.get("PORT", 3978)))
+    web.run_app(APP, host="localhost", port=int(environ.get("PORT", 3978)))
