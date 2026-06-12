@@ -5,7 +5,7 @@ import { AgentApplication, MemoryStorage, TurnContext, TurnState } from '@micros
 import { createLocalAdapter, startNamedPipeServer } from '@microsoft/agents-hosting-directline-namedpipes'
 
 // Create custom conversation state properties.  This is
-// used to store customer properties in conversation state.
+// used to store custom properties in conversation state.
 interface ConversationState {
   count: number;
 }
@@ -58,16 +58,21 @@ const service = await startNamedPipeServer(adapter, (context) => agent.run(conte
   pipeName: PIPE_NAME
 })
 
+// Graceful shutdown — handle both SIGINT (Ctrl-C) and SIGTERM (App Service / container).
+let shuttingDown = false
+
 service.ready.then(() => {
   console.log(`Named pipe agent connected on '${PIPE_NAME}'`)
-}).catch(() => {
-  // Ready rejection means stop() was called before connecting — normal during shutdown.
+}).catch((err) => {
+  // A rejection during shutdown is expected (stop() was called before connecting).
+  // Any other rejection is a real startup error and should be surfaced.
+  if (!shuttingDown) {
+    console.error('Named pipe server failed to start:', err)
+  }
 })
 
 console.log(`Named pipe agent started, waiting for connection on '${PIPE_NAME}'...`)
 
-// Graceful shutdown — handle both SIGINT (Ctrl-C) and SIGTERM (App Service / container).
-let shuttingDown = false
 const shutdown = async (signal: string) => {
   if (shuttingDown) return
   shuttingDown = true

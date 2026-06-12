@@ -27,10 +27,9 @@ Compared to [quickstart](../quickstart/README.md), this sample:
 ## Running locally
 
 1. Open this folder from your IDE or terminal of preference.
-1. Install dependencies and build:
+1. Build the sample (this also installs dependencies via the `prebuild` script):
 
     ```sh
-    npm install
     npm run build
     ```
 
