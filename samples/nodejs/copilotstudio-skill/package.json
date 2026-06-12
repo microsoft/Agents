@@ -4,7 +4,7 @@
   "main": "agent.js",
   "scripts": {
     "prebuild": "npm ci",
-    "build": "tsc --build",
+    "build": "npx tsc --build",
     "prestart": "npm run build",
     "start": "node --env-file .env dist/agent.js"
   },
@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
-    "globals": "^16.1.0"
+    "globals": "^16.1.0",
+    "typescript": "^6.0.3"
   }
 }

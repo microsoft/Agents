@@ -25,6 +25,10 @@ The Microsoft 365 Agents SDK builds multichannel agents for Teams, Copilot Studi
 | `Microsoft.Agents.Builder.Dialogs` | Dialog system (waterfall, prompts) |
 | `Microsoft.Agents.AI` | AI-specific features |
 
+**Minimal project requires only:** `Microsoft.Agents.Hosting.AspNetCore` + `Microsoft.Agents.Authentication.Msal`. The others are transitive dependencies pulled in automatically.
+
+**Always use the latest non-beta (stable) version.** Do not use `--prerelease` unless specifically needed.
+
 Requires .NET 8+.
 
 ## Azure Resources Required
@@ -44,6 +48,8 @@ Local dev: Set `TokenValidation:Enabled` to `false`. No Azure Bot needed until d
 
 ### Single connection (most common)
 
+**appsettings.json** — no secret here (safe to commit):
+
 ```json
 {
   "Connections": {
@@ -52,7 +58,6 @@ Local dev: Set `TokenValidation:Enabled` to `false`. No Azure Bot needed until d
         "AuthType": "ClientSecret",
         "AuthorityEndpoint": "https://login.microsoftonline.com/<tenantId>",
         "ClientId": "<appId>",
-        "ClientSecret": "<secret>",
         "Scopes": ["https://api.botframework.com/.default"]
       }
     }
@@ -67,6 +72,23 @@ Local dev: Set `TokenValidation:Enabled` to `false`. No Azure Bot needed until d
     "Enabled": true,
     "Audiences": ["<appId>"],
     "TenantId": "<tenantId>"
+  }
+}
+```
+
+**appsettings.Development.json** — secret lives here (excluded via `.gitignore`):
+
+```json
+{
+  "Connections": {
+    "ServiceConnection": {
+      "Settings": {
+        "ClientSecret": "<secret>"
+      }
+    }
+  },
+  "TokenValidation": {
+    "Enabled": false
   }
 }
 ```
@@ -154,6 +176,8 @@ Each entry maps a `ServiceUrl` pattern to a named connection. The first matching
 
 ### Local development (disable token validation)
 
+Put in `appsettings.Development.json` (not `appsettings.json`):
+
 ```json
 {
   "TokenValidation": {
@@ -164,10 +188,11 @@ Each entry maps a `ServiceUrl` pattern to a named connection. The first matching
 
 ## Quick Start
 
+**Prerequisite:** Copy [`AspNetExtensions.cs`](https://github.com/microsoft/Agents/blob/main/samples/dotnet/quickstart/AspNetExtensions.cs) into your project. This provides `AddAgentAspNetAuthentication` for JWT token validation.
+
+**Program.cs:**
+
 ```csharp
-using Microsoft.Agents.Builder;
-using Microsoft.Agents.Builder.App;
-using Microsoft.Agents.Core.Models;
 using Microsoft.Agents.Hosting.AspNetCore;
 using Microsoft.Agents.Storage;
 
@@ -186,36 +211,38 @@ app.MapAgentRootEndpoint();
 app.MapAgentApplicationEndpoints(requireAuth: !app.Environment.IsDevelopment());
 
 app.Run();
+```
 
-public class MyAgent : AgentApplication
+**MyAgent.cs** — put the `AgentApplication` subclass in its own file (see [AgentApplication Patterns](#agentapplication-patterns) below for routing, state, and auth examples).
+
+**Properties/launchSettings.json:**
+
+```json
 {
-    public MyAgent(AgentApplicationOptions options) : base(options)
-    {
-        OnConversationUpdate(ConversationUpdateEvents.MembersAdded, WelcomeAsync);
-        OnActivity(ActivityTypes.Message, OnMessageAsync, rank: RouteRank.Last);
+  "profiles": {
+    "MyAgent": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:3979;http://localhost:3978"
     }
-
-    private async Task WelcomeAsync(ITurnContext ctx, ITurnState state, CancellationToken ct)
-    {
-        foreach (var member in ctx.Activity.MembersAdded)
-        {
-            if (member.Id != ctx.Activity.Recipient.Id)
-            {
-                await ctx.SendActivityAsync("Hello! Send me a message.", cancellationToken: ct);
-            }
-        }
-    }
-
-    private async Task OnMessageAsync(ITurnContext ctx, ITurnState state, CancellationToken ct)
-    {
-        int counter = state.GetValue("conversation.counter", () => 0);
-        await ctx.SendActivityAsync($"[{counter++}] You said: {ctx.Activity.Text}", cancellationToken: ct);
-        state.SetValue("conversation.counter", counter);
-    }
+  }
 }
 ```
 
 Run: `dotnet run`
+
+**.gitignore** — ensure `appsettings.Development.json` is excluded (it contains secrets):
+
+```
+appsettings.Development.json
+```
+
+**Teams app manifest (if targeting Teams):** Copy the `appManifest/` folder from [`Agents-for-net/src/samples/EmptyAgent/appManifest`](https://github.com/microsoft/Agents-for-net/tree/main/src/samples/EmptyAgent/appManifest) into your project. Then update `manifest.json`:
+- Replace all `${{AAD_APP_CLIENT_ID}}` with your bot's Client ID
+- Set `name.short` and `name.full` to your bot's display name
 
 ## Program.cs Structure
 
@@ -638,27 +665,27 @@ app.MapAgentProactiveEndpoints<MyAgent>(requireAuth: !app.Environment.IsDevelopm
 
 ## OpenTelemetry / Observability
 
-```csharp
-using OpenTelemetry;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
+**Prerequisite:** Copy [`AgentOtelExtension.cs`](https://github.com/microsoft/Agents/blob/main/samples/dotnet/otel/AgentOtelExtension.cs) into your project. This provides `ConfigureOtelProviders`.
 
-builder.Services.AddOpenTelemetry()
-    .ConfigureResource(r => r.AddService("MyAgent", serviceVersion: "1.0"))
-    .WithTracing(tracing => tracing
-        .AddSource("Microsoft.AspNetCore", "System.Net.Http")
-        .SetSampler(new AlwaysOnSampler())
-        .AddAspNetCoreInstrumentation()
-        .AddHttpClientInstrumentation()
-        .AddOtlpExporter());
+```csharp
+using Otel;
+
+builder.ConfigureOtelProviders();
 ```
 
 Required packages:
 ```xml
+<!-- OpenTelemetry packages - versions managed centrally -->
 <PackageReference Include="OpenTelemetry" Version="1.*" />
-<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.*" />
+<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.*" />
 <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.*" />
 <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.*" />
+<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.*" />
+<!-- OpenTelemetry Exporters -->
+<PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.*" />
+<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.*" />
+<!-- Azure Monitor (Application Insights) Exporter -->
+<PackageReference Include="Azure.Monitor.OpenTelemetry.Exporter" Version="1.*"/>
 ```
 
 ## Common Mistakes
@@ -722,6 +749,31 @@ app.MapAgentApplicationEndpoints(requireAuth: true);
 **6. TokenValidation:Enabled left true for local dev**
 
 If `TokenValidation:Enabled` is `true` with no valid credentials configured, every incoming request will be rejected with 401. Set to `false` for local anonymous development.
+
+**7. Missing AspNetExtensions.cs for AddAgentAspNetAuthentication**
+
+`AddAgentAspNetAuthentication` is NOT built into the SDK packages — it's a helper extension that must be copied into your project from the quickstart samples.
+
+```csharp
+// ERROR — CS1061: 'IServiceCollection' does not contain a definition for 'AddAgentAspNetAuthentication'
+builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
+
+// FIX — Copy AspNetExtensions.cs from the samples repo into your project:
+// https://github.com/microsoft/Agents/blob/main/samples/dotnet/quickstart/AspNetExtensions.cs
+```
+
+**8. Missing `Microsoft.Agents.Builder.State` using for ITurnState**
+
+```csharp
+// WRONG — CS0246: ITurnState could not be found
+using Microsoft.Agents.Builder;
+using Microsoft.Agents.Builder.App;
+
+// CORRECT — add the State namespace
+using Microsoft.Agents.Builder;
+using Microsoft.Agents.Builder.App;
+using Microsoft.Agents.Builder.State;
+```
 
 ## Contributing
 

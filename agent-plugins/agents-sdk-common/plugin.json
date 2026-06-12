@@ -1,0 +1,11 @@
+{
+  "name": "agents-sdk-common",
+  "description": "Shared skills for building agents with the Microsoft 365 Agents SDK (all languages)",
+  "version": "1.1.0",
+  "author": {
+    "name": "Microsoft"
+  },
+  "license": "MIT",
+  "keywords": ["microsoft", "agents", "teams", "copilot-studio", "m365", "azure", "provisioning"],
+  "skills": "skills/"
+}

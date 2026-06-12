@@ -1,5 +1,5 @@
 ---
-name: azure-agents-sdk-provision
+name: agents-sdk-provision
 description: >
   Use when provisioning Azure resources for a Microsoft Agents SDK application —
   including creating an Azure Bot Service resource, setting up Entra app
@@ -8,16 +8,14 @@ description: >
   deployments for SSO, or setting up OAuth user sign-in connections via az CLI.
   Trigger even if the user doesn't say "provision" — use on requests like "set
   up my bot on Azure", "deploy my bot", "configure Azure for my bot", or "get
-  Teams SSO working."
+  Teams SSO working." Applies to all languages (dotnet, Node.js, Python).
 ---
 
 # Azure Agents SDK Provisioning
 
 ## Overview
 
-Provisions Azure Bot resources for M365 Agents SDK apps using `az` CLI commands. Three auth types available; each produces a config block for `appsettings.json` (dotnet) or env vars (Node.js).
-
-**See `agents-sdk-typescript` skill for env var format (Node.js).**
+Provisions Azure Bot resources for M365 Agents SDK apps using `az` CLI commands. Three auth types available; each produces a config block for `appsettings.json` (dotnet) or env vars (Node.js/Python).
 
 ## Prerequisites
 
@@ -30,11 +28,11 @@ az group create --name "<rg>" --location eastus
 
 ## Auth Type Selection
 
-| Auth Type | No Secret | Works Off-Azure | App Registration | JS SDK |
-|-----------|:---------:|:---------------:|:----------------:|:------:|
-| `UserManagedIdentity` | ✅ | ❌ | ❌ | ✅ |
-| `FederatedCredentials` | ✅ | ✅ | ✅ | ✅ |
-| `ClientSecret` | ❌ | ✅ | ✅ | ✅ |
+| Auth Type | No Secret | Works Off-Azure | App Registration |
+|-----------|:---------:|:---------------:|:----------------:|
+| `UserManagedIdentity` | ✅ | ❌ | ❌ |
+| `FederatedCredentials` | ✅ | ✅ | ✅ |
+| `ClientSecret` | ❌ | ✅ | ✅ |
 
 ### UserManagedIdentity
 
@@ -73,7 +71,7 @@ The bot has an App Registration (for a stable `clientId` and tenant-scoped ident
 
 The bot has an App Registration with a generated client secret. The secret is stored in config and sent to Azure AD to obtain tokens. Classic service principal authentication.
 
-**Use when:** The bot runs outside Azure (local dev, on-prem, other cloud), the JS SDK is in use, or you need the quickest path to a working bot without MSI infrastructure.
+**Use when:** The bot runs outside Azure (local dev, on-prem, other cloud), or you need the quickest path to a working bot without MSI infrastructure.
 **How to execute:**  Use Option C in Step 1 below, which runs two Bicep deployments to create the app registration with Teams SSO support, then generates a client secret.
 
 **Implies:**
@@ -102,20 +100,37 @@ TENANT_ID=$(echo $RESULT | jq -r '.tenantId')
 RESOURCE_ID=$(echo $RESULT | jq -r '.id')
 ```
 
-Config output:
+**Config output — dotnet (`appsettings.json`):**
 ```json
 {
-  "ClientId": "<clientId>",
-  "TenantId": "<tenantId>",
-  "ResourceId": "<id>",
-  "AzureBotAppType": "UserAssignedMSI",
-  "ServiceConnection.Settings": {
-    "AuthType": "UserManagedIdentity",
-    "ClientId": "<clientId>",
-    "Scopes": ["https://api.botframework.com/.default"]
+  "Connections": {
+    "ServiceConnection": {
+      "Settings": {
+        "AuthType": "UserManagedIdentity",
+        "ClientId": "<clientId>",
+        "Scopes": ["https://api.botframework.com/.default"]
+      }
+    }
+  },
+  "ConnectionsMap": [
+    { "ServiceUrl": "*", "Connection": "ServiceConnection" }
+  ],
+  "TokenValidation": {
+    "Enabled": true,
+    "Audiences": ["<clientId>"],
+    "TenantId": "<tenantId>"
   }
 }
 ```
+
+**Config output — Node.js (`.env`):**
+```
+connections__serviceConnection__settings__clientId=<clientId>
+connectionsMap__0__connection=serviceConnection
+connectionsMap__0__serviceUrl=*
+```
+
+> Run with: `node --env-file .env dist/index.js` (Node 20+)
 
 ### Option B: FederatedCredentials
 
@@ -149,21 +164,41 @@ az ad app federated-credential create \
 az ad sp create --id "$APP_ID" --output none
 ```
 
-Config output:
+**Config output — dotnet (`appsettings.json`):**
 ```json
 {
-  "ClientId": "<appId>",
-  "TenantId": "<tenantId>",
-  "AzureBotAppType": "SingleTenant",
-  "ServiceConnection.Settings": {
-    "AuthType": "FederatedCredentials",
-    "AuthorityEndpoint": "https://login.microsoftonline.com/<tenantId>",
-    "ClientId": "<appId>",
-    "FederatedClientId": "<msi-clientId>",
-    "Scopes": ["https://api.botframework.com/.default"]
+  "Connections": {
+    "ServiceConnection": {
+      "Settings": {
+        "AuthType": "FederatedCredentials",
+        "AuthorityEndpoint": "https://login.microsoftonline.com/<tenantId>",
+        "ClientId": "<appId>",
+        "FederatedClientId": "<msi-clientId>",
+        "Scopes": ["https://api.botframework.com/.default"]
+      }
+    }
+  },
+  "ConnectionsMap": [
+    { "ServiceUrl": "*", "Connection": "ServiceConnection" }
+  ],
+  "TokenValidation": {
+    "Enabled": true,
+    "Audiences": ["<appId>"],
+    "TenantId": "<tenantId>"
   }
 }
 ```
+
+**Config output — Node.js (`.env`):**
+```
+connections__serviceConnection__settings__clientId=<appId>
+connections__serviceConnection__settings__FICClientId=<msi-clientId>
+connections__serviceConnection__settings__tenantId=<tenantId>
+connectionsMap__0__connection=serviceConnection
+connectionsMap__0__serviceUrl=*
+```
+
+> Run with: `node --env-file .env dist/index.js` (Node 20+)
 
 ### Option C: ClientSecret
 
@@ -315,6 +350,14 @@ Store secret in Key Vault or environment secret store — never in source.
         "Scopes": ["https://api.botframework.com/.default"]
       }
     }
+  },
+  "ConnectionsMap": [
+    { "ServiceUrl": "*", "Connection": "ServiceConnection" }
+  ],
+  "TokenValidation": {
+    "Enabled": true,
+    "Audiences": ["<appId>"],
+    "TenantId": "<tenantId>"
   }
 }
 ```
@@ -398,14 +441,22 @@ az bot teams create \
 ## Step 3: Apply Config
 
 **dotnet (`appsettings.json`):**
+
+Place the config output from Step 1 into your project root. For production, use Azure Key Vault references or user secrets:
+
+```bash
+# Use .NET user secrets for local dev
+dotnet user-secrets init
+dotnet user-secrets set "Connections:ServiceConnection:Settings:ClientSecret" "<secret>"
+```
+
+Or reference Key Vault in `appsettings.json`:
 ```json
 {
   "Connections": {
     "ServiceConnection": {
       "Settings": {
-        "AuthType": "...",
-        "ClientId": "...",
-        "...": "..."
+        "ClientSecret": "@Microsoft.KeyVault(VaultName=myVault;SecretName=BotClientSecret)"
       }
     }
   }
@@ -415,31 +466,6 @@ az bot teams create \
 **Node.js (`.env`):**
 
 Use `connections__<name>__settings__<field>` (double underscore separators). Always add a `connectionsMap` entry.
-
-*ClientSecret:*
-```
-connections__serviceConnection__settings__clientId=<appId>
-connections__serviceConnection__settings__clientSecret=<secret>
-connections__serviceConnection__settings__tenantId=<tenantId>
-connectionsMap__0__connection=serviceConnection
-connectionsMap__0__serviceUrl=*
-```
-
-*UserManagedIdentity* (hosted on Azure — no secret needed):
-```
-connections__serviceConnection__settings__clientId=<msi-clientId>
-connectionsMap__0__connection=serviceConnection
-connectionsMap__0__serviceUrl=*
-```
-
-*FederatedCredentials:*
-```
-connections__serviceConnection__settings__clientId=<appId>
-connections__serviceConnection__settings__FICClientId=<msi-clientId>
-connections__serviceConnection__settings__tenantId=<tenantId>
-connectionsMap__0__connection=serviceConnection
-connectionsMap__0__serviceUrl=*
-```
 
 > Run with: `node --env-file .env dist/index.js` (Node 20+)
 
@@ -468,7 +494,7 @@ If the user needs to add a user sign-in OAuth connection to the bot, read [refer
 | OAuth app not found | Run `az ad sp create --id <oauth-appId>` if bot can't find the app |
 | `AADSTS500113: No reply address is registered` | Add `https://token.botframework.com/.auth/web/redirect` as a redirect URI on the app registration — applies to **both** ClientSecret and FIC OAuth app registrations |
 | Teams SSO token exchange fails silently | The `access_as_user` scope must be created on the OAuth app registration (step 4 of FIC flow) **before** pre-authorizing Teams clients; and `--provider-scope-string` must reference `access_as_user`, not `user_impersonation` |
-| `uuidgen: command not found` on Windows Git Bash | Use `python3 -c "import uuid; print(uuid.uuid4())"` instead of `uuidgen` |
+| `uuidgen: command not found` on Windows | Use `powershell -NoProfile -Command "[guid]::NewGuid().ToString()"` instead of `uuidgen` |
 
 ## Contributing
 

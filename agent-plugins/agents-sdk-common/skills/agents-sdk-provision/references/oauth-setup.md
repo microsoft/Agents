@@ -1,6 +1,6 @@
-# OAuth Connection Setup (.NET)
+# OAuth Connection Setup
 
-Adds a user sign-in OAuth connection to an existing bot. The `az` CLI commands are identical to the JS version — the only difference is the config output format (`appsettings.json` instead of `.env`).
+Adds a user sign-in OAuth connection to an existing bot.
 
 ## Recommended Auth Types
 
@@ -52,7 +52,7 @@ az ad app update \
   --web-redirect-uris "https://token.botframework.com/.auth/web/redirect"
 ```
 
-**appsettings.json — add to AgentApplication section:**
+**Config output — dotnet (`appsettings.json`):**
 ```json
 {
   "AgentApplication": {
@@ -71,6 +71,11 @@ az ad app update \
     }
   }
 }
+```
+
+**Config output — Node.js (`.env`):**
+```
+graph_connectionName=GraphOAuthConnection
 ```
 
 ## FIC bots (AadV2WithFic)
@@ -153,7 +158,9 @@ az ad app update \
   --web-redirect-uris "https://token.botframework.com/.auth/web/redirect"
 ```
 
-**appsettings.json — same AgentApplication:UserAuthorization block as ClientSecret above.**
+**Config output — dotnet (`appsettings.json`):** Same `AgentApplication:UserAuthorization` block as ClientSecret above.
+
+**Config output — Node.js (`.env`):** Same `graph_connectionName=GraphOAuthConnection` as ClientSecret above.
 
 ## Teams SSO (optional)
 

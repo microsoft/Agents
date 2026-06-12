@@ -1,5 +1,5 @@
 ---
-name: agents-sdk-debugging
+name: agents-sdk-typescript-debugging
 description: >
   Use when troubleshooting an agent built with the Microsoft Agents SDK
   (@microsoft/agents-hosting and related packages). Trigger on any of these
