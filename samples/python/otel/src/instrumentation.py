@@ -18,18 +18,25 @@ from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 from opentelemetry.instrumentation.aiohttp_server import AioHttpServerInstrumentor
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 
+from .agent_telemetry import SERVICE_NAME, SERVICE_VERSION, set_telemetry_globals
+
+
+def instrument_aiohttp_server():
+    """Instrument aiohttp before application creation for inbound request tracing."""
+
+    AioHttpServerInstrumentor().instrument()
+
+
 def instrument_libraries():
     """Instrument libraries for OpenTelemetry."""
 
-    # ##
-    # # instrument aiohttp client
-    # ##
+    # instrument aiohttp client
     def aiohttp_client_request_hook(
         span: Span, params: aiohttp.TraceRequestStartParams
     ):
@@ -48,9 +55,7 @@ def instrument_libraries():
         response_hook=aiohttp_client_response_hook,
     )
 
-    #
     # instrument requests library
-    ##
     def requests_request_hook(span: Span, request: requests.Request):
         if span and span.is_recording():
             span.set_attribute("http.url", request.url)
@@ -65,14 +70,15 @@ def instrument_libraries():
         request_hook=requests_request_hook, response_hook=requests_response_hook
     )
 
+
 def configure_otel_providers(service_name: str = "app"):
-    """Configure OpenTelemetry for FastAPI application."""
+    """Configure OpenTelemetry for aiohttp application."""
 
     # Create resource with service name
     resource = Resource.create(
         {
             "service.name": service_name,
-            "service.version": "1.0.0",
+            "service.version": SERVICE_VERSION,
             "service.instance.id": os.getenv("HOSTNAME", "unknown"),
             "telemetry.sdk.language": "python",
         }
@@ -83,9 +89,10 @@ def configure_otel_providers(service_name: str = "app"):
     # Configure Tracing
     tracer_provider = TracerProvider(resource=resource)
     tracer_provider.add_span_processor(
-        SimpleSpanProcessor(OTLPSpanExporter(endpoint=endpoint))
+        BatchSpanProcessor(OTLPSpanExporter(endpoint=endpoint))
     )
     trace.set_tracer_provider(tracer_provider)
+    tracer = trace.get_tracer(service_name, SERVICE_VERSION)
 
     # Configure Metrics
     metric_reader = PeriodicExportingMetricReader(
@@ -93,6 +100,17 @@ def configure_otel_providers(service_name: str = "app"):
     )
     meter_provider = MeterProvider(resource=resource, metric_readers=[metric_reader])
     metrics.set_meter_provider(meter_provider)
+    meter = metrics.get_meter(service_name, SERVICE_VERSION)
+    route_executed_counter = meter.create_counter(
+        "agent.routes.executed.count",
+        unit="routes",
+        description="Number of routes executed by the agent",
+    )
+    message_processing_duration = meter.create_histogram(
+        "agent.message.processing.duration",
+        unit="ms",
+        description="Duration of message processing in milliseconds",
+    )
 
     # Configure Logging
     logger_provider = LoggerProvider(resource=resource)
@@ -104,6 +122,9 @@ def configure_otel_providers(service_name: str = "app"):
     # Add logging handler
     handler = LoggingHandler(level=logging.NOTSET, logger_provider=logger_provider)
     logging.getLogger().addHandler(handler)
+
+    # Set the telemetry globals
+    set_telemetry_globals(service_name, tracer, route_executed_counter, message_processing_duration)
 
     logging.getLogger().info("OpenTelemetry providers configured with endpoint: %s", endpoint)
 

@@ -192,10 +192,10 @@ With a single connection, `connectionsMap` can be omitted — the SDK defaults t
 If your agent uses user sign-in (`authorization: { graph: { ... } }`), the OAuth connection name must be set:
 
 ```
-graph_connectionName=GraphOAuthConnection
+AgentApplication__UserAuthorization__Handlers__graph__Settings__azureBotOAuthConnectionName=GraphOAuthConnection
 ```
 
-The prefix (`graph`) must match the key used in the `authorization` config in your code. A mismatch causes the sign-in flow to fail silently or with a cryptic error.
+The handler ID (`graph`) must match the key used in the `authorization` config in your code. A mismatch causes the sign-in flow to fail silently or with a cryptic error.
 
 ---
 

@@ -1,7 +1,8 @@
 # OTelAgent Sample (OpenTelemetry + Microsoft 365 Agents SDK)
 
-This sample shows a simple Agent hosted as a Node.js web app instrumented end-to-end with OpenTelemetry (traces, metrics, and logs) exporting to the [.NET Aspire Dashboard](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/overview) as the telemetry backend.
-It echoes user messages and demonstrates how to add custom spans, counters, histograms, and enrichment for inbound and outbound HTTP operations.
+This is a sample of a simple Agent hosted as a Node.js web app. The sample demonstrates how to configure [OpenTelemetry](https://opentelemetry.io/) (OTel) for distributed tracing, metrics, and logging in a Microsoft 365 Agents SDK application.
+
+The sample exports telemetry via OTLP (gRPC) to a configurable endpoint and instruments HTTP requests, along with shared sample-level route telemetry for welcome and message handling.
 
 The sample helps you:
 - Understand the Microsoft 365 Agents SDK messaging loop.
@@ -11,71 +12,64 @@ The sample helps you:
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/en) version 20 or higher
-- (optional) [Docker](https://www.docker.com/get-started/) (to run the Aspire Dashboard container)
-## (Optional) Setting up the Aspire Dashboard
+- [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) (for local development)
+- [Docker](https://www.docker.com/) (to run the Aspire Dashboard for local telemetry visualization)
 
-The [.NET Aspire Dashboard](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone) is a lightweight, standalone dashboard for viewing OpenTelemetry data. Run it locally with Docker:
+## Local Setup
+
+### Start the Telemetry Dashboard
+
+Run the [.NET Aspire Dashboard](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone) locally with Docker:
 
 ```bash
-docker run --rm -it \
-  -p 18888:18888 \
-  -p 4317:18889 \
-  -d --name aspire-dashboard \
-  mcr.microsoft.com/dotnet/aspire-dashboard:9.2
+docker run --rm -it -p 18888:18888 -p 4317:18889 --name aspire-dashboard mcr.microsoft.com/dotnet/aspire-dashboard:9.2
 ```
 
 This exposes:
-- **Dashboard UI** at [http://localhost:18888](http://localhost:18888) — browse traces, metrics, and logs.
-- **OTLP gRPC endpoint** at `http://localhost:4317` — where the agent sends telemetry.
+- **Port 18888** — Dashboard UI (open in browser to view traces, metrics, and logs)
+- **Port 4317** — OTLP gRPC endpoint (default for the agent to export telemetry)
+
+If you prefer, use the included helper script, which runs the same pinned dashboard image:
+
+```powershell
+./start_dashboard.ps1
+```
 
 > Check the container logs (`docker logs aspire-dashboard`) for the dashboard login token.
 
-For more details, see:
-- [Aspire Dashboard overview](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/overview)
-- [Standalone Aspire Dashboard](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone)
+### Configure Azure Bot Service
 
-## Configuring the Agent
+1. [Create an Azure Bot](https://aka.ms/AgentsSDK-CreateBot)
+   - Record the Application ID, the Tenant ID, and the Client Secret for use below
 
-1. Rename `env.TEMPLATE` to `.env`.
+1. Configuring the token connection in the Agent settings
+   > These instructions are for **SingleTenant, Client Secret**. For other auth type configuration, see [Configure authentication in a JavaScript agent](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/azure-bot-authentication-for-javascript).
+   1. Rename `env.TEMPLATE` to `.env`.
+   1. Find the `connections` section and fill in the values:
+      ```bash
+      connections__serviceConnection__settings__clientId={{clientId}}
+      connections__serviceConnection__settings__clientSecret={{clientSecret}}
+      connections__serviceConnection__settings__tenantId={{tenantId}}
+      ```
+   1. Replace all **{{clientId}}** with the App Registration Id.
+   1. Replace all **{{tenantId}}** with the Tenant Id where your application is registered.
+   1. Set the **{{clientSecret}}** to the Secret that was created on the App Registration.
 
-1. Set the OTLP endpoint to point to the Aspire Dashboard:
+1. Set the OTLP endpoint in `.env`:
 
    ```bash
    OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
    ```
 
-   **NOTE: If you don't set `OTEL_EXPORTER_OTLP_ENDPOINT`, telemetry will be printed to the console instead.**
-
-1. (Optional) Adjust the metrics and logs export intervals:
+1. Run `dev tunnels`. See [Create and host a dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) and host the tunnel with anonymous user access command as shown below:
 
    ```bash
-   OTEL_METRICS_EXPORT_INTERVAL=5000
-   OTEL_LOGS_EXPORT_INTERVAL=5000
+   devtunnel host -p 3978 --allow-anonymous
    ```
 
-1. Configuring the authentication connection in the Agent settings
-   > These instructions are for **SingleTenant, Client Secret**. For other auth type configuration, see [Configure authentication in a JavaScript agent](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/azure-bot-authentication-for-javascript).
-   1. Find the `connections` section;  it should appear similar to this:
-      ```bash
-      connections__serviceConnection__settings__clientId={{clientId}} # this is the Client ID used for the connection.
-      connections__serviceConnection__settings__clientSecret={{clientSecret}} # this is the Client Secret used for the connection.
-      connections__serviceConnection__settings__tenantId={{tenantId}} # this is the tenant ID for the application.
-      ```
-   1. Replace all **{{clientId}}** with the App Registration Id.
-   1. Replace all **{{tenantId}}** with the Tenant Id where your application is registered.
-   1. Set the **{{clientSecret}}** to the Secret that was created on the App Registration.
-   > Storing sensitive values in .env files is not recommended.  Follow 
-   [Microsoft identity platform authentication](https://learn.microsoft.com/en-us/entra/identity-platform/authentication-vs-authorization) and [MSAL.js](https://learn.microsoft.com/azure/active-directory/develop/msal-overview) for best practices.
+1. On the Azure Bot, select **Settings**, then **Configuration**, and update the **Messaging endpoint** to `{tunnel-url}/api/messages`
 
-## Running the Agent
-
-### QuickStart using Agents Playground
-
-1. If you haven't done so already, install the Agents Playground:
-
-   ```bash
-   winget install agentsplayground
-   ```
+### Running the Agent
 
 1. In the agent's root directory, install dependencies:
 
@@ -89,23 +83,59 @@ For more details, see:
    npm start
    ```
 
-1. Start Agents Playground. At a command prompt: `agentsplayground`
-   - The tool will open a web browser showing the Microsoft 365 Agents Playground, ready to send messages to your agent.
+## Accessing the Agent
 
-1. Interact with the Agent via the browser.
+### Using the Agent in Agents Playground
+
+1. Install the Agents Playground if it is not already available:
+
+   ```bash
+   winget install agentsplayground
+   ```
+
+1. Start Agents Playground:
+
+   ```bash
+   agentsplayground
+   ```
+
+1. Interact with the agent through the browser.
+
+### Optional: Using the Agent in WebChat
+
+1. Go to your Azure Bot Service resource in the Azure Portal and select **Test in WebChat**
+
+## OpenTelemetry Configuration
+
+The `src/instrumentation.ts` file configures the OpenTelemetry Node SDK before the agent starts. It is loaded via the `--import` flag in the `start` script:
+
+```json
+"start": "node --env-file .env --import ./dist/instrumentation.js ./dist/agent.js"
+```
+
+The `src/agentTelemetry.ts` file defines the shared telemetry helpers (tracer, counters, histograms, and structured log emitters) used by the agent handlers.
+
+By default, telemetry is exported to `http://localhost:4317` via OTLP gRPC. To change the endpoint, set the `OTEL_EXPORTER_OTLP_ENDPOINT` environment variable in your `.env` file.
+
+### What is instrumented
+
+| Signal | Sources |
+|--------|---------|
+| **Traces** | HTTP server instrumentation, shared sample spans (`agent.welcome_message`, `agent.message_handler`), and Agents SDK spans |
+| **Metrics** | `agent.routes.executed.count`, `agent.message.processing.duration` |
+| **Logs** | OTLP log records emitted by the sample for welcome and message handling |
 
 ## Viewing Telemetry
 
-1. Open the Aspire Dashboard at [http://localhost:18888](http://localhost:18888).
-1. Send a few messages to the agent through the Agents Playground.
-1. In the dashboard, explore:
-   - **Traces** — see the full request lifecycle including custom spans.
-   - **Metrics** — view counters, histograms, and other custom metrics.
-   - **Structured Logs** — inspect log records emitted by the agent.
+1. Open the Aspire Dashboard at `http://localhost:18888`.
+1. Send a few messages to the agent.
+1. In the dashboard, verify the shared telemetry contract:
+   - **Traces** — `agent.welcome_message` and `agent.message_handler`
+   - **Metrics** — `agent.routes.executed.count` and `agent.message.processing.duration`
+   - **Logs** — welcome and message handling log records emitted by the sample
 
 ## Further reading
 
-- [Microsoft 365 Agents SDK](https://github.com/microsoft/agents)
-- [.NET Aspire Dashboard overview](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/overview)
-- [Standalone Aspire Dashboard](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone)
 - [OpenTelemetry JS SDK](https://opentelemetry.io/docs/languages/js/)
+- [.NET Aspire Dashboard](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/overview)
+- [Microsoft 365 Agents SDK](https://github.com/microsoft/agents)

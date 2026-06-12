@@ -1,6 +1,6 @@
-# OAuth Connection Setup
+# OAuth Connection Setup (.NET)
 
-Adds a user sign-in OAuth connection to an existing bot.
+Adds a user sign-in OAuth connection to an existing bot. The `az` CLI commands are identical to the JS version — the only difference is the config output format (`appsettings.json` instead of `.env`).
 
 ## Recommended Auth Types
 
@@ -52,9 +52,25 @@ az ad app update \
   --web-redirect-uris "https://token.botframework.com/.auth/web/redirect"
 ```
 
-**Node.js env var:**
-```
-graph_connectionName=GraphOAuthConnection
+**appsettings.json — add to AgentApplication section:**
+```json
+{
+  "AgentApplication": {
+    "UserAuthorization": {
+      "DefaultHandlerName": "graph",
+      "AutoSignin": true,
+      "Handlers": {
+        "graph": {
+          "Settings": {
+            "AzureBotOAuthConnectionName": "GraphOAuthConnection",
+            "Title": "Sign In",
+            "Text": "Please sign in to continue"
+          }
+        }
+      }
+    }
+  }
+}
 ```
 
 ## FIC bots (AadV2WithFic)
@@ -96,8 +112,8 @@ az ad app update \
   --identifier-uris "api://botid-$OAUTH_APP_ID"
 
 OAUTH_OBJECT_ID=$(az ad app show --id "$OAUTH_APP_ID" --query id --output tsv)
-# uuidgen on Linux/macOS/WSL; python3 fallback for Windows Git Bash
-SCOPE_ID=$(uuidgen 2>/dev/null || python3 -c "import uuid; print(uuid.uuid4())")
+# uuidgen on Linux/macOS/WSL; PowerShell fallback for Windows
+SCOPE_ID=$(uuidgen 2>/dev/null || powershell -NoProfile -Command "[guid]::NewGuid().ToString()")
 
 az rest --method PATCH \
   --uri "https://graph.microsoft.com/v1.0/applications/$OAUTH_OBJECT_ID" \
@@ -137,6 +153,8 @@ az ad app update \
   --web-redirect-uris "https://token.botframework.com/.auth/web/redirect"
 ```
 
+**appsettings.json — same AgentApplication:UserAuthorization block as ClientSecret above.**
+
 ## Teams SSO (optional)
 
 Pre-authorize the Teams client apps to allow silent token acquisition. The `access_as_user` scope was created in step 4 above and `SCOPE_ID`/`OAUTH_OBJECT_ID` must still be set in the same shell session.
@@ -162,7 +180,7 @@ az rest --method PATCH \
   }"
 ```
 
-These are the Microsoft host client app IDs that must be pre-authorized for SSO to work across all Teams and Office surfaces:
+Microsoft host client app IDs for SSO:
 
 | App ID | Client |
 |--------|--------|

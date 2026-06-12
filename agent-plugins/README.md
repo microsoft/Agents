@@ -16,6 +16,18 @@ Skills for building agents with the Microsoft 365 Agents SDK for TypeScript/Java
 | `agents-sdk-debugging` | Resolving problems with a Microsoft Agents SDK agent |
 | `azure-agents-sdk-provision` | Provisioning Azure Bot resources, configuring identity credentials, or setting up OAuth via `az` CLI |
 
+### `agents-for-net`
+
+Skills for building agents with the Microsoft 365 Agents SDK for C# / .NET.
+
+| Skill | Activates when... |
+|-------|-------------------|
+| `agents-sdk-dotnet` | Code imports `Microsoft.Agents.Hosting.AspNetCore`, `Microsoft.Agents.Builder`, or related packages, or when building a new agent in C# / .NET |
+| `agents-sdk-dotnet-debugging` | Troubleshooting a Microsoft Agents SDK agent in C# / .NET (build errors, auth failures, startup crashes, configuration issues) |
+| `azure-agents-sdk-provision-dotnet` | Provisioning Azure Bot resources, Entra app registrations, identity credentials, or OAuth connections for a .NET agent |
+| `bf-to-agents-sdk-dotnet-migration` | Migrating a Bot Framework .NET SDK bot (`Microsoft.Bot.Builder`) to Microsoft Agents SDK |
+| `agents-sdk-dotnet-activityhandler-migration` | Migrating an Agents SDK bot from `ActivityHandler`/`TeamsActivityHandler` to `AgentApplication` routing |
+
 ---
 
 ## Installing the Plugin Marketplace
@@ -34,6 +46,7 @@ Then install the plugin:
 
 ```
 /plugin install agents-for-js@microsoft-agents-sdk
+/plugin install agents-for-net@microsoft-agents-sdk
 ```
 
 Skills activate automatically based on what you're working on — no manual loading needed.
@@ -56,6 +69,7 @@ Then install the plugin:
 
 ```
 /plugin install agents-for-js@microsoft-agents-sdk
+/plugin install agents-for-net@microsoft-agents-sdk
 ```
 
 ---
