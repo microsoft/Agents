@@ -80,9 +80,9 @@ python -m src.main
 
 1. Open [Agents Playground](https://learn.microsoft.com/azure/bot-service/bot-service-overview) and connect to `http://localhost:3978/api/messages`.
 2. Send any message.
-3. Confirm: the reply reads `[1] you said: <your text>`.
+3. Confirm: the reply reads `[1] You said: <your text>`.
 4. Send another message.
-5. Confirm: the counter increments — `[2] you said: <your text>`.
+5. Confirm: the counter increments — `[2] You said: <your text>`.
 6. Stop and restart the agent process, then send a message.
 7. Confirm: the counter continues from where it left off, demonstrating that state was persisted to Blob Storage.
 
