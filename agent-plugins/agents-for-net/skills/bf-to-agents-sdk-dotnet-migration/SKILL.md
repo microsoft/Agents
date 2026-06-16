@@ -1,6 +1,7 @@
 ---
 name: bf-to-agents-sdk-dotnet-migration
-description: Use when migrating a Bot Framework .NET SDK bot to Microsoft 365 Agents SDK. Triggered by projects that depend on packages: Microsoft.Bot.Builder or Microsoft.Bot.Builder.Integration.AspNet.Core that want to migrate to Agents SDK.
+description: >
+  Use when migrating a Bot Framework .NET SDK bot to Microsoft 365 Agents SDK. Triggered by projects that depend on packages: Microsoft.Bot.Builder or Microsoft.Bot.Builder.Integration.AspNet.Core that want to migrate to Agents SDK.
 ---
 
 # Bot Framework to Agents SDK Migration (.NET)
