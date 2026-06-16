@@ -69,7 +69,7 @@ dotnet run
 
 ## Verify the sample
 
-1. Open [Agents Playground](https://learn.microsoft.com/azure/bot-service/bot-service-overview) or the Bot Framework Emulator and connect to `http://localhost:3978/api/message`.
+1. Open [Agents Playground](https://learn.microsoft.com/azure/bot-service/bot-service-overview) or the Bot Framework Emulator and connect to `http://localhost:3978/api/messages`.
 2. Send any message.
 3. Confirm: the reply reads `[1] You said: <your text>`.
 4. Send another message.

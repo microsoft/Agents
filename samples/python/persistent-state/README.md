@@ -97,7 +97,7 @@ python -m src.main
 
 ## Next steps
 
-- **Cloud deployment with managed identity:** Assign the `Storage Blob Data Contributor` role to your agent's managed identity on the container, then instantiate `BlobStorage` with a `DefaultAzureCredential` from the [`azure-identity`](https://pypi.org/project/azure-identity/) package instead of a connection string. See [Authorize access to blobs using managed identities](https://learn.microsoft.com/azure/storage/blobs/authorize-managed-identity).
+- **Cloud deployment with managed identity:** Assign the `Storage Blob Data Contributor` role to your agent's managed identity on the container, then instantiate `BlobStorage` with a `DefaultAzureCredential` from the [`azure-identity`](https://pypi.org/project/azure-identity/) package instead of a connection string; add `azure-identity` to `requirements.txt` for that path. See [Authorize access to blobs using managed identities](https://learn.microsoft.com/azure/storage/blobs/authorize-managed-identity).
 
 - **Workload identity on AKS:** Follow the [Workload identity overview](https://learn.microsoft.com/azure/aks/workload-identity-overview) to federate a Kubernetes service account with an Entra application and use `DefaultAzureCredential` without any secrets in the pod spec.
 

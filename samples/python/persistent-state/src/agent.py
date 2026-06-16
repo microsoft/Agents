@@ -64,7 +64,7 @@ async def on_message(context: TurnContext, state: TurnState):
     count = (state.conversation.get("count") or 0) + 1
     state.conversation["count"] = count
 
-    await context.send_activity(f"[{count}] you said: {context.activity.text}")
+    await context.send_activity(f"[{count}] You said: {context.activity.text}")
 
 
 @AGENT_APP.error
