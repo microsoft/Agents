@@ -1,0 +1,25 @@
+{
+  "name": "node-named-pipe-agent",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Agents named-pipe (DirectLineFlex) echo agent sample",
+  "author": "Microsoft",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "scripts": {
+    "prebuild": "npm ci",
+    "build": "tsc --build",
+    "prestart": "npm run build",
+    "start": "node --env-file .env ./dist/index.js"
+  },
+  "dependencies": {
+    "@microsoft/agents-hosting": "1.6.*",
+    "@microsoft/agents-hosting-directline-namedpipes": "1.6.*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.18",
+    "typescript": "^5.8.3"
+  },
+  "keywords": []
+}
