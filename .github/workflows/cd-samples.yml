@@ -1,7 +1,5 @@
-name: cd-samples
-
+name: CI-samples
 on:
-  workflow_dispatch:
   pull_request:
     branches:
       - main
@@ -14,7 +12,51 @@ env:
   PYTHON_MINVERSION: '3.10'
 
 jobs:
+  check_path:
+    runs-on: ubuntu-latest
+    name: Check path of changed files
+    outputs:
+      samples_changed: ${{ steps.check_samples.outputs.samples_changed }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: check_samples
+        name: Check if files in samples folder
+        run: |
+          ZERO_SHA='0000000000000000000000000000000000000000'
+
+          # Get changed files
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            # For PRs, compare against base branch
+            CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }}...HEAD)
+          else
+            # For push events, compare against previous commit
+            # A zero SHA means there is no prior commit to diff against, such as branch creation.
+            if [[ "${{ github.event.before }}" != "$ZERO_SHA" ]] && git rev-parse --verify "${{ github.event.before }}" >/dev/null 2>&1; then
+              CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+            else
+              CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
+            fi
+          fi
+          
+          # Check if any files are in samples folder
+          HAS_SAMPLES=false
+          while IFS= read -r file; do
+            if [[ "$file" == samples/* ]]; then
+              HAS_SAMPLES=true
+              break
+            fi
+          done <<< "$CHANGED_FILES"
+          
+          echo "samples_changed=$HAS_SAMPLES" >> $GITHUB_OUTPUT
+
   build-dotnet:
+    needs: check_path
+    if: ${{ needs.check_path.outputs.samples_changed == 'true' }}
+    name: cd-samples-net
     runs-on: ubuntu-latest
 
     steps:
@@ -27,6 +69,9 @@ jobs:
           dotnet build
 
   build-node:
+    needs: check_path
+    if: ${{ needs.check_path.outputs.samples_changed == 'true' }}
+    name: cd-samples-node
     runs-on: ubuntu-latest
 
     strategy:
@@ -60,6 +105,9 @@ jobs:
           done
 
   build-python:
+    needs: check_path
+    if: ${{ needs.check_path.outputs.samples_changed == 'true' }}
+    name: cd-samples-python
     runs-on: ubuntu-latest
 
     strategy:
