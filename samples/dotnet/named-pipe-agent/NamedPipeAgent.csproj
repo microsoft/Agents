@@ -15,9 +15,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<!-- Named-pipe transport currently ships as a 1.6 prerelease (beta) package. -->
-		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.6.109-beta" />
-		<PackageReference Include="Microsoft.Agents.Hosting.DirectLine.NamedPipes" Version="1.6.109-beta" />
+		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.6.*" />
+		<PackageReference Include="Microsoft.Agents.Hosting.DirectLine.NamedPipes" Version="1.6.*" />
 	</ItemGroup>
 
 </Project>

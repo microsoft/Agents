@@ -14,8 +14,8 @@
     "start": "node --env-file .env ./dist/index.js"
   },
   "dependencies": {
-    "@microsoft/agents-hosting": "1.6.0-beta.35.gea39311d63",
-    "@microsoft/agents-hosting-directline-namedpipes": "1.6.0-beta.35.gea39311d63"
+    "@microsoft/agents-hosting": "1.6.*",
+    "@microsoft/agents-hosting-directline-namedpipes": "1.6.*"
   },
   "devDependencies": {
     "@types/node": "^22.15.18",
