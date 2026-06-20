@@ -27,7 +27,12 @@ namespace Otel
                 .ConfigureResource(resource => resource.AddService(
                         serviceName: AgentsTelemetry.SourceName,
                         serviceVersion: AgentsTelemetry.SourceVersion
-                    ))
+                    )
+                    .AddAttributes(new[]
+                    {
+                        new KeyValuePair<string, object>("service.instance.id", Environment.MachineName ?? "unknown"),
+                        new KeyValuePair<string, object>("telemetry.sdk.language", "dotnet")
+                    }))
                 .WithTracing(tracing => tracing
                     .AddSource(
                         "Microsoft.AspNetCore",
@@ -83,14 +88,13 @@ namespace Otel
                 logging.IncludeScopes = true;
                 logging.AddOtlpExporter();
             });
-        
-            // Enable Azure Monitor exporter if Application Insights connection string is configured
-            if (!string.IsNullOrEmpty(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]))
-            {
-                builder.Services.AddOpenTelemetry()
-                   .UseAzureMonitor();
-            }
-        
+
+            // Uncomment the following lines to enable the Azure Monitor exporter (requires the Azure.Monitor.OpenTelemetry.AspNetCore package)
+            //if (!string.IsNullOrEmpty(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]))
+            //{
+            //    builder.Services.AddOpenTelemetry()
+            //       .UseAzureMonitor();
+            //}
             return builder;
         }
         
