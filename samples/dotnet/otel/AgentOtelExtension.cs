@@ -117,7 +117,7 @@ namespace Otel
                 return;
             }
         
-            var headerList = request.Where(h => h.Key != "Authorization")
+            var headerList = request.Where(h => !string.Equals(h.Key, "Authorization", StringComparison.OrdinalIgnoreCase))
                                     .Select(h => $"{h.Key}={string.Join(",", h.Value)}")
                                     .ToArray();
         
