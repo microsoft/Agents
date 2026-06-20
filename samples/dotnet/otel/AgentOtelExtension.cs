@@ -113,7 +113,7 @@ namespace Otel
                 return;
             }
         
-            var headerList = request//.Where(h => h.Key != "Authorization")
+            var headerList = request.Where(h => h.Key != "Authorization")
                                     .Select(h => $"{h.Key}={string.Join(",", h.Value)}")
                                     .ToArray();
         
@@ -148,7 +148,7 @@ namespace Otel
             {
                 return;
             }
-            var headerList = request//.Where(h => h.Key != "Authorization")
+            var headerList = request.Where(h => h.Key != "Authorization")
                                     .Select(h => $"{h.Key}={string.Join(",", h.Value)}")
                                     .ToArray();
         
