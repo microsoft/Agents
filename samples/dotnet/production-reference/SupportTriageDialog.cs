@@ -15,21 +15,22 @@ public sealed record SupportTriageTurnResult(SupportCaseState State, string Resp
 /// Pure, stateless dialog that drives the support triage flow.
 /// Collects <see cref="SupportCaseState.IssueSummary"/>, <see cref="SupportCaseState.Impact"/>,
 /// and <see cref="SupportCaseState.ContactPreference"/> one turn at a time.
+/// Each call returns a <em>new</em> <see cref="SupportCaseState"/>; the input is never mutated.
 /// </summary>
 public sealed class SupportTriageDialog
 {
     /// <summary>
     /// Advances the triage dialog by one turn.
     /// </summary>
-    /// <param name="state">Current case state loaded from conversation storage.</param>
+    /// <param name="state">Current case state loaded from conversation storage.  Not mutated.</param>
     /// <param name="userText">Raw text from the user message; may be null or whitespace.</param>
-    /// <param name="now">Current timestamp, stamped on any state mutation.</param>
-    /// <returns>A <see cref="SupportTriageTurnResult"/> with the updated state and reply text.</returns>
+    /// <param name="now">Current timestamp, stamped on any state change.</param>
+    /// <returns>A <see cref="SupportTriageTurnResult"/> with a new state snapshot and reply text.</returns>
     public SupportTriageTurnResult NextTurn(SupportCaseState state, string? userText, DateTimeOffset now)
     {
         string? input = string.IsNullOrWhiteSpace(userText) ? null : userText.Trim();
 
-        // Already complete — return summary for any follow-up message.
+        // Already complete — return the unchanged state and a summary for any follow-up message.
         if (state.IsComplete)
         {
             return new SupportTriageTurnResult(state, BuildSummary(state), true);
@@ -46,10 +47,15 @@ public sealed class SupportTriageDialog
                     false);
             }
 
-            state.IssueSummary = input;
-            state.UpdatedAt = now;
+            var next = new SupportCaseState
+            {
+                IssueSummary = input,
+                Impact = state.Impact,
+                ContactPreference = state.ContactPreference,
+                UpdatedAt = now,
+            };
             return new SupportTriageTurnResult(
-                state,
+                next,
                 "What is the impact of this issue? (e.g., High \u2013 production down, Medium \u2013 degraded, Low \u2013 minor inconvenience)",
                 false);
         }
@@ -65,10 +71,15 @@ public sealed class SupportTriageDialog
                     false);
             }
 
-            state.Impact = input;
-            state.UpdatedAt = now;
+            var next = new SupportCaseState
+            {
+                IssueSummary = state.IssueSummary,
+                Impact = input,
+                ContactPreference = state.ContactPreference,
+                UpdatedAt = now,
+            };
             return new SupportTriageTurnResult(
-                state,
+                next,
                 "How would you prefer to be contacted? (e.g., Email, Phone, Chat)",
                 false);
         }
@@ -82,9 +93,14 @@ public sealed class SupportTriageDialog
                 false);
         }
 
-        state.ContactPreference = input;
-        state.UpdatedAt = now;
-        return new SupportTriageTurnResult(state, BuildSummary(state), true);
+        var completed = new SupportCaseState
+        {
+            IssueSummary = state.IssueSummary,
+            Impact = state.Impact,
+            ContactPreference = input,
+            UpdatedAt = now,
+        };
+        return new SupportTriageTurnResult(completed, BuildSummary(completed), true);
     }
 
     private static string BuildSummary(SupportCaseState state) =>
