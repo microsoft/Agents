@@ -1,10 +1,12 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using Azure.Identity;
+using Microsoft.Agents.Hosting.AspNetCore;
 using Microsoft.Agents.Storage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +28,13 @@ storageOptions.Validate();
 builder.Services.AddSingleton<IStorage>(
     AgentStorageFactory.Create(storageOptions, new DefaultAzureCredential()));
 
+// Register support triage domain services.
+builder.Services.AddSingleton<SupportCaseStateAccessor>();
+builder.Services.AddSingleton<SupportTriageDialog>();
+
+// Register the agent with the Agents SDK.
+builder.AddAgent<SupportTriageAgent>();
+
 // Add AspNet token validation for Azure Bot Service and Entra.  Authentication is
 // configured in the appsettings.json "TokenValidation" section.
 builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
@@ -35,7 +44,8 @@ WebApplication app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("/", () => "ProductionReference is running.");
+app.MapAgentRootEndpoint();
+app.MapAgentApplicationEndpoints(requireAuth: !app.Environment.IsDevelopment());
 
 app.Run();
 
