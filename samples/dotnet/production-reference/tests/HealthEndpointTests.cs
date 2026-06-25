@@ -5,7 +5,6 @@ using System;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Xunit;
@@ -19,15 +18,36 @@ namespace ProductionReference.Tests;
 public class HealthEndpointTests : IClassFixture<HealthEndpointTests.Factory>
 {
     /// <summary>
-    /// Sets the environment to "Test" so that <c>appsettings.Test.json</c> is loaded.
-    /// This provides <c>AZURE_BLOB_STORAGE_CONNECTION_STRING</c> before startup validation
-    /// runs in <c>Program.cs</c>, without requiring a live Azure dependency.
+    /// Sets <c>AZURE_BLOB_STORAGE_CONNECTION_STRING</c> as a process environment variable
+    /// before the <see cref="WebApplicationFactory{TEntryPoint}"/> starts the app, and
+    /// restores the prior value on disposal.
+    /// <para>
+    /// This is necessary because <c>Program.cs</c> calls <c>storageOptions.Validate()</c>
+    /// during <see cref="Microsoft.AspNetCore.Builder.WebApplicationBuilder"/> construction
+    /// before any <c>ConfigureWebHost</c> callback can inject configuration, so the value
+    /// must already be visible via <see cref="System.Environment.GetEnvironmentVariable"/> at
+    /// that point.  The environment variable is scoped to the current process and is restored
+    /// on disposal, so it does not leak into other test classes.
+    /// </para>
     /// </summary>
     public sealed class Factory : WebApplicationFactory<Program>
     {
-        protected override void ConfigureWebHost(IWebHostBuilder builder)
+        private const string ConnectionStringKey = "AZURE_BLOB_STORAGE_CONNECTION_STRING";
+        private readonly string? _previousValue;
+
+        public Factory()
         {
-            builder.UseEnvironment("Test");
+            _previousValue = Environment.GetEnvironmentVariable(ConnectionStringKey);
+            Environment.SetEnvironmentVariable(ConnectionStringKey, "UseDevelopmentStorage=true");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            if (disposing)
+            {
+                Environment.SetEnvironmentVariable(ConnectionStringKey, _previousValue);
+            }
         }
     }
 
