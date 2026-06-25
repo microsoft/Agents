@@ -10,7 +10,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CopilotStudioEchoSkill", "c
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuickStart", "quickstart\QuickStart.csproj", "{6F14E243-7ED3-43D8-A433-5BA4D52077CF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RetrievalBot", "RetrievalBot\RetrievalBot.csproj", "{9419EAC0-31D3-47DC-A008-9EDF584076D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RetrievalAgent", "retrieval-agent\RetrievalAgent.csproj", "{9419EAC0-31D3-47DC-A008-9EDF584076D6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
