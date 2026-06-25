@@ -1,0 +1,23 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "namePrefix": {
+      "value": "mybot"
+    },
+    "botClientId": {
+      "value": "<your-bot-app-id>"
+    },
+    "botClientSecret": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/<subscription-id>/resourceGroups/<rg-name>/providers/Microsoft.KeyVault/vaults/<existing-kv-name>"
+        },
+        "secretName": "<existing-secret-name>"
+      }
+    },
+    "tenantId": {
+      "value": "<your-tenant-id>"
+    }
+  }
+}
