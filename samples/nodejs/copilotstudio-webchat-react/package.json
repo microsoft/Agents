@@ -8,6 +8,7 @@
     "node": ">=20"
   },
   "scripts": {
+    "prebuild": "node scripts/ensure-settings.js",
     "build": "esbuild src/index.tsx --bundle --platform=browser --target=esnext --outdir=public/dist --jsx=automatic",
     "start": "npm run build -- --watch --serve=localhost:3000 --servedir=./public"
   },

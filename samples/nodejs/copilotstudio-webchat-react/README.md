@@ -76,7 +76,7 @@ This step requires permissions to create application identities in your Azure te
          appClientId: 'your-app-client-id-here',
          tenantId: 'your-tenant-id-here',
          environmentId: 'your-environment-id-here',
-         agentIdentifier: 'your-schema-name-here',
+         schemaName: 'your-schema-name-here',
        }
      }
      ```
@@ -151,7 +151,7 @@ Configuration is handled through `settings.js` which emulates Node.js process.en
 process.env.appClientId      // Your Azure AD app registration ID
 process.env.tenantId         // Your Azure AD tenant ID  
 process.env.environmentId    // Copilot Studio environment ID
-process.env.agentIdentifier  // Copilot Studio schema name
+process.env.schemaName       // Copilot Studio schema name
 // ... other configuration options
 ```
 
