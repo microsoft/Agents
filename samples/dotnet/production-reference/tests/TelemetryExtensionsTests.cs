@@ -17,7 +17,7 @@ public class TelemetryExtensionsTests
     [Fact]
     public void ConfigureProductionReferenceTelemetry_registers_http_instrumentation_for_otlp_only()
     {
-        WebApplicationBuilder builder = WebApplication.CreateBuilder(Array.Empty<string>());
+        WebApplicationBuilder builder = CreateBuilderWithConfiguration(null, null);
 
         builder.ConfigureProductionReferenceTelemetry();
 
@@ -33,6 +33,8 @@ public class TelemetryExtensionsTests
         WebApplicationBuilder builder = CreateAzureMonitorBuilder();
         builder.ConfigureProductionReferenceTelemetry();
 
+        // The +4/+6 deltas come from this extension adding the Agents SDK source/meter,
+        // runtime metrics, resource configuration, and provider callbacks on top of the distro.
         Assert.Equal(
             CountOpenTelemetryBuilderCallbacks(baseline.Services, "OpenTelemetry.Trace.IConfigureTracerProviderBuilder") + 4,
             CountOpenTelemetryBuilderCallbacks(builder.Services, "OpenTelemetry.Trace.IConfigureTracerProviderBuilder"));
@@ -43,10 +45,20 @@ public class TelemetryExtensionsTests
 
     private static WebApplicationBuilder CreateAzureMonitorBuilder()
     {
+        return CreateBuilderWithConfiguration(
+            "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://example.com/",
+            null);
+    }
+
+    private static WebApplicationBuilder CreateBuilderWithConfiguration(
+        string? appInsightsConnectionString,
+        string? otlpEndpoint)
+    {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(Array.Empty<string>());
         builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
         {
-            ["APPLICATIONINSIGHTS_CONNECTION_STRING"] = "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://example.com/",
+            ["APPLICATIONINSIGHTS_CONNECTION_STRING"] = appInsightsConnectionString,
+            ["OTEL_EXPORTER_OTLP_ENDPOINT"] = otlpEndpoint,
         });
         return builder;
     }
