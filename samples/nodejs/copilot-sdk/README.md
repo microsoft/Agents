@@ -17,7 +17,7 @@ When a message arrives, the sample authenticates the user via GitHub OAuth, crea
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org) version 20.6 or higher
+- [Node.js](https://nodejs.org) version 20.19 or higher
 - A Microsoft 365 Agent or Azure Bot configuration that can send activities to this sample
 - [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) for local WebChat testing
 - [GitHub Copilot CLI](https://www.npmjs.com/package/@github/copilot) installed globally
