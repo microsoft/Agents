@@ -6,7 +6,6 @@ updates:
       - "/samples/nodejs/auto-signin"
       - "/samples/nodejs/azure-ai-streaming"
       - "/samples/nodejs/cards"
-      - "/samples/nodejs/copilot-sdk"
       - "/samples/nodejs/copilotstudio-client"
       - "/samples/nodejs/copilot-sdk"
       - "/samples/nodejs/copilotstudio-skill"
