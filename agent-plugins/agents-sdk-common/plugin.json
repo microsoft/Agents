@@ -1,7 +1,7 @@
 {
   "name": "agents-sdk-common",
   "description": "Shared skills for building agents with the Microsoft 365 Agents SDK (all languages)",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "author": {
     "name": "Microsoft"
   },

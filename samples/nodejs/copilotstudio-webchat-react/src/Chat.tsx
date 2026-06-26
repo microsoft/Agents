@@ -6,24 +6,29 @@
 import { Components } from 'botframework-webchat'
 import { FluentThemeProvider } from 'botframework-webchat-fluent-theme'
 import React, { useState, useEffect } from 'react'
-import { ConnectionSettings, CopilotStudioClient, CopilotStudioWebChat, CopilotStudioWebChatConnection } from '@microsoft/agents-copilotstudio-client'
+import { CopilotStudioClient, CopilotStudioWebChat, CopilotStudioWebChatConnection } from '@microsoft/agents-copilotstudio-client'
 
 import { acquireToken } from './acquireToken'
+import { SampleConnectionSettings } from './settings'
 
 const { BasicWebChat, Composer } = Components
 
 function Chat () {
-  let agentsSettings: ConnectionSettings
+  let agentsSettings: SampleConnectionSettings
 
   try {
-    agentsSettings = require('./settings.js').settings
+    agentsSettings = new SampleConnectionSettings()
+
+    if (!agentsSettings.authority) {
+      agentsSettings.authority = 'https://login.microsoftonline.com'
+    }
   } catch (error) {
     console.error(error + '\nsettings.js Not Found. Rename settings.EXAMPLE.js to settings.js and fill out necessary fields')
     agentsSettings = {
       appClientId: '',
       tenantId: '',
       environmentId: '',
-      agentIdentifier: '',
+      schemaName: '',
       directConnectUrl: '',
     }
   }
