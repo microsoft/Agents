@@ -11,23 +11,23 @@
     "start": "node --env-file .env --import ./dist/instrumentation.js ./dist/agent.js"
   },
   "devDependencies": {
-    "typescript": "^5.8.3"
+    "typescript": "^6.0.3"
   },
   "dependencies": {
     "@microsoft/agents-hosting": "^1.5.1",
-    "@microsoft/agents-hosting-express": "^1.5.1",
+    "@microsoft/agents-hosting-express": "^1.6.1",
     "@opentelemetry/api": "1.9.1",
-    "@opentelemetry/api-logs": "0.218.0",
-    "@opentelemetry/exporter-trace-otlp-grpc": "0.218.0",
-    "@opentelemetry/exporter-metrics-otlp-grpc": "0.218.0",
-    "@opentelemetry/exporter-logs-otlp-grpc": "0.218.0",
-    "@opentelemetry/instrumentation-http": "0.218.0",
-    "@opentelemetry/resources": "2.7.1",
-    "@opentelemetry/sdk-metrics": "2.7.1",
-    "@opentelemetry/sdk-node": "0.218.0",
-    "@opentelemetry/sdk-logs": "0.218.0",
-    "@opentelemetry/sdk-trace-base": "2.7.1",
-    "@opentelemetry/sdk-trace-node": "2.7.1",
+    "@opentelemetry/api-logs": "0.219.0",
+    "@opentelemetry/exporter-trace-otlp-grpc": "0.219.0",
+    "@opentelemetry/exporter-metrics-otlp-grpc": "0.219.0",
+    "@opentelemetry/exporter-logs-otlp-grpc": "0.219.0",
+    "@opentelemetry/instrumentation-http": "0.219.0",
+    "@opentelemetry/resources": "2.8.0",
+    "@opentelemetry/sdk-metrics": "2.8.0",
+    "@opentelemetry/sdk-node": "0.219.0",
+    "@opentelemetry/sdk-logs": "0.219.0",
+    "@opentelemetry/sdk-trace-base": "2.8.0",
+    "@opentelemetry/sdk-trace-node": "2.8.0",
     "@opentelemetry/semantic-conventions": "1.41.1"
   }
 }
