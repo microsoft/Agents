@@ -32,7 +32,12 @@ Use [SAMPLE_README_TEMPLATE.md](SAMPLE_README_TEMPLATE.md) when adding or refres
 
 ## Current production reference coverage
 
-The repository currently emphasizes Tier 1 and Tier 2 samples. Before labeling a sample as Tier 3, it should include or link to:
+The repository includes one Tier 3 production reference sample:
+
+- **.NET support triage agent** ([dotnet/production-reference](dotnet/production-reference/README.md)) — a deployable, stateful support triage agent with managed identity, durable Blob Storage state, health checks, OpenTelemetry, Bicep infrastructure, xUnit tests, and a runbook.
+
+
+Before labeling a sample as Tier 3, it should include or link to:
 
 | Capability | Expected production-reference coverage |
 |------------|----------------------------------------|
