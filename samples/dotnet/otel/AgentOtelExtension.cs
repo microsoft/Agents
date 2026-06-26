@@ -110,7 +110,7 @@ namespace Otel
         /// as "HeaderName=value1,value2" strings. The headers are then added to the activity as an array tag,
         /// which is compatible with OpenTelemetry exporters that support array-of-primitive attributes.
         /// </remarks>
-        private static void ExtractHeadersForOTEL(System.Diagnostics.Activity activity, HttpHeaders? request, string tagName)
+        private static void ExtractHeadersForOTEL(System.Diagnostics.Activity activity, System.Net.Http.Headers.HttpHeaders? request, string tagName)
         {
         
             if (request == null)
