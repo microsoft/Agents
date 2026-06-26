@@ -67,6 +67,17 @@ public class HealthEndpointTests : IClassFixture<HealthEndpointTests.Factory>
     }
 
     [Fact]
+    public async Task ReadinessEndpoint_Returns200_WhenStorageConfigurationIsValid()
+    {
+        var client = _factory.CreateClient();
+        var response = await client.GetAsync("/health/ready");
+        string body = await response.Content.ReadAsStringAsync();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("Healthy", body);
+    }
+
+    [Fact]
     public async Task StorageConfigurationHealthCheck_Unhealthy_WhenNoStorageConfigured()
     {
         var options = new StorageOptions();
@@ -117,3 +128,4 @@ public class HealthEndpointTests : IClassFixture<HealthEndpointTests.Factory>
         Assert.Equal(HealthStatus.Healthy, result.Status);
     }
 }
+

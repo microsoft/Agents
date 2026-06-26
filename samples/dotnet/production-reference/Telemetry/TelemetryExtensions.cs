@@ -25,35 +25,50 @@ public static class TelemetryExtensions
     {
         string? otlpEndpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
         string? appInsightsConnStr = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+        bool useOtlp = !string.IsNullOrEmpty(otlpEndpoint);
+        bool useAzureMonitor = !string.IsNullOrEmpty(appInsightsConnStr);
 
         var otel = builder.Services.AddOpenTelemetry()
             .ConfigureResource(resource => resource
                 .AddService("ProductionReference"))
             .WithTracing(tracing =>
             {
-                tracing
-                    .AddAspNetCoreInstrumentation()
-                    .AddHttpClientInstrumentation()
-                    .AddSource(AgentsTelemetry.SourceName);
+                tracing.AddSource(AgentsTelemetry.SourceName);
 
-                if (!string.IsNullOrEmpty(otlpEndpoint))
+                // Azure Monitor distro supplies ASP.NET Core and HttpClient instrumentation.
+                // Register those manually only for the OTLP-only path to avoid duplicate spans.
+                if (!useAzureMonitor)
+                {
+                    tracing
+                        .AddAspNetCoreInstrumentation()
+                        .AddHttpClientInstrumentation();
+                }
+
+                if (useOtlp)
                     tracing.AddOtlpExporter();
             })
             .WithMetrics(metrics =>
             {
                 metrics
-                    .AddAspNetCoreInstrumentation()
-                    .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation()
                     .AddMeter(AgentsTelemetry.SourceName);
 
-                if (!string.IsNullOrEmpty(otlpEndpoint))
+                // Azure Monitor distro supplies ASP.NET Core and HttpClient instrumentation.
+                // Register those manually only for the OTLP-only path to avoid duplicate metric series.
+                if (!useAzureMonitor)
+                {
+                    metrics
+                        .AddAspNetCoreInstrumentation()
+                        .AddHttpClientInstrumentation();
+                }
+
+                if (useOtlp)
                     metrics.AddOtlpExporter();
             })
             .WithLogging(
                 logging =>
                 {
-                    if (!string.IsNullOrEmpty(otlpEndpoint))
+                    if (useOtlp)
                         logging.AddOtlpExporter();
                 },
                 options =>
@@ -62,9 +77,10 @@ public static class TelemetryExtensions
                     options.IncludeScopes = true;
                 });
 
-        if (!string.IsNullOrEmpty(appInsightsConnStr))
+        if (useAzureMonitor)
             otel.UseAzureMonitor();
 
         return builder;
     }
 }
+
