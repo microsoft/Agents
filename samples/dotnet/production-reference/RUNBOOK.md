@@ -10,8 +10,8 @@ The agent exposes two health endpoints mapped in `Program.cs`:
 
 | Endpoint | Purpose | Healthy response | Unhealthy response |
 |----------|---------|------------------|--------------------|
-| `GET /health/live` | Liveness probe — confirms the process is running. No dependency checks. | `200 OK` (empty body) | Process crash / host unreachable |
-| `GET /health/ready` | Readiness probe — confirms storage configuration is valid. | `200 OK` `{"status":"Healthy"}` | `503 Service Unavailable` `{"status":"Unhealthy"}` |
+| `GET /health/live` | Liveness probe — confirms the process is running. No dependency checks. | `200 OK` body: `Healthy` (plain text) | Process crash / host unreachable |
+| `GET /health/ready` | Readiness probe — confirms storage configuration is valid. | `200 OK` body: `Healthy` (plain text) | `503 Service Unavailable` body: `Unhealthy` (plain text) |
 
 **Interpretation:**
 
@@ -198,10 +198,13 @@ customMetrics
 
 App Service maintains a deployment history. To swap back to the previous package:
 
-1. List recent deployments:
-   ```bash
-   az webapp deployment list-publishing-credentials --resource-group "<rg-name>" --name "<web-app-name>"
-   ```
+1. Inspect deployment history without exposing credentials — use one of:
+   - **Azure portal:** App Service → Deployment Center → Deployment Logs shows timestamps, statuses, and commit IDs.
+   - **Kudu SCM console:** `https://<web-app-name>.scm.azurewebsites.net/` → Deployments (no credentials printed to the console).
+   - **Azure CLI (safe):**
+     ```bash
+     az webapp log deployment list --resource-group "<rg-name>" --name "<web-app-name>"
+     ```
 2. If using deployment slots, swap back:
    ```bash
    az webapp deployment slot swap \

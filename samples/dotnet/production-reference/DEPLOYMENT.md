@@ -170,10 +170,10 @@ The `ClientSecret` setting uses an [App Service Key Vault reference](https://lea
 ## Post-deploy validation
 
 ```bash
-# Liveness probe — should return 200
+# Liveness probe — should return 200, body: Healthy (plain text)
 curl https://<appServiceDefaultHostName>/health/live
 
-# Readiness probe — should return 200 with {"status":"Healthy"}
+# Readiness probe — should return 200, body: Healthy (plain text)
 curl https://<appServiceDefaultHostName>/health/ready
 
 # Validate Bicep template syntax locally

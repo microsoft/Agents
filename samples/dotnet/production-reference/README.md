@@ -127,11 +127,11 @@ The agent starts on `http://localhost:3978` by default.
 
 ```bash
 curl http://localhost:3978/health/live
-# Expected: 200 OK (liveness probe; no dependency checks)
+# Expected: 200 OK, body: Healthy (plain text liveness probe; no dependency checks)
 
 curl http://localhost:3978/health/ready
-# Expected: 200 OK with {"status":"Healthy"} when storage is configured correctly
-# Expected: 503 Service Unavailable when storage configuration is missing or invalid
+# Expected: 200 OK, body: Healthy (plain text) when storage is configured correctly
+# Expected: 503 Service Unavailable, body: Unhealthy (plain text) when storage configuration is missing or invalid
 ```
 
 ### Message flow
