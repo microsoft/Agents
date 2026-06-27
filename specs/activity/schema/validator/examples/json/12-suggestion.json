@@ -1,0 +1,13 @@
+{
+  "type": "suggestion",
+  "id": "suggestion-1",
+  "timestamp": "2025-09-15T10:00:12.000Z",
+  "serviceUrl": "https://smba.trafficmanager.net/amer/",
+  "channelId": "cortana",
+  "from": { "id": "bot-id-1", "name": "CalendarBot" },
+  "conversation": { "id": "conv-7" },
+  "recipient": { "id": "user-id-1", "name": "John Doe" },
+  "replyToId": "original-message-id",
+  "text": "I can create that meeting for you.",
+  "textHighlights": [ { "text": "meet on Monday", "occurrence": 1 } ]
+}
