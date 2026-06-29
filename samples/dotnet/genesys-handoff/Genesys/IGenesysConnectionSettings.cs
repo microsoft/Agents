@@ -73,5 +73,10 @@ namespace GenesysHandoff.Genesys
         /// Gets or sets the message sent to the user when the conversation is reset.
         /// </summary>
         public string? ResetConversationMessage { get; set; }
+
+        /// <summary>
+        /// Gets or sets the message sent to the live agent when the user disconnects from an escalated conversation.
+        /// </summary>
+        public string? UserDisconnectedMessage { get; set; }
     }
 }

@@ -101,30 +101,56 @@ Both `startServer()` and `loadAuthConfigFromEnv()` auto-detect the format. Leave
 
 These control the user sign-in flow configured via `authorization: { [id]: { ... } }`. The `id` is the key used in the authorization options (e.g. `graph`).
 
+#### Modern format (recommended)
+
+Uses the prefix `AgentApplication__UserAuthorization__Handlers__<id>__Settings__<property>`. Case-insensitive.
+
 **AzureBot handler** (default — user OAuth flow via Azure Bot Service):
 ```
-graph_connectionName=GraphOAuthConnection   # required — OAuth connection name in Azure Bot resource
-graph_connectionTitle=Sign in with Microsoft
-graph_connectionText=Please sign in to continue
-graph_maxAttempts=3                          # max magic code attempts (default: 2)
-graph_enableSso=false                        # disable SSO (default: true)
+AgentApplication__UserAuthorization__Handlers__graph__Settings__azureBotOAuthConnectionName=GraphOAuthConnection
+AgentApplication__UserAuthorization__Handlers__graph__Settings__title=Sign in with Microsoft
+AgentApplication__UserAuthorization__Handlers__graph__Settings__text=Please sign in to continue
+AgentApplication__UserAuthorization__Handlers__graph__Settings__invalidSignInRetryMax=3
+AgentApplication__UserAuthorization__Handlers__graph__Settings__enableSso=false
 
 # OBO (on-behalf-of) — auto-exchange on routes using exchangeToken()
-graph_obo_connection=OBOConnection
-graph_obo_scopes=https://graph.microsoft.com/.default,Mail.Read
+AgentApplication__UserAuthorization__Handlers__graph__Settings__oboConnectionName=OBOConnection
+AgentApplication__UserAuthorization__Handlers__graph__Settings__oboScopes=https://graph.microsoft.com/.default,Mail.Read
 
 # Custom error messages
-graph_messages_invalidCode=That code was invalid, please try again.
-graph_messages_invalidCodeFormat=Please enter the 6-digit code from the sign-in card.
-graph_messages_maxAttemptsExceeded=Too many failed attempts. Please try again later.
+AgentApplication__UserAuthorization__Handlers__graph__Settings__invalidSignInRetryMessage=That code was invalid, please try again.
+AgentApplication__UserAuthorization__Handlers__graph__Settings__invalidSignInRetryMessageFormat=Please enter the 6-digit code from the sign-in card.
+AgentApplication__UserAuthorization__Handlers__graph__Settings__invalidSignInRetryMaxExceededMessage=Too many failed attempts. Please try again later.
 ```
 
-**Agentic handler** (agent-to-agent, no user prompt):
+**AgenticUserAuthorization handler** (agent-to-agent, no user prompt):
 ```
-myHandler_type=agentic
-myHandler_scopes=https://graph.microsoft.com/.default   # comma-separated, required
-myHandler_altBlueprintConnectionName=altConn             # optional
+AgentApplication__UserAuthorization__Handlers__myHandler__Settings__type=AgenticUserAuthorization
+AgentApplication__UserAuthorization__Handlers__myHandler__Settings__scopes=https://graph.microsoft.com/.default
+AgentApplication__UserAuthorization__Handlers__myHandler__Settings__altBlueprintConnectionName=altConn
 ```
+
+#### Legacy format (deprecated)
+
+> **Do not use the legacy format for new agents.** It exists solely for backwards compatibility. The SDK emits deprecation warnings when legacy variables are detected.
+
+| Legacy variable | Modern equivalent |
+|---|---|
+| `graph_connectionName` | `...Handlers__graph__Settings__azureBotOAuthConnectionName` |
+| `graph_connectionTitle` | `...Handlers__graph__Settings__title` |
+| `graph_connectionText` | `...Handlers__graph__Settings__text` |
+| `graph_maxAttempts` | `...Handlers__graph__Settings__invalidSignInRetryMax` |
+| `graph_enableSso` | `...Handlers__graph__Settings__enableSso` |
+| `graph_obo_connection` | `...Handlers__graph__Settings__oboConnectionName` |
+| `graph_obo_scopes` | `...Handlers__graph__Settings__oboScopes` |
+| `graph_messages_invalidCode` | `...Handlers__graph__Settings__invalidSignInRetryMessage` |
+| `graph_messages_invalidCodeFormat` | `...Handlers__graph__Settings__invalidSignInRetryMessageFormat` |
+| `graph_messages_maxAttemptsExceeded` | `...Handlers__graph__Settings__invalidSignInRetryMaxExceededMessage` |
+| `myHandler_type=agentic` | `...Handlers__myHandler__Settings__type=AgenticUserAuthorization` |
+| `myHandler_scopes` | `...Handlers__myHandler__Settings__scopes` |
+| `myHandler_altBlueprintConnectionName` | `...Handlers__myHandler__Settings__altBlueprintConnectionName` |
+
+Priority when both formats are present: runtime options (code) > modern env vars > legacy env vars.
 
 ## Quick Start
 
@@ -248,7 +274,7 @@ curl -s -o /dev/null -w "%{http_code}" \
 
 ### 3. Validate an OAuth connection name
 
-OAuth connection names (used by `graph_connectionName`) can only be tested end-to-end through a real sign-in flow. Use the Azure portal:
+OAuth connection names (set via `AgentApplication__UserAuthorization__Handlers__graph__Settings__azureBotOAuthConnectionName`) can only be tested end-to-end through a real sign-in flow. Use the Azure portal:
 
 **Azure Portal → Your Bot Resource → Settings → OAuth Connection Settings → [your connection] → Test Connection**
 
@@ -362,7 +388,7 @@ class MyAgent extends AgentApplication<TurnState> {
 }
 ```
 
-`name` can also be provided via environment variable `graph_connectionName` (where `graph` is the handler key) and omitted from code.
+`name` can also be provided via environment variable `AgentApplication__UserAuthorization__Handlers__graph__Settings__azureBotOAuthConnectionName` (where `graph` is the handler key) and omitted from code.
 
 **OBO (on-behalf-of) — exchange user token for a downstream service token:**
 ```typescript
@@ -374,8 +400,9 @@ const { token } = await this.authorization.exchangeToken(ctx, 'graph', {
 
 **Agentic auth** (agent-to-agent, no user prompt):
 ```typescript
-authorization: { agentic: { type: 'agentic' } }
-// env: agentic_type=agentic, agentic_scopes=https://graph.microsoft.com/.default
+authorization: { agentic: { type: 'AgenticUserAuthorization' } }
+// env: AgentApplication__UserAuthorization__Handlers__agentic__Settings__type=AgenticUserAuthorization
+// env: AgentApplication__UserAuthorization__Handlers__agentic__Settings__scopes=https://graph.microsoft.com/.default
 ```
 
 ## Cards

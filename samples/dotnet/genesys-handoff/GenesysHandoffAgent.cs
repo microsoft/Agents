@@ -28,6 +28,7 @@ namespace GenesysHandoff
         private readonly string _messageSendErrorMessage;
         private readonly string _escalationErrorMessage;
         private readonly string _disconnectFromLiveAgentMessage;
+        private readonly string _userDisconnectedMessage;
         private readonly string _signOutMessage;
         private readonly string _signInFailureFormat;
         private readonly GenesysMessageSender _messageSender;
@@ -61,6 +62,7 @@ namespace GenesysHandoff
             _messageSendErrorMessage = configuration?.GetSection("TeamsMessages:MessageSendErrorMessage")?.Value ?? "Sorry, there was a problem sending your message to the live agent. Please try again.";
             _escalationErrorMessage = configuration?.GetSection("TeamsMessages:EscalationErrorMessage")?.Value ?? "Sorry, we couldn't connect you to a live agent at this time. Please try again later.";
             _disconnectFromLiveAgentMessage = configuration?.GetSection("TeamsMessages:DisconnectFromLiveAgentMessage")?.Value ?? "You have ended the chat with the live agent.";
+            _userDisconnectedMessage = settings.UserDisconnectedMessage ?? "The user has disconnected from the conversation.";
             _signOutMessage = configuration?.GetSection("TeamsMessages:SignOutMessage")?.Value ?? "You have signed out";
             _signInFailureFormat = configuration?.GetSection("TeamsMessages:SignInFailureFormat")?.Value ?? "SignIn failed with '{0}': {1}/{2}";
             _messageSender = messageSender;
@@ -133,14 +135,18 @@ namespace GenesysHandoff
                 // If so, stitch the new activity into that conversation instead of starting a fresh one.
                 mcsConversationId = await HandleNewConversation(turnContext, turnState, cpsClient, cancellationToken);
             }
-            if (turnContext.Activity.IsType(ActivityTypes.Message) || turnContext.Activity.IsType(ActivityTypes.Invoke))
+            var isMessage = turnContext.Activity.IsType(ActivityTypes.Message);
+            var isInvoke = turnContext.Activity.IsType(ActivityTypes.Invoke);
+            var isMessageUpdate = turnContext.Activity.IsType(ActivityTypes.MessageUpdate);
+
+            if (isMessage || isInvoke || isMessageUpdate)
             {
                 var isEscalated = _stateManager.IsEscalated(turnState);
-                if (isEscalated && !turnContext.Activity.IsType(ActivityTypes.Invoke))
+                if (isEscalated && !isInvoke)
                 {
                     await HandleEscalatedMessageAsync(turnContext, turnState, cpsClient, mcsConversationId, cancellationToken);
                 }
-                else
+                else if (isMessage || isInvoke)
                 {
                     await HandleCopilotStudioMessage(turnContext, turnState, cpsClient, mcsConversationId, cancellationToken);
                 }
@@ -160,6 +166,7 @@ namespace GenesysHandoff
             {
                 // Agent disconnected — reset state and start a fresh CPS session (same as -reset).
                 await _messageSender.DeleteUserChannelReferenceAsync(mcsConversationId, cancellationToken);
+                await _stateManager.ClearEscalatedInStorageAsync(_storage, mcsConversationId, cancellationToken);
                 _stateManager.ClearConversationState(turnState);
                 await HandleAllActivitiesInternal(turnContext, turnState, cancellationToken, skipIdempotencyCheck: true);
                 return;
@@ -312,6 +319,10 @@ namespace GenesysHandoff
             {
                 var genesysConversationId = await _messageSender.SendMessageToGenesysAsync(summarizationActivity, mcsConversationId, cancellationToken, prefetchConversationId: true);
 
+                // Persist an escalation marker keyed by the MCS conversation ID so the external reset API
+                // can tell the conversation is escalated (turn state alone is not visible to that endpoint).
+                await _stateManager.SetEscalatedInStorageAsync(_storage, mcsConversationId, cancellationToken);
+
                 // Subscribe to agent disconnect notifications if the notification service is enabled
                 if (_notificationService != null && !string.IsNullOrEmpty(genesysConversationId))
                 {
@@ -323,6 +334,7 @@ namespace GenesysHandoff
             {
                 _logger.LogError(ex, "Failed to escalate conversation {ConversationId} to Genesys.", mcsConversationId);
                 _stateManager.SetEscalated(turnState, false);
+                await _stateManager.ClearEscalatedInStorageAsync(_storage, mcsConversationId, cancellationToken);
                 await turnContext.SendActivityAsync(_escalationErrorMessage, cancellationToken: cancellationToken);
             }
         }
@@ -345,6 +357,7 @@ namespace GenesysHandoff
                 }
 
                 await _messageSender.DeleteUserChannelReferenceAsync(mcsConversationId, cancellationToken);
+                await _stateManager.ClearEscalatedInStorageAsync(_storage, mcsConversationId, cancellationToken);
 
                 if (_notificationService != null && !string.IsNullOrEmpty(genesysConversationId))
                 {
@@ -423,6 +436,9 @@ namespace GenesysHandoff
                 var genesysConversationId = _stateManager.GetGenesysConversationId(turnState);
                 if (!string.IsNullOrEmpty(genesysConversationId))
                 {
+                    // Let the live agent know the user has left before the conversation is torn down.
+                    await NotifyLiveAgentUserDisconnectedAsync(turnContext, mcsConversationId, cancellationToken);
+
                     await _messageSender.DisconnectConversationAsync(genesysConversationId, cancellationToken);
 
                     if (_notificationService != null)
@@ -432,6 +448,7 @@ namespace GenesysHandoff
                 }
 
                 await _messageSender.DeleteUserChannelReferenceAsync(mcsConversationId, cancellationToken);
+                await _stateManager.ClearEscalatedInStorageAsync(_storage, mcsConversationId, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -444,6 +461,30 @@ namespace GenesysHandoff
             // Start a fresh Copilot Studio conversation
             var cpsClient = _copilotClientFactory.CreateClient(this, turnContext);
             await HandleNewConversation(turnContext, turnState, cpsClient, cancellationToken);
+        }
+
+        /// <summary>
+        /// Sends a message to the live agent (via Genesys) informing them that the Teams user has
+        /// disconnected from the escalated conversation. Failures are logged but do not block the disconnect.
+        /// </summary>
+        private async Task NotifyLiveAgentUserDisconnectedAsync(ITurnContext turnContext, string mcsConversationId, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(mcsConversationId) || string.IsNullOrWhiteSpace(_userDisconnectedMessage))
+            {
+                return;
+            }
+
+            try
+            {
+                var notice = turnContext.Activity.GetConversationReference().GetContinuationActivity();
+                notice.Text = _userDisconnectedMessage;
+                await _messageSender.SendMessageToGenesysAsync(notice, mcsConversationId, cancellationToken);
+                _logger.LogInformation("Notified live agent that the user disconnected for conversation {ConversationId}.", mcsConversationId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to notify live agent of user disconnect for conversation {ConversationId}. Continuing with disconnect.", mcsConversationId);
+            }
         }
 
         /// <summary>

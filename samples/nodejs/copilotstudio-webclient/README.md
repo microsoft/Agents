@@ -57,9 +57,22 @@ With the above information, you can now configure the web client in the `web` fo
 
 ```bash
   environmentId="" # Environment ID of environment with the CopilotStudio App.
-  agentIdentifier="" # Schema Name of the Copilot to use
+  schemaName="" # Schema Name of the Copilot to use
   tenantId="" # Tenant ID of the App Registration used to login, this should be in the same tenant as the Copilot.
   appClientId="" # App ID of the App Registration used to login, this should be in the same tenant as the CopilotStudio environment.
+  # Alternatively, you can provide a direct URL to connect to Copilot Studio instead of specifying the `environmentId` and `schemaName` values:
+ directConnectUrl="" # The URL to connect to the Copilot Studio service. If set, overrides `environmentId` and `schemaName`.
+```
+
+#### Optional Configuration
+
+This sample lets you configure the following settings in the .env file:
+```bash
+authorityEndpoint="" # The login authority to use for the connection. Default: "https://login.microsoftonline.com".
+cloud="" # The cloud hosting the Power Platform Services. Default: "Prod".
+customPowerPlatformCloud="" # The Power Platform API endpoint when cloud is set to "Other".
+copilotAgentType="" # The type of Copilot Studio Agent (Published or Prebuilt). Default: "Published".
+useExperimentalEndpoint="" # The flag to use the URL provided via the  "x-ms-d2e-experimental" header for subsequent calls to the Copilot Studio service.
 ```
 
 3. Use a web server to serve the files in the `web` folder. If you are using [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer), right click `index.html` and select `Open with Live Server`

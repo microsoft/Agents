@@ -84,7 +84,7 @@ public class StreamingAgent : AgentApplication
             // Requesting the connected LLM Model to do work :) 
             await foreach (StreamingChatCompletionUpdate update in _chatClient.CompleteChatStreamingAsync(
                 messages,
-                new ChatCompletionOptions { MaxOutputTokenCount = 1000 },
+                new ChatCompletionOptions(),
                 cancellationToken: cancellationToken))
             {
                 if (update.ContentUpdate.Count > 0)

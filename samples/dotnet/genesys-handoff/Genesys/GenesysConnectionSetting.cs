@@ -84,6 +84,11 @@ namespace GenesysHandoff.Genesys
         public string? ResetConversationMessage { get; set; }
 
         /// <summary>
+        /// Gets or sets the message sent to the live agent when the user disconnects from an escalated conversation.
+        /// </summary>
+        public string? UserDisconnectedMessage { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GenesysConnectionSetting"/> class.
         /// </summary>
         public GenesysConnectionSetting() { }
@@ -114,6 +119,7 @@ namespace GenesysHandoff.Genesys
                 AgentDisconnectedErrorMessage = config.GetValue<string>("AgentDisconnectedErrorMessage");
                 EndLiveChatMessage = config.GetValue<string>("EndLiveChatMessage");
                 ResetConversationMessage = config.GetValue<string>("ResetConversationMessage");
+                UserDisconnectedMessage = config.GetValue<string>("UserDisconnectedMessage");
             }
         }
     }

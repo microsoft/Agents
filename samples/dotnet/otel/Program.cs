@@ -17,7 +17,7 @@ builder.Services.AddHttpClient();
 
 // Add the AgentApplication, which contains the logic for responding to
 // user messages.
-builder.AddAgent<MyAgent>();
+builder.AddAgent<Agent>();
 
 // Register IStorage.  For development, MemoryStorage is suitable.
 // For production Agents, persisted storage should be used so

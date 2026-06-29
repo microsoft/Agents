@@ -139,7 +139,7 @@ app.MapPost("/api/conversations/reset", async (ResetConversationRequest request,
         response.StatusCode = StatusCodes.Status500InternalServerError;
         await response.WriteAsJsonAsync(new { error = "Failed to reset conversation.", details = ex.Message }, cancellationToken);
     }
-});
+}).RequireAuthorization();
 
 app.Run();
 

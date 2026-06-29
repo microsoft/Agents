@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.Agents.Extensions.Slack;
 using Microsoft.Agents.Hosting.AspNetCore;
 using Microsoft.Agents.Storage;
 using Microsoft.AspNetCore.Builder;
@@ -45,8 +44,5 @@ app.MapAgentRootEndpoint();
 // Map the endpoints for all agents using the [AgentInterface] attribute.
 // If there is a single IAgent/AgentApplication, the endpoints will be mapped to (e.g. "/api/message").
 app.MapAgentApplicationEndpoints(requireAuth: !app.Environment.IsDevelopment());
-
-// Map the endpoints for Slack.  This will map to "/api/actions" to handle interactive messages from slack.
-app.MapSlackEndpoints<MyAgent>(requireAuth: !app.Environment.IsDevelopment());
 
 app.Run();  

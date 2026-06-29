@@ -11,6 +11,8 @@ This guide explains how to add new skills, update existing skills, and add new p
 agent-plugins/
   agents-for-js/                         ← a plugin
     plugin.json                          ← plugin metadata
+    .claude-plugin/
+      plugin.json                        ← plugin manifest (name + description)
     skills/
       <skill-name>/
         SKILL.md                         ← the skill content
@@ -83,9 +85,18 @@ A plugin groups skills for a new language, platform, or use case (e.g., a `agent
    }
    ```
 
-3. **Add skills** following the steps in [Adding a New Skill](#adding-a-new-skill-to-an-existing-plugin).
+3. **Add `.claude-plugin/plugin.json`** — a manifest that some clients (e.g., Claude Code) require for plugin discovery. It must contain at least the `name` and `description`, matching `plugin.json`:
 
-4. **Register the plugin** in `/.claude-plugin/marketplace.json` by adding an entry to the `plugins` array:
+   ```json
+   {
+     "name": "agents-for-dotnet",
+     "description": "Skills for building agents with the Microsoft 365 Agents SDK for .NET"
+   }
+   ```
+
+4. **Add skills** following the steps in [Adding a New Skill](#adding-a-new-skill-to-an-existing-plugin).
+
+5. **Register the plugin** in `/.claude-plugin/marketplace.json` by adding an entry to the `plugins` array:
 
    ```json
    {
@@ -96,7 +107,7 @@ A plugin groups skills for a new language, platform, or use case (e.g., a `agent
    }
    ```
 
-5. **Document it** in `agent-plugins/README.md` — add the plugin to the Available Plugins table and list its skills.
+6. **Document it** in `agent-plugins/README.md` — add the plugin to the Available Plugins table and list its skills.
 
 ---
 

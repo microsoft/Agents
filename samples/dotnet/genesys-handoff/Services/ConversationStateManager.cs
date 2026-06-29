@@ -18,6 +18,7 @@ namespace GenesysHandoff.Services
     {
         private const string MCSConversationPropertyName = "MCSConversationId";
         private const string IsEscalatedPropertyName = "IsEscalated";
+        private const string EscalatedStoragePrefix = "conversation_escalated_";
         private const string LastCopilotStudioReferencePropertyName = "LastCopilotStudioReference";
         private const string GenesysConversationIdPropertyName = "GenesysConversationId";
         private readonly ILogger<ConversationStateManager> _logger;
@@ -128,10 +129,46 @@ namespace GenesysHandoff.Services
         }
 
         /// <summary>
-        /// Checks if a conversation is escalated by reading the escalation state from storage.
+        /// Persists an escalation marker for the conversation, keyed by the MCS conversation ID, so that
+        /// the escalation state can be read outside of a turn (e.g. by the external reset API).
+        /// </summary>
+        /// <param name="storage">The storage instance to write to.</param>
+        /// <param name="conversationId">The MCS conversation ID.</param>
+        /// <param name="cancellationToken">A cancellation token.</param>
+        public async System.Threading.Tasks.Task SetEscalatedInStorageAsync(IStorage storage, string conversationId, CancellationToken cancellationToken)
+        {
+            ArgumentNullException.ThrowIfNull(storage);
+            ArgumentException.ThrowIfNullOrEmpty(conversationId);
+
+            var key = GetEscalatedStorageKey(conversationId);
+            await storage.WriteAsync(
+                new Dictionary<string, object> { { key, new { escalated = true } } },
+                cancellationToken);
+        }
+
+        /// <summary>
+        /// Removes the persisted escalation marker for the conversation. Safe to call when no marker exists.
+        /// </summary>
+        /// <param name="storage">The storage instance to delete from.</param>
+        /// <param name="conversationId">The MCS conversation ID.</param>
+        /// <param name="cancellationToken">A cancellation token.</param>
+        public async System.Threading.Tasks.Task ClearEscalatedInStorageAsync(IStorage storage, string conversationId, CancellationToken cancellationToken)
+        {
+            ArgumentNullException.ThrowIfNull(storage);
+            if (string.IsNullOrEmpty(conversationId))
+            {
+                return;
+            }
+
+            await storage.DeleteAsync([GetEscalatedStorageKey(conversationId)], cancellationToken);
+        }
+
+        /// <summary>
+        /// Checks if a conversation is escalated by reading the persisted escalation marker from storage.
         /// </summary>
         /// <param name="storage">The storage instance to read from.</param>
-        /// <param name="conversationId">The conversation ID to check.</param>
+        /// <param name="conversationId">The MCS conversation ID to check.</param>
+        /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>True if the conversation has been escalated; otherwise, false.</returns>
         public async System.Threading.Tasks.Task<bool> IsEscalatedInStorageAsync(IStorage storage, string conversationId, CancellationToken cancellationToken)
         {
@@ -140,17 +177,9 @@ namespace GenesysHandoff.Services
 
             try
             {
-                // Attempt to read the conversation state from storage
-                var result = await storage.ReadAsync([conversationId], cancellationToken);
-                if (result != null && result.TryGetValue(conversationId, out var stateData))
-                {
-                    // If the state is a dictionary with our property, check the escalation state
-                    if (stateData is Dictionary<string, object> stateDict && 
-                        stateDict.TryGetValue(IsEscalatedPropertyName, out var escalatedValue))
-                    {
-                        return escalatedValue is true;
-                    }
-                }
+                var key = GetEscalatedStorageKey(conversationId);
+                var result = await storage.ReadAsync([key], cancellationToken);
+                return result != null && result.ContainsKey(key);
             }
             catch (Exception ex)
             {
@@ -158,9 +187,8 @@ namespace GenesysHandoff.Services
                 // If unable to read or parse state, assume not escalated (default)
                 return false;
             }
-
-            // Default to false if not found or unable to read
-            return false;
         }
+
+        private static string GetEscalatedStorageKey(string conversationId) => $"{EscalatedStoragePrefix}{conversationId}";
     }
 }

@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<NoWarn>$(NoWarn);SKEXP0110;SKEXP0010</NoWarn>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="wwwroot\**" />
+		<Content Remove="wwwroot\**" />
+		<EmbeddedResource Remove="wwwroot\**" />
+		<None Remove="wwwroot\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Graph" Version="6.2.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AdaptiveCards" Version="3.1.0" />
+		<PackageReference Include="Microsoft.SemanticKernel.Agents.Core" Version="1.77.0" />
+		<PackageReference Include="Microsoft.SemanticKernel.Agents.OpenAI" Version="1.29.0-alpha" />
+		<PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureOpenAI" Version="1.29.0" />
+		<PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.77.0" />
+		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.6.*" />
+		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.6.*" />
+		<PackageReference Include="Microsoft.Agents.M365Copilot" Version="1.6.*" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Update="appsettings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+</Project>

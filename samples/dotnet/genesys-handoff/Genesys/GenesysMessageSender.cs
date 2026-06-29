@@ -8,10 +8,12 @@ using Microsoft.Agents.Storage;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -225,8 +227,85 @@ namespace GenesysHandoff.Genesys
             return new
             {
                 channel = BuildChannelInfo(activity, mcsConversationId),
-                text = activity.Text ?? string.Empty
+                text = ConvertToPlainText(activity)
             };
+        }
+
+        /// <summary>
+        /// Converts the activity to plain text suitable for the Genesys Open Messaging API.
+        /// <para>
+        /// Teams delivers emoji messages as a <c>text/html</c> attachment whose content contains
+        /// <c>&lt;img&gt;</c> tags with <c>alt</c> attributes holding the Unicode emoji character
+        /// (e.g. <c>alt="😮"</c>).  When such an attachment is present this method parses it,
+        /// extracts the readable text including emoji characters, and returns a clean plain-text
+        /// string.  When no HTML attachment is present the regular <see cref="IActivity.Text"/> is
+        /// returned.
+        /// </para>
+        /// </summary>
+        private static string ConvertToPlainText(IActivity activity)
+        {
+            // Teams sends the rich content (including emojis) in a text/html attachment.
+            // Prefer that over activity.Text so emojis are not silently dropped.
+            var html = GetHtmlAttachmentContent(activity);
+
+            if (html != null)
+            {
+                return StripHtmlToPlainText(html);
+            }
+
+            return activity.Text ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Returns the string content of the first <c>text/html</c> attachment, or <c>null</c>
+        /// if no such attachment exists.
+        /// </summary>
+        private static string? GetHtmlAttachmentContent(IActivity activity)
+        {
+            if (activity.Attachments == null || activity.Attachments.Count == 0)
+            {
+                return null;
+            }
+
+            foreach (var attachment in activity.Attachments)
+            {
+                if (string.Equals(attachment.ContentType, "text/html", StringComparison.OrdinalIgnoreCase)
+                    && attachment.Content is string content
+                    && !string.IsNullOrWhiteSpace(content))
+                {
+                    return content;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Converts an HTML string to plain text.  Emoji <c>&lt;img&gt;</c> tags are replaced
+        /// with their <c>alt</c> attribute, block-level tags become newlines, and HTML entities
+        /// are decoded.
+        /// </summary>
+        private static string StripHtmlToPlainText(string html)
+        {
+            // Replace <img> tags that carry an alt attribute with the alt text.
+            // Teams emojis arrive as <img ... alt="😮" ...>.
+            var text = Regex.Replace(html, @"<img\b[^>]*\balt=""([^""]*)""[^>]*/?>", "$1", RegexOptions.IgnoreCase);
+
+            // Replace <br> variants with newlines.
+            text = Regex.Replace(text, @"<br\s*/?>", "\n", RegexOptions.IgnoreCase);
+
+            // Insert newlines after block-level closing tags to preserve paragraph breaks.
+            text = Regex.Replace(text, @"</(?:p|div|li)>", "\n", RegexOptions.IgnoreCase);
+
+            // Strip all remaining HTML tags.
+            text = Regex.Replace(text, @"<[^>]+>", string.Empty);
+
+            // Decode HTML entities (e.g. &amp; → &, &nbsp; → space, &#x27; → ').
+            text = WebUtility.HtmlDecode(text);
+
+            // Collapse excessive blank lines and trim.
+            text = Regex.Replace(text, @"\n{3,}", "\n\n");
+            return text.Trim();
         }
 
         private static object BuildChannelInfo(IActivity activity, string mcsConversationId)

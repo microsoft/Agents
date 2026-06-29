@@ -8,6 +8,8 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Logs;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Agents.Core.Telemetry;
 
@@ -24,14 +26,20 @@ namespace Otel
 
             builder.Services.AddOpenTelemetry()
                 .ConfigureResource(resource => resource.AddService(
-                        serviceName: AgentsTelemetry.SourceName,
-                        serviceVersion: AgentsTelemetry.SourceVersion
-                    ))
+                        serviceName: AgentTelemetry.ServiceName,
+                        serviceVersion: AgentTelemetry.ServiceVersion
+                    )
+                    .AddAttributes(new[]
+                    {
+                        new KeyValuePair<string, object>("service.instance.id", Environment.MachineName ?? "unknown"),
+                        new KeyValuePair<string, object>("telemetry.sdk.language", "dotnet")
+                    }))
                 .WithTracing(tracing => tracing
                     .AddSource(
                         "Microsoft.AspNetCore",
                         "System.Net.Http",
-                        AgentsTelemetry.SourceName
+                        AgentsTelemetry.SourceName,
+                        AgentTelemetry.ServiceName
                     )
                     .SetSampler(new AlwaysOnSampler())
                     .AddAspNetCoreInstrumentation(tracing =>
@@ -61,7 +69,6 @@ namespace Otel
                         o.EnrichWithHttpResponseMessage = (activity, response) =>
                         {
                             activity.SetTag("http.response.status_code", (int)response.StatusCode);
-                            //activity.SetTag("http.response.headers", response.Content.Headers);
                             // Convert response.Content.Headers to a string array: "HeaderName=val1,val2"
                             var headerList = response.Content?.Headers?
                                 .Where(h => h.Key != "Authorization")
@@ -82,21 +89,18 @@ namespace Otel
 
                         };
                     })
-                    //.AddConsoleExporter()
                     .AddOtlpExporter())
                 .WithMetrics(metrics => metrics
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation()
-                    .AddMeter(AgentsTelemetry.SourceName)
-                    //.AddConsoleExporter()
+                    .AddMeter(AgentsTelemetry.SourceName, AgentTelemetry.ServiceName)
                     .AddOtlpExporter());
 
             builder.Logging.AddOpenTelemetry(logging =>
             {
                 logging.IncludeFormattedMessage = true;
                 logging.IncludeScopes = true;
-                //logging.AddConsoleExporter();
                 logging.AddOtlpExporter();
             });
 
