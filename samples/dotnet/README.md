@@ -11,7 +11,7 @@ These samples are Tier 1 or Tier 2 starter samples unless a README explicitly la
 |Streaming Agent |Tier 2: Scenario starter|Streams OpenAI responses|[azure-ai-streaming](azure-ai-streaming/README.md)|
 |Copilot Studio Client|Tier 2: Scenario starter|Console app to consume a Copilot Studio Agent|[copilotstudio-client](copilotstudio-client/README.md)|
 |Copilot Studio Skill |Tier 2: Scenario starter|Call the echo bot from a Copilot Studio skill |[copilotstudio-skill](copilotstudio-skill/README.md)|
-|RetrievalBot Sample with Semantic Kernel|Tier 2: Scenario starter|A simple Retrieval Agent that is hosted on an Asp.net core web service. |[RetrievalBot](RetrievalBot/README.md)|
+|RetrievalBot Sample with Semantic Kernel|Tier 2: Scenario starter|A simple Retrieval Agent that is hosted on an Asp.net core web service. |[RetrievalBot](retrieval-agent/README.md)|
 |MultiAgent|Tier 2: Scenario starter|Demonstrates multiple AgentApplication in the same host|[MultiAgent](multiagent/README.md)|
 |GenesysHandoff|Tier 2: Scenario starter|Demonstrates how a Microsoft Copilot Studio Agent (bot) can seamlessly **hand off a conversation to a live agent** in **Genesys Cloud**.|[GenesysHandoff](genesys-handoff/README.md)|
 |Proactive|Tier 2: Scenario starter|Demonstrates the basics of a proactive conversation using in-code and Http triggers.|[Proactive](proactive/README.md)|
@@ -21,3 +21,4 @@ These samples are Tier 1 or Tier 2 starter samples unless a README explicitly la
 |Named Pipe Agent|Tier 2: Scenario starter|Pipe-only echo agent for the DirectLine App Service extension (DirectLineFlex)|[named-pipe-agent](named-pipe-agent/README.md)|
 |Persistent State|Tier 2: Scenario starter|Durable conversation state backed by Azure Blob Storage|[persistent-state](persistent-state/README.md)|
 |Production Reference|Tier 3: Production reference|Deployable support triage agent with managed identity, durable state, health checks, telemetry, Bicep, tests, and runbook|[production-reference](production-reference/README.md)|
+
