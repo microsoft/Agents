@@ -5,6 +5,8 @@ using AgentFrameworkWeather;
 using AgentFrameworkWeather.Agent;
 using Azure;
 using Azure.AI.OpenAI;
+using Microsoft.Agents.A365.Tooling.Extensions.AgentFramework.Services;
+using Microsoft.Agents.A365.Tooling.Services;
 using Microsoft.Agents.Builder;
 using Microsoft.Agents.Core;
 using Microsoft.Agents.Hosting.AspNetCore;
@@ -33,6 +35,13 @@ builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
 // that state survives Agent restarts, and operate correctly
 // in a cluster of Agent instances.
 builder.Services.AddSingleton<IStorage, MemoryStorage>();
+
+// **********  Configure A365 (WorkIQ) Services **********
+// Registers the MCP tool registration + server configuration services so the
+// agent can discover and call WorkIQ (Agent 365) MCP tools at runtime.
+builder.Services.AddSingleton<IMcpToolRegistrationService, McpToolRegistrationService>();
+builder.Services.AddSingleton<IMcpToolServerConfigurationService, McpToolServerConfigurationService>();
+// **********  END Configure A365 Services **********
 
 // Add the bot (which is transient)
 builder.AddAgent<WeatherAgent>();
