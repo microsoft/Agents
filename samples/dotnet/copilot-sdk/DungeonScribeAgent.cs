@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using GitHub.Copilot.SDK;
 using CopilotSdk.Tools;
 using Microsoft.Agents.Builder;
 using Microsoft.Agents.Builder.App;
@@ -14,6 +13,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Agents.Builder.UserAuth;
+using GitHub.Copilot;
 
 namespace CopilotSdk;
 
@@ -103,7 +103,7 @@ Keep responses concise but flavorful. Use emoji sparingly for emphasis (🎲⚔�
             var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
             bool anyDeltas = false;
 
-            using var subscription = session.On(evt =>
+            using var subscription = session.On<SessionEvent>(evt =>
             {
                 switch (evt)
                 {
