@@ -398,3 +398,13 @@ devTools/
 node_modules/
 *.tsbuildinfo
 
+
+# a365 CLI local/generated config (tenant/app identifiers - do not commit)
+a365.config.json
+a365.generated.config.json
+
+# a365-generated Teams app package
+**/appPackage/
+
+# Slack extension per-conversation state (may contain API tokens)
+samples/dotnet/Agent Framework/slack/
