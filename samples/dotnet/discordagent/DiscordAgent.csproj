@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<UserSecretsId>discord-agent-vinchen</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- Discord API wrapper (Gateway + REST). There is no Azure Bot Service Slack-style
+		     channel for Discord, so we host the bot directly with Discord.Net. -->
+		<PackageReference Include="Discord.Net.WebSocket" Version="3.*" />
+
+		<!-- Configuration (user-secrets for the bot token, env vars). -->
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.*" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.*" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.*" />
+
+		<!-- Agent Framework + Azure OpenAI (same stack as the weather sample). -->
+		<PackageReference Include="Azure.AI.OpenAI" Version="2.7.0-beta.2" />
+		<PackageReference Include="Microsoft.Agents.AI" Version="1.10.0" />
+		<PackageReference Include="Microsoft.Extensions.AI" Version="10.7.0" />
+		<PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="10.7.0" />
+
+		<!-- WorkIQ (Agent 365) MCP client - connect directly to mcp_TeamsServer with a dev bearer token. -->
+		<PackageReference Include="ModelContextProtocol.Core" Version="0.2.0-preview.3" />
+
+		<!-- Weather data source. -->
+		<PackageReference Include="OpenWeatherMapSharp" Version="4.2.0" />
+	</ItemGroup>
+
+</Project>
