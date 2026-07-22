@@ -12,12 +12,16 @@ using Microsoft.Agents.Core;
 using Microsoft.Agents.Core.Models;
 using Microsoft.Agents.Core.Serialization;
 using Microsoft.Agents.Core.Telemetry;
+using Microsoft.Agents.Extensions.Slack;
+using Microsoft.Agents.Extensions.Slack.Api;
 using Microsoft.Extensions.AI;
+using System.Text;
 using System.Text.Json;
 
 namespace AgentFrameworkWeather.Agent
 {
-    public class WeatherAgent : AgentApplication
+    [SlackExtension]
+    public partial class WeatherAgent : AgentApplication
     {
         private readonly string AgentWelcomeMessage = "Hello! I'm your friendly purr-ductivity cat assistant. I can fetch the current weather or forecast for any US city, and I can help with your Microsoft 365 work too - like Teams chats, mail, and files. Ask me a weather question (city + 2-letter state) or anything about your workday. Meow!";
 
@@ -108,24 +112,42 @@ namespace AgentFrameworkWeather.Agent
         }
         protected async Task OnMessageAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
         {
-            // Start a Streaming Process to let clients that support streaming know that we are processing the request. 
+            // Slack: render the response as native Slack Blocks (a card) instead of the
+            // streamed Bot Framework text. Other channels keep the streaming experience.
+            bool isSlack = string.Equals(turnContext.Activity.ChannelId, "slack", StringComparison.OrdinalIgnoreCase);
+
+            var userText = turnContext.Activity.Text?.Trim() ?? string.Empty;
+
+            // Pick the auth handler for this turn (agentic vs OBO). In dev the BEARER_TOKEN path is used.
+            string? toolAuthHandlerName = turnContext.Activity.IsAgenticRequest()
+                ? AgenticAuthHandlerName
+                : OboAuthHandlerName;
+
+            var _agent = await GetClientAgent(turnContext, turnState, toolAuthHandlerName);
+
+            // Read or Create the conversation thread for this conversation.
+            AgentSession? thread = await GetConversationThread(_agent, turnState);
+
+            if (isSlack)
+            {
+                // Collect the full response, then post it as a Slack Block card.
+                var sb = new StringBuilder();
+                await foreach (var response in _agent.RunStreamingAsync(userText, thread, cancellationToken: cancellationToken))
+                {
+                    if (response.Role == ChatRole.Assistant && !string.IsNullOrEmpty(response.Text))
+                    {
+                        sb.Append(response.Text);
+                    }
+                }
+                turnState.Conversation.SetValue("conversation.threadInfo", (await _agent.SerializeSessionAsync(thread)).ToString());
+                await PostSlackBlocksAsync(turnContext, sb.ToString(), cancellationToken);
+                return;
+            }
+
+            // Non-Slack channels: stream the response back as it is produced.
             await turnContext.StreamingResponse.QueueInformativeUpdateAsync("Just a moment please..").ConfigureAwait(false);
-          
             try
             {
-                var userText = turnContext.Activity.Text?.Trim() ?? string.Empty;
-
-                // Pick the auth handler for this turn (agentic vs OBO). In dev the BEARER_TOKEN path is used.
-                string? toolAuthHandlerName = turnContext.Activity.IsAgenticRequest()
-                    ? AgenticAuthHandlerName
-                    : OboAuthHandlerName;
-
-                var _agent = await GetClientAgent(turnContext, turnState, toolAuthHandlerName);
-
-                // Read or Create the conversation thread for this conversation.
-                AgentSession? thread = await GetConversationThread(_agent, turnState);
-
-                // Stream the response back to the user as we receive it from the agent.
                 await foreach (var response in _agent.RunStreamingAsync(userText, thread, cancellationToken: cancellationToken))
                 {
                     if (response.Role == ChatRole.Assistant && !string.IsNullOrEmpty(response.Text))
@@ -140,6 +162,59 @@ namespace AgentFrameworkWeather.Agent
                 await turnContext.StreamingResponse.EndStreamAsync(cancellationToken).ConfigureAwait(false); // End the streaming response
             }
         }
+
+        /// <summary>
+        /// Post the agent's answer to Slack as a Block Kit card (mrkdwn section) via the Slack API,
+        /// instead of the plain text that the Azure Bot Slack channel would render.
+        /// </summary>
+        private async Task PostSlackBlocksAsync(ITurnContext turnContext, string text, CancellationToken cancellationToken)
+        {
+            var channelData = turnContext.Activity.GetChannelData<SlackChannelData>();
+
+            // Slack section text is limited to 3000 chars; trim defensively.
+            var body = string.IsNullOrWhiteSpace(text) ? "_(no response)_" : text;
+            if (body.Length > 2900)
+            {
+                body = body.Substring(0, 2900) + "…";
+            }
+
+            // JSON-encode the text (adds surrounding quotes + escaping) so it is safe inside the payload.
+            var encoded = JsonSerializer.Serialize(body);
+
+            // Wrap the blocks in a message attachment with a blue accent color. Slack Block Kit
+            // "header" blocks are plain_text only (no colored text), so the blue vertical accent
+            // bar on the attachment is the standard way to give the card a blue "brand" color.
+            var message = $$"""
+            {
+                "channel": "{{channelData.Channel}}",
+                "attachments": [
+                    {
+                        "color": "#2E9BF5",
+                        "blocks": [
+                            {
+                                "type": "header",
+                                "text": { "type": "plain_text", "text": "🐾 Purrfect Assistant", "emoji": true }
+                            },
+                            {
+                                "type": "section",
+                                "text": { "type": "mrkdwn", "text": {{encoded}} }
+                            },
+                            { "type": "divider" },
+                            {
+                                "type": "context",
+                                "elements": [
+                                    { "type": "mrkdwn", "text": ":robot_face: *Agent Framework* + :sparkles: *WorkIQ*  |  rendered with Slack Block Kit" }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+            """;
+
+            await SlackExtension.CallAsync(turnContext, "chat.postMessage", message, channelData.ApiToken, cancellationToken);
+        }
+
 
 
         /// <summary>

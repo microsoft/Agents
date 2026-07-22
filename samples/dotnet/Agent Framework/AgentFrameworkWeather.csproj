@@ -16,6 +16,9 @@
 		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.6.*" />
 		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.6.*" />
 
+		<!-- Slack channel extension (Slack Blocks / interactive messages) -->
+		<PackageReference Include="Microsoft.Agents.Extensions.Slack" Version="1.6.*" />
+
 		<!-- Agent 365 (WorkIQ) MCP Tooling -->
 		<PackageReference Include="Microsoft.Agents.A365.Tooling" Version="1.0.*" />
 		<PackageReference Include="Microsoft.Agents.A365.Tooling.Extensions.AgentFramework" Version="1.0.*" />
