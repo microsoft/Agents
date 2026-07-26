@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using AgentFrameworkWeather;
+using AgentFrameworkWeather.Adapters;
 using AgentFrameworkWeather.Agent;
 using Azure;
 using Azure.AI.OpenAI;
@@ -45,6 +46,14 @@ builder.Services.AddSingleton<IMcpToolServerConfigurationService, McpToolServerC
 
 // Add the bot (which is transient)
 builder.AddAgent<WeatherAgent>();
+
+// **********  Discord channel (custom ChannelAdapter) **********
+// Discord has no Azure Bot Service channel, so we host it ourselves: a DiscordAdapter
+// (ChannelAdapter) plus a background service that drives it from the Discord gateway.
+// Reuses the SAME WeatherAgent as Slack/Teams. Only starts if Discord:BotToken is set.
+builder.Services.AddSingleton<DiscordAdapter>();
+builder.Services.AddHostedService<DiscordGatewayService>();
+// **********  END Discord channel **********
 
 // Register IChatClient with correct types
 builder.Services.AddSingleton<IChatClient>(sp => {

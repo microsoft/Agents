@@ -144,6 +144,28 @@ namespace AgentFrameworkWeather.Agent
                 return;
             }
 
+            // Discord: collect the full response and send it as ONE message activity; the
+            // DiscordAdapter renders it as an embed. (Streaming would create many partial messages.)
+            if (string.Equals(turnContext.Activity.ChannelId, "discord", StringComparison.OrdinalIgnoreCase))
+            {
+                var sb = new StringBuilder();
+                await foreach (var response in _agent.RunStreamingAsync(userText, thread, cancellationToken: cancellationToken))
+                {
+                    if (response.Role == ChatRole.Assistant && !string.IsNullOrEmpty(response.Text))
+                    {
+                        sb.Append(response.Text);
+                    }
+                }
+                turnState.Conversation.SetValue("conversation.threadInfo", (await _agent.SerializeSessionAsync(thread)).ToString());
+
+                var answer = sb.ToString();
+                if (!string.IsNullOrWhiteSpace(answer))
+                {
+                    await turnContext.SendActivityAsync(MessageFactory.Text(answer), cancellationToken).ConfigureAwait(false);
+                }
+                return;
+            }
+
             // Non-Slack channels: stream the response back as it is produced.
             await turnContext.StreamingResponse.QueueInformativeUpdateAsync("Just a moment please..").ConfigureAwait(false);
             try
