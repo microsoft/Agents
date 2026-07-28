@@ -115,13 +115,18 @@ namespace AgentFrameworkWeather.Agent
             // Slack: render the response as native Slack Blocks (a card) instead of the
             // streamed Bot Framework text. Other channels keep the streaming experience.
             bool isSlack = string.Equals(turnContext.Activity.ChannelId, "slack", StringComparison.OrdinalIgnoreCase);
+            bool isDiscord = string.Equals(turnContext.Activity.ChannelId, "discord", StringComparison.OrdinalIgnoreCase);
 
             var userText = turnContext.Activity.Text?.Trim() ?? string.Empty;
 
             // Pick the auth handler for this turn (agentic vs OBO). In dev the BEARER_TOKEN path is used.
-            string? toolAuthHandlerName = turnContext.Activity.IsAgenticRequest()
-                ? AgenticAuthHandlerName
-                : OboAuthHandlerName;
+            // Discord has no OBO/sign-in channel (no IUserTokenClient), so force the dev bearer-token
+            // path by using a null handler; otherwise the graph OBO handler tries to sign in and fails.
+            string? toolAuthHandlerName = isDiscord
+                ? null
+                : turnContext.Activity.IsAgenticRequest()
+                    ? AgenticAuthHandlerName
+                    : OboAuthHandlerName;
 
             var _agent = await GetClientAgent(turnContext, turnState, toolAuthHandlerName);
 
@@ -146,7 +151,7 @@ namespace AgentFrameworkWeather.Agent
 
             // Discord: collect the full response and send it as ONE message activity; the
             // DiscordAdapter renders it as an embed. (Streaming would create many partial messages.)
-            if (string.Equals(turnContext.Activity.ChannelId, "discord", StringComparison.OrdinalIgnoreCase))
+            if (isDiscord)
             {
                 var sb = new StringBuilder();
                 await foreach (var response in _agent.RunStreamingAsync(userText, thread, cancellationToken: cancellationToken))

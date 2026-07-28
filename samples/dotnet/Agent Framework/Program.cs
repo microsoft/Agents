@@ -9,6 +9,7 @@ using Azure.AI.OpenAI;
 using Microsoft.Agents.A365.Tooling.Extensions.AgentFramework.Services;
 using Microsoft.Agents.A365.Tooling.Services;
 using Microsoft.Agents.Builder;
+using Microsoft.Agents.Builder.App.UserAuth;
 using Microsoft.Agents.Core;
 using Microsoft.Agents.Hosting.AspNetCore;
 using Microsoft.Agents.Storage;
@@ -46,6 +47,14 @@ builder.Services.AddSingleton<IMcpToolServerConfigurationService, McpToolServerC
 
 // Add the bot (which is transient)
 builder.AddAgent<WeatherAgent>();
+
+// AutoSignIn selector: skip the OAuth sign-in flow for Discord. Discord has no Azure Bot
+// Service channel (no IUserTokenClient), so the default AutoSignIn would try to sign the
+// user in on every message and fail ("Sign in for 'graph' completed without a token").
+// Discord uses the dev BEARER_TOKEN path for WorkIQ instead. Other channels keep AutoSignIn on.
+builder.Services.AddSingleton<AutoSignInSelector>(_ =>
+    (turnContext, cancellationToken) =>
+        Task.FromResult(!string.Equals(turnContext.Activity.ChannelId, "discord", StringComparison.OrdinalIgnoreCase)));
 
 // **********  Discord channel (custom ChannelAdapter) **********
 // Discord has no Azure Bot Service channel, so we host it ourselves: a DiscordAdapter

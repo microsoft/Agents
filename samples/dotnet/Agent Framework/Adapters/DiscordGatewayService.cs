@@ -27,7 +27,7 @@ namespace AgentFrameworkWeather.Adapters
         IServiceProvider services,
         ILogger<DiscordGatewayService> logger) : BackgroundService
     {
-        private DiscordSocketClient _client;
+        private DiscordSocketClient? _client;
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -61,7 +61,14 @@ namespace AgentFrameworkWeather.Adapters
                 return Task.CompletedTask;
             };
 
-            _client.MessageReceived += OnDiscordMessageAsync;
+            // Offload processing to a background task so a slow agent turn (several seconds while
+            // WorkIQ MCP tools load and the model runs) does not block the Discord gateway heartbeat.
+            // Discord.Net warns "A MessageReceived handler is blocking the gateway task" otherwise.
+            _client.MessageReceived += msg =>
+            {
+                _ = Task.Run(() => OnDiscordMessageAsync(msg));
+                return Task.CompletedTask;
+            };
 
             await _client.LoginAsync(TokenType.Bot, token).ConfigureAwait(false);
             await _client.StartAsync().ConfigureAwait(false);
@@ -74,6 +81,9 @@ namespace AgentFrameworkWeather.Adapters
         {
             if (message is not SocketUserMessage userMessage) return;
             if (message.Author.IsBot) return;
+
+            var client = _client;
+            if (client is null) return;
 
             var text = message.Content?.Trim() ?? string.Empty;
             if (string.IsNullOrEmpty(text)) return;
@@ -93,7 +103,7 @@ namespace AgentFrameworkWeather.Adapters
                 ServiceUrl = "discord",
                 Conversation = new ConversationAccount { Id = conversationId },
                 From = new ChannelAccount { Id = message.Author.Id.ToString(), Name = message.Author.Username },
-                Recipient = new ChannelAccount { Id = _client.CurrentUser.Id.ToString(), Name = _client.CurrentUser.Username },
+                Recipient = new ChannelAccount { Id = client.CurrentUser.Id.ToString(), Name = client.CurrentUser.Username },
             };
 
             var identity = new ClaimsIdentity();

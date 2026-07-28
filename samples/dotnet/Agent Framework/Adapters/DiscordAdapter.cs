@@ -54,7 +54,7 @@ namespace AgentFrameworkWeather.Adapters
         {
             var context = new TurnContext(this, activity, claimsIdentity);
             await RunPipelineAsync(context, callback, cancellationToken).ConfigureAwait(false);
-            return null;
+            return null!;
         }
 
         /// <summary>
