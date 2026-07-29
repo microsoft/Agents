@@ -54,7 +54,7 @@ builder.AddAgent<WeatherAgent>();
 // Discord uses the dev BEARER_TOKEN path for WorkIQ instead. Other channels keep AutoSignIn on.
 builder.Services.AddSingleton<AutoSignInSelector>(_ =>
     (turnContext, cancellationToken) =>
-        Task.FromResult(!string.Equals(turnContext.Activity.ChannelId, "discord", StringComparison.OrdinalIgnoreCase)));
+        Task.FromResult(turnContext.Activity.ChannelId != DiscordAdapter.ChannelId));
 
 // **********  Discord channel (custom ChannelAdapter) **********
 // Discord has no Azure Bot Service channel, so we host it ourselves: a DiscordAdapter
