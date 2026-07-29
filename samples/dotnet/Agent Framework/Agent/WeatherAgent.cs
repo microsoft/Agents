@@ -114,7 +114,7 @@ namespace AgentFrameworkWeather.Agent
         {
             // Slack: render the response as native Slack Blocks (a card) instead of the
             // streamed Bot Framework text. Other channels keep the streaming experience.
-            bool isSlack = string.Equals(turnContext.Activity.ChannelId, "slack", StringComparison.OrdinalIgnoreCase);
+            bool isSlack = turnContext.Activity.ChannelId == Channels.Slack;
 
             var userText = turnContext.Activity.Text?.Trim() ?? string.Empty;
 
