@@ -15,6 +15,7 @@ using Microsoft.Agents.Core.Telemetry;
 using Microsoft.Agents.Extensions.Slack;
 using Microsoft.Agents.Extensions.Slack.Api;
 using Microsoft.Extensions.AI;
+using System.Collections.Concurrent;
 using System.Text;
 using System.Text.Json;
 
@@ -48,6 +49,13 @@ namespace AgentFrameworkWeather.Agent
         // WorkIQ (Agent 365) MCP tool service. Nullable so the agent still runs
         // (weather-only) when the service or its configuration is unavailable.
         private readonly IMcpToolRegistrationService? _toolService = null;
+
+        // Cache of WorkIQ MCP tools keyed by access-token hash. Loading the tools is an HTTP
+        // round-trip to mcp_TeamsServer (~5s); the tool set is stable for the life of a token,
+        // so we reuse it across turns and only reload when the token changes or nears expiry.
+        private static readonly ConcurrentDictionary<string, CachedMcpTools> _mcpToolsCache = new();
+
+        private sealed record CachedMcpTools(IList<AITool> Tools, DateTimeOffset ExpiresAt);
 
         // Auth handler names for MCP access (configurable via appsettings.json).
         private readonly string? AgenticAuthHandlerName;
@@ -229,27 +237,6 @@ namespace AgentFrameworkWeather.Agent
             AssertionHelpers.ThrowIfNull(context, nameof(context));
             AssertionHelpers.ThrowIfNull(_chatClient!, nameof(_chatClient));
 
-            // Acquire the access token once for this turn - used for WorkIQ MCP tool loading.
-            string? accessToken = null;
-            string? agentId = null;
-            if (!string.IsNullOrEmpty(authHandlerName))
-            {
-                // Production / Teams: exchange an OBO token via the auth handler.
-                accessToken = await UserAuthorization.GetTurnTokenAsync(context, authHandlerName);
-                agentId = Utility.ResolveAgentIdentity(context, accessToken);
-            }
-            else if (TryGetBearerTokenForDevelopment(out var bearerToken))
-            {
-                // Local dev: use the bearer token from `a365 develop get-token`.
-                _logger?.LogInformation("Using bearer token from environment for WorkIQ MCP.");
-                accessToken = bearerToken;
-                agentId = Utility.ResolveAgentIdentity(context, accessToken!);
-            }
-            else
-            {
-                _logger?.LogWarning("No auth handler or bearer token - WorkIQ MCP tools will not be loaded (weather-only).");
-            }
-
             // Setup the local (weather) tools - these are always available.
             WeatherLookupTool weatherLookupTool = new(context, _configuration!);
             var toolList = new List<AITool>
@@ -259,40 +246,8 @@ namespace AgentFrameworkWeather.Agent
                 AIFunctionFactory.Create(weatherLookupTool.GetWeatherForecastForLocation)
             };
 
-            // Attach the WorkIQ MCP tools on top of the weather tools when available.
-            if (_toolService != null && !string.IsNullOrEmpty(agentId))
-            {
-                try
-                {
-                    await context.StreamingResponse.QueueInformativeUpdateAsync("Loading tools...");
-
-                    // For the bearer-token (dev) flow, pass the token as an override and
-                    // use the OBO/agentic handler name if configured.
-                    var handlerForMcp = !string.IsNullOrEmpty(authHandlerName)
-                        ? authHandlerName
-                        : OboAuthHandlerName ?? AgenticAuthHandlerName ?? string.Empty;
-                    var tokenOverride = string.IsNullOrEmpty(authHandlerName) ? accessToken : null;
-
-                    var a365Tools = await _toolService.GetMcpToolsAsync(agentId, UserAuthorization, handlerForMcp, context, tokenOverride).ConfigureAwait(false);
-                    if (a365Tools != null && a365Tools.Count > 0)
-                    {
-                        toolList.AddRange(a365Tools);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    // If setup fails, keep serving weather instead of crashing.
-                    if (ShouldSkipToolingOnErrors())
-                    {
-                        _logger?.LogWarning(ex, "Failed to register WorkIQ MCP tools. Continuing weather-only (SKIP_TOOLING_ON_ERRORS=true).");
-                    }
-                    else
-                    {
-                        _logger?.LogError(ex, "Failed to register WorkIQ MCP tools.");
-                        throw;
-                    }
-                }
-            }
+            // Attach the WorkIQ MCP tools (token-cached) on top of the weather tools.
+            toolList.AddRange(await GetWorkIqMcpToolsAsync(context, authHandlerName, announceLoading: true).ConfigureAwait(false));
 
             // Setup the tools for the agent:
             var toolOptions = new ChatOptions
@@ -322,6 +277,143 @@ namespace AgentFrameworkWeather.Agent
                 .AsBuilder()
                 .UseOpenTelemetry(sourceName: AgentsTelemetry.SourceName, (cfg) => cfg.EnableSensitiveData = true)
                 .Build(); 
+        }
+
+        /// <summary>
+        /// Resolve the WorkIQ MCP tools for this operation, using the token-keyed cache. Returns an
+        /// empty list when auth or tools are unavailable. When <paramref name="announceLoading"/> is
+        /// true, a "Loading tools..." status is streamed on a cache miss (skipped for background warm-up).
+        /// </summary>
+        private async Task<IList<AITool>> GetWorkIqMcpToolsAsync(ITurnContext context, string? authHandlerName, bool announceLoading)
+        {
+            // Acquire the access token once - used for WorkIQ MCP tool loading.
+            string? accessToken = null;
+            string? agentId = null;
+            if (!string.IsNullOrEmpty(authHandlerName))
+            {
+                // Production / Teams: exchange an OBO token via the auth handler.
+                accessToken = await UserAuthorization.GetTurnTokenAsync(context, authHandlerName);
+                agentId = Utility.ResolveAgentIdentity(context, accessToken);
+            }
+            else if (TryGetBearerTokenForDevelopment(out var bearerToken))
+            {
+                // Local dev: use the bearer token from `a365 develop get-token`.
+                _logger?.LogInformation("Using bearer token from environment for WorkIQ MCP.");
+                accessToken = bearerToken;
+                agentId = Utility.ResolveAgentIdentity(context, accessToken!);
+            }
+            else
+            {
+                _logger?.LogWarning("No auth handler or bearer token - WorkIQ MCP tools will not be loaded (weather-only).");
+            }
+
+            if (_toolService == null || string.IsNullOrEmpty(agentId))
+            {
+                return Array.Empty<AITool>();
+            }
+
+            try
+            {
+                // The tool set is bound to the user's access token; cache it by token so we
+                // only pay the ~5s MCP load once per token instead of on every turn.
+                var cacheKey = HashToken(accessToken!);
+                if (_mcpToolsCache.TryGetValue(cacheKey, out var cachedTools)
+                    && cachedTools.ExpiresAt > DateTimeOffset.UtcNow)
+                {
+                    _logger?.LogInformation("WorkIQ MCP tools served from cache ({Count} tools).", cachedTools.Tools.Count);
+                    return cachedTools.Tools;
+                }
+
+                if (announceLoading)
+                {
+                    await context.StreamingResponse.QueueInformativeUpdateAsync("Loading tools...");
+                }
+
+                // For the bearer-token (dev) flow, pass the token as an override and
+                // use the OBO/agentic handler name if configured.
+                var handlerForMcp = !string.IsNullOrEmpty(authHandlerName)
+                    ? authHandlerName
+                    : OboAuthHandlerName ?? AgenticAuthHandlerName ?? string.Empty;
+                var tokenOverride = string.IsNullOrEmpty(authHandlerName) ? accessToken : null;
+
+                var a365Tools = await _toolService.GetMcpToolsAsync(agentId, UserAuthorization, handlerForMcp, context, tokenOverride).ConfigureAwait(false);
+                if (a365Tools != null && a365Tools.Count > 0)
+                {
+                    // Expire the cache entry shortly before the token itself expires so we
+                    // never invoke a cached tool with a dead token.
+                    var expiresAt = GetTokenExpiry(accessToken!).AddMinutes(-1);
+                    _mcpToolsCache[cacheKey] = new CachedMcpTools(a365Tools, expiresAt);
+                    PruneExpiredMcpToolsCache();
+                    _logger?.LogInformation("WorkIQ MCP tools loaded from server ({Count} tools); cached until {Expiry:u}.", a365Tools.Count, expiresAt);
+                    return a365Tools;
+                }
+
+                return Array.Empty<AITool>();
+            }
+            catch (Exception ex)
+            {
+                // If setup fails, keep serving weather instead of crashing.
+                if (ShouldSkipToolingOnErrors())
+                {
+                    _logger?.LogWarning(ex, "Failed to register WorkIQ MCP tools. Continuing weather-only (SKIP_TOOLING_ON_ERRORS=true).");
+                    return Array.Empty<AITool>();
+                }
+
+                _logger?.LogError(ex, "Failed to register WorkIQ MCP tools.");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Extract the expiry (exp claim) from a JWT access token. Falls back to a short window
+        /// if the token cannot be parsed, so a bad token never yields a long-lived cache entry.
+        /// </summary>
+        private static DateTimeOffset GetTokenExpiry(string token)
+        {
+            try
+            {
+                var parts = token.Split('.');
+                if (parts.Length >= 2)
+                {
+                    var payload = parts[1].Replace('-', '+').Replace('_', '/');
+                    switch (payload.Length % 4)
+                    {
+                        case 2: payload += "=="; break;
+                        case 3: payload += "="; break;
+                    }
+                    var json = Encoding.UTF8.GetString(Convert.FromBase64String(payload));
+                    using var doc = JsonDocument.Parse(json);
+                    if (doc.RootElement.TryGetProperty("exp", out var expEl) && expEl.TryGetInt64(out var exp))
+                    {
+                        return DateTimeOffset.FromUnixTimeSeconds(exp);
+                    }
+                }
+            }
+            catch
+            {
+                // Ignore parse failures and use the fallback below.
+            }
+            return DateTimeOffset.UtcNow.AddMinutes(5);
+        }
+
+        /// <summary>Stable, non-reversible cache key for an access token.</summary>
+        private static string HashToken(string token)
+        {
+            var hash = System.Security.Cryptography.SHA256.HashData(Encoding.UTF8.GetBytes(token));
+            return Convert.ToHexString(hash);
+        }
+
+        /// <summary>Drop expired MCP tool cache entries to bound memory as tokens rotate.</summary>
+        private static void PruneExpiredMcpToolsCache()
+        {
+            var now = DateTimeOffset.UtcNow;
+            foreach (var entry in _mcpToolsCache)
+            {
+                if (entry.Value.ExpiresAt <= now)
+                {
+                    _mcpToolsCache.TryRemove(entry.Key, out _);
+                }
+            }
         }
 
         /// <summary>
