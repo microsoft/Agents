@@ -58,6 +58,8 @@ namespace AgentFrameworkWeather.Adapters
             _client.Ready += () =>
             {
                 logger.LogInformation("Discord bot ready as {User}", _client.CurrentUser);
+                // Pre-load WorkIQ MCP tools in the background so the first real message is fast.
+                _ = Task.Run(WarmUpToolsAsync);
                 return Task.CompletedTask;
             };
 
@@ -75,6 +77,37 @@ namespace AgentFrameworkWeather.Adapters
 
             // Keep the service alive until shutdown.
             await Task.Delay(Timeout.Infinite, stoppingToken).ContinueWith(_ => { }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Pre-load the WorkIQ MCP tools at startup so the first real Discord message is fast. Sends a
+        /// synthetic "warmup" Event activity through the adapter pipeline (which builds a full TurnContext)
+        /// and lets the agent populate its shared tool cache. Best-effort: failures fall back to lazy load.
+        /// </summary>
+        private async Task WarmUpToolsAsync()
+        {
+            try
+            {
+                var activity = new Activity
+                {
+                    Type = ActivityTypes.Event,
+                    Name = "warmup",
+                    ChannelId = DiscordAdapter.ChannelId,
+                    ServiceUrl = "discord",
+                    Conversation = new ConversationAccount { Id = "warmup" },
+                    From = new ChannelAccount { Id = "warmup" },
+                };
+
+                using var scope = services.CreateScope();
+                var agent = scope.ServiceProvider.GetRequiredService<AgentFrameworkWeather.Agent.WeatherAgent>();
+                await adapter.ProcessActivityAsync(new ClaimsIdentity(), activity, agent.OnTurnAsync, CancellationToken.None)
+                    .ConfigureAwait(false);
+                logger.LogInformation("Discord: WorkIQ MCP tools warm-up complete.");
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Discord: WorkIQ MCP tools warm-up failed (tools will load on first message).");
+            }
         }
 
         private async Task OnDiscordMessageAsync(SocketMessage message)
