@@ -4,6 +4,7 @@
 using System.Security.Claims;
 using Discord;
 using Discord.WebSocket;
+using Microsoft.Agents.Authentication;
 using Microsoft.Agents.Builder;
 using Microsoft.Agents.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -100,7 +101,7 @@ namespace AgentFrameworkWeather.Adapters
 
                 using var scope = services.CreateScope();
                 var agent = scope.ServiceProvider.GetRequiredService<AgentFrameworkWeather.Agent.WeatherAgent>();
-                await adapter.ProcessActivityAsync(new ClaimsIdentity(), activity, agent.OnTurnAsync, CancellationToken.None)
+                await adapter.ProcessActivityAsync(CreateBotClaimsIdentity(), activity, agent.OnTurnAsync, CancellationToken.None)
                     .ConfigureAwait(false);
                 logger.LogInformation("Discord: WorkIQ MCP tools warm-up complete.");
             }
@@ -139,7 +140,7 @@ namespace AgentFrameworkWeather.Adapters
                 Recipient = new ChannelAccount { Id = client.CurrentUser.Id.ToString(), Name = client.CurrentUser.Username },
             };
 
-            var identity = new ClaimsIdentity();
+            var identity = CreateBotClaimsIdentity();
 
             try
             {
@@ -157,6 +158,17 @@ namespace AgentFrameworkWeather.Adapters
                 await message.Channel.SendMessageAsync("Sorry, I hit an error while processing that. 🐾")
                     .ConfigureAwait(false);
             }
+        }
+
+        // Build a non-anonymous ClaimsIdentity carrying the Azure Bot's app id so the adapter can
+        // create an IUserTokenClient (the OAuth sign-in flow needs the bot app id to call the
+        // Bot Framework Token Service). Falls back to an empty identity if not configured.
+        private ClaimsIdentity CreateBotClaimsIdentity()
+        {
+            var botAppId = configuration["Connections:BotServiceConnection:Settings:ClientId"];
+            return string.IsNullOrEmpty(botAppId)
+                ? new ClaimsIdentity()
+                : AgentClaims.CreateIdentity(botAppId, appId: botAppId);
         }
 
         public override async Task StopAsync(CancellationToken cancellationToken)

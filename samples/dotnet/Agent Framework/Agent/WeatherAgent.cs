@@ -76,7 +76,7 @@ namespace AgentFrameworkWeather.Agent
 
             // Read auth handler names from configuration (can be empty/null to disable).
             AgenticAuthHandlerName = _configuration.GetValue<string>("AgentApplication:AgenticAuthHandlerName");
-            OboAuthHandlerName = _configuration.GetValue<string>("AgentApplication:OboAuthHandlerName");
+            OboAuthHandlerName = _configuration.GetValue<string>("AgentApplication:UserAuthorization:Handlers:mcs:Settings:AzureBotOAuthConnectionName");
 
             // Greet when members are added to the conversation
             OnConversationUpdate(ConversationUpdateEvents.MembersAdded, WelcomeMessageAsync);
@@ -86,8 +86,15 @@ namespace AgentFrameworkWeather.Agent
             // message is fast. Registered before the generic message handler.
             OnActivity(ActivityTypes.Event, OnWarmupAsync);
 
+            OnMessage("ForceLogout", OnLogout);
+
             // Listen for ANY message to be received. MUST BE AFTER ANY OTHER MESSAGE HANDLERS
-            OnActivity(ActivityTypes.Message, OnMessageAsync);
+            OnActivity(ActivityTypes.Message, OnMessageAsync, autoSignInHandlers: [OboAuthHandlerName]);
+        }
+
+        private async Task OnLogout(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
+        {
+            await UserAuthorization.SignOutUserAsync(turnContext, turnState);
         }
 
         /// <summary>
@@ -146,11 +153,14 @@ namespace AgentFrameworkWeather.Agent
             bool isSlack = turnContext.Activity.ChannelId == Channels.Slack;
             bool isDiscord = turnContext.Activity.ChannelId == DiscordAdapter.ChannelId;
 
+            var userToken = await UserAuthorization.GetTurnTokenAsync(turnContext, OboAuthHandlerName);
+
             var userText = turnContext.Activity.Text?.Trim() ?? string.Empty;
 
             // Pick the auth handler for this turn (agentic vs OBO). In dev the BEARER_TOKEN path is used.
-            // Discord has no OBO/sign-in channel (no IUserTokenClient), so force the dev bearer-token
-            // path by using a null handler; otherwise the graph OBO handler tries to sign in and fails.
+            // Discord signs the user in (custom DiscordAdapter provides the IUserTokenClient), but the
+            // WorkIQ tools still use the dev bearer-token path here; wiring the tools to the user's OBO
+            // token is a follow-up.
             string? toolAuthHandlerName = isDiscord
                 ? null
                 : turnContext.Activity.IsAgenticRequest()
