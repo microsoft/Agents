@@ -1,0 +1,50 @@
+services:
+  agent:
+    build:
+      context: .
+    network_mode: "service:sidecar"
+    environment:
+      - PORT
+      - NODE_ENV
+      - Connections__ServiceConnection__Settings__AuthType
+      - Connections__ServiceConnection__Settings__ClientId
+      - Connections__ServiceConnection__Settings__TenantId
+      - Connections__ServiceConnection__Settings__SidecarBaseUrl
+      - Connections__ServiceConnection__Settings__ServiceName
+      - Connections__ServiceConnection__Settings__BlueprintServiceName
+      - Connections__ServiceConnection__Settings__Scopes
+      - ConnectionsMap__0__ServiceUrl
+      - ConnectionsMap__0__Connection
+    depends_on:
+      - sidecar
+    security_opt:
+      - no-new-privileges:true
+
+  sidecar:
+    image: mcr.microsoft.com/entra-sdk/auth-sidecar:1.1.1-azurelinux3.0-distroless
+    ports:
+      - "127.0.0.1:3978:3978"
+    environment:
+      ASPNETCORE_URLS: "http://+:5000"
+      AllowedHosts: "*"
+      AzureAd__Instance: "https://login.microsoftonline.com/"
+      AzureAd__TenantId: "${BLUEPRINT_TENANT_ID:?Set BLUEPRINT_TENANT_ID in .env}"
+      AzureAd__ClientId: "${BLUEPRINT_CLIENT_ID:?Set BLUEPRINT_CLIENT_ID in .env}"
+      AzureAd__ClientCredentials__0__SourceType: "ClientSecret"
+      AzureAd__ClientCredentials__0__ClientSecret: "${BLUEPRINT_CLIENT_SECRET:?Set BLUEPRINT_CLIENT_SECRET in .env}"
+      Sidecar__AllowOverrides__GetAuthorizationHeaderUnauthenticated: "true"
+      DownstreamApis__agenticblueprint__Scopes__0: "api://AzureAdTokenExchange/.default"
+      DownstreamApis__agenticblueprint__RequestAppToken: "true"
+      DownstreamApis__botframework__BaseUrl: "https://api.botframework.com/"
+      DownstreamApis__botframework__Scopes__0: "5a807f24-c9de-44ee-a3a7-329e88a00ffc/.default"
+    expose:
+      - "5000"
+    networks:
+      - agent-network
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  agent-network:
+    driver: bridge

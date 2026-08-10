@@ -17,3 +17,4 @@
 |Agent Framework|Weather agent built with Microsoft Agent Framework SDK|[Agent Framework](Agent%20Framework/README.md)|
 |Copilot SDK|Dungeon Scribe RPG agent powered by the GitHub Copilot SDK|[copilot-sdk](copilot-sdk/README.md)|
 |Named Pipe Agent|Pipe-only echo agent for the DirectLine App Service extension (DirectLineFlex)|[named-pipe-agent](named-pipe-agent/README.md)|
+|Entra Agent ID Sidecar|Simple agent using the Microsoft Entra Agent ID sidecar for Agents SDK authentication|[entra-agent-id-sidecar](entra-agent-id-sidecar/README.md)|
