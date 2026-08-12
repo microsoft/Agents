@@ -9,12 +9,13 @@
   },
   "scripts": {
     "prebuild": "node scripts/ensure-settings.js",
-    "build": "esbuild src/index.tsx --bundle --platform=browser --target=esnext --outdir=public/dist --jsx=automatic",
+    "build": "npm run typecheck && esbuild src/index.tsx --bundle --platform=browser --target=esnext --outdir=public/dist --jsx=automatic",
+    "typecheck": "tsc --noEmit",
     "start": "npm run build -- --watch --serve=localhost:3000 --servedir=./public"
   },
   "dependencies": {
     "@azure/msal-browser": "^4.13.1",
-    "@microsoft/agents-copilotstudio-client": "^1.5.1",
+    "@microsoft/agents-copilotstudio-client": "^1.7.2",
     "botframework-webchat": "4.18.1-main.20251219.4ef3594",
     "botframework-webchat-fluent-theme": "4.18.1-main.20251219.4ef3594",
     "react": "16.8.6",
@@ -23,6 +24,7 @@
   "devDependencies": {
     "@types/react": "16.14.65",
     "@types/react-dom": "16.9.0",
-    "esbuild": "^0.25.9"
+    "esbuild": "^0.25.9",
+    "typescript": "^6.0.3"
   }
 }

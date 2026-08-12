@@ -15,13 +15,13 @@
   },
   "dependencies": {
     "@azure/msal-node": "^3.7.2",
-    "@microsoft/agents-copilotstudio-client": "^1.5.1",
+    "@microsoft/agents-copilotstudio-client": "^1.7.2",
     "open": "^10.1.2"
   },
   "devDependencies": {
     "@types/debug": "^4.1.12",
     "@types/node": "^24.3.0",
-    "typescript": "^5.9.2"
+    "typescript": "^6.0.3"
   },
   "keywords": []
 }
