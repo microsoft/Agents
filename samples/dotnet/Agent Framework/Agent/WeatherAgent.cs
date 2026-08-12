@@ -310,7 +310,6 @@ namespace AgentFrameworkWeather.Agent
             // Setup the tools for the agent:
             var toolOptions = new ChatOptions
             {
-                Temperature = (float?)0.2,
                 Tools = toolList,
                 Instructions = AgentInstructions,
                 AllowMultipleToolCalls = true
