@@ -6,7 +6,6 @@ from os import environ
 from aiohttp.web import Application, Request, Response, run_app
 from microsoft_agents.authentication.entra_auth_sidecar import SidecarAuth
 from microsoft_agents.hosting.aiohttp import (
-    CloudAdapter,
     jwt_authorization_middleware,
     start_agent_process,
 )

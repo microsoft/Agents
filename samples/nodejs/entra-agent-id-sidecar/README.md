@@ -10,7 +10,7 @@ application permission or tenant-wide application-permission grant.
 
 ## Prerequisites
 
-- Node.js 20.6 or later
+- Node.js 22 or later
 - Docker Desktop with Docker Compose
 - [Dev Tunnels CLI](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started)
 - An Agent Identity Blueprint application
@@ -125,10 +125,11 @@ Every other message is echoed. Send `help` to display usage.
 
 ## Authentication boundaries
 
-- **Inbound channel validation:** enabled because `AGENT_CLIENT_ID` and
-  `AGENT_TENANT_ID` are set to the Blueprint values. Missing, expired,
-  incorrectly signed, or wrong-audience tokens are rejected before agent code
-  runs.
+- **Inbound channel validation:** enabled because
+  `Connections__ServiceConnection__Settings__ClientId` and
+  `Connections__ServiceConnection__Settings__TenantId` are set to the
+  Blueprint values. Missing, expired, incorrectly signed, or wrong-audience
+  tokens are rejected before agent code runs.
 - **Outbound channel authentication:** `ConnectionManager` uses the native
   `SidecarAuthProvider` through `AuthType.EntraAuthSideCar`.
 - **Blueprint credential:** exists only in the sidecar container.
@@ -157,7 +158,9 @@ network boundary and never publish its port.
 - **Channel callback token failure:** confirm the `botframework` scope is
   `5a807f24-c9de-44ee-a3a7-329e88a00ffc/.default`.
 - **Inbound 401:** confirm the caller sends a bearer token for
-  `AGENT_CLIENT_ID` and that `AGENT_TENANT_ID` matches the token issuer.
+  `Connections__ServiceConnection__Settings__ClientId` and that
+  `Connections__ServiceConnection__Settings__TenantId` matches the token
+  issuer.
 - **Agents Playground returns 401:** expected. Playground does not mint an
   Agent Identity instance token; test through Teams or another authenticated
   Microsoft 365 surface.

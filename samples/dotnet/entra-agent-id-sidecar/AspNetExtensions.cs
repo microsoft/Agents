@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.JsonWebTokens;
 
@@ -224,17 +225,27 @@ public static class AspNetExtensions
                         return Task.CompletedTask;
                     }
 
-                    string[] parts = authorizationHeader?.Split(' ')!;
-                    if (parts.Length != 2 || parts[0] != "Bearer")
+                    if (!AuthenticationHeaderValue.TryParse(authorizationHeader, out AuthenticationHeaderValue? authorization)
+                        || !authorization.Scheme.Equals(JwtBearerDefaults.AuthenticationScheme, StringComparison.OrdinalIgnoreCase)
+                        || string.IsNullOrWhiteSpace(authorization.Parameter))
                     {
                         // Default to AadTokenValidation handling
                         context.Options.TokenValidationParameters.ConfigurationManager ??= options.ConfigurationManager as BaseConfigurationManager;
                         return Task.CompletedTask;
                     }
 
-                    // Use JsonWebToken for lightweight issuer extraction without full token parsing
-                    JsonWebToken token = new(parts[1]);
-                    string issuer = token.Issuer;
+                    string issuer;
+                    try
+                    {
+                        // Use JsonWebToken for lightweight issuer extraction without full token validation.
+                        issuer = new JsonWebToken(authorization.Parameter).Issuer;
+                    }
+                    catch (SecurityTokenMalformedException)
+                    {
+                        // Let the normal JWT bearer validation reject malformed tokens.
+                        context.Options.TokenValidationParameters.ConfigurationManager ??= options.ConfigurationManager as BaseConfigurationManager;
+                        return Task.CompletedTask;
+                    }
 
                     if (validationOptions.AzureBotServiceTokenHandling 
                         && IsBotFrameworkIssuer(issuer))
