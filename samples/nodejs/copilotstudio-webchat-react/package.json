@@ -23,6 +23,6 @@
   "devDependencies": {
     "@types/react": "16.14.65",
     "@types/react-dom": "16.9.0",
-    "esbuild": "^0.25.9"
+    "esbuild": "^0.28.1"
   }
 }
