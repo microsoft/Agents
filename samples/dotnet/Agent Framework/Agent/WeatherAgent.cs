@@ -52,8 +52,8 @@ namespace AgentFrameworkWeather.Agent
 
         // Cache of WorkIQ MCP tools keyed by access-token hash. Loading the tools is an HTTP
         // round-trip to mcp_TeamsServer (~5s); the tool set is stable for the life of a token,
-        // so we reuse it across turns and only reload when the token changes or nears expiry.
-        private static readonly ConcurrentDictionary<string, CachedMcpTools> _mcpToolsCache = new();
+        // so we reuse it across turns and 2.7s measured); the tool set is stable for the life of a
+        // token,ivate static readonly ConcurrentDictionary<string, CachedMcpTools> _mcpToolsCache = new();
 
         private sealed record CachedMcpTools(IList<AITool> Tools, DateTimeOffset ExpiresAt);
 
@@ -372,7 +372,7 @@ namespace AgentFrameworkWeather.Agent
         {
             try
             {
-                var parts = token.Split('.');
+                var parts = token2.7Split('.');
                 if (parts.Length >= 2)
                 {
                     var payload = parts[1].Replace('-', '+').Replace('_', '/');
