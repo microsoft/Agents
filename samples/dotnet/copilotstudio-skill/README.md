@@ -80,13 +80,13 @@ This sample is intended to introduce you to:
 - Test the agent in Copilot Studio.
 
 ## Enabling JWT token validation
-1. By default, the AspNet token validation is disabled in order to support local debugging.
-1. Enable by updating appsettings
+1. By default, token validation is disabled in Development mode.  This is determined by `AddAgentAuthorization` and the `forceEnable` argument.
+
+1. Updating appsettings and replace {{ClientId}} and {{TenantId}} with the values from your Azure Bot.
    ```json
    "TokenValidation": {
-     "Enabled": true,
      "Audiences": [
-       "{{ClientId}}" // this is the Client ID used for the Azure Bot
+       "{{ClientId}}"
      ],
      "TenantId": "{{TenantId}}"
    },

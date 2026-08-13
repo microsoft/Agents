@@ -140,6 +140,19 @@ Then set `APPLICATIONINSIGHTS_CONNECTION_STRING` to your Application Insights co
    - **Metrics** — `agent.routes.executed.count` and `agent.message.processing.duration`
    - **Logs** — welcome and message handling log records emitted by the sample
 
+## Enabling JWT token validation
+1. By default, token validation is disabled in Development mode.  This is determined by `AddAgentAuthorization` and the `forceEnable` argument.
+
+1. Updating appsettings and replace {{ClientId}} and {{TenantId}} with the values from your Azure Bot.
+   ```json
+   "TokenValidation": {
+     "Audiences": [
+       "{{ClientId}}"
+     ],
+     "TenantId": "{{TenantId}}"
+   },
+   ```
+
 ## Further reading
 
 - [OpenTelemetry .NET](https://opentelemetry.io/docs/languages/net/)

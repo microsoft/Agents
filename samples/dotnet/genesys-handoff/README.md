@@ -346,11 +346,10 @@ Follow the guide for [configuring your .NET agent to use OAuth](https://learn.mi
 
 ### 4.4. Update Token Validation
 
-Update appsettings.json with the `TokenValidation` section to secure your bot endpoint. Set the `Audiences` to your Azure Bot App ID (the Application (client) ID from section 4.1) and `TenantId` to the Tenant ID of the app registration:
+By default, token validation is disabled in Development mode. This is determined by `AddAgentAuthorization` and the `forceEnable` argument. Update appsettings.json with the `TokenValidation` section to secure your bot endpoint. Set the `Audiences` to your Azure Bot App ID (the Application (client) ID from section 4.1) and `TenantId` to the Tenant ID of the app registration:
 
 ```json
 "TokenValidation": {
-  "Enabled": true,
   "Audiences": [
     "{{ClientID}}"           // App ID from Azure Bot registration (section 4.1)
   ],
@@ -684,3 +683,47 @@ With the basics in place, you can use this foundation to further integrate and f
 8. **Agent disconnect detection (optional):** When `EnableNotifications` is enabled, the Agent SDK maintains a WebSocket connection to the Genesys Cloud Notification Service. Upon escalation, it subscribes to the `v2.detail.events.conversation.{id}.user.end` topic. When a Genesys agent disconnects, the Agent SDK proactively notifies the Teams user and clears the escalation flag on the next user message, returning the conversation to Copilot Studio.
 
 This architecture lets the user stay in a single Teams conversation while the Agent SDK, Copilot Studio runtime, Genesys Cloud, and persistent storage coordinate the escalation and message exchange behind the scenes. During escalation, Copilot Studio’s role is limited to raising the `GenesysHandoff` event; the actual Genesys conversation is managed directly between the Agent SDK and Genesys Cloud.
+
+---
+
+## Production Hardening
+
+This sample is a demonstration starting point. Before deploying to production, address the following:
+
+### SSE Streaming Resilience
+
+The Copilot Studio SSE stream can be reset by idle-sensitive intermediaries (SNAT, nginx, island-gateway) during long generative turns (~10s+ silence on the wire). The `GenesysHandoffAgent.Streaming.cs` partial class wraps the SSE enumeration with retry-with-backoff and a friendly fallback message. The `McsHttpClientRegistration` configures the `"mcs"` HttpClient with HTTP/2 keep-alive pings to prevent most resets.
+
+### Azure Blob Storage RBAC
+
+If using Azure Blob Storage for `ConversationMappingStore`, the app's managed identity **must** have the **Storage Blob Data Contributor** role on the storage account. Without this, you will see recurring `Azure.RequestFailedException 403 AuthorizationFailure` errors on `ConversationMappingStore.LoadAsync`, which can trigger a Genesys notification WebSocket reconnect storm.
+
+To fix:
+```bash
+az role assignment create \
+  --assignee <app-managed-identity-object-id> \
+  --role "Storage Blob Data Contributor" \
+  --scope /subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.Storage/storageAccounts/<account>
+```
+
+### MSAL Token Cache
+
+The default configuration uses an in-memory MSAL token cache. For production multi-instance deployments, configure a distributed token cache (e.g., Redis):
+
+```csharp
+builder.Services.AddDistributedMemoryCache(); // Replace with Redis in production
+// Or: builder.Services.AddStackExchangeRedisCache(options => { ... });
+```
+
+Without this, each instance independently acquires tokens, increasing latency and AAD throttling risk.
+
+### Persistent Storage
+
+Replace `MemoryStorage` with a persistent `IStorage` implementation (e.g., Azure Cosmos DB, Azure Blob Storage) so conversation state survives app restarts and works correctly across multiple instances:
+
+```csharp
+// Replace:
+builder.Services.AddSingleton<IStorage, MemoryStorage>();
+// With (example):
+builder.Services.AddSingleton<IStorage>(new CosmosDbPartitionedStorage(cosmosOptions));
+```

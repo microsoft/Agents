@@ -9,20 +9,20 @@ using Microsoft.Agents.Hosting.AspNetCore;
 using Microsoft.Agents.Storage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddHttpClient();
-
 // Register IStorage.  For development, MemoryStorage is suitable.
 // For production Agents, persisted storage should be used so
 // that state survives Agent restarts, and operates correctly
 // in a cluster of Agent instances.
 builder.Services.AddSingleton<IStorage, MemoryStorage>();
+
+// Add agent hosting defaults (AgentApplicationOptions, channel adapter, etc.).
+builder.AddAgentDefaults();
 
 // Add the AgentApplication, which contains the logic for responding to
 // user messages.
@@ -109,19 +109,14 @@ builder.AddAgent(sp =>
 
 // Add AspNet token validation for Azure Bot Service and Entra.  Authentication is
 // configured in the appsettings.json "TokenValidation" section.
-builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
+builder.AddAgentAuthorization(b => b.AddAgentAspNetAuthentication());
 
 WebApplication app = builder.Build();
 
-// Enable AspNet authentication and authorization
-app.UseAuthentication();
-app.UseAuthorization();
+// Add the authentication and authorization middleware to the request pipeline.
+app.UseAgents();
 
-// Map GET "/"
-app.MapAgentRootEndpoint();
-
-// Map the endpoints for all agents using the [AgentInterface] attribute.
-// If there is a single IAgent/AgentApplication, the endpoints will be mapped to (e.g. "/api/message").
-app.MapAgentApplicationEndpoints(requireAuth: !app.Environment.IsDevelopment());
+// Map the default agent endpoints: GET "/" and the agent message endpoints.
+app.MapDefaultAgentEndpoints();
 
 app.Run();

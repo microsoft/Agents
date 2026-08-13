@@ -114,7 +114,7 @@ Open `appsettings.json` and replace the placeholder values (`----`) in the `AISe
 
 | Section | Purpose in This Sample |
 |---|---|
-| `TokenValidation.Enabled: false` | Token validation is disabled so the agent runs without auth in the local `Development` environment. Tokens should be validated when deploying to Teams or Copilot. |
+| `TokenValidation` | Token validation is disabled in the local `Development` environment (determined by `AddAgentAuthorization` and the `forceEnable` argument) and enforced automatically in other environments. Set `Audiences` and `TenantId` when deploying to Teams or Copilot. |
 | `Connections.BotServiceConnection` | Configures the outbound connection to Azure Bot Framework services. Required for Teams / Copilot deployment; not needed for the local Playground. |
 | `AgentApplicationOptions` | Controls typing indicators and mention normalization behavior. |
 
@@ -210,7 +210,7 @@ To deploy the agent to Teams or Microsoft 365 Copilot, you need a registered Azu
 
 1. Register an **Azure Bot** resource in the Azure portal and note the **App ID** (Client ID) and **Tenant ID**.
 2. Update `appsettings.json` (or environment variables / Key Vault) with the correct `TokenValidation.Audiences`, `TokenValidation.TenantId`, and `Connections.BotServiceConnection.Settings.ClientId` values.
-3. Set `TokenValidation.Enabled` to `true`.
+3. Run the app outside the `Development` environment (for example, set `ASPNETCORE_ENVIRONMENT=Production`) so token validation is enforced.
 4. Deploy the ASP.NET Core application to Azure App Service (or any HTTPS-accessible host) and update the Azure Bot messaging endpoint to point to your deployment.
 
 ### App Package — Configure `appPackage/manifest.json`

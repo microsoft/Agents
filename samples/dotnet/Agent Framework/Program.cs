@@ -25,17 +25,20 @@ builder.ConfigureOtelProviders();
 
 builder.Logging.AddConsole();
 
-// Add AspNet token validation
-builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
-
 // Register IStorage.  For development, MemoryStorage is suitable.
 // For production Agents, persisted storage should be used so
 // that state survives Agent restarts, and operate correctly
 // in a cluster of Agent instances.
 builder.Services.AddSingleton<IStorage, MemoryStorage>();
 
-// Add the bot (which is transient)
-builder.AddAgent<WeatherAgent>();
+// Add the bot (which is transient) and configure AspNet token validation.
+// Authorization (and therefore required auth on the mapped endpoints) is enabled
+// for all environments except Development and Playground.
+builder.AddAgentDefaults()
+    .AddAgent<WeatherAgent>()
+    .AddAgentAuthorization(
+        b => b.AddAgentAspNetAuthentication(),
+        forceEnable: !(builder.Environment.IsDevelopment() || builder.Environment.EnvironmentName == "Playground"));
 
 // Register IChatClient with correct types
 builder.Services.AddSingleton<IChatClient>(sp => {
@@ -68,16 +71,13 @@ builder.Services.AddSingleton<Microsoft.Agents.Builder.IMiddleware[]>([new Trans
 
 var app = builder.Build();
 
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
+// Add the authentication and authorization middleware to the request pipeline
+// (with routing enabled so the controllers below can be mapped).
+app.UseAgents(useRouting: true);
 
-// Map GET "/"
-app.MapAgentRootEndpoint();
-
-// Map the endpoints for all agents using the [AgentInterface] attribute.
-// If there is a single IAgent/AgentApplication, the endpoints will be mapped to (e.g. "/api/message").
-app.MapAgentApplicationEndpoints(requireAuth: !(app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Playground"));
+// Map the default agent endpoints: GET "/" and the agent message endpoints.
+// Authorization is required automatically when AddAgentAuthorization enabled it above.
+app.MapDefaultAgentEndpoints();
 
 if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Playground")
 {
