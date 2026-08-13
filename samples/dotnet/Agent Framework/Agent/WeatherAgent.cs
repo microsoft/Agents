@@ -423,7 +423,7 @@ namespace AgentFrameworkWeather.Agent
 
         /// <summary>
         /// Pre-load the WorkIQ MCP tools into the shared cache so the first real message does not pay
-        /// the ~5s load. Intended for background warm-up (e.g. Discord at startup) using the dev bearer
+        /// the ~2.7s load. Intended for background warm-up (e.g. Discord at startup) using the dev bearer
         /// token. No-op if tools are already cached or no token is available; never sends a reply.
         /// </summary>
         private Task WarmUpWorkIqToolsAsync(ITurnContext context)
