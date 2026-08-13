@@ -37,6 +37,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CopilotSdk", "copilot-sdk\C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlackAgent", "slackagent\SlackAgent.csproj", "{74277777-C4F9-2F3E-162A-02D8A8E4B702}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PersistentState", "persistent-state\PersistentState.csproj", "{C40EE44E-A349-4B48-9556-AEA743E23092}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProductionReference", "production-reference\ProductionReference.csproj", "{462C6644-9FCC-486B-B4E6-FED3BBF17346}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProductionReference.Tests", "production-reference\tests\ProductionReference.Tests.csproj", "{EA9858E1-A852-4C13-B00A-351B26EF89B9}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NamedPipeAgent", "named-pipe-agent\NamedPipeAgent.csproj", "{C26BC6C8-72FF-435F-82B3-1782CA505EDF}"
 EndProject
 Global
@@ -105,6 +111,18 @@ Global
 		{74277777-C4F9-2F3E-162A-02D8A8E4B702}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74277777-C4F9-2F3E-162A-02D8A8E4B702}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74277777-C4F9-2F3E-162A-02D8A8E4B702}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C40EE44E-A349-4B48-9556-AEA743E23092}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C40EE44E-A349-4B48-9556-AEA743E23092}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C40EE44E-A349-4B48-9556-AEA743E23092}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C40EE44E-A349-4B48-9556-AEA743E23092}.Release|Any CPU.Build.0 = Release|Any CPU
+		{462C6644-9FCC-486B-B4E6-FED3BBF17346}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{462C6644-9FCC-486B-B4E6-FED3BBF17346}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{462C6644-9FCC-486B-B4E6-FED3BBF17346}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{462C6644-9FCC-486B-B4E6-FED3BBF17346}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA9858E1-A852-4C13-B00A-351B26EF89B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA9858E1-A852-4C13-B00A-351B26EF89B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA9858E1-A852-4C13-B00A-351B26EF89B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA9858E1-A852-4C13-B00A-351B26EF89B9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C26BC6C8-72FF-435F-82B3-1782CA505EDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C26BC6C8-72FF-435F-82B3-1782CA505EDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C26BC6C8-72FF-435F-82B3-1782CA505EDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -117,3 +135,4 @@ Global
 		SolutionGuid = {12345678-1234-5678-9012-123456789012}
 	EndGlobalSection
 EndGlobal
+

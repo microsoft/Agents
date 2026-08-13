@@ -12,7 +12,7 @@ Use the Agents SDK to:
 
 ## Get Started
 
-You can get started right here by scolling up and clicking the 'samples' folder in this repo, selecting your language and reviewing the samples list before picking which one you want to start with (QuickStart is recommended for fundamentals).
+You can get started right here by opening the [samples catalog](samples/README.md), selecting your language, and reviewing each sample's maturity tier before picking where to start. The QuickStart samples are recommended for fundamentals.
 
 Microsoft 365 Copilot is one of many channels supported by this SDK, and a *Microsoft 365 Copilot subscription is *not* required* to get started with or use this SDK unless your working specifically with that channel (or others, that require a subscription/service to use their client).
 

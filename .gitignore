@@ -61,6 +61,7 @@ BenchmarkDotNet.Artifacts/
 project.lock.json
 project.fragment.lock.json
 artifacts/
+.worktrees/
 
 # ASP.NET Scaffolding
 ScaffoldingReadMe.txt
@@ -397,4 +398,3 @@ static/
 devTools/
 node_modules/
 *.tsbuildinfo
-
