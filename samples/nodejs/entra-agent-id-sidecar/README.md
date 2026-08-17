@@ -112,9 +112,10 @@ such as Teams to exercise the complete inbound authentication flow.
    ```
 
 Microsoft 365 sends a signed bearer token to the tunnel endpoint. The token's
-audience must be the Blueprint application client ID and its issuer tenant must
-match `BLUEPRINT_TENANT_ID`. The activity identifies the child Agent Identity
-instance separately through `recipient.agenticAppId`.
+audience must be the Blueprint application client ID. The configured tenant ID
+selects the Entra authority used to obtain signing keys. The activity identifies
+the child Agent Identity instance separately through
+`recipient.agenticAppId`.
 
 The `caller` command displays an Adaptive Card with selected inbound JWT claims
 (`iss`, `aud`, `tid`, `sub`, `azp`/`appid`, `ver`, `iat`, and `exp`) plus the
@@ -128,8 +129,8 @@ Every other message is echoed. Send `help` to display usage.
 - **Inbound channel validation:** enabled because
   `Connections__ServiceConnection__Settings__ClientId` and
   `Connections__ServiceConnection__Settings__TenantId` are set to the
-  Blueprint values. Missing, expired, incorrectly signed, or wrong-audience
-  tokens are rejected before agent code runs.
+  Blueprint values. Missing, expired, incorrectly signed, unsupported-algorithm,
+  or wrong-audience tokens are rejected before agent code runs.
 - **Outbound channel authentication:** `ConnectionManager` uses the native
   `SidecarAuthProvider` through `AuthType.EntraAuthSideCar`.
 - **Blueprint credential:** exists only in the sidecar container.
@@ -139,6 +140,11 @@ Every other message is echoed. Send `help` to display usage.
 Replace the local client secret with workload identity federation or another
 supported credential source. Keep the sidecar in the same trusted pod or
 network boundary and never publish its port.
+
+The Agents SDK 1.7.x JWT middleware uses the tenant ID to select the signing-key
+endpoint, but it does not independently enforce the token's `iss` claim.
+Applications that require tenant isolation should use an Agents SDK version
+that supports issuer validation when one is available.
 
 ## Troubleshooting
 
@@ -159,8 +165,8 @@ network boundary and never publish its port.
   `5a807f24-c9de-44ee-a3a7-329e88a00ffc/.default`.
 - **Inbound 401:** confirm the caller sends a bearer token for
   `Connections__ServiceConnection__Settings__ClientId` and that
-  `Connections__ServiceConnection__Settings__TenantId` matches the token
-  issuer.
+  `Connections__ServiceConnection__Settings__TenantId` identifies the tenant
+  whose Entra signing-key endpoint should be used.
 - **Agents Playground returns 401:** expected. Playground does not mint an
   Agent Identity instance token; test through Teams or another authenticated
   Microsoft 365 surface.

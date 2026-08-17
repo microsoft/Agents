@@ -4,17 +4,17 @@ services:
       context: .
     network_mode: "service:sidecar"
     environment:
-      - PORT
-      - NODE_ENV
-      - Connections__ServiceConnection__Settings__AuthType
-      - Connections__ServiceConnection__Settings__ClientId
-      - Connections__ServiceConnection__Settings__TenantId
-      - Connections__ServiceConnection__Settings__SidecarBaseUrl
-      - Connections__ServiceConnection__Settings__ServiceName
-      - Connections__ServiceConnection__Settings__BlueprintServiceName
-      - Connections__ServiceConnection__Settings__Scopes
-      - ConnectionsMap__0__ServiceUrl
-      - ConnectionsMap__0__Connection
+      PORT: "${PORT:-3978}"
+      NODE_ENV: "${NODE_ENV:-development}"
+      Connections__ServiceConnection__Settings__AuthType: "${Connections__ServiceConnection__Settings__AuthType:?Set sidecar auth type in .env}"
+      Connections__ServiceConnection__Settings__ClientId: "${Connections__ServiceConnection__Settings__ClientId:?Set Blueprint client ID in .env}"
+      Connections__ServiceConnection__Settings__TenantId: "${Connections__ServiceConnection__Settings__TenantId:?Set Blueprint tenant ID in .env}"
+      Connections__ServiceConnection__Settings__SidecarBaseUrl: "${Connections__ServiceConnection__Settings__SidecarBaseUrl:?Set sidecar URL in .env}"
+      Connections__ServiceConnection__Settings__ServiceName: "${Connections__ServiceConnection__Settings__ServiceName:?Set sidecar service name in .env}"
+      Connections__ServiceConnection__Settings__BlueprintServiceName: "${Connections__ServiceConnection__Settings__BlueprintServiceName:?Set Blueprint service name in .env}"
+      Connections__ServiceConnection__Settings__Scopes: "${Connections__ServiceConnection__Settings__Scopes:?Set callback scopes in .env}"
+      ConnectionsMap__0__ServiceUrl: "${ConnectionsMap__0__ServiceUrl:?Set service URL map in .env}"
+      ConnectionsMap__0__Connection: "${ConnectionsMap__0__Connection:?Set connection map in .env}"
     depends_on:
       - sidecar
     security_opt:
