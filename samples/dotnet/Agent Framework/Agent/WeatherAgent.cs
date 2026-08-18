@@ -2,12 +2,14 @@
 // Licensed under the MIT License.
 
 using AgentFrameworkWeather.Adapters;
+using AgentFrameworkWeather.Services;
 using AgentFrameworkWeather.Tools;
 using Microsoft.Agents.A365.Runtime.Utils;
 using Microsoft.Agents.A365.Tooling.Extensions.AgentFramework.Services;
 using Microsoft.Agents.AI;
 using Microsoft.Agents.Builder;
 using Microsoft.Agents.Builder.App;
+using Microsoft.Agents.Builder.App.Proactive;
 using Microsoft.Agents.Builder.State;
 using Microsoft.Agents.Core;
 using Microsoft.Agents.Core.Models;
@@ -17,6 +19,7 @@ using Microsoft.Agents.Extensions.Slack;
 using Microsoft.Agents.Extensions.Slack.Api;
 using Microsoft.Extensions.AI;
 using System.Collections.Concurrent;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
@@ -46,6 +49,8 @@ namespace AgentFrameworkWeather.Agent
         private readonly IChatClient? _chatClient = null;
         private readonly IConfiguration? _configuration = null;
         private readonly ILogger<WeatherAgent>? _logger = null;
+        private readonly SlackWorkQueue _slackWorkQueue;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         // WorkIQ (Agent 365) MCP tool service. Nullable so the agent still runs
         // (weather-only) when the service or its configuration is unavailable.
@@ -66,11 +71,15 @@ namespace AgentFrameworkWeather.Agent
             AgentApplicationOptions options,
             IChatClient chatClient,
             IConfiguration configuration,
+            SlackWorkQueue slackWorkQueue,
+            IHttpClientFactory httpClientFactory,
             IMcpToolRegistrationService? toolService = null,
             ILogger<WeatherAgent>? logger = null) : base(options)
         {
             _chatClient = chatClient;
             _configuration = configuration;
+            _slackWorkQueue = slackWorkQueue;
+            _httpClientFactory = httpClientFactory;
             _toolService = toolService;
             _logger = logger;
 
@@ -153,9 +162,21 @@ namespace AgentFrameworkWeather.Agent
             bool isSlack = turnContext.Activity.ChannelId == Channels.Slack;
             bool isDiscord = turnContext.Activity.ChannelId == DiscordAdapter.ChannelId;
 
-            var userToken = await UserAuthorization.GetTurnTokenAsync(turnContext, OboAuthHandlerName);
-
             var userText = turnContext.Activity.Text?.Trim() ?? string.Empty;
+
+            if (isSlack)
+            {
+                var conversationId = await Proactive.StoreConversationAsync(turnContext, cancellationToken);
+                var channelData = turnContext.Activity.GetChannelData<SlackChannelData>();
+                if (!_slackWorkQueue.TryEnqueue(new SlackWorkItem(turnContext.Adapter, conversationId, userText, channelData)))
+                {
+                    throw new InvalidOperationException("Unable to queue the Slack message for processing.");
+                }
+
+                return;
+            }
+
+            var userToken = await UserAuthorization.GetTurnTokenAsync(turnContext, OboAuthHandlerName);
 
             // Pick the auth handler for this turn (agentic vs OBO). In dev the BEARER_TOKEN path is used.
             // Discord signs the user in (custom DiscordAdapter provides the IUserTokenClient), but the
@@ -171,22 +192,6 @@ namespace AgentFrameworkWeather.Agent
 
             // Read or Create the conversation thread for this conversation.
             AgentSession? thread = await GetConversationThread(_agent, turnState);
-
-            if (isSlack)
-            {
-                // Collect the full response, then post it as a Slack Block card.
-                var sb = new StringBuilder();
-                await foreach (var response in _agent.RunStreamingAsync(userText, thread, cancellationToken: cancellationToken))
-                {
-                    if (response.Role == ChatRole.Assistant && !string.IsNullOrEmpty(response.Text))
-                    {
-                        sb.Append(response.Text);
-                    }
-                }
-                turnState.Conversation.SetValue("conversation.threadInfo", (await _agent.SerializeSessionAsync(thread)).ToString());
-                await PostSlackBlocksAsync(turnContext, sb.ToString(), cancellationToken);
-                return;
-            }
 
             // Discord: collect the full response and send it as ONE message activity; the
             // DiscordAdapter renders it as an embed. (Streaming would create many partial messages.)
@@ -229,14 +234,53 @@ namespace AgentFrameworkWeather.Agent
             }
         }
 
+        public Task ProcessSlackWorkItemAsync(SlackWorkItem item, CancellationToken cancellationToken)
+        {
+            return Proactive.ContinueConversationAsync(
+                item.Adapter,
+                item.ConversationId,
+                (turnContext, turnState, ct) => RunSlackResponseAsync(turnContext, turnState, item.UserText, item.ChannelData, ct),
+                autoSignInHandlers: OboAuthHandlerName is null ? [] : [OboAuthHandlerName],
+                cancellationToken: cancellationToken);
+        }
+
+        private async Task RunSlackResponseAsync(
+            ITurnContext turnContext,
+            ITurnState turnState,
+            string userText,
+            SlackChannelData channelData,
+            CancellationToken cancellationToken)
+        {
+            var userToken = await UserAuthorization.GetTurnTokenAsync(turnContext, OboAuthHandlerName);
+            var toolAuthHandlerName = turnContext.Activity.IsAgenticRequest()
+                ? AgenticAuthHandlerName
+                : OboAuthHandlerName;
+            var agent = await GetClientAgent(turnContext, turnState, toolAuthHandlerName);
+            AgentSession? thread = await GetConversationThread(agent, turnState);
+            var responseText = new StringBuilder();
+
+            await foreach (var response in agent.RunStreamingAsync(userText, thread, cancellationToken: cancellationToken))
+            {
+                if (response.Role == ChatRole.Assistant && !string.IsNullOrEmpty(response.Text))
+                {
+                    responseText.Append(response.Text);
+                }
+            }
+
+            turnState.Conversation.SetValue("conversation.threadInfo", (await agent.SerializeSessionAsync(thread)).ToString());
+            await PostSlackBlocksAsync(turnContext, channelData, responseText.ToString(), cancellationToken);
+        }
+
         /// <summary>
         /// Post the agent's answer to Slack as a Block Kit card (mrkdwn section) via the Slack API,
         /// instead of the plain text that the Azure Bot Slack channel would render.
         /// </summary>
-        private async Task PostSlackBlocksAsync(ITurnContext turnContext, string text, CancellationToken cancellationToken)
+        private async Task PostSlackBlocksAsync(
+            ITurnContext turnContext,
+            SlackChannelData channelData,
+            string text,
+            CancellationToken cancellationToken)
         {
-            var channelData = turnContext.Activity.GetChannelData<SlackChannelData>();
-
             // Slack section text is limited to 3000 chars; trim defensively.
             var body = string.IsNullOrWhiteSpace(text) ? "_(no response)_" : text;
             if (body.Length > 2900)
@@ -278,7 +322,16 @@ namespace AgentFrameworkWeather.Agent
             }
             """;
 
-            await SlackExtension.CallAsync(turnContext, "chat.postMessage", message, channelData.ApiToken, cancellationToken);
+            using var request = new HttpRequestMessage(HttpMethod.Post, "https://slack.com/api/chat.postMessage")
+            {
+                Content = new StringContent(message, Encoding.UTF8, "application/json")
+            };
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", channelData.ApiToken);
+
+            using var response = await _httpClientFactory.CreateClient("WebClient")
+                .SendAsync(request, cancellationToken)
+                .ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
         }
 
 

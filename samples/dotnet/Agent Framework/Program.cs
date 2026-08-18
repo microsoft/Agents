@@ -4,6 +4,7 @@
 using AgentFrameworkWeather;
 using AgentFrameworkWeather.Adapters;
 using AgentFrameworkWeather.Agent;
+using AgentFrameworkWeather.Services;
 using Azure;
 using Azure.AI.OpenAI;
 using Microsoft.Agents.A365.Tooling.Extensions.AgentFramework.Services;
@@ -54,7 +55,9 @@ builder.AddAgent<WeatherAgent>();
 // such as the Discord startup "warmup" Event (which loads tools and must not prompt sign-in).
 builder.Services.AddSingleton<AutoSignInSelector>(_ =>
     (turnContext, cancellationToken) =>
-        Task.FromResult(turnContext.Activity.Type == ActivityTypes.Message));
+        Task.FromResult(
+            turnContext.Activity.Type == ActivityTypes.Message &&
+            !string.Equals(turnContext.Activity.Text?.Trim(), "ForceLogout", StringComparison.OrdinalIgnoreCase)));
 
 // **********  Discord channel (custom ChannelAdapter) **********
 // Discord has no Azure Bot Service channel, so we host it ourselves: a DiscordAdapter
@@ -63,6 +66,9 @@ builder.Services.AddSingleton<AutoSignInSelector>(_ =>
 builder.Services.AddSingleton<DiscordAdapter>();
 builder.Services.AddHostedService<DiscordGatewayService>();
 // **********  END Discord channel **********
+
+builder.Services.AddSingleton<SlackWorkQueue>();
+builder.Services.AddHostedService<SlackBackgroundService>();
 
 // Register IChatClient with correct types
 builder.Services.AddSingleton<IChatClient>(sp => {
@@ -105,6 +111,7 @@ app.MapAgentRootEndpoint();
 // Map the endpoints for all agents using the [AgentInterface] attribute.
 // If there is a single IAgent/AgentApplication, the endpoints will be mapped to (e.g. "/api/message").
 app.MapAgentApplicationEndpoints(requireAuth: !(app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Playground"));
+app.MapAgentProactiveEndpoints<WeatherAgent>(requireAuth: !(app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Playground"));
 
 if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Playground")
 {
