@@ -18,14 +18,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Graph" Version="6.2.0" />
+		<PackageReference Include="Microsoft.Graph" Version="6.5.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="AdaptiveCards" Version="3.1.0" />
-		<PackageReference Include="Microsoft.SemanticKernel.Agents.Core" Version="1.78.0" />
+		<PackageReference Include="Microsoft.SemanticKernel.Agents.Core" Version="1.80.0" />
 		<PackageReference Include="Microsoft.SemanticKernel.Agents.OpenAI" Version="1.29.0-alpha" />
 		<PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureOpenAI" Version="1.29.0" />
-		<PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.78.0" />
+		<PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.80.0" />
 		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.7.*" />
 		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.7.*" />
 		<PackageReference Include="Microsoft.Agents.M365Copilot" Version="1.8.*" />
@@ -38,9 +38,9 @@
 	     is empty". Exclude the transitive SourceLink build assets to silence the warning. Source
 	     link is not needed for a sample (it ships no symbol package). -->
 	<ItemGroup>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.301" PrivateAssets="all" ExcludeAssets="all" />
-		<PackageReference Include="Microsoft.SourceLink.Common" Version="10.0.301" PrivateAssets="all" ExcludeAssets="all" />
-		<PackageReference Include="Microsoft.Build.Tasks.Git" Version="10.0.301" PrivateAssets="all" ExcludeAssets="all" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.400" PrivateAssets="all" ExcludeAssets="all" />
+		<PackageReference Include="Microsoft.SourceLink.Common" Version="10.0.400" PrivateAssets="all" ExcludeAssets="all" />
+		<PackageReference Include="Microsoft.Build.Tasks.Git" Version="10.0.400" PrivateAssets="all" ExcludeAssets="all" />
 	</ItemGroup>
 
 	<ItemGroup>
