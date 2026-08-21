@@ -37,7 +37,7 @@ const sdk = new NodeSDK({
   traceExporter,
   metricReader: new PeriodicExportingMetricReader({ exporter: metricExporter }),
   logRecordProcessors: [
-    new BatchLogRecordProcessor(logExporter),
+    new BatchLogRecordProcessor({ exporter: logExporter }),
   ],
   instrumentations: [
     new HttpInstrumentation()
