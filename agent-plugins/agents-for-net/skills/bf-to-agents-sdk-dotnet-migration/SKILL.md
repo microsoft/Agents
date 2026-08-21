@@ -395,7 +395,7 @@ builder.AddAgent<MyBot, CustomAdapter>();
 
 ## Files to Add
 
-Every migrated project needs `AspNetExtensions.cs` — the `AddAgentAspNetAuthentication()` extension method is **not in any NuGet package**; it is a sample-provided file. Copy it from the Agents SDK quickstart sample (https://github.com/microsoft/Agents/blob/main/samples/dotnet/quickstart/AspNetExtensions.cs).
+Every migrated project needs `AspNetExtensions.cs` — the `AddAgentAspNetAuthentication()` extension method is **not in any NuGet package**; it is a sample-provided file. Copy it from the Agents SDK shared samples (https://github.com/microsoft/Agents-for-net/blob/main/src/samples/Shared/AspNetExtensions.cs).
 
 ---
 

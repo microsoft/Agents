@@ -1,0 +1,23 @@
+{
+  "name": "entra-agent-id-sidecar-agent",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Microsoft 365 Agents SDK sample using the Entra Agent ID sidecar",
+  "author": "Microsoft",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc --build",
+    "start": "node --env-file .env ./dist/index.js"
+  },
+  "dependencies": {
+    "@microsoft/agents-hosting-express": "^1.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.18",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

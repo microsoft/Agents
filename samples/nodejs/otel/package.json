@@ -5,17 +5,24 @@
   "author": "Microsoft",
   "license": "MIT",
   "main": "./dist/agent.js",
+  "workspaces": [
+    "apphost"
+  ],
   "scripts": {
     "build": "tsc --build",
     "prestart": "npm run build",
-    "start": "node --env-file .env --import ./dist/instrumentation.js ./dist/agent.js"
+    "start": "node --env-file-if-exists=.env --import ./dist/instrumentation.js ./dist/agent.js",
+    "aspire": "aspire run",
+    "agentsplayground": "agentsplayground"
   },
   "devDependencies": {
-    "typescript": "^5.8.3"
+    "@microsoft/aspire-cli": "13.4.6",
+    "@microsoft/m365agentsplayground": "0.2.24",
+    "typescript": "5.8.3"
   },
   "dependencies": {
-    "@microsoft/agents-hosting": "^1.5.1",
-    "@microsoft/agents-hosting-express": "^1.5.1",
+    "@microsoft/agents-hosting": "1.5.1",
+    "@microsoft/agents-hosting-express": "1.5.1",
     "@opentelemetry/api": "1.9.1",
     "@opentelemetry/api-logs": "0.218.0",
     "@opentelemetry/exporter-trace-otlp-grpc": "0.218.0",

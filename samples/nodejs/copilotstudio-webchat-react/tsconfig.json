@@ -19,5 +19,6 @@
     "outDir": "public/static",
     "jsx": "react",
     "noImplicitAny": false
-  }
+  },
+  "exclude": ["apphost"]
 }

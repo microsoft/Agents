@@ -111,6 +111,19 @@ This step requires permissions to create application identities in your Azure te
 3. **Open your browser:**
    - Navigate to [http://localhost:3000](http://localhost:3000) to interact with your Copilot Studio bot via the WebChat interface.
 
+### Optional: view browser telemetry with Aspire
+
+Run the sample and a local Aspire Dashboard together:
+
+```bash
+npm run build
+npm run aspire
+```
+
+Aspire prints the dashboard URL in the terminal. Open the dashboard, then use the **URLs** column to open **webchat**. The dashboard shows browser document-load and network-fetch traces. It does not show telemetry from the Copilot Studio agent, which runs outside this sample.
+
+This local development exporter sends browser traces directly to the anonymous Aspire Dashboard. Do not use this configuration in production; send browser telemetry through a server-side collector or proxy instead.
+
 ## 6. How It Works
 
 This is a pure client-side React application that connects directly to Copilot Studio:

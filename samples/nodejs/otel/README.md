@@ -37,6 +37,20 @@ If you prefer, use the included helper script, which runs the same pinned dashbo
 
 > Check the container logs (`docker logs aspire-dashboard`) for the dashboard login token.
 
+### Optional: local orchestration with Aspire
+
+For local debugging, Aspire can start the agent, Agents Playground, and dashboard together without Docker:
+
+```bash
+npm install
+npm run build
+npm run aspire
+```
+
+Aspire prints the dashboard URL in the terminal. Open it, then use the **URLs** column to open Playground and send the agent a message.
+
+The sample works anonymously by default. If a `.env` file contains all three Bot Service credential values, Aspire passes them only to the local Playground and labels the agent and Playground URLs **🔐 with credentials**. Otherwise it labels them **🔓 anonymous**.
+
 ### Configure Azure Bot Service
 
 1. [Create an Azure Bot](https://aka.ms/AgentsSDK-CreateBot)
@@ -110,12 +124,12 @@ If you prefer, use the included helper script, which runs the same pinned dashbo
 The `src/instrumentation.ts` file configures the OpenTelemetry Node SDK before the agent starts. It is loaded via the `--import` flag in the `start` script:
 
 ```json
-"start": "node --env-file .env --import ./dist/instrumentation.js ./dist/agent.js"
+"start": "node --env-file-if-exists=.env --import ./dist/instrumentation.js ./dist/agent.js"
 ```
 
 The `src/agentTelemetry.ts` file defines the shared telemetry helpers (tracer, counters, histograms, and structured log emitters) used by the agent handlers.
 
-By default, telemetry is exported to `http://localhost:4317` via OTLP gRPC. To change the endpoint, set the `OTEL_EXPORTER_OTLP_ENDPOINT` environment variable in your `.env` file.
+By default, telemetry is exported to `http://localhost:4317` via OTLP gRPC. To change the endpoint, set the `OTEL_EXPORTER_OTLP_ENDPOINT` environment variable in your `.env` file. The optional Aspire flow configures this endpoint automatically.
 
 ### What is instrumented
 

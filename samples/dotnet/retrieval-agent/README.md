@@ -81,7 +81,6 @@ This Agent Sample is intended to introduce you to the Copilot Retrieval API Grou
 
       ```json
       "TokenValidation": {
-        "Enabled": true,
         "Audiences": [
           "{{ClientId}}" // this is the Client ID used for the Azure Bot
         ],
@@ -128,6 +127,19 @@ This Agent Sample is intended to introduce you to the Copilot Retrieval API Grou
 3. How many days till Build 2025?
 4. I haven't seen a demo for the Pricing Analytics session. Can you send a mail to Adele Vance requesting for a Demo run this Friday? 
 
+
+## Enabling JWT token validation
+1. By default, token validation is disabled in Development mode.  This is determined by `AddAgentAuthorization` and the `forceEnable` argument.
+
+1. Updating appsettings and replace {{ClientId}} and {{TenantId}} with the values from your Azure Bot.
+   ```json
+   "TokenValidation": {
+     "Audiences": [
+       "{{ClientId}}"
+     ],
+     "TenantId": "{{TenantId}}"
+   },
+   ```
 
 ## Further reading
 To learn more about building Agents, see [Microsoft 365 Agents SDK](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/).

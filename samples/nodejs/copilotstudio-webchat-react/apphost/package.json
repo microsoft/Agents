@@ -1,0 +1,13 @@
+{
+  "name": "copilotstudio-webchat-react-apphost",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "tsx": "4.23.5",
+    "typescript": "5.8.3",
+    "vscode-jsonrpc": "8.2.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

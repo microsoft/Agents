@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using GitHub.Copilot;
 using CopilotSdk.Tools;
 using Microsoft.Agents.Builder;
 using Microsoft.Agents.Builder.App;
@@ -13,7 +14,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Agents.Builder.UserAuth;
-using GitHub.Copilot;
 
 namespace CopilotSdk;
 

@@ -41,13 +41,13 @@ This is a sample of a simple slack Agent that is hosted on an Asp.net core web s
    1. Follow the instructions in this doc to create a Slack App and connect it to your Agent: https://learn.microsoft.com/en-us/azure/bot-service/bot-service-channel-connect-slack?view=azure-bot-service-4.0
  
 ## Enabling JWT token validation
-1. By default, the AspNet token validation is disabled in order to support local debugging.
-1. Enable by updating appsettings
+1. By default, token validation is disabled in Development mode.  This is determined by `AddAgentAuthorization` and the `forceEnable` argument.
+
+1. Updating appsettings and replace {{ClientId}} and {{TenantId}} with the values from your Azure Bot.
    ```json
    "TokenValidation": {
-     "Enabled": true,
      "Audiences": [
-       "{{ClientId}}" // this is the Client ID used for the Azure Bot
+       "{{ClientId}}"
      ],
      "TenantId": "{{TenantId}}"
    },

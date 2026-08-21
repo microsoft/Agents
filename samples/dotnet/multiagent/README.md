@@ -116,5 +116,19 @@ This demonstrates an Agent that implements multiple AgentApplication instances.
 1. Select **Test in WebChat** on either Azure Bot
 
 
+## Enabling JWT token validation
+1. By default, token validation is disabled in Development mode.  This is determined by `AddAgentAuthorization` and the `forceEnable` argument.
+
+1. Updating appsettings and replace {{ClientId1}}, {{ClientId2}}, and {{TenantId}} with the values from your Azure Bots.
+   ```json
+   "TokenValidation": {
+     "Audiences": [
+       "{{ClientId1}}",
+       "{{ClientId2}}"
+     ],
+     "TenantId": "{{TenantId}}"
+   },
+   ```
+
 ## Further reading
 To learn more about building Agents, see our [Microsoft 365 Agents SDK](https://github.com/microsoft/agents) repo.

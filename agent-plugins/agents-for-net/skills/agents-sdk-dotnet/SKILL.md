@@ -188,7 +188,7 @@ Put in `appsettings.Development.json` (not `appsettings.json`):
 
 ## Quick Start
 
-**Prerequisite:** Copy [`AspNetExtensions.cs`](https://github.com/microsoft/Agents/blob/main/samples/dotnet/quickstart/AspNetExtensions.cs) into your project. This provides `AddAgentAspNetAuthentication` for JWT token validation.
+**Prerequisite:** Copy [`AspNetExtensions.cs`](https://github.com/microsoft/Agents-for-net/blob/main/src/samples/Shared/AspNetExtensions.cs) into your project. This provides `AddAgentAspNetAuthentication` for JWT token validation.
 
 **Program.cs:**
 
@@ -752,14 +752,14 @@ If `TokenValidation:Enabled` is `true` with no valid credentials configured, eve
 
 **7. Missing AspNetExtensions.cs for AddAgentAspNetAuthentication**
 
-`AddAgentAspNetAuthentication` is NOT built into the SDK packages — it's a helper extension that must be copied into your project from the quickstart samples.
+`AddAgentAspNetAuthentication` is NOT built into the SDK packages — it's a helper extension that must be copied into your project from the shared samples.
 
 ```csharp
 // ERROR — CS1061: 'IServiceCollection' does not contain a definition for 'AddAgentAspNetAuthentication'
 builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
 
 // FIX — Copy AspNetExtensions.cs from the samples repo into your project:
-// https://github.com/microsoft/Agents/blob/main/samples/dotnet/quickstart/AspNetExtensions.cs
+// https://github.com/microsoft/Agents-for-net/blob/main/src/samples/Shared/AspNetExtensions.cs
 ```
 
 **8. Missing `Microsoft.Agents.Builder.State` using for ITurnState**
