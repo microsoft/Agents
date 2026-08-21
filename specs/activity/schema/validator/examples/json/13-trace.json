@@ -1,0 +1,18 @@
+{
+  "type": "trace",
+  "id": "trace-1",
+  "timestamp": "2025-09-15T10:00:13.000Z",
+  "serviceUrl": "https://smba.trafficmanager.net/amer/",
+  "channelId": "emulator",
+  "from": { "id": "bot-id-1", "name": "DebuggingBot" },
+  "conversation": { "id": "conv-debug" },
+  "recipient": { "id": "user-id-dev", "name": "Developer" },
+  "name": "LUIS_TRACE",
+  "label": "LUIS Trace",
+  "valueType": "https://www.luis.ai/schemas/trace",
+  "value": {
+    "query": "book a flight to paris",
+    "topScoringIntent": { "intent": "BookFlight", "score": 0.98 },
+    "entities": [ { "type": "Location", "entity": "paris" } ]
+  }
+}
