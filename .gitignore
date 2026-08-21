@@ -398,3 +398,10 @@ devTools/
 node_modules/
 *.tsbuildinfo
 
+# a365 CLI local/generated config (contains tenant & app identifiers - do not commit)
+a365.config.json
+a365.generated.config.json
+
+# a365-generated Teams app package for local testing
+**/appPackage/
+

@@ -153,3 +153,84 @@ agent-framework/
         ├── date_time.py      # Current date/time tool
         └── weather_lookup.py # OpenWeatherMap weather tools
 ```
+
+---
+
+## WorkIQ MCP Integration
+
+This agent is extended with **WorkIQ** (Microsoft 365 / Agent 365) tools served over the **Model Context Protocol (MCP)**. The agent routes requests as follows:
+
+| Question type | Tools used |
+|---|---|
+| **Weather in the United States** | Local tools — `get_current_weather`, `get_weather_forecast`, `get_date` |
+| **Everything else** (M365, Teams chat, mail, files, calendar, non-US weather, general Q&A) | **WorkIQ MCP tools** |
+
+The WorkIQ tools are discovered at runtime and merged with the local weather tools via
+`McpToolRegistrationService.add_tool_servers_to_agent(...)`. If WorkIQ is not configured (or fails to
+load) and `SKIP_TOOLING_ON_ERRORS=true`, the agent still answers using the local weather tools only.
+
+### Prerequisites
+
+| Tool | Purpose |
+|---|---|
+| [Agent 365 CLI (`a365`)](https://learn.microsoft.com/microsoft-365/agents-sdk/) | Manage MCP servers, tokens, and permissions |
+| Microsoft 365 tenant with WorkIQ / Agent 365 enabled | Provides the MCP servers (Teams, Mail, etc.) |
+
+The integration packages are already listed in `requirements.txt`:
+
+```text
+microsoft-agents-a365-tooling
+microsoft-agents-a365-tooling-extensions-agentframework
+microsoft-agents-a365-runtime
+```
+
+### Step A — Register the MCP servers
+
+List the MCP servers available to your tenant, then add the one(s) you want. This writes a
+`ToolingManifest.json` file — **do not hand-edit it**, always use the CLI.
+
+```bash
+a365 develop list-available
+a365 develop add-mcp-servers "mcp_TeamsTools"
+```
+
+### Step B — Grant permissions
+
+```bash
+a365 setup permissions mcp
+```
+
+Skipping this results in `403` errors at runtime when the agent calls a WorkIQ tool.
+
+### Step C — Configure authentication
+
+Open your `.env` and set the WorkIQ values:
+
+**Local development** — get a short-lived token and paste it in:
+
+```bash
+a365 develop get-token
+```
+
+```bash
+BEARER_TOKEN=<token-from-a365-develop-get-token>
+USE_AGENTIC_AUTH=false
+SKIP_TOOLING_ON_ERRORS=true
+PYTHON_ENVIRONMENT=Development
+```
+
+**Production / Teams** — use on-behalf-of (OBO) token exchange instead of a static token:
+
+```bash
+BEARER_TOKEN=
+USE_AGENTIC_AUTH=true
+WORKIQ_AUTH_HANDLER=<auth-handler-name-registered-in-your-AgentApplication>
+SKIP_TOOLING_ON_ERRORS=true
+```
+
+### Step D — Run and test
+
+Start the agent as usual (`python -m src.main`) and try both routes:
+
+- *"What's the weather in Seattle?"* → answered by the local weather tools.
+- *"Summarize my recent Teams chats"* → answered by the WorkIQ MCP tools.
