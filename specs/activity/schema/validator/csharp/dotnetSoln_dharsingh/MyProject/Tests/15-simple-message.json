@@ -1,0 +1,9 @@
+{
+  "type": "message",
+  "channelId": "emulator",
+  "from": { "id": "user1", "name": "User One" },
+  "conversation": { "id": "conv1", "name": "Conversation 1" },
+  "recipient": { "id": "bot", "name": "Bot" },
+  "serviceUrl": "https://example.org",
+  "text": "Hello, world!"
+}

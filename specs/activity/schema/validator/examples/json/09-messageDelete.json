@@ -1,0 +1,10 @@
+{
+  "type": "messageDelete",
+  "id": "message-activity-to-delete",
+  "timestamp": "2025-09-15T10:00:09.000Z",
+  "serviceUrl": "https://smba.trafficmanager.net/amer/",
+  "channelId": "msteams",
+  "from": { "id": "user-id-1", "name": "John Doe" },
+  "conversation": { "id": "conv-1" },
+  "recipient": { "id": "bot-id-1", "name": "HelpBot" }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "messageReaction",
+  "id": "reaction-1",
+  "timestamp": "2025-09-15T10:00:11.000Z",
+  "serviceUrl": "https://smba.trafficmanager.net/amer/",
+  "channelId": "msteams",
+  "from": { "id": "user-id-2", "name": "Jane Smith" },
+  "conversation": { "id": "conv-1" },
+  "recipient": { "id": "bot-id-1", "name": "HelpBot" },
+  "replyToId": "message-activity-1",
+  "reactionsAdded": [ { "type": "like" } ],
+  "reactionsRemoved": []
+}
