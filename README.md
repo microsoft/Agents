@@ -27,6 +27,37 @@ The source for the client libraries exists for the most part in repositories for
 | JavaScript          | [Agents-for-js Repository]     |
 | Python              | [Agents-for-python Repository] |
 
+## Agent Plugins (Skills)
+
+The Agents SDK provides AI coding assistant plugins that give your assistant
+deep knowledge of SDK APIs, patterns, and common mistakes. Skills activate
+automatically based on the language and task you are working on.
+
+The plugins are hosted in
+[microsoft/Agents — agent-plugins](https://github.com/microsoft/Agents/tree/main/agent-plugins).
+
+**Available plugins across the SDKs:**
+
+| Plugin | SDKs | Skills Included |
+|--------|------|-----------------|
+| `agents-sdk-common` | All languages | Azure provisioning, identity credentials, and OAuth setup through the `az` CLI |
+| `agents-for-js` | TypeScript/JavaScript | Building agents, debugging authentication and startup issues, and configuring OpenTelemetry observability |
+| `agents-for-net` | C#/.NET | Building agents, debugging, OpenTelemetry observability, Bot Framework migration, and `ActivityHandler`-to-`AgentApplication` migration |
+| `agents-for-python` | Python | Configuring and troubleshooting OpenTelemetry observability |
+
+**Installation (GitHub Copilot CLI or Claude Code):**
+
+```text
+/plugin marketplace add microsoft/Agents
+/plugin install agents-sdk-common@microsoft-agents-sdk
+/plugin install agents-for-js@microsoft-agents-sdk
+/plugin install agents-for-net@microsoft-agents-sdk
+/plugin install agents-for-python@microsoft-agents-sdk
+```
+
+Install the common plugin and the plugins for the SDKs you use. Skills activate
+automatically—no manual loading is needed. Run `/plugin` to verify installation.
+
 ## Documentation
 
 To learn more about the Agents SDK, you can read our official docs here: [Agents SDK Documentation](https://aka.ms/M365-Agents-SDK-Docs)

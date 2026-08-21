@@ -1,6 +1,6 @@
 {
-  "name": "agents-for-dotnet",
-  "description": "Skills for building agents with the Microsoft 365 Agents SDK for DotNet",
+  "name": "agents-for-python",
+  "description": "Skills for building agents with the Microsoft 365 Agents SDK for Python",
   "version": "1.2.0",
   "author": {
     "name": "Microsoft"

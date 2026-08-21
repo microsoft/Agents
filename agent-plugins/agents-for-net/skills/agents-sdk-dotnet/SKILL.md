@@ -665,28 +665,9 @@ app.MapAgentProactiveEndpoints<MyAgent>(requireAuth: !app.Environment.IsDevelopm
 
 ## OpenTelemetry / Observability
 
-**Prerequisite:** Copy [`AgentOtelExtension.cs`](https://github.com/microsoft/Agents/blob/main/samples/dotnet/otel/AgentOtelExtension.cs) into your project. This provides `ConfigureOtelProviders`.
-
-```csharp
-using Otel;
-
-builder.ConfigureOtelProviders();
-```
-
-Required packages:
-```xml
-<!-- OpenTelemetry packages - versions managed centrally -->
-<PackageReference Include="OpenTelemetry" Version="1.*" />
-<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.*" />
-<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.*" />
-<PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.*" />
-<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.*" />
-<!-- OpenTelemetry Exporters -->
-<PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.*" />
-<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.*" />
-<!-- Azure Monitor (Application Insights) Exporter -->
-<PackageReference Include="Azure.Monitor.OpenTelemetry.Exporter" Version="1.*"/>
-```
+Use the `agents-sdk-dotnet-otel` skill for OpenTelemetry setup, SDK trace and
+metric subscriptions, safe custom instrumentation, OTLP configuration, Azure
+Monitor export, validation, and the local Aspire Dashboard.
 
 ## Common Mistakes
 
