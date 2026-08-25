@@ -1,0 +1,9 @@
+node_modules
+dist
+.env
+.git
+.gitignore
+npm-debug.log*
+README.md
+compose.yaml
+env.TEMPLATE

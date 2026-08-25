@@ -6,9 +6,9 @@
     },
     "devDependencies": {
         "@eslint/js": "^9.31.0",
-        "@microsoft/m365agentsplayground": "^0.2.16",
+        "@microsoft/m365agentsplayground": "^0.2.28",
         "eslint": "^9.31.0",
-        "neostandard": "^0.12.2",
+        "neostandard": "^0.13.0",
         "typescript-eslint": "^8.37.0"
     }
 }

@@ -1,0 +1,7 @@
+python-dotenv
+aiohttp
+cryptography
+microsoft-agents-hosting-aiohttp==1.3.0
+microsoft-agents-hosting-core==1.3.0
+microsoft-agents-authentication-entra-auth-sidecar==1.3.0
+microsoft-agents-activity==1.3.0
