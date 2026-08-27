@@ -14,7 +14,7 @@ This sample demonstrates a **Microsoft 365 Agents SDK** agent that uses the **Mi
 | **Streaming Responses** | Server-sent streaming back to the client using `StreamingResponse` |
 | **Conversation History** | In-memory per-conversation chat history with a 10-message reducer |
 | **Host / Transport** | ASP.NET Core with `/api/messages` endpoint; compatible with Microsoft Agents Playground and M365 Teams / Copilot |
-| **Observability** | OpenTelemetry traces, metrics, and logs via OTLP export; `AgentOtelExtensions.cs` provides the wiring; viewable in Aspire Dashboard |
+| **Observability** | OpenTelemetry traces, metrics, and logs via OTLP export; `AgentOtelExtension.cs` provides the wiring; viewable in Aspire Dashboard |
 
 ---
 
@@ -169,7 +169,7 @@ The agent uses the OpenWeather tools to fetch live data and formats the response
 
 ## Step 6 — View Telemetry with the Aspire Dashboard (Optional)
 
-The agent emits OpenTelemetry traces, metrics, and structured logs via OTLP export, configured in `AgentOtelExtensions.cs`. The easiest way to view this locally is with the standalone **Aspire Dashboard**.
+The agent emits OpenTelemetry traces, metrics, and structured logs via OTLP export, configured in `AgentOtelExtension.cs`. The easiest way to view this locally is with the standalone **Aspire Dashboard**.
 
 ### 6.1 Run the Aspire Dashboard
 
@@ -194,7 +194,7 @@ The follow the instructions at [standalone Aspire Dashboard instructions - Login
 
 ### 6.3 Enabling Azure Monitor (Application Insights)
 
-To export telemetry to Application Insights in addition to (or instead of) the Aspire Dashboard, Add the nuget package `Azure.Monitor.OpenTelemetry.Exporter` and uncomment the Azure Monitor block at the bottom of `AgentOtelExtensions.cs` and add your connection string:
+To export telemetry to Application Insights in addition to (or instead of) the Aspire Dashboard, Add the nuget package `Azure.Monitor.OpenTelemetry.Exporter` and uncomment the Azure Monitor block at the bottom of `AgentOtelExtension.cs` and add your connection string:
 
 ```bash
 dotnet user-secrets set "APPLICATIONINSIGHTS_CONNECTION_STRING" "<your-connection-string>"
@@ -282,7 +282,7 @@ AgentFrameworkWeather/
 ├── Tools/
 │   ├── WeatherLookupTool.cs     # Calls OpenWeather API for current weather and forecasts
 │   └── DateTimeFunctionTool.cs  # Returns current date/time to the model
-├── AgentOtelExtensions.cs       # OpenTelemetry configuration (traces, metrics, logs, OTLP export)
+├── AgentOtelExtension.cs        # OpenTelemetry configuration (traces, metrics, logs, OTLP export)
 ├── Program.cs                   # Host setup, DI registration, endpoint mapping
 ├── appsettings.json             # Configuration template (replace ---- placeholders or use user secrets)
 └── AgentFrameworkWeather.csproj # Project dependencies
@@ -296,7 +296,7 @@ AgentFrameworkWeather/
 2. **Customize the persona** — edit the `AgentInstructions` string in `WeatherAgent.cs` to change the agent's behavior and personality.
 3. **Persist conversation history** — replace `MemoryStorage` in `Program.cs` with `AzureBlobStorage` or another durable provider so conversations survive restarts.
 4. **Explore Agent Framework features** — see the [Agent Framework GitHub repo](https://github.com/microsoft/agent-framework) for advanced orchestration patterns.
-5. **Enable Azure Monitor** — uncomment the Azure Monitor block in `AgentOtelExtensions.cs` to send telemetry to Application Insights.
+5. **Enable Azure Monitor** — uncomment the Azure Monitor block in `AgentOtelExtension.cs` to send telemetry to Application Insights.
 
 ---
 

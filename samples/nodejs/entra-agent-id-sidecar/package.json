@@ -11,7 +11,7 @@
     "start": "node --env-file .env ./dist/index.js"
   },
   "dependencies": {
-    "@microsoft/agents-hosting-express": "^1.5.1"
+    "@microsoft/agents-hosting-express": "^1.7.2"
   },
   "devDependencies": {
     "@types/node": "^22.15.18",

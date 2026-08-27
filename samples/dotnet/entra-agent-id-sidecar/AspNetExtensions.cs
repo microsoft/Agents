@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.JsonWebTokens;
 
@@ -225,27 +224,17 @@ public static class AspNetExtensions
                         return Task.CompletedTask;
                     }
 
-                    if (!AuthenticationHeaderValue.TryParse(authorizationHeader, out AuthenticationHeaderValue? authorization)
-                        || !authorization.Scheme.Equals(JwtBearerDefaults.AuthenticationScheme, StringComparison.OrdinalIgnoreCase)
-                        || string.IsNullOrWhiteSpace(authorization.Parameter))
+                    string[] parts = authorizationHeader?.Split(' ')!;
+                    if (parts.Length != 2 || parts[0] != "Bearer")
                     {
                         // Default to AadTokenValidation handling
                         context.Options.TokenValidationParameters.ConfigurationManager ??= options.ConfigurationManager as BaseConfigurationManager;
                         return Task.CompletedTask;
                     }
 
-                    string issuer;
-                    try
-                    {
-                        // Use JsonWebToken for lightweight issuer extraction without full token validation.
-                        issuer = new JsonWebToken(authorization.Parameter).Issuer;
-                    }
-                    catch (SecurityTokenMalformedException)
-                    {
-                        // Let the normal JWT bearer validation reject malformed tokens.
-                        context.Options.TokenValidationParameters.ConfigurationManager ??= options.ConfigurationManager as BaseConfigurationManager;
-                        return Task.CompletedTask;
-                    }
+                    // Use JsonWebToken for lightweight issuer extraction without full token parsing
+                    JsonWebToken token = new(parts[1]);
+                    string issuer = token.Issuer;
 
                     if (validationOptions.AzureBotServiceTokenHandling 
                         && IsBotFrameworkIssuer(issuer))
@@ -280,6 +269,14 @@ public static class AspNetExtensions
                     var issuer = context.Principal?.FindFirst("iss")?.Value;
                     bool isBotFrameworkToken = validationOptions.AzureBotServiceTokenHandling
                         && issuer != null && IsBotFrameworkIssuer(issuer);
+
+                    if (!isBotFrameworkToken
+                        && context.Principal?.Identity is System.Security.Claims.ClaimsIdentity identity
+                        && !identity.IsTenantIdIssuerValid())
+                    {
+                        context.Fail("Token tenant ID does not match its issuer.");
+                        return Task.CompletedTask;
+                    }
 
                     if (!isBotFrameworkToken
                         && validationOptions.AllowedCallers != null

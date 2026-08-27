@@ -15,13 +15,13 @@
     "test": "npm-run-all -p -r start test-tool"
   },
   "dependencies": {
-    "@microsoft/agents-hosting": "^1.5.1",
-    "@microsoft/agents-hosting-express": "^1.5.1",
+    "@microsoft/agents-hosting": "^1.7.2",
+    "@microsoft/agents-hosting-express": "^1.7.2",
     "express": "^5.1.0"
   },
   "devDependencies": {
-    "@microsoft/m365agentsplayground": "^0.2.24",
-    "@types/node": "^24.0.10",
+    "@microsoft/m365agentsplayground": "^0.2.28",
+    "@types/node": "^26.2.0",
     "npm-run-all": "^4.1.5"
   },
   "keywords": []

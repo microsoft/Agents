@@ -413,6 +413,13 @@ Read [references/cards.md](references/cards.md) when working with Adaptive Cards
 
 Read [references/streaming.md](references/streaming.md) when implementing streaming responses.
 
+## OpenTelemetry / Observability
+
+Use the `agents-sdk-typescript-otel` skill for OpenTelemetry initialization, SDK
+traces and metrics, OTLP exporters, structured logs, safe custom
+instrumentation, span-category filtering, Azure Monitor, validation, and the
+local Aspire Dashboard.
+
 ## Common Mistakes
 
 **1. Wrong field name on ConversationReference**

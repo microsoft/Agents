@@ -14,12 +14,13 @@ import {
   LogRecordExporter,
 } from '@opentelemetry/sdk-logs'
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http'
+import { UndiciInstrumentation } from '@opentelemetry/instrumentation-undici'
 import { resourceFromAttributes } from '@opentelemetry/resources'
 import {
   ATTR_SERVICE_NAME,
   ATTR_SERVICE_VERSION,
 } from '@opentelemetry/semantic-conventions'
-import { SpanExporter } from '@opentelemetry/sdk-trace-base'
+import { AlwaysOnSampler, SpanExporter } from '@opentelemetry/sdk-trace-base'
 import { hostname } from 'os'
 
 const traceExporter: SpanExporter = new OTLPTraceExporter()
@@ -28,6 +29,7 @@ const logExporter: LogRecordExporter = new OTLPLogExporter()
 
 // configure the SDK to export telemetry data.
 const sdk = new NodeSDK({
+  sampler: new AlwaysOnSampler(),
   resource: resourceFromAttributes({
     [ATTR_SERVICE_NAME]: 'OTelAgent',
     [ATTR_SERVICE_VERSION]: '1.0.0',
@@ -37,23 +39,42 @@ const sdk = new NodeSDK({
   traceExporter,
   metricReader: new PeriodicExportingMetricReader({ exporter: metricExporter }),
   logRecordProcessors: [
-    new BatchLogRecordProcessor(logExporter),
+    new BatchLogRecordProcessor({ exporter: logExporter }),
   ],
   instrumentations: [
-    new HttpInstrumentation()
+    new HttpInstrumentation(),
+    new UndiciInstrumentation()
   ]
 })
 
 sdk.start()
 
-const shutdownHandler = () => {
+let isShuttingDown = false
+
+const shutdownHandler = (signal: NodeJS.Signals) => {
+  if (isShuttingDown) {
+    return
+  }
+  isShuttingDown = true
+
+  const shutdownTimeout = setTimeout(() => {
+    console.error(`OTel SDK shutdown timed out after receiving ${signal}`)
+    process.exit(1)
+  }, 5000)
+  shutdownTimeout.unref()
+
   sdk.shutdown()
-    .then(() => console.log('OTel SDK shut down successfully'))
+    .then(() => {
+      console.log('OTel SDK shut down successfully')
+      clearTimeout(shutdownTimeout)
+      process.exit(0)
+    })
     .catch((error) => {
       console.error('Error shutting down OTel SDK', error)
-      process.exitCode = 1
+      clearTimeout(shutdownTimeout)
+      process.exit(1)
     })
 }
 
-process.on('SIGTERM', shutdownHandler)
-process.on('SIGINT', shutdownHandler)
+process.once('SIGTERM', () => shutdownHandler('SIGTERM'))
+process.once('SIGINT', () => shutdownHandler('SIGINT'))

@@ -271,6 +271,14 @@ public static class AspNetExtensions
                         && issuer != null && IsBotFrameworkIssuer(issuer);
 
                     if (!isBotFrameworkToken
+                        && context.Principal?.Identity is System.Security.Claims.ClaimsIdentity identity
+                        && !identity.IsTenantIdIssuerValid())
+                    {
+                        context.Fail("Token tenant ID does not match its issuer.");
+                        return Task.CompletedTask;
+                    }
+
+                    if (!isBotFrameworkToken
                         && validationOptions.AllowedCallers != null
                         && validationOptions.AllowedCallers.Count > 0
                         && !validationOptions.AllowedCallers.Any(c => c.Equals("*", StringComparison.Ordinal)))
