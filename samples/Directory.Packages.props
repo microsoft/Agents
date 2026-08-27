@@ -1,0 +1,88 @@
+<Project>
+  <!-- See: https://docs.microsoft.com/en-us/visualstudio/msbuild/customize-your-build?view=vs-2019#directorybuildprops-and-directorybuildtargets -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <!-- To avoid NU1507 we must disable library packs from getting added by the SDK.
+    Error:
+     The project E:\repos\msazure\One\PowerPlatform-ISVEx-ToolsCore\src\cli\Analyzers\bolt.Analyzers\bolt.Analyzers\bolt.Analyzers.csproj is using CentralPackageVersionManagement, a NuGet preview feature.
+     E:\repos\msazure\One\PowerPlatform-ISVEx-ToolsCore\src\cli\Analyzers\bolt.Analyzers\bolt.Analyzers\bolt.Analyzers.csproj : warning NU1507: There are 2 package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: https://pkgs.dev.azure.com/msazure/One/_packaging/CAP_ISVExp_Tools_Upstream/nuget/v3/index.json, C:\Program Files\dotnet\library-packs
+     The 'library-packs' source is added by the SDK.
+    -->
+    <DisableImplicitLibraryPacksFolder>true</DisableImplicitLibraryPacksFolder>
+    <!-- Define no-warns for Nuget packages-->
+    <NoWarn>$(NoWarn);NU1701;NU1900;NU5125;NU5104</NoWarn>
+  </PropertyGroup>
+
+  <!-- Define the versions of the packages used in for .net SAMPLES -->
+  <PropertyGroup>
+    <Microsoft_Extensions_PkgVer>8.0.0</Microsoft_Extensions_PkgVer>
+    <Microsoft_AspNetCore_PkgVer>8.0.11</Microsoft_AspNetCore_PkgVer>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Agent SDK Base Libs -->
+		<PackageVersion Include="Microsoft.Agents.Authentication.Msal" Version="0.2.58-alpha" />
+		<PackageVersion Include="Microsoft.Agents.CopilotStudio.Client" Version="0.2.58-alpha" />
+		<PackageVersion Include="Microsoft.Agents.Hosting.AspNetCore" Version="0.2.58-alpha" />
+		<PackageVersion Include="Microsoft.Agents.Storage" Version="0.2.58-alpha" />
+    <!-- End Agent SDK -->
+
+    <PackageVersion Include="Azure.AI.OpenAI" Version="2.1.0" />
+    <PackageVersion Include="CsvHelper" Version="33.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.AI.OpenAI" Version="9.1.0-preview.1.25064.3" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.1" />
+    <PackageVersion Include="Microsoft.IdentityModel.Tokens" Version="8.1.2" />
+    <PackageVersion Include="Nerdbank.GitVersioning" Version="3.7.115" />
+    <PackageVersion Include="AdaptiveCards.Rendering.Html" Version="2.7.3" />
+    <PackageVersion Include="Azure.Identity" Version="1.13.2" />
+    <PackageVersion Include="Azure.Core" Version="1.43.0" />
+    <PackageVersion Include="Microsoft.Identity.Client" Version="4.67.2" />
+    <PackageVersion Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.67.2" />
+    <PackageVersion Include="Microsoft.IdentityModel.Abstractions" Version="8.1.2" />
+    <PackageVersion Include="Microsoft.IdentityModel.LoggingExtensions" Version="8.1.2" />
+    <PackageVersion Include="Microsoft.IdentityModel.Validators" Version="8.1.2" />
+    <PackageVersion Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.1.2" />
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1" />
+    <PackageVersion Include="Azure.Security.KeyVault.Certificates" Version="4.6.0" />
+    <PackageVersion Include="Microsoft.Azure.AutoRest.CSharp" Version="3.0.0-beta.20231020.1" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.AzureAppServices" Version="8.0.7" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="$(Microsoft_Extensions_PkgVer)" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="$(Microsoft_Extensions_PkgVer)" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="$(Microsoft_Extensions_PkgVer)" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="$(Microsoft_Extensions_PkgVer)" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="$(Microsoft_Extensions_PkgVer)" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="$(Microsoft_Extensions_PkgVer)" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="$(Microsoft_Extensions_PkgVer)" />
+    <PackageVersion Include="System.Text.Json" Version="8.0.5" />
+    <PackageVersion Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+    <!-- ASP.net Core support -->
+    <PackageVersion Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="$(Microsoft_AspNetCore_PkgVer)" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(Microsoft_AspNetCore_PkgVer)" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="$(Microsoft_AspNetCore_PkgVer)" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Core" Version="$(Microsoft_AspNetCore_PkgVer)" />
+    <PackageVersion Include="Microsoft.AspNetCore.Http" Version="$(Microsoft_AspNetCore_PkgVer)" />
+    <!-- Test nuget packages -->
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.0" />
+    <PackageVersion Include="xunit" Version="2.9.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageVersion Include="coverlet.collector" Version="1.2.0" />
+    <PackageVersion Include="Moq" Version="4.20.70" />
+    <PackageVersion Include="Jint" Version="4.0.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.10.0" />
+    <PackageVersion Include="Microsoft.Recognizers.Text.DataTypes.TimexExpression" Version="1.3.2" />
+    <PackageVersion Include="xunit.extensibility.core" Version="2.9.0" />
+    <!-- Teams samples -->
+    <PackageVersion Include="AdaptiveCards" Version="3.1.0" />
+    <PackageVersion Include="AdaptiveCards.Templating" Version="2.0.3" />
+    <PackageVersion Include="Microsoft.Graph" Version="4.47.0" />
+    <PackageVersion Include="Microsoft.Graph.Core" Version="2.0.14" />
+    <!-- Semantic Kernel Samples -->
+    <PackageVersion Include="Microsoft.SemanticKernel" Version="1.35.0" />
+    <PackageVersion Include="Microsoft.SemanticKernel.Agents.Core" Version="1.35.0-alpha" />
+    <PackageVersion Include="Microsoft.SemanticKernel.Agents.OpenAI" Version="1.35.0-alpha" />
+    <PackageVersion Include="Microsoft.SemanticKernel.Connectors.AzureOpenAI" Version="1.35.0" />
+    <PackageVersion Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.35.0" />
+    <!-- Dataverse -->
+    <PackageVersion Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.2.2" />
+  </ItemGroup>
+</Project>
