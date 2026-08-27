@@ -7,3 +7,6 @@ microsoft-agents-activity
 microsoft-agents-hosting-core
 microsoft-agents-hosting-aiohttp
 microsoft-agents-authentication-msal
+microsoft-agents-a365-tooling
+microsoft-agents-a365-tooling-extensions-agentframework
+microsoft-agents-a365-runtime

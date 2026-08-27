@@ -1,0 +1,12 @@
+{
+  "mcpServers": [
+    {
+      "mcpServerName": "mcp_TeamsServer",
+      "mcpServerUniqueName": "mcp_TeamsServer",
+      "url": "https://agent365.svc.cloud.microsoft/agents/servers/mcp_TeamsServer",
+      "scope": "Tools.ListInvoke.All",
+      "audience": "ce5029ee-c1d3-45c0-bdcc-efb5a4245687",
+      "publisher": "Microsoft"
+    }
+  ]
+}
