@@ -16,7 +16,7 @@ This sample shows how an agent sends a message when no user activity starts the 
 
 ## Prerequisites
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [Python 3.10 or later](https://www.python.org/downloads/)
 - An Azure subscription
 - An [Azure Bot](https://github.com/microsoft/Agents/blob/main/docs/HowTo/azurebot-create-single-secret.md) with a client ID, client secret, and tenant ID
 - [Dev tunnels](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started) for local channel testing
@@ -24,11 +24,8 @@ This sample shows how an agent sends a message when no user activity starts the 
 
 ## Azure Bot configuration
 
-1. Create an Azure Bot with one of these authentication types:
-   - [Single tenant and client secret](https://github.com/microsoft/Agents/blob/main/docs/HowTo/azurebot-create-single-secret.md)
-   - [Single tenant and federated credentials](https://github.com/microsoft/Agents/blob/main/docs/HowTo/azurebot-create-fic.md)
-   - [User-assigned managed identity](https://github.com/microsoft/Agents/blob/main/docs/HowTo/azurebot-create-msi.md)
-2. For local testing, start an anonymous tunnel:
+1. Create an Azure Bot with single-tenant client-secret authentication.
+2. Start an anonymous tunnel:
 
    ```bash
    devtunnel host -p 3978 --allow-anonymous
@@ -40,28 +37,33 @@ This sample shows how an agent sends a message when no user activity starts the 
    https://<tunnel-host>/api/messages
    ```
 
-Federated credentials and managed identity do not work through a local tunnel. Deploy the agent when you use these authentication types.
-
 The `appManifest` directory contains a Microsoft Teams app manifest. Replace `AAD_APP_CLIENT_ID` and `BOT_DOMAIN` through your provisioning process before you package and upload it to Teams.
 
 ## Local configuration
 
-Open `appsettings.json`. Replace:
+Copy `env.TEMPLATE` to `.env`. Set:
 
-- `{{ClientId}}` with the Azure Bot client ID.
-- `{{ClientSecret}}` with the client secret.
-- `{{TenantId}}` with the tenant ID.
-- `{{CallerClientId}}` with the application ID permitted to call proactive HTTP routes outside Development.
+- `CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTID`
+- `CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTSECRET`
+- `CONNECTIONS__SERVICE_CONNECTION__SETTINGS__TENANTID`
+- `CONNECTIONS__SERVICE_CONNECTION__SETTINGS__SCOPES__0=https://api.botframework.com/.default`
 
-Do not store production secrets in this file. Use [.NET configuration providers](https://learn.microsoft.com/aspnet/core/fundamentals/configuration/) or a managed identity.
+Keep `ENVIRONMENT=development` for local testing. `ALLOWED_CALLERS` is required outside Development. Set it to a comma-separated list of application IDs permitted to call proactive HTTP routes.
+
+Do not commit `.env` or store production secrets in it.
 
 ## Install and run
 
-From the repository root:
+From `samples/python/proactive`:
 
 ```bash
-dotnet run --project samples/dotnet/proactive
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python -m src.main
 ```
+
+On Windows PowerShell, activate the environment with `.venv\Scripts\Activate.ps1`.
 
 The agent listens on `http://localhost:3978`.
 
@@ -116,9 +118,9 @@ The conversation receives `This is OnContinueConversation`.
 
 ## Authentication and caller authorization
 
-The proactive routes require JWT authentication outside Development. `TokenValidation:AllowedCallers` limits non-Azure Bot callers by application ID. Do not use `*` in production.
+The proactive routes require JWT authentication outside Development. `ALLOWED_CALLERS` limits callers by application ID. The process stops at startup when this setting is empty outside Development.
 
-For local testing, `launchSettings.json` sets the ASP.NET Core environment to Development. Do not use Development in a deployed service.
+Do not use Development in a deployed service.
 
 ## Production storage
 
@@ -129,8 +131,8 @@ Conversation references contain service and participant identifiers. Apply your 
 ## Troubleshooting
 
 - **Conversation not found:** Send `-s` again. Memory storage was empty or the process restarted.
-- **401 response:** Verify the bearer token, Azure Bot client ID, tenant ID, and environment.
-- **403 response:** Add the caller application ID to `AllowedCallers`.
+- **401 response:** Verify the bearer token, Azure Bot client ID, tenant ID, and `ENVIRONMENT`.
+- **403 response:** Add the caller application ID to `ALLOWED_CALLERS`.
 - **No proactive message:** Verify the conversation is still valid and the channel service URL is reachable.
 
 ## Further reading
