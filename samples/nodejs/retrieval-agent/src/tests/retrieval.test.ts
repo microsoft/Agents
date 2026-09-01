@@ -37,9 +37,9 @@ test('message route sends grounded text and a source card', async () => {
   const messages: string[] = []
   const cards: object[] = []
   await handleBuildGenieMessage(result, async text => { messages.push(text) }, async card => { cards.push(card) })
-  assert.match(messages[0], /https:\/\/contoso.sharepoint.com\/session.docx/)
+  assert.match(messages[0], /https:\/\/contoso\.sharepoint\.com\/session\.docx/)
   assert.equal(cards.length, 1)
-  assert.match(JSON.stringify(cards[0]), /https:\/\/contoso.sharepoint.com\/session.docx/)
+  assert.match(JSON.stringify(cards[0]), /https:\/\/contoso\.sharepoint\.com\/session\.docx/)
 })
 
 for (const status of ['notSignedIn', 'noResults', 'serviceUnavailable'] as const) {
