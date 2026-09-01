@@ -17,8 +17,8 @@
     "aspire": "aspire run"
   },
   "dependencies": {
-    "@azure/msal-browser": "4.13.1",
-    "@microsoft/agents-copilotstudio-client": "1.7.2",
+    "@azure/msal-browser": "5.20.0",
+    "@microsoft/agents-copilotstudio-client": "1.8.1",
     "@opentelemetry/api": "1.9.1",
     "@opentelemetry/context-zone": "2.10.0",
     "@opentelemetry/exporter-trace-otlp-proto": "0.221.0",
@@ -28,7 +28,7 @@
     "@opentelemetry/resources": "2.10.0",
     "@opentelemetry/sdk-trace-base": "2.10.0",
     "@opentelemetry/sdk-trace-web": "2.10.0",
-    "@opentelemetry/semantic-conventions": "1.39.0",
+    "@opentelemetry/semantic-conventions": "1.43.0",
     "botframework-webchat": "4.19.1",
     "botframework-webchat-fluent-theme": "4.19.1",
     "react": "19.2.8",
@@ -36,9 +36,9 @@
     "zone.js": "0.16.2"
   },
   "devDependencies": {
-    "@microsoft/aspire-cli": "13.4.6",
+    "@microsoft/aspire-cli": "13.5.3",
     "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.4",
+    "@types/react-dom": "19.2.5",
     "esbuild": "^0.28.2"
   }
 }
