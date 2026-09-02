@@ -3,9 +3,9 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "tsx": "4.23.5",
-    "typescript": "5.8.3",
-    "vscode-jsonrpc": "8.2.1"
+    "tsx": "4.23.12",
+    "typescript": "7.0.2",
+    "vscode-jsonrpc": "9.0.2"
   },
   "engines": {
     "node": ">=20"

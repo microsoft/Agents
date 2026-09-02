@@ -11,11 +11,11 @@
     "start": "node --env-file .env ./dist/index.js"
   },
   "dependencies": {
-    "@microsoft/agents-hosting-express": "^1.7.2"
+    "@microsoft/agents-hosting-express": "^1.8.1"
   },
   "devDependencies": {
-    "@types/node": "^22.15.18",
-    "typescript": "^5.8.3"
+    "@types/node": "^26.4.0",
+    "typescript": "^7.0.2"
   },
   "engines": {
     "node": ">=22"

@@ -1,9 +1,9 @@
 {
   "type": "module",
   "dependencies": {
-    "@ai-sdk/azure": "^4.0.43",
-    "@microsoft/agents-hosting-express": "^1.7.2",
-    "ai": "^7.0.66"
+    "@ai-sdk/azure": "^4.0.53",
+    "@microsoft/agents-hosting-express": "^1.8.1",
+    "ai": "^7.0.84"
   },
   "scripts": {
     "build": "tsc -b",
