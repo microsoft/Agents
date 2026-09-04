@@ -9,7 +9,6 @@
 |Streaming Agent |Streams OpenAI responses|[azure-ai-streaming](azure-ai-streaming/README.md)|
 |Copilot Studio Client|Console app to consume a Copilot Studio Agent|[copilotstudio-client](copilotstudio-client/README.md)|
 |Copilot Studio Skill |Call the echo bot from a Copilot Studio skill |[copilotstudio-skill](copilotstudio-skill/README.md)|
-|RetrievalAgent Sample with Semantic Kernel|A simple Retrieval Agent that is hosted on an Asp.net core web service. |[RetrievalAgent](retrieval-agent/README.md)|
 |MultiAgent|Demonstrates multiple AgentApplication in the same host|[MultiAgent](multiagent/README.md)|
 |GenesysHandoff|Demonstrates how a Microsoft Copilot Studio Agent (bot) can seamlessly **hand off a conversation to a live agent** in **Genesys Cloud**.|[GenesysHandoff](genesys-handoff/README.md)|
 |Proactive|Demonstrates the basics of a proactive conversation using in-code and Http triggers.|[Proactive](proactive/README.md)|
@@ -18,3 +17,4 @@
 |Copilot SDK|Dungeon Scribe RPG agent powered by the GitHub Copilot SDK|[copilot-sdk](copilot-sdk/README.md)|
 |Named Pipe Agent|Pipe-only echo agent for the DirectLine App Service extension (DirectLineFlex)|[named-pipe-agent](named-pipe-agent/README.md)|
 |Entra Agent ID Sidecar|Simple agent using the Microsoft Entra Agent ID sidecar for Agents SDK authentication|[entra-agent-id-sidecar](entra-agent-id-sidecar/README.md)|
+|Build Genie Retrieval Agent|Retrieves SharePoint content with the signed-in user's delegated permissions. |[Build Genie Retrieval Agent](retrieval-agent/README.md)|

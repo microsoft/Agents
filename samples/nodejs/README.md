@@ -17,3 +17,4 @@
 |OTel Agent|Agent with OTel instrumentation |[otel](otel/README.md)|
 |Named Pipe Agent|Pipe-only echo agent for the DirectLine App Service extension (DirectLineFlex)|[named-pipe-agent](named-pipe-agent/README.md)|
 |Entra Agent ID Sidecar|Simple agent using the Microsoft Entra Agent ID sidecar for Agents SDK authentication|[entra-agent-id-sidecar](entra-agent-id-sidecar/README.md)|
+|Build Genie Retrieval Agent|Retrieves SharePoint content with the signed-in user's delegated permissions.|[Build Genie Retrieval Agent](retrieval-agent/README.md)|

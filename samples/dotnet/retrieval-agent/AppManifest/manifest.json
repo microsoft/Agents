@@ -2,38 +2,38 @@
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/vdevPreview/MicrosoftTeams.schema.json",
   "manifestVersion": "devPreview",
   "version": "1.0.0",
-  "id": "fe9b0fcb-7525-4c2f-92a6-28da2efbb894",
-  "packageName": "com.microsoft.agents.oauth",
+  "id": "{{AppId}}",
+  "packageName": "com.microsoft.agents.buildgenie",
   "developer": {
-    "name": "Microsoft, Inc.",
-    "websiteUrl": "https://example.azurewebsites.net",
-    "privacyUrl": "https://example.azurewebsites.net/privacy",
-    "termsOfUseUrl": "https://example.azurewebsites.net/termsofuse"
+    "name": "Microsoft",
+    "websiteUrl": "https://learn.microsoft.com/microsoft-365/agents-sdk/",
+    "privacyUrl": "https://privacy.microsoft.com/privacystatement",
+    "termsOfUseUrl": "https://www.microsoft.com/servicesagreement"
   },
   "icons": {
     "color": "color.png",
     "outline": "outline.png"
   },
   "name": {
-    "short": "FHL App",
-    "full": "FHL App"
+    "short": "Build Genie",
+    "full": "Build Genie Retrieval Agent"
   },
   "description": {
-    "short": "Sample demonstrating Azure Bot Services user authentication with using a Agent.",
-    "full": "This sample demonstrates how to integrate Azure AD authentication in an Agent with Single Sign-On (SSO) capabilities built with the Agents Framework"
+    "short": "Find Build session information from SharePoint.",
+    "full": "This sample uses the signed-in user's delegated permissions to retrieve Build session information from a configured SharePoint site."
   },
   "accentColor": "#FFFFFF",
   "copilotAgents": {
     "customEngineAgents": [
       {
-        "id": "fe9b0fcb-7525-4c2f-92a6-28da2efbb894",
+        "id": "{{AppId}}",
         "type": "bot"
       }
     ]
   },
   "bots": [
     {
-      "botId": "fe9b0fcb-7525-4c2f-92a6-28da2efbb894",
+      "botId": "{{AppId}}",
       "scopes": [
         "personal"
       ],
@@ -42,14 +42,13 @@
     }
   ],
   "permissions": [
-    "identity",
-    "messageTeamMembers"
+    "identity"
   ],
   "validDomains": [
     "token.botframework.com"
   ],
   "webApplicationInfo": {
-    "id": "fe9b0fcb-7525-4c2f-92a6-28da2efbb894",
-    "resource": "api://botid-fe9b0fcb-7525-4c2f-92a6-28da2efbb894"
+    "id": "{{AppId}}",
+    "resource": "api://botid-{{AppId}}"
   }
 }

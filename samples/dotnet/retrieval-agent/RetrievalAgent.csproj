@@ -4,7 +4,6 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>disable</ImplicitUsings>
-		<NoWarn>$(NoWarn);SKEXP0110;SKEXP0010</NoWarn>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
 		<Nullable>enable</Nullable>
@@ -12,35 +11,18 @@
 
 	<ItemGroup>
 		<Compile Remove="wwwroot\**" />
+		<Compile Remove="tests\**" />
+		<Content Remove="tests\**" />
+		<EmbeddedResource Remove="tests\**" />
+		<None Remove="tests\**" />
 		<Content Remove="wwwroot\**" />
 		<EmbeddedResource Remove="wwwroot\**" />
 		<None Remove="wwwroot\**" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Graph" Version="6.5.0" />
-	</ItemGroup>
-	<ItemGroup>
-		<PackageReference Include="AdaptiveCards" Version="3.1.0" />
-		<PackageReference Include="Microsoft.SemanticKernel.Agents.Core" Version="1.80.0" />
-		<PackageReference Include="Microsoft.SemanticKernel.Agents.OpenAI" Version="1.29.0-alpha" />
-		<PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureOpenAI" Version="1.29.0" />
-		<PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.80.0" />
 		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.8.*" />
 		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.8.*" />
-		<PackageReference Include="Microsoft.Agents.M365Copilot" Version="1.8.*" />
-	</ItemGroup>
-
-	<!-- Microsoft.Agents.M365Copilot transitively references Microsoft.SourceLink.GitHub (10.0.300)
-	     as a non-private (non-PrivateAssets) dependency. That makes the .NET SDK suppress its own
-	     implicit SourceLink and defer to the transitive package (v10.0.300), which mismatches the
-	     SDK and fails with "Source control information is not available - the generated source link
-	     is empty". Exclude the transitive SourceLink build assets to silence the warning. Source
-	     link is not needed for a sample (it ships no symbol package). -->
-	<ItemGroup>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.400" PrivateAssets="all" ExcludeAssets="all" />
-		<PackageReference Include="Microsoft.SourceLink.Common" Version="10.0.400" PrivateAssets="all" ExcludeAssets="all" />
-		<PackageReference Include="Microsoft.Build.Tasks.Git" Version="10.0.400" PrivateAssets="all" ExcludeAssets="all" />
 	</ItemGroup>
 
 	<ItemGroup>

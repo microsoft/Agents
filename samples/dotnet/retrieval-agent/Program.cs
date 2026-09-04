@@ -6,54 +6,31 @@ using Microsoft.Agents.Storage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.SemanticKernel;
 using RetrievalAgent;
+using RetrievalAgent.Services;
+using System;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-// Register Semantic Kernel
-builder.Services.AddKernel();
+builder.Services.AddOptions<RetrievalOptions>()
+    .Bind(builder.Configuration.GetSection(RetrievalOptions.SectionName))
+    .Validate(options => RetrievalOptions.IsValidSiteUrl(options.SharePointSiteUrl), "Retrieval:SharePointSiteUrl must be an absolute HTTPS SharePoint site URL.")
+    .Validate(options => options.MaximumNumberOfResults is >= 1 and <= 25, "Retrieval:MaximumNumberOfResults must be from 1 through 25.")
+    .ValidateOnStart();
 
-// Register the AI service of your choice. AzureOpenAI and OpenAI are demonstrated...
-if (builder.Configuration.GetSection("AIServices").GetValue<bool>("UseAzureOpenAI"))
+builder.Services.AddHttpClient<IBuildRetrievalService, BuildRetrievalService>(client =>
 {
-    builder.Services.AddAzureOpenAIChatCompletion(
-        deploymentName: builder.Configuration.GetSection("AIServices:AzureOpenAI").GetValue<string>("DeploymentName")!,
-        endpoint: builder.Configuration.GetSection("AIServices:AzureOpenAI").GetValue<string>("Endpoint")!,
-        apiKey: builder.Configuration.GetSection("AIServices:AzureOpenAI").GetValue<string>("ApiKey")!);
+    client.BaseAddress = new Uri("https://graph.microsoft.com/v1.0/");
+});
+builder.Services.AddSingleton<IBuildGenieMessageRoute, BuildGenieMessageRoute>();
 
-    //Use the Azure CLI (for local) or Managed Identity (for Azure running app) to authenticate to the Azure OpenAI service
-    //credentials: new ChainedTokenCredential(
-    //   new AzureCliCredential(),
-    //   new ManagedIdentityCredential()
-    //));
-}
-else
-{
-    builder.Services.AddOpenAIChatCompletion(
-        modelId: builder.Configuration.GetSection("AIServices:OpenAI").GetValue<string>("ModelId")!,
-        apiKey: builder.Configuration.GetSection("AIServices:OpenAI").GetValue<string>("ApiKey")!);
-}
-
-// Add the AgentApplication, which contains the logic for responding to
-// user messages.
 builder.AddAgentDefaults()
     .AddAgent<Retrieval>()
     .AddAgentAuthorization(b => b.AddAgentAspNetAuthentication());
 
-// Register IStorage.  For development, MemoryStorage is suitable.
-// For production Agents, persisted storage should be used so
-// that state survives Agent restarts, and operates correctly
-// in a cluster of Agent instances.
 builder.Services.AddSingleton<IStorage, MemoryStorage>();
 
 WebApplication app = builder.Build();
-
-// Add the authentication and authorization middleware to the request pipeline.
 app.UseAgents();
-
-// Map the default agent endpoints: GET "/" and the agent message endpoints.
 app.MapDefaultAgentEndpoints();
-
 app.Run();
-

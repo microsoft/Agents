@@ -10,21 +10,19 @@ The sample has one behavior: ask a question about Contoso's Build 2025 sessions,
 2. The agent sends the question and configured SharePoint site scope to `POST /v1.0/copilot/retrieval`, using the `sharePoint` data source.
 3. The agent returns text extracts and a deterministic Adaptive Card with source links.
 
-The retrieval service owns token use, site validation, Microsoft Graph request construction, response mapping, and safe failure handling. The message route only sends the response.
+The retrieval client owns token use, site validation, Microsoft Graph request construction, response mapping, and safe failure handling. The message route only sends the response.
 
 > [!NOTE]
 > The Retrieval API supports both `sharePoint` and `oneDriveBusiness` data sources. This sample uses `sharePoint` by default. If `sharePoint` returns no results for an indexed document, test `oneDriveBusiness` with the same user and site path before changing permissions or reindexing.
 
 ## Prerequisites
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- Python 3.10 or later
 - An Azure subscription and an [Azure Bot](https://aka.ms/AgentsSDK-CreateBot)
-- An Azure Bot OAuth connection that uses Microsoft Entra ID v2 and is named `graph`
-- Delegated `Files.Read.All` and `Sites.Read.All` permissions on the OAuth connection's app registration
 - A Microsoft 365 tenant with Copilot Retrieval API entitlement, a user who can sign in, and a SharePoint site that user can read
 - [Dev Tunnels](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started) for Web Chat testing
 
-The supplied [ContosoBuildSessions2025.docx](Sharepoint/ContosoBuildSessions2025.docx) must be uploaded to the configured SharePoint site's **Documents** library. A local fake response can test the interaction path, but it does not prove delegated access, permission trimming, indexing, or Retrieval API access.
+Upload [ContosoBuildSessions2025.docx](Sharepoint/ContosoBuildSessions2025.docx) to the configured SharePoint site's **Documents** library.
 
 ## Configure Azure Bot OAuth
 
@@ -48,36 +46,30 @@ For local testing, create one single-tenant Microsoft Entra ID app registration 
 
 6. Save the connection. Select **Test connection**, sign in as the test user, and confirm it succeeds.
 
-The OAuth connection name must remain `graph`; the application configuration uses this exact name.
-
 ## Configure the sample
 
-Keep secret values outside tracked files. For local development, use environment variables or .NET user secrets.
-
-Set the required SharePoint site URL. The sample derives the Retrieval API KQL filter from this value, so do not edit source code for your tenant.
+Copy `env.TEMPLATE` to `.env`. Keep `.env` outside source control.
 
 ```bash
-dotnet user-secrets init
-dotnet user-secrets set "Retrieval:SharePointSiteUrl" "https://contoso.sharepoint.com/sites/Build"
-dotnet user-secrets set "TokenValidation:Audiences:0" "<YOUR_BOT_APP_ID>"
-dotnet user-secrets set "TokenValidation:TenantId" "<YOUR_TENANT_ID>"
-dotnet user-secrets set "AgentApplication:UserAuthorization:Handlers:graph:Settings:AzureBotOAuthConnectionName" "graph"
-dotnet user-secrets set "Connections:BotServiceConnection:Settings:ClientId" "<YOUR_BOT_APP_ID>"
-dotnet user-secrets set "Connections:BotServiceConnection:Settings:ClientSecret" "<YOUR_BOT_APP_SECRET>"
-dotnet user-secrets set "Connections:BotServiceConnection:Settings:TenantId" "<YOUR_TENANT_ID>"
-dotnet user-secrets set "Connections:BotServiceConnection:Settings:AuthorityEndpoint" "https://login.microsoftonline.com/<YOUR_TENANT_ID>"
+CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTID=<YOUR_BOT_APP_ID>
+CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTSECRET=<YOUR_BOT_APP_SECRET>
+CONNECTIONS__SERVICE_CONNECTION__SETTINGS__TENANTID=<YOUR_TENANT_ID>
+AGENTAPPLICATION__USERAUTHORIZATION__HANDLERS__GRAPH__SETTINGS__AZUREBOTOAUTHCONNECTIONNAME=graph
+RETRIEVAL_SHAREPOINT_SITE_URL=https://contoso.sharepoint.com/sites/Build
+RETRIEVAL_MAXIMUM_NUMBER_OF_RESULTS=3
 ```
 
-`Retrieval:SharePointSiteUrl` must be the SharePoint site root: for a document at `https://contoso.sharepoint.com/sites/Build/Shared%20Documents/session.docx`, set `https://contoso.sharepoint.com/sites/Build`. Do not use a file URL or sharing link. The application validates the URL during startup. Set `Retrieval:MaximumNumberOfResults` from `1` through `25` only when you need a different result count.
-
-For deployment, use equivalent environment variables, for example `Retrieval__SharePointSiteUrl`.
+`RETRIEVAL_SHAREPOINT_SITE_URL` must be the SharePoint site root. For a document at `https://contoso.sharepoint.com/sites/Build/Shared%20Documents/session.docx`, set `https://contoso.sharepoint.com/sites/Build`. Do not use a file URL or sharing link. `RETRIEVAL_MAXIMUM_NUMBER_OF_RESULTS` must be from `1` through `25`.
 
 ## Run and test
 
-1. Start the sample:
+1. Create an environment, install dependencies, and start the sample:
 
    ```bash
-   dotnet run
+   python -m venv .venv
+   .venv\Scripts\activate
+   pip install -r requirements.txt
+   python -m src.main
    ```
 
 2. In a second terminal, expose it through a tunnel:
@@ -88,11 +80,7 @@ For deployment, use equivalent environment variables, for example `Retrieval__Sh
 
 3. In Azure Bot, set the messaging endpoint to `{tunnel-url}/api/messages`.
 4. Open **Test in Web Chat** and complete sign-in when prompted.
-5. Ask one of these questions:
-
-   - `What Contoso sessions are at Build 2025?`
-   - `Tell me about the Pricing Analytics session.`
-   - `Who is speaking at the collaboration sessions?`
+5. Ask `Tell me about the Pricing Analytics session.`
 
 A successful test returns text from the uploaded document and a source card. Select a source card to verify that its link opens the SharePoint document.
 
@@ -108,7 +96,7 @@ If the document is still not searchable after a reasonable wait, first confirm t
 
 | Symptom | Action |
 |---|---|
-| Startup fails with `Retrieval:SharePointSiteUrl` | Set an absolute HTTPS SharePoint site URL in user secrets or environment variables. |
+| Startup fails with `RETRIEVAL_SHAREPOINT_SITE_URL` | Set an absolute HTTPS SharePoint site-root URL in `.env`. |
 | Sign-in does not complete | Confirm the Azure Bot OAuth connection name is `graph`, then check its app registration and delegated permissions. |
 | No results | Confirm the user can open the document, the configured URL is the site root, and SharePoint site search finds the document. If needed, request one library reindex. |
 | Retrieval is unavailable | Confirm tenant entitlement, Microsoft Graph permissions, and service availability; retry later. |
@@ -117,7 +105,7 @@ If the document is still not searchable after a reasonable wait, first confirm t
 
 - The application never writes delegated tokens, Microsoft Graph response bodies, or stack traces to chat.
 - Microsoft Graph applies the signed-in user's SharePoint permissions to Retrieval API requests.
-- Keep client secrets in user secrets, environment variables, or a managed secret store.
+- Keep client secrets in `.env`, environment variables, or a managed secret store.
 
 ## Further reading
 
