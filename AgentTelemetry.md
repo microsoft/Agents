@@ -1058,34 +1058,60 @@ All spans created by the SDK automatically handle errors. When an exception occu
 
 On success, the span status is set to `OK`.
 
+## Filtering Spans with a Parent-Based Sampler
 
-## Disabling Span Categories
+> [!WARNING]
+> `AGENTS_TELEMETRY_DISABLED_SPAN_CATEGORIES` is deprecated and will be removed in a future release. It remains supported temporarily for backward compatibility, but new applications should configure an OpenTelemetry sampler instead.
 
-All built-in span categories are enabled by default.
+Filtering belongs in the application's OpenTelemetry configuration. A custom sampler can reject selected SDK span names, while a parent-based delegate preserves normal sampling decisions and rejects descendants of a filtered parent span.
 
-You can selectively disable groups of spans by setting the `AGENTS_TELEMETRY_DISABLED_SPAN_CATEGORIES` environment variable. This is useful for reducing telemetry noise in production, where certain span categories (e.g., storage or authentication) may not be needed.
+The following reusable sampler filters automatic typing-indicator telemetry. The `agents.app.typing_indicator` span is the parent of the adapter and connector spans created while sending that notification, so rejecting it suppresses the complete typing operation:
 
-```env
-AGENTS_TELEMETRY_DISABLED_SPAN_CATEGORIES=STORAGE,AUTHORIZATION
+```typescript
+import { SpanNames } from '@microsoft/agents-telemetry';
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import {
+  AlwaysOnSampler,
+  ParentBasedSampler,
+  SamplingDecision,
+  type Sampler,
+} from '@opentelemetry/sdk-trace-base';
+import { ConsoleSpanExporter } from '@opentelemetry/sdk-trace-node';
 
-# or
+class SpanNameFilteringSampler implements Sampler {
+  private readonly filteredSpanNames: ReadonlySet<string>;
+  private readonly parentBased = new ParentBasedSampler({
+    root: new AlwaysOnSampler(),
+  });
 
-AGENTS_TELEMETRY_DISABLED_SPAN_CATEGORIES=STORAGE AUTHORIZATION
+  constructor(spanNames: Iterable<string>) {
+    this.filteredSpanNames = new Set(spanNames);
+  }
+
+  shouldSample: Sampler['shouldSample'] = (context, traceId, spanName, spanKind, attributes, links) => {
+    return this.filteredSpanNames.has(spanName)
+      ? { decision: SamplingDecision.NOT_RECORD }
+      : this.parentBased.shouldSample(context, traceId, spanName, spanKind, attributes, links)
+  }
+
+  toString() {
+    return `SpanNameFilteringSampler(${[...this.filteredSpanNames].join(',')})`;
+  }
+}
+
+const sdk = new NodeSDK({
+  sampler: new SpanNameFilteringSampler([
+    SpanNames.AGENTS_APP_TYPING_INDICATOR,
+  ]),
+  traceExporter: new ConsoleSpanExporter(),
+});
+
+sdk.start();
 ```
 
-Valid category names are case-insensitive:
+Add other values from `SpanNames` when additional SDK spans should be filtered. Applications migrating from the deprecated `STORAGE`, `AUTHENTICATION`, `AUTHORIZATION`, or `DIALOGS` categories should list the corresponding span-name constants instead. This gives the application explicit control over its sampling policy without requiring SDK-specific environment configuration.
 
-| Category | Disabled spans |
-|----------|----------------|
-| `STORAGE` | `agents.storage.*` |
-| `AUTHENTICATION` | `agents.authentication.*` |
-| `AUTHORIZATION` | `agents.authorization.*` and `agents.user_token_client.*` |
-| `DIALOGS` | `agents.dialogs.*` |
-
-When a span category is disabled, the trace helper still executes your callback with no-op `record` and `actions` helpers so the instrumented code path remains safe, but it does not create a span or emit the metrics normally recorded by that span's end hook.
-
-The setting is read once when the telemetry module loads. Unknown categories are ignored with a warning, and duplicate categories are de-duplicated.
-
+---
 
 ## JavaScript Metrics
 
