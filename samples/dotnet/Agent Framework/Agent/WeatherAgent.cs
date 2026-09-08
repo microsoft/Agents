@@ -9,6 +9,7 @@ using Microsoft.Agents.Builder.State;
 using Microsoft.Agents.Core;
 using Microsoft.Agents.Core.Models;
 using Microsoft.Agents.Core.Serialization;
+using Microsoft.Agents.Core.Telemetry;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
 
@@ -27,6 +28,9 @@ namespace AgentFrameworkWeather.Agent
         For current weather, Use the {{WeatherLookupTool.GetCurrentWeatherForLocation}}, you should include the current temperature, low and high temperatures, wind speed, humidity, and a short description of the weather.
         For forecast's, Use the {{WeatherLookupTool.GetWeatherForecastForLocation}}, you should report on the next 5 days, including the current day, and include the date, high and low temperatures, and a short description of the weather.
         You should use the {{DateTimePlugin.GetDateTime}} to get the current date and time.
+
+        When responding, make sure to format the information in a way that is easy to read and understand, markdown is good, and always speak like a cat. Use emojis if it fits the response!
+
         """;
 
         private readonly IChatClient? _chatClient = null;
@@ -65,7 +69,7 @@ namespace AgentFrameworkWeather.Agent
                 var _agent = GetClientAgent(turnContext);
 
                 // Read or Create the conversation thread for this conversation.
-                AgentThread? thread = GetConversationThread(_agent, turnState);
+                AgentSession? thread = await GetConversationThread(_agent, turnState);
 
                 // Stream the response back to the user as we receive it from the agent.
                 await foreach (var response in _agent.RunStreamingAsync(userText, thread, cancellationToken: cancellationToken))
@@ -75,7 +79,7 @@ namespace AgentFrameworkWeather.Agent
                         turnContext.StreamingResponse.QueueTextChunk(response.Text);
                     }
                 }
-                turnState.Conversation.SetValue("conversation.threadInfo", ProtocolJsonSerializer.ToJson(thread.Serialize()));
+                turnState.Conversation.SetValue("conversation.threadInfo", (await _agent.SerializeSessionAsync(thread)).ToString());
             }
             finally
             {
@@ -90,7 +94,7 @@ namespace AgentFrameworkWeather.Agent
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        private ChatClientAgent GetClientAgent(ITurnContext context)
+        private AIAgent GetClientAgent(ITurnContext context)
         {
             AssertionHelpers.ThrowIfNull(_configuration!, nameof(_configuration));
             AssertionHelpers.ThrowIfNull(context, nameof(context));
@@ -103,7 +107,9 @@ namespace AgentFrameworkWeather.Agent
             var toolOptions = new ChatOptions
             {
                 Temperature = (float?)0.2,
-                Tools = new List<AITool>()
+                Tools = new List<AITool>(),
+                Instructions = AgentInstructions,
+                AllowMultipleToolCalls = true
             };
             toolOptions.Tools.Add(AIFunctionFactory.Create(DateTimeFunctionTool.getDate));
             toolOptions.Tools.Add(AIFunctionFactory.Create(weatherLookupTool.GetCurrentWeatherForLocation));
@@ -114,15 +120,20 @@ namespace AgentFrameworkWeather.Agent
                     new ChatClientAgentOptions
                     {
                         Name = "Purrfect Weather Agent",
-                        Instructions = AgentInstructions,
                         ChatOptions = toolOptions,
-                        ChatMessageStoreFactory = ctx =>
-                        {
+                        ChatHistoryProvider =
 #pragma warning disable MEAI001 // MessageCountingChatReducer is for evaluation purposes only and is subject to change or removal in future updates
-                            return new InMemoryChatMessageStore(new MessageCountingChatReducer(10), ctx.SerializedState, ctx.JsonSerializerOptions);
+                            new InMemoryChatHistoryProvider(new InMemoryChatHistoryProviderOptions
+                            {
+                                JsonSerializerOptions = ProtocolJsonSerializer.SerializationOptions,
+                                ChatReducer = new MessageCountingChatReducer(10)
+                            })
 #pragma warning restore MEAI001 // MessageCountingChatReducer is for evaluation purposes only and is subject to change or removal in future updates
-                        }
-                    });
+
+                    })
+                .AsBuilder()
+                .UseOpenTelemetry(sourceName: AgentsTelemetry.SourceName, (cfg) => cfg.EnableSensitiveData = true)
+                .Build(); 
         }
 
         /// <summary>
@@ -131,18 +142,19 @@ namespace AgentFrameworkWeather.Agent
         /// <param name="agent">ChatAgent</param>
         /// <param name="turnState">State Manager for the Agent.</param>
         /// <returns></returns>
-        private static AgentThread GetConversationThread(ChatClientAgent agent, ITurnState turnState)
+        private static async Task<AgentSession> GetConversationThread(AIAgent? agent, ITurnState turnState)
         {
-            AgentThread thread;
+            ArgumentNullException.ThrowIfNull(agent);
+            AgentSession thread;
             string? agentThreadInfo = turnState.Conversation.GetValue<string?>("conversation.threadInfo", () => null);
             if (string.IsNullOrEmpty(agentThreadInfo))
             {
-                thread = agent.GetNewThread();
+                thread = await agent.CreateSessionAsync();
             }
             else
             {
                 JsonElement ele = ProtocolJsonSerializer.ToObject<JsonElement>(agentThreadInfo);
-                thread = agent.DeserializeThread(ele);
+                thread = await agent.DeserializeSessionAsync(ele);
             }
             return thread;
         }

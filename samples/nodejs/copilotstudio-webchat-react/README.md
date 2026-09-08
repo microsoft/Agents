@@ -76,7 +76,7 @@ This step requires permissions to create application identities in your Azure te
          appClientId: 'your-app-client-id-here',
          tenantId: 'your-tenant-id-here',
          environmentId: 'your-environment-id-here',
-         agentIdentifier: 'your-schema-name-here',
+         schemaName: 'your-schema-name-here',
        }
      }
      ```
@@ -110,6 +110,19 @@ This step requires permissions to create application identities in your Azure te
 
 3. **Open your browser:**
    - Navigate to [http://localhost:3000](http://localhost:3000) to interact with your Copilot Studio bot via the WebChat interface.
+
+### Optional: view browser telemetry with Aspire
+
+Run the sample and a local Aspire Dashboard together:
+
+```bash
+npm run build
+npm run aspire
+```
+
+Aspire prints the dashboard URL in the terminal. Open the dashboard, then use the **URLs** column to open **webchat**. The dashboard shows browser document-load and network-fetch traces. It does not show telemetry from the Copilot Studio agent, which runs outside this sample.
+
+This local development exporter sends browser traces directly to the anonymous Aspire Dashboard. Do not use this configuration in production; send browser telemetry through a server-side collector or proxy instead.
 
 ## 6. How It Works
 
@@ -151,7 +164,7 @@ Configuration is handled through `settings.js` which emulates Node.js process.en
 process.env.appClientId      // Your Azure AD app registration ID
 process.env.tenantId         // Your Azure AD tenant ID  
 process.env.environmentId    // Copilot Studio environment ID
-process.env.agentIdentifier  // Copilot Studio schema name
+process.env.schemaName       // Copilot Studio schema name
 // ... other configuration options
 ```
 

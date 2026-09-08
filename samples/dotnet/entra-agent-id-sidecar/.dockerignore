@@ -1,0 +1,8 @@
+**/bin
+**/obj
+.git
+.gitignore
+.env
+env.*
+README.md
+compose.yaml

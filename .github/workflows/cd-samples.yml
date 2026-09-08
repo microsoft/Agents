@@ -1,85 +1,135 @@
-name: cd-samples
-
+name: CI-samples
 on:
-  workflow_dispatch:
   pull_request:
     branches:
       - main
 
+permissions:
+  contents: read
+
+env:
+  NODE_MINVERSION: '20'
+  PYTHON_MINVERSION: '3.10'
+
 jobs:
-  build:
+  check_path:
+    runs-on: ubuntu-latest
+    name: Check path of changed files
+    outputs:
+      samples_changed: ${{ steps.check_samples.outputs.samples_changed }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - id: check_samples
+        name: Check if files in samples folder
+        run: |
+          ZERO_SHA='0000000000000000000000000000000000000000'
+
+          # Get changed files
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            # For PRs, compare against base branch
+            CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }}...HEAD)
+          else
+            # For push events, compare against previous commit
+            # A zero SHA means there is no prior commit to diff against, such as branch creation.
+            if [[ "${{ github.event.before }}" != "$ZERO_SHA" ]] && git rev-parse --verify "${{ github.event.before }}" >/dev/null 2>&1; then
+              CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+            else
+              CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
+            fi
+          fi
+          
+          # Check if any files are in samples folder
+          HAS_SAMPLES=false
+          while IFS= read -r file; do
+            if [[ "$file" == samples/* ]]; then
+              HAS_SAMPLES=true
+              break
+            fi
+          done <<< "$CHANGED_FILES"
+          
+          echo "samples_changed=$HAS_SAMPLES" >> $GITHUB_OUTPUT
+
+  build-dotnet:
+    needs: check_path
+    if: ${{ needs.check_path.outputs.samples_changed == 'true' }}
+    name: cd-samples-net
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js 22
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install Node dependencies
-        run: npm ci
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Build dotnet Samples
         working-directory: ./samples/dotnet
         run: |
           dotnet build
 
+  build-node:
+    needs: check_path
+    if: ${{ needs.check_path.outputs.samples_changed == 'true' }}
+    name: cd-samples-node
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        # NOTE: keep first entry in sync with env.NODE_MINVERSION
+        node-version: [20, 'latest']
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Node dependencies
+        run: npm ci
+
       - name: Run lint
         run: npm run lint
 
-      - name: Build Node Copilot Studio client sample
-        working-directory: ./samples/nodejs/copilotstudio-client/
+      - name: Build all Node samples
         run: |
-          npm ci
-          npm run build
+          for dir in samples/nodejs/*/; do
+            if [ -f "$dir/package.json" ]; then
+              echo "::group::Building $dir"
+              (cd "$dir" && npm ci && npm run build)
+              echo "::endgroup::"
+            fi
+          done
 
-      - name: Build Node Copilot Studio client - React Webchat sample
-        working-directory: ./samples/nodejs/copilotstudio-webchat-react/
-        run: |
-          npm ci
-          npm run build
+  build-python:
+    needs: check_path
+    if: ${{ needs.check_path.outputs.samples_changed == 'true' }}
+    name: cd-samples-python
+    runs-on: ubuntu-latest
 
-      - name: build Node QuickStart
-        working-directory: ./samples/nodejs/quickstart
-        run: |
-          npm ci
-          npm run build
+    strategy:
+      matrix:
+        # NOTE: keep first entry in sync with env.PYTHON_MINVERSION
+        python-version: ['3.10', '3.x']
 
-      - name: Build  Node Cards Agent
-        working-directory: ./samples/nodejs/cards/
-        run: |
-          npm ci
-          npm run build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Build  iamge Node Skill Agent
-        working-directory: ./samples/nodejs/copilotstudio-skill/
-        run: |
-          npm ci
-          npm run build
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
 
-      - name: Build Node langChain Agent
-        working-directory: ./samples/nodejs/langchain-multiturn/
+      - name: Build all Python samples
         run: |
-          npm ci
-          npm run build
-
-      - name: Build Node StreamingResponse Agent
-        working-directory: ./samples/nodejs/azure-ai-streaming/
-        run: |
-          npm ci
-          npm run build
-
-      - name: Build Node auto signin Agent
-        working-directory: ./samples/nodejs/auto-signin/
-        run: |
-          npm ci
-          npm run build
-
-      - name: Build Node OBO Agent
-        working-directory: ./samples/nodejs/obo-authorization/
-        run: |
-          npm ci
-          npm run build
+          for dir in samples/python/*/; do
+            if [ -f "$dir/requirements.txt" ]; then
+              echo "::group::Building $dir"
+              (cd "$dir" && pip install -r requirements.txt && python -m compileall src/ -q)
+              echo "::endgroup::"
+            fi
+          done

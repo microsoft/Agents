@@ -28,8 +28,9 @@ The error code serves as a deep link anchor to this document.
 - **[Storage - Cosmos DB Errors (-100000 to -100999)](#storage---cosmos-db-errors--100000-to--100999)** - 20 errors - Cosmos DB configuration, partition keys, and storage operations
 - **[Storage - Blob Errors (-160000 to -160999)](#storage---blob-errors--160000-to--160999)** - 3 errors - Azure Blob Storage configuration and container management
 - **[Teams Errors (-150000 to -150999)](#teams-errors--150000-to--150999)** - 19 errors - Microsoft Teams context, channels, meetings, and participants
-- **[Hosting Errors (-120000 to -120999)](#hosting-errors--120000-to--120999)** - 75 errors - Adapter configuration, turn context, authentication, and streaming
-- **[Activity Errors (-110000 to -110999)](#activity-errors--110000-to--110999)** - 8 errors - Bot Framework activity validation and channel configuration
+- **[Slack Errors (-170000 to -170999)](#slack-errors--170000-to--170999)** - 4 errors - Slack API operations, authentication, and streaming
+- **[Hosting Errors (-120000 to -120999)](#hosting-errors--120000-to--120999)** - 94 errors - Adapter configuration, turn context, authentication, and streaming
+- **[Activity Errors (-110000 to -110999)](#activity-errors--110000-to--110999)** - 9 errors - Bot Framework activity validation and channel configuration
 - **[Dialog Errors (-130000 to -130999)](#dialog-errors--130000-to--130999)** - 29 errors - Dialog management, context, and state operations
 
 ---
@@ -2193,6 +2194,45 @@ const app = new AgentApplication({
 
 ---
 
+### -120591
+
+**Azure Bot OAuth Connection Name Required**
+
+**Description & Context:**
+
+This error occurs when the `azureBotOAuthConnectionName` option is not available in the app options. This setting is required for Azure Bot OAuth-based authentication flows and must be configured before attempting OAuth operations.
+
+**Likely Fix:**
+
+Ensure the `azureBotOAuthConnectionName` is properly configured in your application options:
+```typescript
+const app = new AgentApplication({
+  azureBotOAuthConnectionName: 'your-oauth-connection-name'
+});
+```
+Verify the connection name matches an OAuth connection configured in your Azure Bot registration.
+
+---
+
+### -120592
+
+**Azure Bot Connection Token Not Exchangeable**
+
+**Description & Context:**
+
+This error occurs when the current token for an AzureBot connection cannot be exchanged for an on-behalf-of (OBO) flow. For OBO token exchange to work, the base token audience must be for the bot/resource app, such as an App ID URI like `api://...` or otherwise include the app's client ID.
+
+**Likely Fix:**
+
+Ensure the token acquired for the AzureBot connection has the correct audience:
+```typescript
+// Token audience should target the bot's app registration
+// e.g., api://your-bot-app-id or include the client ID
+```
+Review your Azure Bot OAuth connection configuration to ensure the token endpoint returns tokens with an appropriate audience for OBO exchange. The audience should be an App ID URI (e.g., `api://botid-xxxx`) rather than a generic Microsoft resource.
+
+---
+
 ### -120600
 
 **Missing Agent Client Config**
@@ -2346,6 +2386,228 @@ This error is raised when an invalid state scope is provided. Valid scopes are t
 Use valid state scopes:
 ```typescript
 const scope = 'conversation'; // Valid scope
+```
+
+---
+
+### -120740
+
+**Proactive Property Unavailable**
+
+**Description & Context:**
+
+This error occurs when trying to access the `Application.proactive` property but no storage was configured. Proactive messaging requires a storage backend to persist conversation references and state across turns.
+
+**Likely Fix:**
+
+Configure storage in your application options:
+```typescript
+const app = new AgentApplication({
+  storage: new MemoryStorage(), // or BlobsStorage, CosmosDbPartitionedStorage
+  // Or configure proactive-specific storage:
+  proactive: { storage: new MemoryStorage() }
+});
+```
+
+---
+
+### -120741
+
+**Proactive Storage Required**
+
+**Description & Context:**
+
+This error is raised when a proactive operation is attempted but no storage backend is configured. Proactive operations need storage to persist and retrieve conversation references.
+
+**Likely Fix:**
+
+Set `options.storage` or `options.proactive.storage` in your application options before using proactive features.
+
+---
+
+### -120742
+
+**Proactive Conversation Not Found**
+
+**Description & Context:**
+
+This error occurs when attempting to send a proactive message to a conversation that doesn't exist in proactive storage. The conversation reference must be saved before it can be used for proactive messaging.
+
+**Likely Fix:**
+
+Ensure the conversation is saved to proactive storage before attempting proactive messaging:
+```typescript
+// Save conversation reference during an active turn
+await app.proactive.saveConversation(context);
+
+// Later, send proactive message
+await app.proactive.sendActivity(conversationId, activity);
+```
+Verify the conversation ID is correct and the conversation was previously saved.
+
+---
+
+### -120743
+
+**Proactive Send Activity No Response**
+
+**Description & Context:**
+
+This error occurs when the adapter does not return a `ResourceResponse` after sending a proactive activity. This typically indicates the adapter failed to deliver the message or an unexpected adapter behavior.
+
+**Likely Fix:**
+
+Verify your adapter is properly configured and the conversation reference is valid. Check network connectivity to the Bot Framework service.
+
+---
+
+### -120744
+
+**Proactive Not All Tokens Acquired**
+
+**Description & Context:**
+
+This error occurs when not all configured token handlers have a signed-in user. Proactive operations that require authenticated access to external services need all configured auth handlers to have valid tokens.
+
+**Likely Fix:**
+
+Ensure all users have completed sign-in for all configured auth handlers before attempting proactive operations that require authenticated access.
+
+---
+
+### -120745
+
+**Proactive Members Required**
+
+**Description & Context:**
+
+This error is raised when calling `createConversation` without specifying at least one member in `parameters.members`. A conversation must have at least one participant besides the bot.
+
+**Likely Fix:**
+
+Provide at least one member when creating a conversation:
+```typescript
+await app.proactive.createConversation({
+  members: [{ id: 'user-id', name: 'User Name' }]
+});
+```
+
+---
+
+### -120746
+
+**Proactive Cloud Adapter Required**
+
+**Description & Context:**
+
+This error occurs when `createConversation` is called but the provided adapter does not implement `createConversationAsync()`. This operation requires a CloudAdapter.
+
+**Likely Fix:**
+
+Ensure your application uses a CloudAdapter:
+```typescript
+const adapter = new CloudAdapter(config);
+const app = new AgentApplication({ adapter });
+```
+
+---
+
+### -120747
+
+**Proactive Callback Not Invoked**
+
+**Description & Context:**
+
+This error occurs when `createConversationAsync` completed without invoking its callback. This indicates an unexpected adapter behavior where the conversation creation process didn't properly trigger the callback function.
+
+**Likely Fix:**
+
+This typically indicates an adapter implementation issue. Verify the adapter correctly implements `createConversationAsync()` and invokes the provided callback.
+
+---
+
+### -120748
+
+**Conversation Invalid ID**
+
+**Description & Context:**
+
+This error occurs when a conversation reference is invalid because `reference.conversation.id` is missing or empty. The conversation ID is required for proactive messaging operations.
+
+**Likely Fix:**
+
+Ensure the conversation reference has a valid conversation ID:
+```typescript
+if (!reference.conversation?.id) {
+  throw new Error('Invalid conversation reference');
+}
+```
+
+---
+
+### -120749
+
+**Conversation Invalid Service URL**
+
+**Description & Context:**
+
+This error occurs when a conversation reference is invalid because `reference.serviceUrl` is missing. The service URL is required to route messages to the correct Bot Framework service endpoint.
+
+**Likely Fix:**
+
+Ensure the conversation reference has a valid service URL before using it for proactive messaging.
+
+---
+
+### -120750
+
+**Conversation Invalid Audience**
+
+**Description & Context:**
+
+This error occurs when a conversation is invalid because `claims.aud` (the agent client ID) is required but missing. The audience claim identifies the bot application and is needed for authentication during proactive messaging.
+
+**Likely Fix:**
+
+Ensure the conversation was saved with proper authentication claims. The audience (aud) claim should contain the bot's client ID.
+
+---
+
+### -120751
+
+**Create Conversation Builder Members Required**
+
+**Description & Context:**
+
+This error occurs when using `CreateConversationOptionsBuilder` without adding at least one member via `withUser()`. A conversation requires at least one user participant.
+
+**Likely Fix:**
+
+Add at least one user before building the options:
+```typescript
+const options = new CreateConversationOptionsBuilder()
+  .withUser({ id: 'user-id', name: 'User' })
+  .build();
+```
+
+---
+
+### -120753
+
+**Create Conversation Builder Channel Activity Required**
+
+**Description & Context:**
+
+This error occurs when creating a Teams channel conversation without providing an initial activity. Teams channel conversations require an initial message or activity to start the thread.
+
+**Likely Fix:**
+
+Call `withActivity()` before building options for Teams channel conversations:
+```typescript
+const options = new CreateConversationOptionsBuilder()
+  .withUser({ id: 'user-id' })
+  .withActivity({ type: 'message', text: 'Starting conversation' })
+  .build();
 ```
 
 ---
@@ -2739,6 +3001,30 @@ if (!activity.channelId) {
 }
 ```
 Incoming activities from channels automatically have channelId set.
+
+---
+
+### -110008
+
+**Targeted Activity Is Group Only**
+
+**Description & Context:**
+
+This error occurs when attempting to send a targeted activity outside of a group chat or channel context. Targeted activities (activities directed at specific participants) are only supported in group conversations or channels, not in 1:1 personal chats.
+
+**Likely Fix:**
+
+Ensure you're only sending targeted activities in group chat or channel contexts:
+```typescript
+// Check if conversation is a group before sending targeted activity
+if (context.activity.conversation?.isGroup) {
+  await context.sendActivity(targetedActivity);
+} else {
+  // Fall back to a regular activity for 1:1 chats
+  await context.sendActivity(regularActivity);
+}
+```
+Verify the conversation type before attempting to send targeted activities.
 
 ---
 
@@ -3382,6 +3668,101 @@ Check the error details to identify which step (by index) failed and why. Add pr
 
 ---
 
+## Slack Errors (-170000 to -170999)
+
+The Slack errors relate to the Slack channel extension for agents. These errors occur during Slack API operations, token validation, and streaming message updates.
+
+### -170000
+
+**Slack API Error**
+
+**Description & Context:**
+
+This error occurs when a Slack API call returns a failure response (`ok: false`). Slack API methods return a JSON object with an `ok` field indicating success or failure. When `ok` is `false`, the response includes an `error` field with a specific error code from Slack (e.g., `channel_not_found`, `not_authed`, `invalid_auth`).
+
+**Likely Fix:**
+
+Review the error code included in the exception message and consult the [Slack API documentation](https://api.slack.com/methods) for the specific method being called. Common causes include:
+- `channel_not_found`: The channel ID is invalid or the bot isn't a member
+- `not_authed` / `invalid_auth`: The Slack API token is invalid or expired
+- `missing_scope`: The bot token lacks required OAuth scopes
+```typescript
+try {
+  await slackApi.call('chat.postMessage', { channel: 'C123', text: 'Hello' });
+} catch (error) {
+  // Check the Slack error code in the message
+  console.error('Slack API error:', error.message);
+}
+```
+
+---
+
+### -170001
+
+**Slack API HTTP Error**
+
+**Description & Context:**
+
+This error occurs when the HTTP request to the Slack API fails at the transport level. This can be due to network errors, DNS resolution failures, timeouts, or non-2xx HTTP status codes (e.g., 503 Service Unavailable, 429 Too Many Requests).
+
+**Likely Fix:**
+
+Check network connectivity and Slack API service status:
+- For network errors: Verify outbound HTTPS access to `https://slack.com/api/`
+- For 429 status: Implement rate limiting and retry with backoff as per [Slack rate limits](https://api.slack.com/docs/rate-limits)
+- For 5xx status: Slack may be experiencing issues; retry after a delay
+- Ensure your deployment environment allows outbound HTTPS connections to Slack's API endpoints
+
+---
+
+### -170002
+
+**Slack API Token Missing**
+
+**Description & Context:**
+
+This error occurs when no Slack API token is available for making API calls. The extension looks for the token in two places: the `ApiToken` property in the activity's channel data, or the `SLACK_TOKEN` environment variable. If neither is set, the extension cannot authenticate with Slack's API.
+
+**Likely Fix:**
+
+Provide a Slack API token via one of these methods:
+1. Set the `SLACK_TOKEN` environment variable with your bot's OAuth token
+2. Include `ApiToken` in the channel data when calling Slack-specific methods
+
+```typescript
+// Option 1: Environment variable
+// Set SLACK_TOKEN=xoxb-your-bot-token in your .env file
+
+// Option 2: Channel data (set during activity processing)
+activity.channelData = {
+  ApiToken: 'xoxb-your-bot-token'
+};
+```
+Ensure the token has the necessary bot scopes for the operations you're performing.
+
+---
+
+### -170003
+
+**Slack Stream Not Started**
+
+**Description & Context:**
+
+This error occurs when calling `append()` or `stop()` on a `SlackStream` instance before calling `start()`. The stream must be initialized with `start()` first, which posts the initial message to Slack that subsequent updates will modify.
+
+**Likely Fix:**
+
+Always call `start()` before `append()` or `stop()`:
+```typescript
+const stream = extension.createStream(context);
+await stream.start('Processing...'); // Must be called first
+await stream.append('Still working...');
+await stream.stop('Done!');
+```
+Ensure your streaming logic follows the correct lifecycle: `start()` → `append()` (zero or more times) → `stop()`.
+
+---
+
 ## Appendix - Linking to this Document
 
 This document is deep-linked from the M365 Agents SDK for JavaScript. When errors/exceptions are generated, those exceptions contain aka.ms links that deep link into the sections here. The error codes MUST map to a section header.
@@ -3401,12 +3782,13 @@ The following prompt was used to create this document. Due to token limits, this
   
   For the JS SDK, we need a similar markdown file. 
   
-  There are 8 packages in this JS project that need to be analyzed:
+  There are 9 packages in this JS project that need to be analyzed:
   1. agents-activity
   1. agents-copilot-studio-client
   1. agents-hosting
   1. agents-hosting-dialogs
   1. agents-hosting-express
+  1. agents-hosting-extensions-slack
   1. agents-hosting-extensions-teams
   1. agents-hosting-storage-blob
   1. agents-hosting-storage-cosmos

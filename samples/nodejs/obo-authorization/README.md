@@ -41,7 +41,9 @@ This Agent has been created using [Microsoft 365 Agents SDK](https://github.com/
     you should have one item for `graph` and aonther for `github`
 
     ```env
-    graph_connectionName=
+    AgentApplication__UserAuthorization__Handlers__graph__Settings__azureBotOAuthConnectionName=
+    AgentApplication__UserAuthorization__Handlers__graph__Settings__oboConnectionName=oboConnection
+    AgentApplication__UserAuthorization__Handlers__graph__Settings__oboScopes=https://graph.microsoft.com/.default
     ```
       
 

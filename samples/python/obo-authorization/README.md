@@ -7,7 +7,7 @@ This Agent has been created using [Microsoft 365 Agents SDK](https://github.com/
 
 ## Prerequisites
 
-- [Python](https://www.python.org/) version 3.9 or higher
+- [Python](https://www.python.org/) version 3.10 or higher
 - [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) (for local development)
 - Access to CopilotStudio to [create an Agent](https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-get-started?tabs=web)
 
@@ -17,7 +17,7 @@ This Agent has been created using [Microsoft 365 Agents SDK](https://github.com/
 
 1. Create an Agent in Copilot Studio.
    1. Publish your newly created Agent
-   1. Got to Settings => Advanced => Metadata and copy the following values. You will need them later:
+   1. Go to Settings => Advanced => Metadata and copy the following values. You will need them later:
       1. Schema name
       1. Environment ID
 

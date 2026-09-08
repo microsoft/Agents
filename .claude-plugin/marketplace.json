@@ -1,0 +1,33 @@
+{
+  "name": "microsoft-agents-sdk",
+  "owner": { "name": "Microsoft" },
+  "metadata": {
+    "description": "Claude Code skills for building agents with the Microsoft Agents SDK"
+  },
+  "plugins": [
+    {
+      "name": "agents-sdk-common",
+      "source": "./agent-plugins/agents-sdk-common",
+      "description": "Shared skills for building agents with the Microsoft 365 Agents SDK (all languages)",
+      "version": "1.1.1"
+    },
+    {
+      "name": "agents-for-js",
+      "source": "./agent-plugins/agents-for-js",
+      "description": "Skills for building agents with the Microsoft 365 Agents SDK for TypeScript/JavaScript",
+      "version": "1.2.0"
+    },
+    {
+      "name": "agents-for-net",
+      "source": "./agent-plugins/agents-for-net",
+      "description": "Skills for building agents with the Microsoft 365 Agents SDK for DotNet",
+      "version": "1.2.0"
+    },
+    {
+      "name": "agents-for-python",
+      "source": "./agent-plugins/agents-for-python",
+      "description": "Skills for building agents with the Microsoft 365 Agents SDK for Python",
+      "version": "1.2.0"
+    }
+  ]
+}

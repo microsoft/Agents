@@ -19,10 +19,11 @@ builder.Configuration.AddUserSecrets(Assembly.GetExecutingAssembly());
 builder.Services.AddControllers();
 builder.Services.AddHttpClient("WebClient", client => client.Timeout = TimeSpan.FromSeconds(600));
 builder.Services.AddHttpContextAccessor();
-builder.Logging.AddConsole();
 
-// Add AspNet token validation
-builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
+// Configure defaults for Aspire dashboard
+builder.ConfigureOtelProviders();
+
+builder.Logging.AddConsole();
 
 // Register IStorage.  For development, MemoryStorage is suitable.
 // For production Agents, persisted storage should be used so
@@ -30,11 +31,14 @@ builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
 // in a cluster of Agent instances.
 builder.Services.AddSingleton<IStorage, MemoryStorage>();
 
-// Add AgentApplicationOptions from config.
-builder.AddAgentApplicationOptions();
-
-// Add the bot (which is transient)
-builder.AddAgent<WeatherAgent>();
+// Add the bot (which is transient) and configure AspNet token validation.
+// Authorization (and therefore required auth on the mapped endpoints) is enabled
+// for all environments except Development and Playground.
+builder.AddAgentDefaults()
+    .AddAgent<WeatherAgent>()
+    .AddAgentAuthorization(
+        b => b.AddAgentAspNetAuthentication(),
+        forceEnable: !(builder.Environment.IsDevelopment() || builder.Environment.EnvironmentName == "Playground"));
 
 // Register IChatClient with correct types
 builder.Services.AddSingleton<IChatClient>(sp => {
@@ -67,31 +71,18 @@ builder.Services.AddSingleton<Microsoft.Agents.Builder.IMiddleware[]>([new Trans
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-}
+// Add the authentication and authorization middleware to the request pipeline
+// (with routing enabled so the controllers below can be mapped).
+app.UseAgents(useRouting: true);
 
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
-
-
-// Map the /api/messages endpoint to the AgentApplication
-app.MapPost("/api/messages", async (HttpRequest request, HttpResponse response, IAgentHttpAdapter adapter, IAgent agent, CancellationToken cancellationToken) =>
-{
-    await adapter.ProcessAsync(request, response, agent, cancellationToken);
-});
+// Map the default agent endpoints: GET "/" and the agent message endpoints.
+// Authorization is required automatically when AddAgentAuthorization enabled it above.
+app.MapDefaultAgentEndpoints();
 
 if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Playground")
 {
-    app.MapGet("/", () => "Agent Framework Example Weather Agent");
     app.UseDeveloperExceptionPage();
     app.MapControllers().AllowAnonymous();
-
-    // Hard coded for brevity and ease of testing. 
-    // In production, this should be set in configuration.
-    app.Urls.Add($"http://localhost:3978");
 }
 else
 {

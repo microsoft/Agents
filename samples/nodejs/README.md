@@ -13,3 +13,8 @@
 |Cards Agent|Agent that uses rich cards to enhance conversation design |[cards](cards/README.md)|
 |Multi-turn Prompt |Multi-turn dialog flow using prompts and state management |[multi-turn-prompt](multi-turn-prompt/README.md)|
 |Copilot Studio Skill|Call the echo bot from a Copilot Studio skill |[copilotstudio-skill](copilotstudio-skill/README.md)|
+|Copilot SDK|Dungeon Scribe RPG agent powered by the GitHub Copilot SDK|[copilot-sdk](copilot-sdk/README.md)|
+|OTel Agent|Agent with OTel instrumentation |[otel](otel/README.md)|
+|Named Pipe Agent|Pipe-only echo agent for the DirectLine App Service extension (DirectLineFlex)|[named-pipe-agent](named-pipe-agent/README.md)|
+|Entra Agent ID Sidecar|Simple agent using the Microsoft Entra Agent ID sidecar for Agents SDK authentication|[entra-agent-id-sidecar](entra-agent-id-sidecar/README.md)|
+|Proactive|Sends messages to existing conversations from in-code and HTTP triggers|[proactive](proactive/README.md)|

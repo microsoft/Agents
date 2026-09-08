@@ -4,7 +4,7 @@ This sample shows how to create an Agent that can be consumed from CopilotStudio
 
 ## Prerequisites
 
-- [Python](https://www.python.org/) version 3.9 or higher
+- [Python](https://www.python.org/) version 3.10 or higher
 - [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) (for local development)
 - Access to CopilotStudio to [create an Agent](https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-get-started?tabs=web)
 

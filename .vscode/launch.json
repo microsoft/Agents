@@ -1,0 +1,146 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Program",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${file}",
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "nodejs/quickstart",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/samples/nodejs/quickstart/dist/index.js",
+            "cwd": "${workspaceFolder}/samples/nodejs/quickstart",
+            "envFile": "${workspaceFolder}/samples/nodejs/quickstart/.env",
+            "outFiles": [
+                "${workspaceFolder}/samples/nodejs/quickstart/dist/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "nodejs/multi-turn-prompt",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/samples/nodejs/multi-turn-prompt/dist/index.js",
+            "cwd": "${workspaceFolder}/samples/nodejs/multi-turn-prompt",
+            "envFile": "${workspaceFolder}/samples/nodejs/multi-turn-prompt/.env",
+            "outFiles": [
+                "${workspaceFolder}/samples/nodejs/multi-turn-prompt/dist/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "nodejs/cards",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/samples/nodejs/cards/dist/index.js",
+            "cwd": "${workspaceFolder}/samples/nodejs/cards",
+            "envFile": "${workspaceFolder}/samples/nodejs/cards/.env",
+            "outFiles": [
+                "${workspaceFolder}/samples/nodejs/cards/dist/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "nodejs/auto-signin",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/samples/nodejs/auto-signin/dist/index.js",
+            "cwd": "${workspaceFolder}/samples/nodejs/auto-signin",
+            "envFile": "${workspaceFolder}/samples/nodejs/auto-signin/.env",
+            "outFiles": [
+                "${workspaceFolder}/samples/nodejs/auto-signin/dist/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "nodejs/azure-ai-streaming",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/samples/nodejs/azure-ai-streaming/dist/index.js",
+            "cwd": "${workspaceFolder}/samples/nodejs/azure-ai-streaming",
+            "envFile": "${workspaceFolder}/samples/nodejs/azure-ai-streaming/.env",
+            "outFiles": [
+                "${workspaceFolder}/samples/nodejs/azure-ai-streaming/dist/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "nodejs/copilotstudio-client",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/samples/nodejs/copilotstudio-client/dist/index.js",
+            "cwd": "${workspaceFolder}/samples/nodejs/copilotstudio-client",
+            "envFile": "${workspaceFolder}/samples/nodejs/copilotstudio-client/.env",
+            "outFiles": [
+                "${workspaceFolder}/samples/nodejs/copilotstudio-client/dist/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "nodejs/copilotstudio-skill",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/samples/nodejs/copilotstudio-skill/dist/agent.js",
+            "cwd": "${workspaceFolder}/samples/nodejs/copilotstudio-skill",
+            "envFile": "${workspaceFolder}/samples/nodejs/copilotstudio-skill/.env",
+            "outFiles": [
+                "${workspaceFolder}/samples/nodejs/copilotstudio-skill/dist/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "nodejs/langchain-multiturn",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/samples/nodejs/langchain-multiturn/dist/index.js",
+            "cwd": "${workspaceFolder}/samples/nodejs/langchain-multiturn",
+            "envFile": "${workspaceFolder}/samples/nodejs/langchain-multiturn/.env",
+            "outFiles": [
+                "${workspaceFolder}/samples/nodejs/langchain-multiturn/dist/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "nodejs/obo-authorization",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/samples/nodejs/obo-authorization/dist/index.js",
+            "cwd": "${workspaceFolder}/samples/nodejs/obo-authorization",
+            "envFile": "${workspaceFolder}/samples/nodejs/obo-authorization/.env",
+            "outFiles": [
+                "${workspaceFolder}/samples/nodejs/obo-authorization/dist/**/*.js"
+            ]
+        }
+    ]
+}

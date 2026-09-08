@@ -3,17 +3,27 @@
  * Licensed under the MIT License.
  */
 
+import './instrumentation'
 import React from 'react'
-import ReactDOM from 'react-dom'
-import Chat from './Chat'
+import { createRoot } from 'react-dom/client'
 
-ReactDOM.render(
-  <div style={{
-    width: '100vw',
-    height: '100vh',
-    margin: 0,
-  }}
-  >
-    <Chat />
-  </div>, document.getElementById('root')
-)
+const rootElement = document.getElementById('root')
+
+if (!rootElement) {
+  throw new Error('Root element not found')
+}
+
+const root = createRoot(rootElement)
+
+import('./Chat').then(({ default: Chat }) => {
+  root.render(
+    <div style={{
+      width: '100vw',
+      height: '100vh',
+      margin: 0,
+    }}
+    >
+      <Chat />
+    </div>
+  )
+})

@@ -1,0 +1,6 @@
+.aspire
+.env
+node_modules/
+dist/
+devTools/
+*.tsbuildinfo

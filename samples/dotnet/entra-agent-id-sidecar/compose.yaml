@@ -1,0 +1,47 @@
+services:
+  agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    network_mode: "service:sidecar"
+    environment:
+      SIDECAR_URL: http://localhost:5000
+      Connections__ServiceConnection__Settings__SidecarBaseUrl: http://localhost:5000
+      TokenValidation__Audiences__0: ${BLUEPRINT_CLIENT_ID}
+      TokenValidation__TenantId: ${BLUEPRINT_TENANT_ID}
+      ASPNETCORE_ENVIRONMENT: Development
+    depends_on:
+      - sidecar
+    security_opt:
+      - no-new-privileges:true
+
+  sidecar:
+    image: mcr.microsoft.com/entra-sdk/auth-sidecar:1.1.1-azurelinux3.0-distroless
+    ports:
+      - "127.0.0.1:3978:3978"
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      AllowedHosts: "*"
+      AzureAd__Instance: https://login.microsoftonline.com/
+      AzureAd__TenantId: ${BLUEPRINT_TENANT_ID}
+      AzureAd__ClientId: ${BLUEPRINT_CLIENT_ID}
+      AzureAd__ClientCredentials__0__SourceType: ClientSecret
+      AzureAd__ClientCredentials__0__ClientSecret: ${BLUEPRINT_CLIENT_SECRET}
+      Sidecar__AllowOverrides__GetAuthorizationHeaderUnauthenticated: "true"
+      DownstreamApis__agenticblueprint__Scopes__0: api://AzureAdTokenExchange/.default
+      DownstreamApis__agenticblueprint__RequestAppToken: "true"
+      DownstreamApis__botframework__BaseUrl: https://api.botframework.com/
+      DownstreamApis__botframework__Scopes__0: 5a807f24-c9de-44ee-a3a7-329e88a00ffc/.default
+      Logging__LogLevel__Default: Warning
+      Logging__LogLevel__Microsoft.Identity: Warning
+    expose:
+      - "5000"
+    networks:
+      - agent-network
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  agent-network:
+    driver: bridge

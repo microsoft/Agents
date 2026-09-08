@@ -64,7 +64,7 @@ public class MyAgent : AgentApplication
             case WeatherForecastAgentResponseContentType.AdaptiveCard:
                 turnContext.StreamingResponse.FinalMessage = MessageFactory.Attachment(new Attachment()
                 {
-                    ContentType = "application/vnd.microsoft.card.adaptive",
+                    ContentType = ContentTypes.AdaptiveCard,
                     Content = forecastResponse.Content,
                 });
                 break;
