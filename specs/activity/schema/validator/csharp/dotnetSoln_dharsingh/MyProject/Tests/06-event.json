@@ -1,0 +1,12 @@
+{
+  "type": "event",
+  "id": "event-1",
+  "timestamp": "2025-09-15T10:00:06.000Z",
+  "serviceUrl": "https://smba.trafficmanager.net/amer/",
+  "channelId": "webchat",
+  "from": { "id": "user-id-1", "name": "John Doe" },
+  "conversation": { "id": "conv-5" },
+  "recipient": { "id": "bot-id-1", "name": "LocationBot" },
+  "name": "locationReceived",
+  "value": { "latitude": 47.6062, "longitude": -122.3321 }
+}
