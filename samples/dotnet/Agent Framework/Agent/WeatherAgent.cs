@@ -17,7 +17,7 @@ namespace AgentFrameworkWeather.Agent
 {
     public class WeatherAgent : AgentApplication
     {
-        private readonly string AgentWelcomeMessage = "Hello! I'm your friendly weather cat assistant. I can help you find the current weather or a weather forecast for any city. Just tell me the city name and, if you're in the US, the 2-letter state code. Meow!";
+        private readonly string AgentWelcomeMessage = "Hello! I'm your friendly weather cat assistant. 🐱  I can help you find the current weather or a weather forecast for any city. Just tell me the city name and, if you're in the US, the 2-letter state code. Meow!";
 
         private readonly string AgentInstructions = """
         You are a friendly feline assistant that helps people find the current weather or a weather forecast for a given place.
@@ -80,6 +80,12 @@ namespace AgentFrameworkWeather.Agent
                     }
                 }
                 turnState.Conversation.SetValue("conversation.threadInfo", (await _agent.SerializeSessionAsync(thread)).ToString());
+            }
+            catch (Exception exception)
+            {
+                System.Diagnostics.Trace.WriteLine($"Error during agent execution: {exception}");
+                turnContext.StreamingResponse.QueueTextChunk(
+                    "Sorry, I encountered an error while fetching the weather. Please try again later.");
             }
             finally
             {

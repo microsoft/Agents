@@ -5,12 +5,17 @@ from os import environ
 import logging
 
 from dotenv import load_dotenv
-from agent_framework import Agent
+from agent_framework import (
+    Agent,
+    AgentSession,
+    CompactionProvider,
+    InMemoryHistoryProvider,
+    SlidingWindowStrategy,
+)
 from agent_framework.openai import OpenAIChatClient
 
 from microsoft_agents.hosting.aiohttp import CloudAdapter
 from microsoft_agents.authentication.msal import MsalConnectionManager
-
 from microsoft_agents.hosting.core import (
     Authorization,
     AgentApplication,
@@ -21,10 +26,25 @@ from microsoft_agents.hosting.core import (
 from microsoft_agents.activity import load_configuration_from_env
 
 from .tools import get_date, get_current_weather, get_weather_forecast
+from .tools.progress import reset_turn_context, set_turn_context
 
 logger = logging.getLogger(__name__)
 
 load_dotenv()
+
+
+def _required_setting(name: str) -> str:
+    value = environ.get(name, "").strip()
+    if not value:
+        raise RuntimeError(f"{name} environment variable is missing and required.")
+    return value
+
+
+azure_openai_endpoint = _required_setting("AZURE_OPENAI_ENDPOINT")
+azure_openai_api_key = _required_setting("AZURE_OPENAI_API_KEY")
+azure_openai_model = _required_setting("AZURE_OPENAI_MODEL")
+_required_setting("OPEN_WEATHER_API_KEY")
+
 agents_sdk_config = load_configuration_from_env(environ)
 
 STORAGE = MemoryStorage()
@@ -49,15 +69,26 @@ You should use the get_date tool to get the current date and time.
 When responding, make sure to format the information in a way that is easy to read and understand, markdown is good, and always speak like a cat. Use emojis if it fits the response!
 """
 
+HISTORY = InMemoryHistoryProvider(skip_excluded=True)
+CONTEXT_COMPACTION = CompactionProvider(
+    before_strategy=SlidingWindowStrategy(
+        keep_last_groups=10,
+        preserve_system=True,
+    ),
+    history_source_id=HISTORY.source_id,
+)
+
 WEATHER_AGENT = Agent(
     client=OpenAIChatClient(
-        azure_endpoint=environ.get("AZURE_OPENAI_ENDPOINT", ""),
-        api_key=environ.get("AZURE_OPENAI_API_KEY", ""),
-        model=environ.get("AZURE_OPENAI_MODEL", "gpt-4o"),
+        azure_endpoint=azure_openai_endpoint,
+        api_key=azure_openai_api_key,
+        model=azure_openai_model,
     ),
     name="Purrfect Weather Agent",
     instructions=AGENT_INSTRUCTIONS,
     tools=[get_date, get_current_weather, get_weather_forecast],
+    context_providers=[HISTORY, CONTEXT_COMPACTION],
+    default_options={"store": False},
 )
 
 WELCOME_MESSAGE = (
@@ -65,6 +96,12 @@ WELCOME_MESSAGE = (
     "I can help you find the current weather or a weather forecast for any city. "
     "Just tell me the city name and, if you're in the US, the 2-letter state code. Meow!"
 )
+
+
+def _restore_session(value: object) -> AgentSession:
+    if isinstance(value, dict):
+        return AgentSession.from_dict(value)
+    return WEATHER_AGENT.create_session()
 
 
 @AGENT_APP.conversation_update("membersAdded")
@@ -81,26 +118,35 @@ async def on_message(context: TurnContext, state: TurnState):
     if not user_text:
         return
 
+    session = None
+
     context.streaming_response.queue_informative_update("Just a moment please..")
 
-    session_data = None
     try:
-        session_data = state.get_value("ConversationState.agentSession", lambda: None)
+        stored_session = state.get_value(
+            "ConversationState.agentSession", lambda: None
+        )
+        session = _restore_session(stored_session)
 
-        if session_data is None:
-            session_data = WEATHER_AGENT.create_session()
+        context_token = set_turn_context(context)
+        try:
+            async for chunk in WEATHER_AGENT.run(
+                user_text, session=session, stream=True
+            ):
+                if chunk.text:
+                    context.streaming_response.queue_text_chunk(chunk.text)
+        finally:
+            reset_turn_context(context_token)
 
-        async for chunk in WEATHER_AGENT.run(user_text, session=session_data, stream=True):
-            if chunk.text:
-                context.streaming_response.queue_text_chunk(chunk.text)
-
-    except Exception as e:
-        logger.error("Error during agent execution: %s", e)
+    except Exception:
+        logger.exception("Error during agent execution")
         context.streaming_response.queue_text_chunk(
-            "Sorry, I encountered an error while fetching the weather. Please try again later."
+            "Sorry, I encountered an error while fetching the weather. "
+            "Please try again later."
         )
     finally:
-        state.set_value("ConversationState.agentSession", session_data)
+        if session is not None:
+            state.set_value("ConversationState.agentSession", session.to_dict())
         await context.streaming_response.end_stream()
 
 

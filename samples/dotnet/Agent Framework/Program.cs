@@ -67,7 +67,7 @@ builder.Services.AddSingleton<IChatClient>(sp => {
 });
 
 // Uncomment to add transcript logging middleware to log all conversations to files
-builder.Services.AddSingleton<Microsoft.Agents.Builder.IMiddleware[]>([new TranscriptLoggerMiddleware(new FileTranscriptLogger())]);
+// builder.Services.AddSingleton<Microsoft.Agents.Builder.IMiddleware[]>([new TranscriptLoggerMiddleware(new FileTranscriptLogger())]);
 
 var app = builder.Build();
 

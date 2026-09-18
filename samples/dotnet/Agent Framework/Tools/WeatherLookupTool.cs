@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using Microsoft.Agents.Builder;
-using Microsoft.Agents.Core;
 using Microsoft.Agents.Core.Models;
 using OpenWeatherMapSharp;
 using OpenWeatherMapSharp.Models;
@@ -10,149 +9,162 @@ using System.ComponentModel;
 
 namespace AgentFrameworkWeather.Tools
 {
+    public sealed record DailyForecast(
+        DateTime Date,
+        double HighTemperature,
+        double LowTemperature,
+        string Description);
+
     public class WeatherLookupTool(ITurnContext turnContext, IConfiguration configuration)
     {
         /// <summary>
-        /// Retrieves the current weather for a specified location.
-        /// This method uses the OpenWeatherMap API to fetch the current weather data for a given city and state.
+        /// Retrieves the current weather for a specified city and state.
         /// </summary>
-        /// <param name="location">The name of the city for which to retrieve the weather.</param>
-        /// <param name="state">The name of the state where the city is located.</param>
-        /// <returns>
-        /// A <see cref="WeatherRoot"/> object containing the current weather details for the specified location,
-        /// or <c>null</c> if the weather data could not be retrieved.
-        /// </returns>
-        /// <remarks>
-        /// The method performs the following steps:
-        /// 1. Notifies the user that the weather lookup is in progress.
-        /// 2. Retrieves the OpenWeather API key from the configuration.
-        /// 3. Uses the OpenWeatherMap API to find the location by city and state.
-        /// 4. Fetches the current weather data for the location's latitude and longitude.
-        /// 5. Returns the weather data if successful, or <c>null</c> if the operation fails.
-        /// </remarks>
-        /// <exception cref="InvalidOperationException">
-        /// Thrown if the OpenWeather API key is not configured or if the location cannot be found.
-        /// </exception>
-
-        [Description("Retrieves the Current weather for a location, location is a city name")]
+        [Description("Retrieves the current weather for a location. Location is a city name.")]
         public async Task<WeatherRoot?> GetCurrentWeatherForLocation(string location, string state)
         {
-            AssertionHelpers.ThrowIfNull(turnContext, nameof(turnContext));
+            ArgumentNullException.ThrowIfNull(turnContext);
+            await ReportProgressAsync($"Looking up the Current Weather in {location}");
 
-            // Notify the user that we are looking up the weather
-            Console.WriteLine($"Looking up the Current Weather in {location}");
-
-            // Notify the user that we are looking up the weather
-            if (!turnContext.Activity.ChannelId.Channel!.Contains(Channels.Webchat))
-                await turnContext.StreamingResponse.QueueInformativeUpdateAsync($"Looking up the Current Weather in {location}");
-            else
-                await turnContext.SendActivityAsync(MessageFactory.CreateMessageActivity().Text = $"Looking up the Current Weather in {location}").ConfigureAwait(false);
-
-            var openAPIKey = configuration.GetValue("OpenWeatherApiKey", string.Empty);
-            OpenWeatherMapService openWeather = new OpenWeatherMapService(openAPIKey);
-            var openWeatherLocation = await openWeather.GetLocationByNameAsync(string.Format("{0},{1}", location, state));
-            if (openWeatherLocation != null && openWeatherLocation.IsSuccess)
+            var openWeather = new OpenWeatherMapService(GetApiKey());
+            var openWeatherLocation = await openWeather.GetLocationByNameAsync($"{location},{state}");
+            if (openWeatherLocation?.IsSuccess != true)
             {
-                var locationInfo = openWeatherLocation.Response.FirstOrDefault();
-                if (locationInfo == null)
-                {
-                    if (!turnContext.Activity.ChannelId.Channel.Contains(Channels.Webchat))
-                        turnContext.StreamingResponse.QueueTextChunk($"Unable to resolve location from provided information {location}, {state}");
-                    else
-                        await turnContext.SendActivityAsync(
-                            MessageFactory.CreateMessageActivity().Text = "Sorry, I couldn't get the weather forecast at the moment.")
-                            .ConfigureAwait(false);
-
-                    throw new ArgumentException($"Unable to resolve location from provided information {location}, {state}");
-                }
-
-                // Notify the user that we are fetching the weather
-                Console.WriteLine($"Fetching Current Weather for {location}");
-
-                if (!turnContext.Activity.ChannelId.Channel.Contains(Channels.Webchat))
-                    // Notify the user that we are looking up the weather
-                    await turnContext.StreamingResponse.QueueInformativeUpdateAsync($"Fetching Current Weather for {location}");
-                else
-                    await turnContext.SendActivityAsync(MessageFactory.CreateMessageActivity().Text = $"Fetching Current Weather for {location}").ConfigureAwait(false);
-
-
-                var weather = await openWeather.GetWeatherAsync(locationInfo.Latitude, locationInfo.Longitude, unit: OpenWeatherMapSharp.Models.Enums.Unit.Imperial);
-                if (weather.IsSuccess)
-                {
-                    WeatherRoot wInfo = weather.Response;
-                    return wInfo;
-                }
+                System.Diagnostics.Trace.WriteLine(
+                    $"Failed to complete API call to OpenWeather: {openWeatherLocation?.Error}");
+                return null;
             }
-            else
+
+            var locationInfo = openWeatherLocation.Response.FirstOrDefault();
+            if (locationInfo == null)
             {
-                System.Diagnostics.Trace.WriteLine($"Failed to complete API Call to OpenWeather: {openWeatherLocation!.Error}");
+                await ReportLocationErrorAsync(location, state);
+                throw new ArgumentException(
+                    $"Unable to resolve location from provided information {location}, {state}");
             }
-            return null;
+
+            await ReportProgressAsync($"Fetching Current Weather for {location}");
+            var weather = await openWeather.GetWeatherAsync(
+                locationInfo.Latitude,
+                locationInfo.Longitude,
+                unit: OpenWeatherMapSharp.Models.Enums.Unit.Imperial);
+
+            return weather.IsSuccess ? weather.Response : null;
         }
 
         /// <summary>
-        /// Retrieves the weather forecast for a specified location.
-        /// This method uses the OpenWeatherMap API to fetch the weather forecast data for a given city and state.
+        /// Retrieves one daily high, low, and representative condition for each
+        /// of the next five forecast days for a specified city and state.
         /// </summary>
-        /// <param name="location">The name of the city for which to retrieve the weather forecast.</param>
-        /// <param name="state">The name of the state where the city is located.</param>
-        /// <returns>
-        /// A list of <see cref="ForecastItem"/> objects containing the weather forecast details for the specified location,
-        /// or <c>null</c> if the forecast data could not be retrieved.
-        /// </returns>
-        /// <remarks>
-        /// The method performs the following steps:
-        /// 1. Notifies the user that the weather forecast lookup is in progress.
-        /// 2. Retrieves the OpenWeather API key from the configuration.
-        /// 3. Uses the OpenWeatherMap API to find the location by city and state.
-        /// 4. Fetches the weather forecast data for the location's latitude and longitude.
-        /// 5. Returns the forecast data if successful, or <c>null</c> if the operation fails.
-        /// </remarks>
-        /// <exception cref="InvalidOperationException">
-        /// Thrown if the OpenWeather API key is not configured or if the location cannot be found.
-        /// </exception>
-
-        [Description("Retrieves the Weather forecast for a location, location is a city name")]
-        public async Task<List<ForecastItem>?> GetWeatherForecastForLocation(string location, string state)
+        [Description("Retrieves the 5-day weather forecast for a location. Location is a city name.")]
+        public async Task<List<DailyForecast>?> GetWeatherForecastForLocation(
+            string location,
+            string state)
         {
-            // Notify the user that we are looking up the weather
-            Console.WriteLine($"Looking up the Weather Forecast in {location}");
+            ArgumentNullException.ThrowIfNull(turnContext);
+            await ReportProgressAsync($"Looking up the Weather Forecast in {location}");
 
-            var openAPIKey = configuration.GetValue("OpenWeatherApiKey", string.Empty);
-            OpenWeatherMapService openWeather = new OpenWeatherMapService(openAPIKey);
-            var openWeatherLocation = await openWeather.GetLocationByNameAsync(string.Format("{0},{1}", location, state));
-            if (openWeatherLocation != null && openWeatherLocation.IsSuccess)
+            var openWeather = new OpenWeatherMapService(GetApiKey());
+            var openWeatherLocation = await openWeather.GetLocationByNameAsync($"{location},{state}");
+            if (openWeatherLocation?.IsSuccess != true)
             {
-                var locationInfo = openWeatherLocation.Response.FirstOrDefault();
-                if (locationInfo == null)
+                System.Diagnostics.Trace.WriteLine(
+                    $"Failed to complete API call to OpenWeather: {openWeatherLocation?.Error}");
+                return null;
+            }
+
+            var locationInfo = openWeatherLocation.Response.FirstOrDefault();
+            if (locationInfo == null)
+            {
+                await ReportLocationErrorAsync(location, state);
+                throw new ArgumentException(
+                    $"Unable to resolve location from provided information {location}, {state}");
+            }
+
+            await ReportProgressAsync($"Fetching Weather Forecast for {location}");
+            var currentWeather = await openWeather.GetWeatherAsync(
+                locationInfo.Latitude,
+                locationInfo.Longitude,
+                unit: OpenWeatherMapSharp.Models.Enums.Unit.Imperial);
+            if (!currentWeather.IsSuccess)
+            {
+                return null;
+            }
+
+            var weather = await openWeather.GetForecastAsync(
+                locationInfo.Latitude,
+                locationInfo.Longitude,
+                unit: OpenWeatherMapSharp.Models.Enums.Unit.Imperial);
+            if (!weather.IsSuccess)
+            {
+                return null;
+            }
+
+            return weather.Response.Items
+                .Select(item => new
                 {
-
-                    if (!turnContext.Activity.ChannelId.Channel!.Contains(Channels.Webchat))
-                        turnContext.StreamingResponse.QueueTextChunk($"Unable to resolve location from provided information {location}, {state}");
-                    else
-                        await turnContext.SendActivityAsync(
-                            MessageFactory.CreateMessageActivity().Text = "Sorry, I couldn't get the weather forecast at the moment.")
-                            .ConfigureAwait(false);
-
-
-                    throw new ArgumentException($"Unable to resolve location from provided information {location}, {state}");
-                }
-
-                // Notify the user that we are fetching the weather
-                Console.WriteLine($"Fetching Weather Forecast for {location}");
-
-                var weather = await openWeather.GetForecastAsync(locationInfo.Latitude, locationInfo.Longitude, unit: OpenWeatherMapSharp.Models.Enums.Unit.Imperial);
-                if (weather.IsSuccess)
+                    Item = item,
+                    LocalDateTime = DateTimeOffset
+                        .FromUnixTimeSeconds(item.DateUnix)
+                        .ToOffset(TimeSpan.FromSeconds(currentWeather.Response.Timezone)),
+                })
+                .GroupBy(item => item.LocalDateTime.Date)
+                .OrderBy(group => group.Key)
+                .Take(5)
+                .Select(group =>
                 {
-                    var result = weather.Response.Items;
-                    return result;
-                }
+                    var representative = group
+                        .OrderBy(item => Math.Abs(
+                            (item.LocalDateTime.TimeOfDay - TimeSpan.FromHours(12)).TotalMinutes))
+                        .First();
+                    return new DailyForecast(
+                        group.Key,
+                        group.Max(item => item.Item.MainWeather.MaxTemperature),
+                        group.Min(item => item.Item.MainWeather.MinTemperature),
+                        representative.Item.WeatherInfos.FirstOrDefault()?.Description ?? "N/A");
+                })
+                .ToList();
+        }
+
+        private string GetApiKey()
+        {
+            var apiKey = configuration.GetValue("OpenWeatherApiKey", string.Empty);
+            if (string.IsNullOrWhiteSpace(apiKey))
+            {
+                throw new InvalidOperationException(
+                    "OpenWeatherApiKey configuration is missing and required.");
+            }
+            return apiKey;
+        }
+
+        private async Task ReportProgressAsync(string message)
+        {
+            Console.WriteLine(message);
+            if (turnContext.Activity.ChannelId.Channel?.Contains(Channels.Webchat) == true)
+            {
+                await turnContext.SendActivityAsync(message).ConfigureAwait(false);
             }
             else
             {
-                System.Diagnostics.Trace.WriteLine($"Failed to complete API Call to OpenWeather: {openWeatherLocation!.Error}");
+                await turnContext.StreamingResponse.QueueInformativeUpdateAsync(message)
+                    .ConfigureAwait(false);
             }
-            return null;
+        }
+
+        private async Task ReportLocationErrorAsync(string location, string state)
+        {
+            const string friendlyError =
+                "Sorry, I couldn't get the weather forecast at the moment.";
+
+            if (turnContext.Activity.ChannelId.Channel?.Contains(Channels.Webchat) == true)
+            {
+                await turnContext.SendActivityAsync(friendlyError).ConfigureAwait(false);
+            }
+            else
+            {
+                turnContext.StreamingResponse.QueueTextChunk(
+                    $"Unable to resolve location from provided information {location}, {state}");
+            }
         }
     }
 }
