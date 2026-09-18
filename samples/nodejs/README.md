@@ -18,3 +18,4 @@
 |Named Pipe Agent|Pipe-only echo agent for the DirectLine App Service extension (DirectLineFlex)|[named-pipe-agent](named-pipe-agent/README.md)|
 |Entra Agent ID Sidecar|Simple agent using the Microsoft Entra Agent ID sidecar for Agents SDK authentication|[entra-agent-id-sidecar](entra-agent-id-sidecar/README.md)|
 |Proactive|Sends messages to existing conversations from in-code and HTTP triggers|[proactive](proactive/README.md)|
+|Production Reference|Tier 3 Web Chat support issue-capture agent with durable state, App Service deployment, and operations guidance|[production-reference](production-reference/README.md)|
