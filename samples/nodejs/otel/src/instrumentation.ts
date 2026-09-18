@@ -20,16 +20,41 @@ import {
   ATTR_SERVICE_NAME,
   ATTR_SERVICE_VERSION,
 } from '@opentelemetry/semantic-conventions'
-import { AlwaysOnSampler, SpanExporter } from '@opentelemetry/sdk-trace-base'
+import { AlwaysOnSampler, ParentBasedSampler, Sampler, SamplingDecision, SpanExporter } from '@opentelemetry/sdk-trace-base'
 import { hostname } from 'os'
+import { SpanNames } from '@microsoft/agents-telemetry'
 
 const traceExporter: SpanExporter = new OTLPTraceExporter()
 const metricExporter: PushMetricExporter = new OTLPMetricExporter()
 const logExporter: LogRecordExporter = new OTLPLogExporter()
 
+// Example of a custom sampler that filters out spans based on their name. This is useful for disabling telemetry for certain categories of spans, such as storage operations.
+class SpanNameFilteringSampler implements Sampler {
+  private readonly filteredSpanNames: ReadonlySet<string>
+  private readonly parentBased = new ParentBasedSampler({
+    root: new AlwaysOnSampler(),
+  })
+
+  constructor (spanNames: Iterable<string>) {
+    this.filteredSpanNames = new Set(spanNames)
+  }
+
+  shouldSample: Sampler['shouldSample'] = (context, traceId, spanName, spanKind, attributes, links) => {
+    return this.filteredSpanNames.has(spanName)
+      ? { decision: SamplingDecision.NOT_RECORD }
+      : this.parentBased.shouldSample(context, traceId, spanName, spanKind, attributes, links)
+  }
+
+  toString () {
+    return `SpanNameFilteringSampler(${[...this.filteredSpanNames].join(',')})`
+  }
+}
+
 // configure the SDK to export telemetry data.
 const sdk = new NodeSDK({
-  sampler: new AlwaysOnSampler(),
+  sampler: new SpanNameFilteringSampler([
+    SpanNames.STORAGE_READ, SpanNames.STORAGE_WRITE, SpanNames.STORAGE_DELETE
+  ]),
   resource: resourceFromAttributes({
     [ATTR_SERVICE_NAME]: 'OTelAgent',
     [ATTR_SERVICE_VERSION]: '1.0.0',

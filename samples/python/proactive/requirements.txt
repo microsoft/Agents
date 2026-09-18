@@ -1,0 +1,6 @@
+aiohttp>=3.11.11,<4
+microsoft-agents-activity==1.5.0
+microsoft-agents-authentication-msal==1.5.0
+microsoft-agents-hosting-aiohttp==1.5.0
+microsoft-agents-hosting-core==1.5.0
+python-dotenv>=1.1.1,<2

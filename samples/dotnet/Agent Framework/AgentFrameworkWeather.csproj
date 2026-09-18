@@ -20,7 +20,7 @@
 		<PackageReference Include="AdaptiveCards" Version="3.1.0" />
 		<PackageReference Include="Azure.AI.OpenAI" Version="2.7.0-beta.2" />
 		<PackageReference Include="Azure.Identity" Version="1.21.0" />
-		<PackageReference Include="Microsoft.Agents.AI" Version="1.18.0" />
+		<PackageReference Include="Microsoft.Agents.AI" Version="1.20.0" />
 		<PackageReference Include="Microsoft.Extensions.AI.OpenAI"
 			Version="10.9.0" />
 		<PackageReference Include="Microsoft.Extensions.AI" Version="10.9.0" />
@@ -30,14 +30,14 @@
 		
 		<!-- Open Telemetry -->
 		<PackageVersion Include="OpenTelemetry" Version="1.15.3" />
-		<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.17.0" />
-		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.17.0" />
-		<PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.17.0" />
-		<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.17.0" />
+		<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.18.0" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.18.0" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.18.0" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.18.0" />
 
 		<!-- OpenTelemetry Exporters -->
-		<PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.17.0" />
-		<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.17.0" />
+		<PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.18.0" />
+		<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.18.0" />
 
 		<!-- Open weather -->
 		<PackageReference Include="OpenWeatherMapSharp" Version="4.2.0" />
