@@ -1,0 +1,191 @@
+name: Sync Teams .NET samples
+
+on:
+  # Runs weekly at 00:00 UTC each Sunday.
+  schedule:
+    - cron: "0 0 * * 0"
+  workflow_dispatch:
+    inputs:
+      sample:
+        description: Selected sample or all
+        required: true
+        type: choice
+        default: all
+        options:
+          - all
+          - agent-targeted-messages
+          - bot-ai-messages
+          - bot-attachments
+          - bot-cards
+          - bot-meetings
+          - bot-message-extensions
+          - bot-task-modules
+      createPr:
+        description: Create draft pull requests
+        type: boolean
+        default: false
+
+env:
+  SYNC_TOOL: automation/teams-sample-sync
+  TEAMS_SAMPLES_REPOSITORY: OfficeDev/Microsoft-Teams-Samples
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      baseSha: ${{ steps.base.outputs.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+          persist-credentials: false
+      - id: base
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ env.TEAMS_SAMPLES_REPOSITORY }}
+          ref: main
+          path: .sync/upstream
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: automation/teams-sample-sync/package-lock.json
+      - run: npm ci --prefix "$SYNC_TOOL" && npm run build --prefix "$SYNC_TOOL"
+      - id: plan
+        env:
+          SYNC_SAMPLE: ${{ github.event_name == 'schedule' && 'all' || inputs.sample }}
+        run: |
+          sample_arg=(); [ "$SYNC_SAMPLE" = all ] || sample_arg=(--sample "$SYNC_SAMPLE")
+          node "$SYNC_TOOL/dist/cli.js" plan --repo-root . --upstream-root .sync/upstream "${sample_arg[@]}" --output .sync/plan.json
+          echo "matrix=$(jq -c .matrix .sync/plan.json)" >> "$GITHUB_OUTPUT"
+          jq -r '.samples | to_entries[] | "- \(.key): \(.value.status)"' .sync/plan.json >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: teams-sample-sync-plan
+          path: .sync/plan.json
+
+  migrate:
+    name: migrate · ${{ matrix.sample }}
+    needs: plan
+    if: needs.plan.outputs.matrix != '[]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      copilot-requests: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    concurrency:
+      group: teams-sample-sync-${{ matrix.sample }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.plan.outputs.baseSha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ env.TEAMS_SAMPLES_REPOSITORY }}
+          ref: ${{ matrix.upstreamCommit }}
+          path: .sync/upstream
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: automation/teams-sample-sync/package-lock.json
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          dotnet-version: 10.0.x
+      - run: npm ci --prefix "$SYNC_TOOL" && npm run build --prefix "$SYNC_TOOL"
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: teams-sample-sync-plan
+          path: .sync
+      - name: Migrate and validate
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SYNC_SAMPLE: ${{ matrix.sample }}
+          UPSTREAM_COMMIT: ${{ matrix.upstreamCommit }}
+        run: |
+          test "$(git -C .sync/upstream rev-parse HEAD)" = "$UPSTREAM_COMMIT"
+          node "$SYNC_TOOL/dist/cli.js" migrate --repo-root . --upstream-root .sync/upstream --plan .sync/plan.json --sample "$SYNC_SAMPLE" --output-directory ".sync/output/$SYNC_SAMPLE"
+      - name: Report sample result
+        if: always()
+        env:
+          SYNC_SAMPLE: ${{ matrix.sample }}
+        run: |
+          if [ -f ".sync/output/$SYNC_SAMPLE/workflow-summary.md" ]; then cat ".sync/output/$SYNC_SAMPLE/workflow-summary.md" >> "$GITHUB_STEP_SUMMARY"; else echo "### $SYNC_SAMPLE: failed before a report was produced" >> "$GITHUB_STEP_SUMMARY"; fi
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: always()
+        with:
+          name: teams-sample-sync-${{ matrix.sample }}
+          path: .sync/output/${{ matrix.sample }}
+          if-no-files-found: warn
+
+  publish:
+    name: publish · ${{ matrix.sample }}
+    needs: [plan, migrate]
+    if: always() && (github.event_name == 'schedule' || inputs.createPr) && needs.plan.result == 'success' && needs.plan.outputs.matrix != '[]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    concurrency:
+      group: teams-sample-sync-${{ matrix.sample }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.plan.outputs.baseSha }}
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: automation/teams-sample-sync/package-lock.json
+      - run: npm ci --prefix "$SYNC_TOOL" && npm run build --prefix "$SYNC_TOOL"
+      - id: download
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        continue-on-error: true
+        with:
+          name: teams-sample-sync-${{ matrix.sample }}
+          path: .sync/result
+      - id: ready
+        run: |
+          ready=false
+          if [ "${{ steps.download.outcome }}" = success ] && [ -f .sync/result/sync-result.json ] && [ "$(jq -r .publishable .sync/result/sync-result.json)" = true ]; then ready=true; fi
+          echo "ready=$ready" >> "$GITHUB_OUTPUT"
+      - name: Apply verified patch
+        if: steps.ready.outputs.ready == 'true'
+        env:
+          SYNC_SAMPLE: ${{ matrix.sample }}
+        run: |
+          git apply --index --binary .sync/result/change.patch
+          node "$SYNC_TOOL/dist/cli.js" verify-patch --repo-root . --sample "$SYNC_SAMPLE" --result .sync/result/sync-result.json
+      - name: Push draft PR
+        if: steps.ready.outputs.ready == 'true'
+        env:
+          SYNC_SAMPLE: ${{ matrix.sample }}
+        run: |
+          branch="automation/teams-sample-sync/$SYNC_SAMPLE"
+          git config user.name github-actions[bot]; git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git fetch origin "$branch:refs/remotes/origin/$branch" || true; git checkout -B "$branch"
+          git commit -m "Sync Teams SDK sample: $SYNC_SAMPLE"; git push --force-with-lease origin "$branch"
+          number="$(gh pr list --head "$branch" --state open --json number --jq '.[0].number')"
+          if [ "$number" = null ]; then gh pr create --draft --head "$branch" --title "Sync Teams SDK sample: $SYNC_SAMPLE" --body-file .sync/result/pr-body.md; else gh pr edit "$number" --title "Sync Teams SDK sample: $SYNC_SAMPLE" --body-file .sync/result/pr-body.md; fi
