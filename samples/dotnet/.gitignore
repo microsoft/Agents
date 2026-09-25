@@ -4,4 +4,5 @@ appsettings.Development.json
 appsettings.Development*
 appsettings.Production.json
 **/[Aa]ppManifest/*.zip
+**/manifest/*.zip
 .deployment

@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <AgentsSdkTestVersion Condition="'$(AgentsSdkTestVersion)' == ''">1.8.*</AgentsSdkTestVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Agents.Builder.Testing" Version="$(AgentsSdkTestVersion)" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../../../samples/dotnet/teams/bot-ai-messages/BotAiMessages.csproj" />
+    <ProjectReference Include="../../../../samples/dotnet/teams/bot-cards/BotCards.csproj" />
+    <ProjectReference Include="../../../../samples/dotnet/teams/bot-meetings/BotMeetings.csproj" />
+    <ProjectReference Include="../../../../samples/dotnet/teams/bot-message-extensions/BotMessageExtensions.csproj" />
+    <ProjectReference Include="../../../../samples/dotnet/teams/bot-task-modules/BotTaskModules.csproj" />
+    <ProjectReference Include="../../../../samples/dotnet/teams/agent-targeted-messages/AgentTargetedMessages.csproj" />
+    <ProjectReference Include="../../../../samples/dotnet/teams/bot-attachments/BotAttachments.csproj" />
+  </ItemGroup>
+
+</Project>
