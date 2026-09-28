@@ -1,0 +1,11 @@
+<Project>
+	<PropertyGroup>
+		<!--<Company Condition="'$(Company)' == ''">Microsoft</Company>--> <!-- Company Set in Nuget Properties -->
+		<Product Condition="'$(Product)' == ''">Microsoft Agents Sdk Samples</Product>
+		<Copyright Condition="'$(Copyright)' == ''">© Microsoft Corporation. All rights reserved.</Copyright>
+		<AssemblyVersion Condition="'$(AssemblyVersion)' == ''">0.1.0.0</AssemblyVersion>
+		<FileVersion Condition="'$(FileVersion)' == ''">1.0.0.0</FileVersion>
+		<InformationalVersion Condition="'$(InformationalVersion)' == ''">$(FileVersion)</InformationalVersion>
+		<PreSetAssemblyVersion>$(AssemblyVersion)</PreSetAssemblyVersion>
+	</PropertyGroup>
+</Project>
