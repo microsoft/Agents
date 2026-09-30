@@ -1,0 +1,38 @@
+{
+  "type": "message",
+  "id": "message-activity-1",
+  "timestamp": "2025-09-15T10:00:01.000Z",
+  "localTimestamp": "2025-09-15T03:00:01.000-07:00",
+  "localTimezone": "America/Los_Angeles",
+  "serviceUrl": "https://smba.trafficmanager.net/amer/",
+  "channelId": "msteams",
+  "from": { "id": "user-id-1", "name": "John Doe" },
+  "conversation": { "isGroup": true, "id": "conv-1", "name": "Project Discussion" },
+  "recipient": { "id": "bot-id-1", "name": "HelpBot" },
+  "text": "Hello, I need help with my order.",
+  "textFormat": "plain",
+  "locale": "en-US",
+  "attachments": [
+    {
+      "contentType": "application/vnd.microsoft.card.hero",
+      "content": {
+        "title": "Order #12345",
+        "text": "Status: Shipped"
+      }
+    }
+  ],
+  "suggestedActions": {
+    "actions": [
+      {
+        "type": "imBack",
+        "title": "Track Package",
+        "value": "track order 12345"
+      },
+      {
+        "type": "imBack",
+        "title": "Cancel Order",
+        "value": "cancel order 12345"
+      }
+    ]
+  }
+}
