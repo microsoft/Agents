@@ -150,7 +150,7 @@ public partial class McsSlackBridge : AgentApplication
             return;
         }
 
-        await stream.AppendAsync(new TaskUpdateChunk(id: "mcsUpdate", title: "Formating response for you", status: SlackTaskStatus.InProgress));
+        await stream.AppendAsync(new TaskUpdateChunk(id: "mcsUpdate", title: "Formatting response for you", status: SlackTaskStatus.InProgress));
 
         AIAgent agent = await GetClientAgent(context, turnState, ToolAuthHandlerName).ConfigureAwait(false);
         AgentSession thread = await GetConversationThread(agent, turnState, cancellationToken).ConfigureAwait(false);

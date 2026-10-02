@@ -90,10 +90,10 @@ secrets, or an environment-specific settings file.
 | `AIServices:AzureOpenAI:ApiKey` | Azure OpenAI credential; required at startup when the chat client is resolved |
 | `OutboundHostValidator:*` | Controls outbound destination validation performed by the Agents SDK |
 
-The base settings intentionally do not contain the Azure OpenAI API key. They
-also do not define the required `mcs` user-authorization handler;
-`appsettings.development.json` provides a development example. Supply that
-handler in every active environment that calls Copilot Studio.
+Use the checked-in `appsettings.json` as the configuration example. It
+intentionally does not contain the Azure OpenAI API key or define the required
+`mcs` user-authorization handler. Supply both through the appropriate secure
+configuration source in every active environment that calls Copilot Studio.
 
 Do not commit real client secrets or Azure OpenAI API keys. This project has a
 `UserSecretsId`, so local secrets can be set from the repository root:
@@ -103,10 +103,10 @@ dotnet user-secrets set "Connections:ServiceConnection:Settings:ClientSecret" "<
 dotnet user-secrets set "AIServices:AzureOpenAI:ApiKey" "<azure-openai-api-key>"
 ```
 
-`appsettings.development.json` overrides the base configuration with
-development-specific identifiers, connection mappings, authorization handlers,
-and service endpoints. Replace them with values for your own tenant, bot,
-Copilot Studio agent, and Azure OpenAI deployment.
+The placeholders in `appsettings.json` demonstrate the base configuration,
+connection mapping, and service endpoints. Replace them with values for your
+own tenant, bot, Copilot Studio agent, and Azure OpenAI deployment, and add the
+required authorization handlers for your environment.
 
 The base configuration currently disables outbound-host validation. Review and
 restrict `OutboundHostValidator` for production deployments.
@@ -346,9 +346,9 @@ Azure Bot registration:
 }
 ```
 
-The `Enabled` value currently present in `appsettings.development.json` is not
-read by this project's `TokenValidationOptions`; it does not disable the
-registered JWT bearer handler.
+`TokenValidation:Enabled` is not read by this project's
+`TokenValidationOptions`; setting it to `false` does not disable the registered
+JWT bearer handler.
 
 ## Further reading
 
