@@ -58,7 +58,7 @@ public static class AgentTelemetry
     }
     public static Activity InitializeMessageHandlingActivity(string handlerName, ITurnContext context)
     {
-        using System.Diagnostics.Activity? activity = AgentTelemetry.ActivitySource.StartActivity(handlerName);
+System.Diagnostics.Activity? activity = AgentTelemetry.ActivitySource.StartActivity(handlerName);
         Stopwatch stopwatch = Stopwatch.StartNew();
         string conversationId = context.Activity.Conversation?.Id ?? "unknown";
         string channelId = context.Activity.ChannelId.ToString() ?? "unknown";
@@ -80,9 +80,6 @@ public static class AgentTelemetry
 
     public static void FinalizeMessageHandlingActivity(Activity activity, ITurnContext context, long duration, bool success)
     {
-        MessageProcessingDuration.Record(duration,
-                new("Conversation.Id", context.Activity.Conversation?.Id ?? "unknown"),
-                new("Channel.Id", context.Activity.ChannelId?.ToString() ?? "unknown"));
 
         RouteExecutedCounter.Add(1,
             new("Route.Type", "message_handler"),

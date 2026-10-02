@@ -250,9 +250,9 @@ receive the intended messages and post to the intended conversations.
    dotnet run --launch-profile Slack_MCS_Bridge
    ```
 
-   The profile sets `ASPNETCORE_ENVIRONMENT` to `Development` and listens on
-   `http://localhost:3978`. Visual Studio also opens the application in a
-   browser when this profile starts.
+The profile sets `ASPNETCORE_ENVIRONMENT` to `Development` and listens on
+`http://localhost:3978`; its `launchBrowser` setting is disabled, so Visual Studio
+does not automatically open a browser.
 
 ## Accessing the Agent
 
