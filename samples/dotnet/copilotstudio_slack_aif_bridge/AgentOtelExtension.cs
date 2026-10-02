@@ -24,6 +24,10 @@ namespace Slack_MCS_Bridge
     // To learn more about using the local aspire desktop, see https://learn.microsoft.com/en-us/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash
     public static class AgentOtelExtension
     {
+        /// <summary>
+        /// Flag to enable or disable logging of HTTP request and response bodies for OpenTelemetry activities.
+        /// </summary>
+        private static bool _enableBodyLogging = false;
 
         public static TBuilder ConfigureOtelProviders<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
         {
@@ -180,6 +184,8 @@ namespace Slack_MCS_Bridge
 
         private static void ExtractBodyOfRequestForOTEL(System.Diagnostics.Activity activity, HttpRequestMessage? request, string tagName)
         {
+            if (!_enableBodyLogging) return;
+
             if (request == null)
             {
                 return;
@@ -197,6 +203,8 @@ namespace Slack_MCS_Bridge
 
         private static void ExtractBodyOfResponseForOTEL(System.Diagnostics.Activity activity, HttpResponseMessage? response, string tagName)
         {
+            if (!_enableBodyLogging) return; 
+
             if (response == null)
             {
                 return;

@@ -30,7 +30,7 @@ public static class AgentTelemetry
         description: "Duration of message processing in milliseconds");
 
 
-    public static T InvokeObservedAgentOperation<T>(string operationName, ITurnContext context, Func<T> func)
+    public static Task<T> InvokeObservedAgentOperation<T>(string operationName, ITurnContext context, Func<Task<T>> func)
     {
         // Init the activity for observability
         using var activity = InitializeMessageHandlingActivity(operationName, context);
