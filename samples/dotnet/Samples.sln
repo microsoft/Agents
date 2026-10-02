@@ -61,6 +61,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cards", "cards\Cards.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slack_MCS_Bridge", "copilotstudio_slack_aif_bridge\Slack_MCS_Bridge.csproj", "{3354AB69-97B8-44DB-253B-3F5DA041AD8F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slack_MCS_Bridge.Tests", "copilotstudio_slack_aif_bridge\tests\Slack_MCS_Bridge.Tests\Slack_MCS_Bridge.Tests.csproj", "{BAC7F5A1-608F-2E90-9C22-D37C37A3C2BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -175,6 +177,10 @@ Global
 		{3354AB69-97B8-44DB-253B-3F5DA041AD8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3354AB69-97B8-44DB-253B-3F5DA041AD8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3354AB69-97B8-44DB-253B-3F5DA041AD8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAC7F5A1-608F-2E90-9C22-D37C37A3C2BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAC7F5A1-608F-2E90-9C22-D37C37A3C2BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAC7F5A1-608F-2E90-9C22-D37C37A3C2BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAC7F5A1-608F-2E90-9C22-D37C37A3C2BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

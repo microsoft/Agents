@@ -41,7 +41,8 @@ namespace Slack_MCS_Bridge
                     .AddSource(
                         "Microsoft.AspNetCore",
                         "System.Net.Http",
-                        AgentsTelemetry.SourceName
+                        AgentsTelemetry.SourceName,
+                        AgentTelemetry.ServiceName
                     )
                     .SetSampler(new AlwaysOnSampler())
                     .AddAspNetCoreInstrumentation(tracing =>
@@ -86,6 +87,7 @@ namespace Slack_MCS_Bridge
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation()
                     .AddMeter(AgentsTelemetry.SourceName)
+                    .AddMeter(AgentTelemetry.ServiceName)
                     .AddOtlpExporter());
 
             builder.Logging.AddOpenTelemetry(logging =>
@@ -159,7 +161,7 @@ namespace Slack_MCS_Bridge
             {
                 return;
             }
-            var headerList = request//.Where(h => h.Key != "Authorization")
+            var headerList = request.Where(h => h.Key != "Authorization")
                                     .Select(h => $"{h.Key}={string.Join(",", h.Value)}")
                                     .ToArray();
 

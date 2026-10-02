@@ -77,33 +77,34 @@ builder.Services.AddSingleton<IStorage, MemoryStorage>();
 
 WebApplication app = builder.Build();
 
-app.Use(async (context, next) =>
-{
-    if (context.Request.Method == HttpMethods.Post)
-    {
-        // Enable buffering so we can read the body without consuming it
-        context.Request.EnableBuffering();
+// Diagnostics: Log the request body for POST requests to help with debugging and tracing.
+//app.Use(async (context, next) =>
+//{
+//    if (context.Request.Method == HttpMethods.Post)
+//    {
+//        // Enable buffering so we can read the body without consuming it
+//        context.Request.EnableBuffering();
 
-        using var reader = new StreamReader(context.Request.Body, Encoding.UTF8, leaveOpen: true);
-        string body = await reader.ReadToEndAsync();
+//        using var reader = new StreamReader(context.Request.Body, Encoding.UTF8, leaveOpen: true);
+//        string body = await reader.ReadToEndAsync();
 
-        // Reset stream position so the next middleware/controller can read it
-        context.Request.Body.Position = 0;
+//        // Reset stream position so the next middleware/controller can read it
+//        context.Request.Body.Position = 0;
 
-        // Attach body to current OTEL span
-        var activity = System.Diagnostics.Activity.Current;
-        if (activity != null)
-        {
-            // WARNING: Be careful with sensitive data!
-            activity.AddEvent(new System.Diagnostics.ActivityEvent(
-                                    "http.request.body",
-                                    tags: new System.Diagnostics.ActivityTagsCollection { { "http.request.body.content", body } }
-                                ));
-        }
-    }
+//        // Attach body to current OTEL span
+//        var activity = System.Diagnostics.Activity.Current;
+//        if (activity != null)
+//        {
+//            // WARNING: Be careful with sensitive data!
+//            activity.AddEvent(new System.Diagnostics.ActivityEvent(
+//                                    "http.request.body",
+//                                    tags: new System.Diagnostics.ActivityTagsCollection { { "http.request.body.content", body } }
+//                                ));
+//        }
+//    }
 
-    await next();
-});
+//    await next();
+//});
 
 // Add the authentication and authorization middleware to the request pipeline.
 app.UseAgents();
