@@ -10,6 +10,7 @@
 |Streaming Agent |Streams OpenAI responses|[azure-ai-streaming](azure-ai-streaming/README.md)|
 |Copilot Studio Client|Console app to consume a Copilot Studio Agent|[copilotstudio-client](copilotstudio-client/README.md)|
 |Copilot Studio Skill |Call the echo bot from a Copilot Studio skill |[copilotstudio-skill](copilotstudio-skill/README.md)|
+|Copilot Studio + Slack Bridge + AIF|This is a broker / translator agent that brokers communications between MCS and Slack, using an Agent Framework orchstrator + prompt to translate activities into Slack Block messages|[copilotstudio_slack_aif_bridge](copilotstudio_slack_aif_bridge/README.md)|
 |MultiAgent|Demonstrates multiple AgentApplication in the same host|[MultiAgent](multiagent/README.md)|
 |GenesysHandoff|Demonstrates how a Microsoft Copilot Studio Agent (bot) can seamlessly **hand off a conversation to a live agent** in **Genesys Cloud**.|[GenesysHandoff](genesys-handoff/README.md)|
 |OpenTelemetry Agent|Configures OTel tracing, metrics, and logging with OTLP export|[otel](otel/README.md)|
