@@ -32,6 +32,6 @@
     }
   ],
   "validDomains": [
-    "<<BOT_DOMAIN>>"
+    "{{BotDomain}}"
   ]
 }
