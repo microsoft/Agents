@@ -21,6 +21,32 @@
     "full": "Demonstrates Teams meeting events, participant notifications, and transcript retrieval with a Microsoft 365 agent."
   },
   "accentColor": "#FFFFFF",
+  "webApplicationInfo": {
+    "id": "${{AAD_APP_CLIENT_ID}}",
+    "resource": "https://RscPermission"
+  },
+  "authorization": {
+    "permissions": {
+      "resourceSpecific": [
+        {
+          "name": "OnlineMeeting.ReadBasic.Chat",
+          "type": "Application"
+        },
+        {
+          "name": "OnlineMeetingTranscript.Read.Chat",
+          "type": "Application"
+        },
+        {
+          "name": "ChannelMeeting.ReadBasic.Group",
+          "type": "Application"
+        },
+        {
+          "name": "OnlineMeetingParticipant.Read.Chat",
+          "type": "Application"
+        }
+      ]
+    }
+  },
   "bots": [
     {
       "botId": "${{AAD_APP_CLIENT_ID}}",

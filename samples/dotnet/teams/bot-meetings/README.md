@@ -107,7 +107,9 @@ Ensure the app manifest's bot entry supports meetings:
 }
 ```
 
-In `manifest/manifest.json`, set `id` to the Teams app ID, `bots[0].botId` to the client ID, and `validDomains` to your tunnel domain. Then upload the manifest to the existing app and download its package:
+The checked-in manifest also declares the meeting resource-specific permissions listed above. Its `webApplicationInfo.resource` value is the RSC-only marker `https://RscPermission`; retain the `webApplicationInfo.id` and `bots[0].botId` client ID placeholders consistently when configuring the app.
+
+In `manifest/manifest.json`, set `id` to the Teams app ID, `bots[0].botId` and `webApplicationInfo.id` to the client ID, and `validDomains` to your tunnel domain. Then upload the manifest to the existing app and download its package:
 
 ```bash
 teams app manifest upload manifest/manifest.json <teams-app-id>
@@ -126,7 +128,7 @@ dotnet run --launch-profile BotMeetings
 
 The agent listens on `http://localhost:3978`. Add the packaged app to a meeting, then start or end the meeting or have a participant join or leave to exercise the corresponding event.
 
-Meeting transcripts can take time to become available. The sample attempts to retrieve the newest VTT transcript through Microsoft Graph when it receives the meeting-end event and displays parsed speaker lines when the transcript is already available.
+Meeting transcripts can take time to become available. After a meeting-end event, the sample resolves the Microsoft Graph online-meeting ID from the meeting join URL, waits 30 seconds for transcript processing, and attempts to retrieve the newest VTT transcript. It displays parsed speaker lines when the transcript is available.
 
 ## Troubleshooting
 

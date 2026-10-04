@@ -113,13 +113,24 @@ public partial class BotMeetingsAgent : AgentApplication
     {
         var meetingInfo = await turnContext.Client.Meetings.GetByIdAsync(meeting.Id);
         string userId = meetingInfo?.Organizer?.AadObjectId ?? string.Empty;
-        string? graphMeetingId = meetingInfo?.Details?.MSGraphResourceId;
+        string? joinUrl = (meeting.JoinUrl ?? meetingInfo?.Details?.JoinUrl)?.ToString();
+        string graphMeetingId = string.Empty;
+        if (_graphClient is not null &&
+            !string.IsNullOrEmpty(joinUrl) &&
+            !string.IsNullOrEmpty(userId))
+        {
+            graphMeetingId = await GetOnlineMeetingIdAsync(
+                userId,
+                joinUrl,
+                cancellationToken);
+        }
 
         string transcript = string.Empty;
         if (_graphClient is not null &&
             !string.IsNullOrEmpty(graphMeetingId) &&
             !string.IsNullOrEmpty(userId))
         {
+            await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);
             string vttTranscript = await GetMeetingTranscriptAsync(
                 graphMeetingId,
                 userId,
@@ -172,6 +183,25 @@ public partial class BotMeetingsAgent : AgentApplication
                 Body = cardBody
             },
             cancellationToken);
+    }
+
+    private async Task<string> GetOnlineMeetingIdAsync(
+        string userId,
+        string joinWebUrl,
+        CancellationToken cancellationToken)
+    {
+        string escapedJoinUrl = joinWebUrl.Replace("'", "''", StringComparison.Ordinal);
+        var meetings = await _graphClient!.Users[userId]
+            .OnlineMeetings
+            .GetAsync(
+                requestConfiguration =>
+                {
+                    requestConfiguration.QueryParameters.Filter =
+                        $"JoinWebUrl eq '{escapedJoinUrl}'";
+                },
+                cancellationToken);
+
+        return meetings?.Value?.FirstOrDefault()?.Id ?? string.Empty;
     }
 
     [TeamsMeetingParticipantsLeaveRoute]
