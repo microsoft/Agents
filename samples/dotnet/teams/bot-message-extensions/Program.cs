@@ -12,8 +12,6 @@ builder.AddAgentDefaults()
     .AddAgent<BotMessageExtensionsAgent>()
     .AddAgentAuthorization(b => b.AddAgentAspNetAuthentication());
 
-builder.Services.AddHttpClient();
-
 WebApplication app = builder.Build();
 
 app.UseAgents();
