@@ -53,7 +53,18 @@ public partial class BotCardsAgent(AgentApplicationOptions options) : AgentAppli
             ? nameProperty.ToString()
             : string.Empty;
 
-        return Task.FromResult(
-            AdaptiveCardInvokeResponseFactory.Message($"Data Submitted: {name}"));
+        return SendSubmissionResponseAsync(turnContext, name, cancellationToken);
+    }
+
+    private static async Task<AdaptiveCardInvokeResponse> SendSubmissionResponseAsync(
+        ITurnContext turnContext,
+        string name,
+        CancellationToken cancellationToken)
+    {
+        await turnContext.SendActivityAsync(
+            $"Data Submitted: {name}",
+            cancellationToken: cancellationToken);
+
+        return AdaptiveCardInvokeResponseFactory.Message("Action processed successfully");
     }
 }
