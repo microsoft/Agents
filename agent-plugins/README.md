@@ -25,6 +25,7 @@ Skills for building agents with the Microsoft 365 Agents SDK for TypeScript/Java
 | `agents-sdk-typescript` | Code imports `@microsoft/agents-hosting`, `@microsoft/agents-hosting-express`, or related packages, or when building a new agent |
 | `agents-sdk-typescript-debugging` | Troubleshooting a Microsoft Agents SDK agent in TypeScript/JavaScript (build errors, auth failures, startup crashes, configuration issues) |
 | `agents-sdk-typescript-otel` | Adding or troubleshooting OpenTelemetry traces, metrics, logs, OTLP exporters, Azure Monitor, or an Aspire Dashboard for an Agents SDK JavaScript/TypeScript application |
+| `agents-sdk-to-prod` | Assessing, hardening, deploying, or reviewing production readiness for Microsoft 365 Agents SDK JavaScript/TypeScript code |
 
 ---
 
