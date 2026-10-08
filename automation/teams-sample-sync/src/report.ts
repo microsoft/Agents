@@ -1,10 +1,10 @@
 /** For Copilot Agents only: workflow reporting infrastructure. */
 /**
  * Turns structured synchronization results into CI-facing output.
- * It keeps workflow logs concise while producing failure annotations, a run summary, diagnostic references,
- * and the draft pull-request body only after a sample has become publishable.
+ * It keeps workflow logs concise and builds short issue handoffs from publishable results.
  */
-import type { SyncResult, UpstreamChange } from './types.js'
+import type { SyncResult } from './types.js'
+import { hash, stable } from './git.js'
 
 function safe (value: string): string {
   return value
@@ -14,15 +14,6 @@ function safe (value: string): string {
 }
 function code (value: string): string {
   return `\`${safe(value).replaceAll('`', '')}\``
-}
-function fenced (value: string): string {
-  const longest = Math.max(0, ...(value.match(/`+/g) ?? []).map((item) => item.length))
-  const delimiter = '`'.repeat(Math.max(3, longest + 1))
-  return `${delimiter}text\n${value.trim()}\n${delimiter}`
-}
-function change (change: UpstreamChange): string {
-  const path = change.newPath ?? change.oldPath ?? 'unknown'
-  return `- ${change.status}: ${code(path)}${change.binary ? ' (binary)' : ''}`
 }
 function validation (result: SyncResult): string[] {
   return Object.entries(result.validation?.checks ?? {}).map(
@@ -57,46 +48,62 @@ export function failureReport (result: SyncResult): { stderr: string; annotation
   }
 }
 
-export function prBody (result: SyncResult): string {
-  const outcome =
-    result.status === 'no-changes'
-      ? [
-          '### Outcome',
-          '',
-          'No sample changes were required. This patch records the verified synchronization state.',
-          '',
-        ]
-      : []
+export function issueTitle (results: SyncResult[]): string {
+  if (results.length === 1) {
+    return `Publish Teams sample: ${results[0]!.sample.replaceAll('-', ' ')}`
+  }
+  if (results.length === 2) {
+    return `Publish Teams samples: ${results.map((result) => result.sample.replaceAll('-', ' ')).join(' and ')}`
+  }
+  return `Publish ${results.length} synced Teams .NET samples`
+}
+
+export function handoffId (baseSha: string, results: SyncResult[]): string {
+  return hash(stable({
+    baseSha,
+    samples: results.map((result) => ({
+      sample: result.sample,
+      upstreamCommit: result.upstreamCommit,
+      inputDigest: result.inputDigest,
+      outputDigest: result.outputDigest,
+    })),
+  }))
+}
+
+export function handoffIssueBody (
+  results: SyncResult[],
+  baseSha: string,
+  baseBranch: string,
+  repository: string,
+  runUrl: string,
+  handoffUrl: string,
+  handoffArtifact: string
+): string {
+  const runId = /\/actions\/runs\/(\d+)/.exec(runUrl)?.[1]
   return [
-    '## Teams SDK sample synchronization',
+    'Sync the Teams samples below into their Agents SDK counterparts. Use the prepared patches and migration evidence as a starting point; make any adjustments needed to complete the work.',
     '',
-    `Sample: ${code(result.sample)}`,
-    `Teams commit: ${code(result.upstreamCommit)}`,
-    `Frozen migration plan: ${code(result.planHash ?? 'not recorded')}`,
+    `- **Target:** ${code(baseBranch)} (prepared at ${code(baseSha)})`,
+    `- **Workflow:** [validation results](${runUrl})`,
+    `- **Artifact:** [prepared changes and evidence](${handoffUrl})`,
+    ...(runId ? [`- **Download:** ${code(`gh run download ${runId} --repo ${repository} --name ${handoffArtifact}`)}`] : []),
     '',
-    ...outcome,
-    '### Source changes',
+    '### Samples',
     '',
-    ...(result.upstreamChanges.length ? result.upstreamChanges.map(change) : ['- Initial tracked synchronization.']),
+    ...results.map((result) => {
+      const summary = result.summary!.replace(/[\r\n]+/g, ' ').trim()
+      return `- **${safe(result.sample)}:** ${summary}`
+    }),
     '',
-    '### Validation',
+    '### Acceptance criteria',
     '',
-    ...validation(result),
+    '- Complete the sample sync using the patches, plans, and evidence in the artifact.',
+    '- Create a PR linked to this issue and summarize each sample\'s changes (or no changes needed).',
+    '- Explain any additional changes, including tests, and why they were needed in the PR description.',
+    '- Run relevant validation and include results in the PR description. Report failed, blocked, or incomplete checks, including security checks.',
+    '- List remaining manual checks in the PR description, or state that none remain.',
     '',
-    '### Implementer self-audit',
-    '',
-    result.selfAudit?.trim() ? fenced(result.selfAudit) : 'No self-audit was captured.',
-    '',
-    '### External validation',
-    '',
-    ...(
-      result.validation?.externalValidationRequired ?? [
-        'Credentialed Teams, Entra, Graph, Azure Bot, and portal behavior.',
-      ]
-    ).map((item) => `- ${safe(item)}`),
-    '',
-    'This draft was produced by the sample synchronization workflow. Review the sample behavior and external setup before merge.',
-    '',
+    `<!-- teams-sample-sync-handoff:${handoffId(baseSha, results)} -->`,
   ].join('\n')
 }
 

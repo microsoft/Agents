@@ -156,6 +156,20 @@ describe('Agents SDK release policy', () => {
         },
         sample
       )
+      const metadata = path.join(upstream, 'metadata.git')
+      execFileSync(
+        'git',
+        ['-c', 'user.name=Sample Sync', '-c', 'user.email=sync@example.com', 'tag', '-am', 'Source release', 'v1.0'],
+        { cwd: upstream }
+      )
+      execFileSync('git', ['init', '--bare', '-q', metadata])
+      execFileSync('git', ['remote', 'add', 'origin', upstream], { cwd: metadata })
+      execFileSync('git', ['fetch', '--depth=1', 'origin', 'v1.0'], { cwd: metadata, stdio: 'pipe' })
+      execFileSync('git', ['update-ref', 'HEAD', 'FETCH_HEAD^{commit}'], { cwd: metadata })
+      assert.deepEqual(
+        createPlan(repo, metadata, previous.agentsSdkVersion, sample),
+        previous
+      )
       const newer = createPlan(
         repo,
         upstream,

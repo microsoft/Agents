@@ -20,8 +20,8 @@ on:
           - bot-meetings
           - bot-message-extensions
           - bot-task-modules
-      createPr:
-        description: Create draft pull requests
+      publish:
+        description: Create a handoff issue after all migrations pass (assign Copilot if a token is configured)
         type: boolean
         default: false
 
@@ -31,6 +31,7 @@ env:
 
 jobs:
   plan:
+    if: (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -45,18 +46,29 @@ jobs:
           persist-credentials: false
       - id: base
         run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          repository: ${{ env.TEAMS_SAMPLES_REPOSITORY }}
-          ref: main
-          path: .sync/upstream
-          persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "24"
           cache: npm
           cache-dependency-path: automation/teams-sample-sync/package-lock.json
       - run: npm ci --prefix "$SYNC_TOOL" && npm run build --prefix "$SYNC_TOOL"
+      - name: Read upstream configuration
+        id: upstream
+        run: |
+          node --input-type=module <<'NODE'
+          import { appendFileSync } from 'node:fs'
+          import { targets } from './automation/teams-sample-sync/dist/config.js'
+          const { ref } = targets(process.cwd()).upstream
+          appendFileSync(process.env.GITHUB_OUTPUT, `ref=${ref}\n`)
+          NODE
+      - name: Fetch upstream metadata without checking out code
+        env:
+          UPSTREAM_REF: ${{ steps.upstream.outputs.ref }}
+        run: |
+          git init --bare .sync/upstream
+          git -C .sync/upstream remote add origin "https://github.com/$TEAMS_SAMPLES_REPOSITORY.git"
+          git -C .sync/upstream fetch --depth=1 origin "$UPSTREAM_REF"
+          git -C .sync/upstream update-ref HEAD 'FETCH_HEAD^{commit}'
       - id: plan
         env:
           SYNC_SAMPLE: ${{ github.event_name == 'schedule' && 'all' || inputs.sample }}
@@ -66,7 +78,12 @@ jobs:
           node "$SYNC_TOOL/dist/cli.js" plan --repo-root . --upstream-root .sync/upstream "${sample_arg[@]}" --output .sync/plan.json
           echo "matrix=$(jq -c .matrix .sync/plan.json)" >> "$GITHUB_OUTPUT"
           jq -r '.samples | to_entries[] | "- \(.key): \(.value.status)"' .sync/plan.json >> "$GITHUB_STEP_SUMMARY"
+          if ! jq -e '[.samples[] | select(.status == "upstream-removed")] | length == 0' .sync/plan.json; then
+            echo "::error::A configured sample was removed upstream; coordinated publication is blocked."
+            exit 1
+          fi
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: always()
         with:
           name: teams-sample-sync-plan
           path: .sync/plan.json
@@ -134,21 +151,20 @@ jobs:
           if-no-files-found: warn
 
   publish:
-    name: publish · ${{ matrix.sample }}
+    name: hand off coordinated sync
     needs: [plan, migrate]
-    if: always() && (github.event_name == 'schedule' || inputs.createPr) && needs.plan.result == 'success' && needs.plan.outputs.matrix != '[]'
+    if: (github.event_name == 'schedule' || inputs.publish) && needs.plan.result == 'success' && needs.migrate.result == 'success' && needs.plan.outputs.matrix != '[]'
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
+      contents: read
+      actions: read
+      issues: write
     env:
       GH_TOKEN: ${{ github.token }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include: ${{ fromJSON(needs.plan.outputs.matrix) }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
+      PLAN_FILE: .sync/results/teams-sample-sync-plan/plan.json
     concurrency:
-      group: teams-sample-sync-${{ matrix.sample }}
+      group: teams-sample-sync-publish
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -161,31 +177,100 @@ jobs:
           cache: npm
           cache-dependency-path: automation/teams-sample-sync/package-lock.json
       - run: npm ci --prefix "$SYNC_TOOL" && npm run build --prefix "$SYNC_TOOL"
-      - id: download
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        continue-on-error: true
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: teams-sample-sync-${{ matrix.sample }}
-          path: .sync/result
-      - id: ready
-        run: |
-          ready=false
-          if [ "${{ steps.download.outcome }}" = success ] && [ -f .sync/result/sync-result.json ] && [ "$(jq -r .publishable .sync/result/sync-result.json)" = true ]; then ready=true; fi
-          echo "ready=$ready" >> "$GITHUB_OUTPUT"
-      - name: Apply verified patch
-        if: steps.ready.outputs.ready == 'true'
+          pattern: teams-sample-sync-*
+          path: .sync/results
+      - name: Check every verified patch against the planned base
         env:
-          SYNC_SAMPLE: ${{ matrix.sample }}
+          BASE_SHA: ${{ needs.plan.outputs.baseSha }}
         run: |
-          git apply --index --binary .sync/result/change.patch
-          node "$SYNC_TOOL/dist/cli.js" verify-patch --repo-root . --sample "$SYNC_SAMPLE" --result .sync/result/sync-result.json
-      - name: Push branch and publish PR
-        if: steps.ready.outputs.ready == 'true'
+          repo_root="$PWD"
+          while IFS= read -r sample; do
+            result="$repo_root/.sync/results/teams-sample-sync-$sample"
+            test -f "$result/sync-result.json"
+            test "$(jq -r .publishable "$result/sync-result.json")" = true
+            test "$(jq -r .baseSha "$result/sync-result.json")" = "$BASE_SHA"
+            verify="$repo_root/.sync/verify/$sample"
+            git worktree add --detach "$verify" "$BASE_SHA"
+            git -C "$verify" apply --index --binary "$result/change.patch"
+            node "$repo_root/$SYNC_TOOL/dist/cli.js" verify-patch --repo-root "$verify" --sample "$sample" --result "$result/sync-result.json"
+            git worktree remove --force "$verify"
+          done < <(jq -r '.matrix[].sample' "$PLAN_FILE")
+      - name: Prepare consolidated handoff
         env:
-          SYNC_SAMPLE: ${{ matrix.sample }}
+          BASE_SHA: ${{ needs.plan.outputs.baseSha }}
         run: |
-          branch="automation/teams-sample-sync/$SYNC_SAMPLE"
-          git config user.name github-actions[bot]; git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git fetch origin "$branch:refs/remotes/origin/$branch" || true; git checkout -B "$branch"
-          git commit -m "Sync Teams SDK sample: $SYNC_SAMPLE"; git push --force-with-lease origin "$branch"
-          node "$SYNC_TOOL/dist/cli.js" publish-pr --repo-root . --sample "$SYNC_SAMPLE" --branch "$branch" --head-sha "$(git rev-parse HEAD)" --body-file .sync/result/pr-body.md
+          node "$SYNC_TOOL/dist/cli.js" prepare-handoff \
+            --repo-root . --plan "$PLAN_FILE" --results-directory .sync/results \
+            --base-sha "$BASE_SHA" --output-directory .sync/handoff
+      - id: handoff
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: teams-sample-sync-handoff-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .sync/handoff
+          if-no-files-found: error
+      - name: Prepare handoff issue
+        env:
+          BASE_SHA: ${{ needs.plan.outputs.baseSha }}
+          BASE_BRANCH: ${{ github.event.repository.default_branch }}
+          HANDOFF_URL: ${{ steps.handoff.outputs.artifact-url }}
+          HANDOFF_ARTIFACT: teams-sample-sync-handoff-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          node "$SYNC_TOOL/dist/cli.js" prepare-issue \
+            --repo-root . --plan "$PLAN_FILE" --results-directory .sync/results \
+            --base-sha "$BASE_SHA" --base-branch "$BASE_BRANCH" \
+            --repository "$GITHUB_REPOSITORY" --run-url "$RUN_URL" --handoff-url "$HANDOFF_URL" \
+            --handoff-artifact "$HANDOFF_ARTIFACT" --output-directory .sync/issue
+      - name: Create or reuse handoff issue and assign Copilot
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_ASSIGNMENT_TOKEN || github.token }}
+          COPILOT_ASSIGNMENT_TOKEN: ${{ secrets.COPILOT_ASSIGNMENT_TOKEN }}
+          BASE_BRANCH: ${{ github.event.repository.default_branch }}
+          BASE_SHA: ${{ needs.plan.outputs.baseSha }}
+        run: |
+          current_base="$(git ls-remote origin "refs/heads/$BASE_BRANCH" | cut -f1)"
+          test "$current_base" = "$BASE_SHA" || { echo 'Target branch moved since planning; rerun the sync'; exit 1; }
+          handoff_id="$(cat .sync/issue/handoff-id.txt)"
+          gh api --paginate "repos/$GITHUB_REPOSITORY/issues?state=open&per_page=100" \
+            > .sync/issue/open-issues.json
+          existing_number="$(jq -sr --arg marker "teams-sample-sync-handoff:$handoff_id" \
+            '[.[][] | select(.pull_request == null and ((.body // "") | contains($marker)))]
+              | first | .number // empty' .sync/issue/open-issues.json)"
+          jq -n --rawfile title .sync/issue/issue-title.txt --rawfile body .sync/issue/issue-body.md \
+            '{title: ($title | rtrimstr("\n")), body: $body}' > .sync/issue/issue-request.json
+          if [ -n "$existing_number" ]; then
+            gh api "repos/$GITHUB_REPOSITORY/issues/$existing_number" > .sync/issue/issue-response.json
+            if jq -e '.assignees | any(.login == "Copilot" or .login == "copilot-swe-agent[bot]")' \
+              .sync/issue/issue-response.json > /dev/null; then
+              echo "### Coordinated sync already handed to Copilot" >> "$GITHUB_STEP_SUMMARY"
+              echo "Handoff issue: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/issues/$existing_number" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/$existing_number" \
+              --input .sync/issue/issue-request.json > .sync/issue/issue-response.json
+          else
+            gh api --method POST "repos/$GITHUB_REPOSITORY/issues" \
+              --input .sync/issue/issue-request.json > .sync/issue/issue-response.json
+          fi
+          issue_number="$(jq -r .number .sync/issue/issue-response.json)"
+          issue_url="$(jq -r .html_url .sync/issue/issue-response.json)"
+          if [ -z "$COPILOT_ASSIGNMENT_TOKEN" ]; then
+            echo "### Coordinated sync ready for manual assignment" >> "$GITHUB_STEP_SUMMARY"
+            echo "Handoff issue: $issue_url" >> "$GITHUB_STEP_SUMMARY"
+            echo "Assign Copilot manually to the handoff issue. Configure COPILOT_ASSIGNMENT_TOKEN to enable automatic assignment." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          jq -n --arg repository "$GITHUB_REPOSITORY" --arg base "$BASE_BRANCH" \
+            '{assignees: ["copilot-swe-agent[bot]"],
+              agent_assignment: {target_repo: $repository, base_branch: $base,
+                custom_agent: "", model: ""}}' > .sync/issue/assignment-request.json
+          current_base="$(git ls-remote origin "refs/heads/$BASE_BRANCH" | cut -f1)"
+          test "$current_base" = "$BASE_SHA" || { echo 'Target branch moved since planning; rerun the sync'; exit 1; }
+          gh api --method POST "repos/$GITHUB_REPOSITORY/issues/$issue_number/assignees" \
+            --input .sync/issue/assignment-request.json > .sync/issue/issue-response.json
+          jq -e '.assignees | any(.login == "Copilot" or .login == "copilot-swe-agent[bot]")' \
+            .sync/issue/issue-response.json > /dev/null || { echo 'Issue was not assigned to Copilot'; exit 1; }
+          issue_url="$(jq -r .html_url .sync/issue/issue-response.json)"
+          echo "### Coordinated sync handed to Copilot" >> "$GITHUB_STEP_SUMMARY"
+          echo "Handoff issue: $issue_url" >> "$GITHUB_STEP_SUMMARY"

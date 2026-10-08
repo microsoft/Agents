@@ -4,10 +4,10 @@
  * CLI entry point used by the GitHub Actions plan, migrate, and publish jobs.
  * `plan` writes a deterministic matrix, `migrate` produces an isolated validated patch and artifacts,
  * `verify-patch` rejects anything whose context, digest, or changed paths no longer match that run,
- * and `publish-pr` requires an open pull request for the pushed commit.
+ * and the handoff commands package migration evidence and a concise issue for a verified run.
  */
 import type { Tool } from '@github/copilot-sdk'
-import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { CopilotAgentRunner, type SdkFactory } from './agent-runner.js'
@@ -15,9 +15,10 @@ import { createContext } from './context.js'
 import { protection, targets, SyncError } from './config.js'
 import { guardCandidate, validateTool, type ToolHost } from './agent-tools.js'
 import { changedPaths, digestDirectory, git, hash, matches, stable } from './git.js'
+import { prepareHandoffBundle } from './handoff-bundle.js'
 import { createPlan } from './plan.js'
-import { publishDraftPr, publishedPrSummary } from './publish-pr.js'
-import { failureReport, githubErrorAnnotation, prBody, workflowSummary } from './report.js'
+import { publishableResults } from './publish-bundle.js'
+import { failureReport, githubErrorAnnotation, handoffId, handoffIssueBody, issueTitle, workflowSummary } from './report.js'
 import { createState, statePath, validateState } from './state.js'
 import { prepareManifest, type ValidationRuntime } from './validate.js'
 import { assertAgentsSdkVersionSelection, resolveAgentsSdkVersion } from './versions.js'
@@ -42,9 +43,13 @@ function parseArgs (items: string[]): Record<string, string> {
         'output-directory',
         'output',
         'result',
-        'branch',
-        'head-sha',
-        'body-file',
+        'base-sha',
+        'base-branch',
+        'repository',
+        'results-directory',
+        'run-url',
+        'handoff-url',
+        'handoff-artifact',
       ].includes(key)
     ) {
       throw new SyncError(`Unknown option: ${option}`)
@@ -224,11 +229,12 @@ export async function migrateCandidate (
         session,
         validate: () => validateTool(host, 'all'),
         sampleChanges: () => changedPaths(repo, baseSha).filter((item) => item.startsWith(`${sampleRelative}/`)),
+        sampleDiff: () => git(repo, ['diff', '--no-ext-diff', '--unified=3', baseSha, '--', sampleRelative]) as string,
       })
       result.validation = migration.validation
       result.outputDigest = migration.validation.outputDigest
       result.planHash = migration.planHash
-      result.selfAudit = migration.selfAudit
+      result.summary = migration.summary
       writeFileSync(path.join(output, 'self-audit.md'), `${migration.selfAudit}\n`, 'utf8')
       const sampleChanges = changedPaths(repo, baseSha).filter((item) => item.startsWith(`${sampleRelative}/`))
       assertOutcomeMatchesSampleChanges(migration.outcome, sampleChanges)
@@ -266,19 +272,12 @@ export async function migrateCandidate (
     })
     writeJson(path.join(output, 'sync-result.json'), result)
     writeFileSync(path.join(output, 'workflow-summary.md'), workflowSummary(result), 'utf8')
-    if (result.publishable) {
-      writeFileSync(path.join(output, 'pr-body.md'), prBody(result), 'utf8')
-    }
     const failure = failureReport(result)
     if (failure) {
       emitFailure(failure)
     }
   }
   return result.publishable ? 0 : 1
-}
-
-async function migrate (repo: string, values: Record<string, string>): Promise<number> {
-  return migrateCandidate(repo, values)
 }
 
 function verifyPatch (repo: string, values: Record<string, string>): void {
@@ -385,8 +384,8 @@ function verifyPatch (repo: string, values: Record<string, string>): void {
 export async function main (argv = process.argv.slice(2)): Promise<number> {
   try {
     const [command, ...rest] = argv
-    if (command !== 'plan' && command !== 'migrate' && command !== 'verify-patch' && command !== 'publish-pr') {
-      throw new SyncError('Expected command: plan, migrate, verify-patch, or publish-pr')
+    if (!['plan', 'migrate', 'verify-patch', 'prepare-handoff', 'prepare-issue'].includes(String(command))) {
+      throw new SyncError('Expected command: plan, migrate, verify-patch, prepare-handoff, or prepare-issue')
     }
     const values = parseArgs(rest)
     const repo = path.resolve(process.env.INIT_CWD ?? process.cwd(), values['repo-root'] ?? '.')
@@ -398,21 +397,37 @@ export async function main (argv = process.argv.slice(2)): Promise<number> {
       return 0
     }
     if (command === 'migrate') {
-      return migrate(repo, values)
+      return migrateCandidate(repo, values)
     }
-    if (command === 'publish-pr') {
-      const sample = required(values, 'sample')
-      const pullRequest = publishDraftPr(
-        repo,
-        required(values, 'branch'),
-        `Sync Teams SDK sample: ${sample}`,
-        resolveOption(required(values, 'body-file')),
-        required(values, 'head-sha')
-      )
-      process.stdout.write(`Open pull request: ${pullRequest.url}\n`)
-      if (process.env.GITHUB_STEP_SUMMARY) {
-        appendFileSync(process.env.GITHUB_STEP_SUMMARY, publishedPrSummary(sample, pullRequest), 'utf8')
+    if (command === 'prepare-handoff' || command === 'prepare-issue') {
+      const plan = readJson<Plan>(resolveOption(required(values, 'plan')))
+      const results = publishableResults(plan, resolveOption(required(values, 'results-directory')), required(values, 'base-sha'))
+      const output = resolveOption(required(values, 'output-directory'))
+      mkdirSync(output, { recursive: true })
+      if (command === 'prepare-handoff') {
+        prepareHandoffBundle({
+          planFile: resolveOption(required(values, 'plan')),
+          resultsDirectory: resolveOption(required(values, 'results-directory')),
+          results,
+          output,
+        })
+        return 0
       }
+      writeFileSync(
+        path.join(output, 'issue-body.md'),
+        handoffIssueBody(
+          results,
+          required(values, 'base-sha'),
+          required(values, 'base-branch'),
+          required(values, 'repository'),
+          required(values, 'run-url'),
+          required(values, 'handoff-url'),
+          required(values, 'handoff-artifact')
+        ),
+        'utf8'
+      )
+      writeFileSync(path.join(output, 'issue-title.txt'), `${issueTitle(results)}\n`, 'utf8')
+      writeFileSync(path.join(output, 'handoff-id.txt'), `${handoffId(required(values, 'base-sha'), results)}\n`, 'utf8')
       return 0
     }
     verifyPatch(repo, values)
