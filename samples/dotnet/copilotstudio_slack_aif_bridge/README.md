@@ -48,8 +48,11 @@ and interactive submit/input actions are not implemented.
 `SlackMessageContent` checks the content shape, supported block types, required
 fields, HTTP(S) image URLs, and message/block size limits before posting. Invalid
 or oversized output raises an error instead of being silently truncated or replaced
-with an echo. Model and Slack API failures reach the existing logged turn-error
-handler. Empty Copilot Studio responses are logged and are not sent to the formatter.
+with an echo. Failures after Slack stream creation attempt to mark the `mcsUpdate`
+task as errored with a generic user-facing message, then propagate to the existing
+logged turn-error handler. If the error update also fails, that failure is logged
+without replacing the original exception. Empty Copilot Studio responses are
+logged and are not sent to the formatter.
 
 The Copilot Studio conversation ID is stored in conversation state as
 `MCSConversationId`. After successful Slack delivery, the formatter session is

@@ -141,28 +141,50 @@ public partial class McsSlackBridge : AgentApplication
     {
         var stream = await SlackExtension.CreateStreamAsync(context);
 
-        CopilotStudioResponse response = await ProcessCopilotStudioResponseAsync(context, turnState, stream, cancellationToken);
-
-        turnState.Temp.SetValue(CopilotStudioResponseStateKey, response);
-        if (string.IsNullOrWhiteSpace(response.Text) && response.Attachments.Length == 0)
+        try
         {
-            _logger.LogWarning("Skipping empty Slack response for conversation {ConversationId}", context.Activity.Conversation?.Id);
-            return;
+            CopilotStudioResponse response = await ProcessCopilotStudioResponseAsync(context, turnState, stream, cancellationToken);
+
+            turnState.Temp.SetValue(CopilotStudioResponseStateKey, response);
+            if (string.IsNullOrWhiteSpace(response.Text) && response.Attachments.Length == 0)
+            {
+                _logger.LogWarning("Skipping empty Slack response for conversation {ConversationId}", context.Activity.Conversation?.Id);
+                return;
+            }
+
+            await stream.AppendAsync(new TaskUpdateChunk(id: "mcsUpdate", title: "Formatting response for you", status: SlackTaskStatus.InProgress));
+
+            AIAgent agent = await GetClientAgent(context, turnState, ToolAuthHandlerName).ConfigureAwait(false);
+            AgentSession thread = await GetConversationThread(agent, turnState, cancellationToken).ConfigureAwait(false);
+            string input = JsonSerializer.Serialize(new { text = response.Text, attachments = response.Attachments },
+                ProtocolJsonSerializer.SerializationOptions);
+            AgentResponse converted = await agent.RunAsync(input, thread, cancellationToken: cancellationToken).ConfigureAwait(false);
+            JsonElement savedSession = await agent.SerializeSessionAsync(thread, cancellationToken: cancellationToken).ConfigureAwait(false);
+
+            await PostSlackBlocksAsync(context, converted.Text, stream,cancellationToken).ConfigureAwait(false);
+
+            await stream.AppendAsync(new TaskUpdateChunk(id: "mcsUpdate", title: "Done", status: SlackTaskStatus.Complete));
+            turnState.Conversation.SetValue("conversation.threadInfo", savedSession.GetRawText());
         }
+        catch (Exception)
+        {
+            try
+            {
+                await stream.AppendAsync(new TaskUpdateChunk(
+                    id: "mcsUpdate",
+                    title: "Unable to complete your request",
+                    status: SlackTaskStatus.Error));
+            }
+            catch (Exception updateException)
+            {
+                _logger.LogError(
+                    updateException,
+                    "Failed to update Slack task status for conversation {ConversationId}",
+                    context.Activity.Conversation?.Id);
+            }
 
-        await stream.AppendAsync(new TaskUpdateChunk(id: "mcsUpdate", title: "Formatting response for you", status: SlackTaskStatus.InProgress));
-
-        AIAgent agent = await GetClientAgent(context, turnState, ToolAuthHandlerName).ConfigureAwait(false);
-        AgentSession thread = await GetConversationThread(agent, turnState, cancellationToken).ConfigureAwait(false);
-        string input = JsonSerializer.Serialize(new { text = response.Text, attachments = response.Attachments },
-            ProtocolJsonSerializer.SerializationOptions);
-        AgentResponse converted = await agent.RunAsync(input, thread, cancellationToken: cancellationToken).ConfigureAwait(false);
-        JsonElement savedSession = await agent.SerializeSessionAsync(thread, cancellationToken: cancellationToken).ConfigureAwait(false);
-
-        await PostSlackBlocksAsync(context, converted.Text, stream,cancellationToken).ConfigureAwait(false);
-
-        await stream.AppendAsync(new TaskUpdateChunk(id: "mcsUpdate", title: "Done", status: SlackTaskStatus.Complete));
-        turnState.Conversation.SetValue("conversation.threadInfo", savedSession.GetRawText());
+            throw;
+        }
     }
 
     [MessageRoute(text:"signout")]

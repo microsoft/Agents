@@ -57,6 +57,7 @@ public class SlackDeliveryTests
         Assert.Equal("Bearer test-token", Assert.Single(test.Transport.AuthorizationHeaders));
         Assert.EndsWith("/chat.postMessage", Assert.Single(test.Transport.Urls));
         Assert.False(string.IsNullOrEmpty(test.Conversation.GetValue<string>("conversation.threadInfo")));
+        Assert.DoesNotContain(test.Transport.StreamBodies, HasErrorTaskUpdate);
         test.Context.As<ITurnContext>().VerifyGet(c => c.StreamingResponse, Times.Never);
     }
 
@@ -119,6 +120,7 @@ public class SlackDeliveryTests
         Assert.Single(test.ModelInputs);
         Assert.Empty(test.Transport.Bodies);
         Assert.Null(test.Conversation.GetValue<string?>("conversation.threadInfo", () => null));
+        AssertErrorTaskUpdate(test.Transport);
     }
 
     [Fact]
@@ -133,6 +135,7 @@ public class SlackDeliveryTests
 
         Assert.Contains("invalid_blocks", error.Message);
         Assert.Equal(previousSession, test.Conversation.GetValue<string>("conversation.threadInfo"));
+        AssertErrorTaskUpdate(test.Transport);
     }
 
     [Fact]
@@ -146,6 +149,26 @@ public class SlackDeliveryTests
         await Assert.ThrowsAsync<InvalidOperationException>(() => test.RunAsync());
 
         Assert.Empty(test.Transport.Bodies);
+        AssertErrorTaskUpdate(test.Transport);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ProcessingFailureMarksTaskAsErroredAndPreservesOriginalException(bool errorUpdateFails)
+    {
+        using var test = new Harness(new CopilotStudioResponse("Answer", []), ValidContent);
+        var failure = new InvalidOperationException("Copilot Studio unavailable");
+        test.Agent.ProcessingFailure = failure;
+        test.Transport.ErrorUpdateFails = errorUpdateFails;
+
+        var thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => test.RunAsync());
+
+        Assert.Same(failure, thrown);
+        Assert.Empty(test.ModelInputs);
+        Assert.Empty(test.Transport.Bodies);
+        Assert.Null(test.Conversation.GetValue<string?>("conversation.threadInfo", () => null));
+        AssertErrorTaskUpdate(test.Transport);
     }
 
     [Fact]
@@ -176,6 +199,7 @@ public class SlackDeliveryTests
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => test.RunAsync(cancellation.Token));
 
         Assert.Empty(test.Transport.Bodies);
+        AssertErrorTaskUpdate(test.Transport);
     }
 
     [Theory]
@@ -272,6 +296,22 @@ public class SlackDeliveryTests
         Assert.Empty(test.Transport.Bodies);
     }
 
+    private static void AssertErrorTaskUpdate(RecordingTransport transport)
+    {
+        string body = Assert.Single(transport.StreamBodies, HasErrorTaskUpdate);
+        Assert.DoesNotContain("unavailable", body, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("invalid_blocks", body);
+    }
+
+    private static bool HasErrorTaskUpdate(string body)
+    {
+        using var json = JsonDocument.Parse(body);
+        return json.RootElement.TryGetProperty("chunks", out var chunks) && chunks.EnumerateArray().Any(chunk =>
+            chunk.GetProperty("type").GetString() == "task_update"
+            && chunk.GetProperty("id").GetString() == "mcsUpdate"
+            && chunk.GetProperty("status").GetString() == "error");
+    }
+
     private sealed class Harness : IDisposable
     {
         public Mock<IChatClient> ChatClient { get; } = new();
@@ -354,12 +394,19 @@ public class SlackDeliveryTests
             chatClient, new ConfigurationBuilder().Build(), services, NullLogger<McsSlackBridge>.Instance)
     {
         public int ProcessingCalls { get; private set; }
+        public Exception? ProcessingFailure { get; set; }
 
-        protected override Task<CopilotStudioResponse> ProcessCopilotStudioResponseAsync(
+        protected override async Task<CopilotStudioResponse> ProcessCopilotStudioResponseAsync(
             ITurnContext context, ITurnState turnState, object additionalData, CancellationToken cancellationToken)
         {
             ProcessingCalls++;
-            return Task.FromResult(response);
+            if (ProcessingFailure != null)
+            {
+                await ((SlackStream)additionalData).AppendAsync(new TaskUpdateChunk(
+                    id: "mcsUpdate", title: "Processing", status: SlackTaskStatus.InProgress));
+                throw ProcessingFailure;
+            }
+            return response;
         }
     }
 
@@ -368,12 +415,22 @@ public class SlackDeliveryTests
         public List<string> Bodies { get; } = [];
         public List<string> AuthorizationHeaders { get; } = [];
         public List<string> Urls { get; } = [];
+        public List<string> StreamBodies { get; } = [];
+        public bool ErrorUpdateFails { get; set; }
         public string Response { get; set; } = """{"ok":true,"ts":"987.654"}""";
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             string url = request.RequestUri!.ToString();
             bool isPostedMessage = url.EndsWith("/chat.postMessage", StringComparison.Ordinal);
+            bool failedErrorUpdate = false;
+            if (url.EndsWith("/chat.startStream", StringComparison.Ordinal)
+                || url.EndsWith("/chat.appendStream", StringComparison.Ordinal))
+            {
+                string body = await request.Content!.ReadAsStringAsync(cancellationToken);
+                StreamBodies.Add(body);
+                failedErrorUpdate = ErrorUpdateFails && HasErrorTaskUpdate(body);
+            }
             if (isPostedMessage)
             {
                 Bodies.Add(await request.Content!.ReadAsStringAsync(cancellationToken));
@@ -383,7 +440,8 @@ public class SlackDeliveryTests
             return new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent(
-                    isPostedMessage ? Response : """{"ok":true,"ts":"987.654"}""",
+                    failedErrorUpdate ? """{"ok":false,"error":"stream_update_failed"}"""
+                        : isPostedMessage ? Response : """{"ok":true,"ts":"987.654"}""",
                     Encoding.UTF8,
                     "application/json")
             };
