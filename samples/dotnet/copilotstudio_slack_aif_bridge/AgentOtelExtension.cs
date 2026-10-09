@@ -29,6 +29,18 @@ namespace Slack_MCS_Bridge
         /// </summary>
         private static bool _enableBodyLogging = false;
 
+        private static readonly HashSet<string> SensitiveHeaders = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "Authorization",
+            "Proxy-Authorization",
+            "api-key",
+            "x-api-key",
+            "Ocp-Apim-Subscription-Key",
+            "x-functions-key",
+            "Cookie",
+            "Set-Cookie"
+        };
+
         public static TBuilder ConfigureOtelProviders<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
         {
 
@@ -118,7 +130,7 @@ namespace Slack_MCS_Bridge
         /// <param name="request">The HTTP content headers to extract. If null, no tags will be added.</param>
         /// <param name="tagName">The name of the tag to use when adding headers to the activity (e.g., "http.request.headers" or "http.response.headers").</param>
         /// <remarks>
-        /// This method filters out the "Authorization" header for security reasons and formats the remaining headers
+        /// This method excludes known credential and cookie headers using a case-insensitive denylist and formats the remaining headers
         /// as "HeaderName=value1,value2" strings. The headers are then added to the activity as an array tag,
         /// which is compatible with OpenTelemetry exporters that support array-of-primitive attributes.
         /// </remarks>
@@ -130,7 +142,7 @@ namespace Slack_MCS_Bridge
                 return;
             }
 
-            var headerList = request.Where(h => h.Key != "Authorization")
+            var headerList = request.Where(h => !SensitiveHeaders.Contains(h.Key))
                                     .Select(h => $"{h.Key}={string.Join(",", h.Value)}")
                                     .ToArray();
 
@@ -154,7 +166,7 @@ namespace Slack_MCS_Bridge
         /// <param name="request">The HTTP content headers to extract. If null, no tags will be added.</param>
         /// <param name="tagName">The name of the tag to use when adding headers to the activity (e.g., "http.request.headers" or "http.response.headers").</param>
         /// <remarks>
-        /// This method filters out the "Authorization" header for security reasons and formats the remaining headers
+        /// This method excludes known credential and cookie headers using a case-insensitive denylist and formats the remaining headers
         /// as "HeaderName=value1,value2" strings. The headers are then added to the activity as an array tag,
         /// which is compatible with OpenTelemetry exporters that support array-of-primitive attributes.
         /// </remarks>
@@ -165,7 +177,7 @@ namespace Slack_MCS_Bridge
             {
                 return;
             }
-            var headerList = request.Where(h => h.Key != "Authorization")
+            var headerList = request.Where(h => !SensitiveHeaders.Contains(h.Key))
                                     .Select(h => $"{h.Key}={string.Join(",", h.Value)}")
                                     .ToArray();
 

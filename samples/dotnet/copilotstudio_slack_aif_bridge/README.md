@@ -294,6 +294,12 @@ or configure it in the active settings file.
 `ConfigureOtelProviders`; the OTLP exporters are always registered by the
 current implementation.
 
+HTTP header telemetry excludes `Authorization`, `Proxy-Authorization`, `api-key`,
+`x-api-key`, `Ocp-Apim-Subscription-Key`, `x-functions-key`, `Cookie`, and
+`Set-Cookie` using a shared, case-insensitive denylist for inbound and outbound
+requests and responses. Other headers remain visible; extend the denylist before
+using clients that send credentials in additional headers.
+
 > **Sensitive-data warning:** The current sample configuration records POST
 > request bodies, outgoing HTTP request and response bodies, HTTP headers, and
 > model content in telemetry. Do not enable this behavior in production without
