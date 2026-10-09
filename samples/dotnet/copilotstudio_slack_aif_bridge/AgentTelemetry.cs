@@ -35,9 +35,12 @@ public static class AgentTelemetry
         // Init the activity for observability
         using var activity = InitializeMessageHandlingActivity(operationName, context);
         var routeStopwatch = Stopwatch.StartNew();
+        bool success = false;
         try
         {
-            return await func().ConfigureAwait(false);
+            T result = await func().ConfigureAwait(false);
+            success = true;
+            return result;
         }
         catch (Exception ex)
         {
@@ -53,7 +56,7 @@ public static class AgentTelemetry
         finally
         {
             routeStopwatch.Stop();
-            FinalizeMessageHandlingActivity(activity, context, routeStopwatch.ElapsedMilliseconds, true);
+            FinalizeMessageHandlingActivity(activity, context, routeStopwatch.ElapsedMilliseconds, success);
         }
     }
     public static Activity InitializeMessageHandlingActivity(string handlerName, ITurnContext context)
