@@ -355,7 +355,9 @@ public partial class AgentTargetedMessagesAgent(
             "**Reactions:**\n" +
             "- `add-reaction [type]` - Agent adds a reaction to your message\n" +
             "- `remove-reaction [type]` - Agent removes a reaction from your message\n" +
-            "- React to any agent message and the agent will acknowledge it!";
+            "- React to any agent message and the agent will acknowledge it!\n\n" +
+            "**Supported Reaction Types:**\n" +
+            "- `like` \ud83d\udc4d, `heart` \u2764\ufe0f, `1f440_eyes` \ud83d\udc40, `2705_whiteheavycheckmark` \u2705, `launch` \ud83d\ude80, `1f4cc_pushpin` \ud83d\udccc";
 
         IActivity response = CreateTextActivity(helpText);
         response.SuggestedActions = BuildSuggestedCommands(
@@ -379,7 +381,8 @@ public partial class AgentTargetedMessagesAgent(
         if (string.IsNullOrEmpty(reactionType))
         {
             await turnContext.SendActivityAsync(
-                "Please specify a reaction type. Example: `add-reaction like`",
+                "Please specify a reaction type. Example: `add-reaction like`\n\n" +
+                "Supported types: `like`, `heart`, `1f440_eyes`, `2705_whiteheavycheckmark`, `launch`, `1f4cc_pushpin`",
                 cancellationToken: cancellationToken);
             return;
         }
