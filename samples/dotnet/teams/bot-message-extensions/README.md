@@ -67,7 +67,7 @@ The manifest preserves the upstream message extension configuration:
 - Query command ID: `wikipediaSearch`
 - Contexts: `compose` and `commandBox`
 - Query parameter: `searchQuery`
-- Link-unfurling domain: `*.wikipedia.org`
+- Link-unfurling domain: `en.wikipedia.org`
 - Bot endpoint: `/api/messages`, configured on the Azure Bot resource
 
 Upload the ZIP as a custom app in Teams. In the compose area, open **Apps**, select **Wikipedia Search**, and search for an article. Paste a Wikipedia URL to test link unfurling.
