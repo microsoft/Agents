@@ -49,9 +49,15 @@ public partial class BotCardsAgent(AgentApplicationOptions options) : AgentAppli
         CancellationToken cancellationToken)
     {
         JsonElement submittedData = JsonSerializer.SerializeToElement(data);
-        string name = submittedData.TryGetProperty("name", out JsonElement nameProperty)
-            ? nameProperty.ToString()
-            : string.Empty;
+        if (!submittedData.TryGetProperty("name", out JsonElement nameProperty)
+            || nameProperty.ValueKind == JsonValueKind.Null)
+        {
+            return Task.FromResult(AdaptiveCardInvokeResponseFactory.Message("No data specified"));
+        }
+
+        string name = nameProperty.ValueKind == JsonValueKind.String
+            ? nameProperty.GetString() ?? string.Empty
+            : nameProperty.ToString();
 
         return Task.FromResult(
             AdaptiveCardInvokeResponseFactory.Message($"Data Submitted: {name}"));
