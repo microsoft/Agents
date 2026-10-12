@@ -1,0 +1,6 @@
+dist/
+node_modules/
+.env
+env.local
+infra/main.json
+app.zip
