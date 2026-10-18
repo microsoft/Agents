@@ -65,7 +65,7 @@ public partial class BotTaskModulesAgent(
             cancellationToken);
     }
 
-    [TeamsTaskFetchRoute("AdaptiveCard", key: "data")]
+    [TeamsTaskFetchRoute("AdaptiveCard", key: "data", rank: 10)]
     public Task<TaskResponse> OnAdaptiveCardFetchAsync(
         ITeamsTurnContext turnContext,
         ITurnState turnState,
@@ -73,7 +73,7 @@ public partial class BotTaskModulesAgent(
         CancellationToken cancellationToken)
         => Task.FromResult(CreateAdaptiveCardTask());
 
-    [TeamsTaskFetchRoute("CustomForm", key: "data")]
+    [TeamsTaskFetchRoute("CustomForm", key: "data", rank: 20)]
     public Task<TaskResponse> OnCustomFormFetchAsync(
         ITeamsTurnContext turnContext,
         ITurnState turnState,
@@ -81,13 +81,21 @@ public partial class BotTaskModulesAgent(
         CancellationToken cancellationToken)
         => Task.FromResult(CreateCustomFormTask());
 
-    [TeamsTaskFetchRoute("MultiStep", key: "data")]
+    [TeamsTaskFetchRoute("MultiStep", key: "data", rank: 30)]
     public Task<TaskResponse> OnMultiStepFetchAsync(
         ITeamsTurnContext turnContext,
         ITurnState turnState,
         Request request,
         CancellationToken cancellationToken)
         => Task.FromResult(CreateMultiStepOneTask());
+
+    [TeamsTaskFetchRoute(key: "data", rank: 100)]
+    public Task<TaskResponse> OnUnknownFetchAsync(
+        ITeamsTurnContext turnContext,
+        ITurnState turnState,
+        Request request,
+        CancellationToken cancellationToken)
+        => Task.FromResult(new TaskResponse(new MessageTask("Unknown dialog type")));
 
     [TeamsTaskSubmitRoute("multi_step_1", key: "submissiontype", rank: 10)]
     public Task<TaskResponse> OnMultiStepOneSubmitAsync(
@@ -142,6 +150,10 @@ public partial class BotTaskModulesAgent(
         CancellationToken cancellationToken)
     {
         string userText = request.GetDataString("usertext");
+        if (userText is null)
+        {
+            return new TaskResponse(new MessageTask("No data found in the activity value"));
+        }
 
         await turnContext.SendActivityAsync(
             $"You submitted: {userText}",

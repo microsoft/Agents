@@ -8,7 +8,7 @@ This sample demonstrates task modules (dialogs) in Microsoft Teams using an agen
 
 - **Adaptive Card task module** - Opens a card-based dialog, collects multiline text, and confirms the submitted value.
 - **Custom form task module** - Hosts an HTML and JavaScript form at `/customform`, collects a name and email address, and submits the values to the agent.
-- **Multistep task module** - Collects a name on the first Adaptive Card, carries it into a second card, collects an email address, and sends a personalized confirmation.
+- **Multi-step task module** - Collects a name on the first Adaptive Card, carries it into a second card, collects an email address, and sends a personalized confirmation.
 
 ## Prerequisites
 
