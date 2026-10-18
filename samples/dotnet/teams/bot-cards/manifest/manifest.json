@@ -30,7 +30,26 @@
         "groupChat"
       ],
       "supportsFiles": false,
-      "isNotificationOnly": false
+      "isNotificationOnly": false,
+      "commandLists": [
+        {
+          "scopes": [
+            "personal",
+            "team",
+            "groupChat"
+          ],
+          "commands": [
+            {
+              "title": "card actions",
+              "description": "Send an adaptive card showcasing several card actions."
+            },
+            {
+              "title": "toggle visibility",
+              "description": "Send a card demonstrating Action.ToggleVisibility."
+            }
+          ]
+        }
+      ]
     }
   ],
   "validDomains": [
