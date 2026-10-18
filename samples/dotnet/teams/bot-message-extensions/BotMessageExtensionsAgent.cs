@@ -47,7 +47,7 @@ public partial class BotMessageExtensionsAgent(
             {
                 string title = result["title"]?.ToString() ?? "No Title";
                 string snippet = Regex.Replace(result["snippet"]?.ToString() ?? string.Empty, "<[^>]+>", string.Empty);
-                return CreateAttachment(CreateWikipediaCard(result), title, snippet);
+                return CreateSearchResultAttachment(title, snippet);
             })
             .ToList();
 
@@ -105,26 +105,6 @@ public partial class BotMessageExtensionsAgent(
         await turnContext.SendActivityAsync(
             $"You said: {turnContext.Activity.Text}\n\nType 'help' to learn more.",
             cancellationToken: cancellationToken);
-    }
-
-    private static AdaptiveCard CreateWikipediaCard(JToken result)
-    {
-        string title = result["title"]?.ToString() ?? "No Title";
-        string snippet = Regex.Replace(result["snippet"]?.ToString() ?? string.Empty, "<[^>]+>", string.Empty);
-
-        return new AdaptiveCard
-        {
-            Version = Microsoft.Teams.Cards.Version.Version1_4,
-            Body =
-            [
-                new TextBlock(title) { Weight = TextWeight.Bolder, Size = TextSize.Large },
-                new TextBlock(snippet) { Wrap = true, IsSubtle = true }
-            ],
-            Actions =
-            [
-                new OpenUrlAction($"https://en.wikipedia.org/wiki/{Uri.EscapeDataString(title.Replace(' ', '_'))}") { Title = "Read on Wikipedia" }
-            ]
-        };
     }
 
     private static AdaptiveCard CreateLinkPreviewCard(string url)
@@ -190,16 +170,15 @@ public partial class BotMessageExtensionsAgent(
         }
     }
 
-    private static MsgExt.Attachment CreateAttachment(AdaptiveCard card, string title, string text)
+    private static MsgExt.Attachment CreateSearchResultAttachment(string title, string text)
     {
-        return new MsgExt.Attachment(ContentType.AdaptiveCard)
+        return new MsgExt.Attachment(ContentType.ThumbnailCard)
         {
-            Content = card,
-            Preview = new Microsoft.Teams.Api.Attachment(new Microsoft.Teams.Api.Cards.ThumbnailCard
+            Content = new Microsoft.Teams.Api.Cards.ThumbnailCard
             {
                 Title = title,
                 Text = text
-            })
+            }
         };
     }
 
