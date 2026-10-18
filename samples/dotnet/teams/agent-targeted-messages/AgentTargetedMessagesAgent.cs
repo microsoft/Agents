@@ -344,9 +344,10 @@ public partial class AgentTargetedMessagesAgent(
             "- Minutes: `5 minutes`, `5 mins`, `5m`\n" +
             "- Hours: `1 hour`, `2 hrs`, `1h`\n\n" +
             "**Manage Reminders:**\n" +
-            "- `my-reminders` - View your active reminders\n" +
-            "- `cancel-reminder [id]` - Cancel a specific reminder\n" +
-            "- `reminder-help` - Show this help message\n\n" +
+            "- Slash commands: `my-reminders`, `cancel-reminder [id]`, `add-reaction [type]`, and `remove-reaction [type]`\n" +
+            "- Mention command: `remind`\n" +
+            "- Slash or mention command: `reminder-help`\n" +
+            "- `help` is an alias for `reminder-help`\n\n" +
             "**How It Works:**\n" +
             "- Reminders are delivered as **targeted messages** (only the recipient can see them)\n" +
             "- Works in both **channels** and **group chats**\n" +

@@ -11,7 +11,10 @@
     <PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.8.*" />
     <PackageReference Include="Microsoft.Agents.Extensions.MSTeams" Version="1.8.*" />
     <PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.8.*" />
-    <PackageReference Include="Microsoft.Teams.Cards" Version="2.0.9" />
+    <PackageReference Include="Microsoft.Teams.Cards" Version="2.1.*" />
+    <PackageReference Include="Microsoft.Teams.Common" Version="2.0.9">
+      <Aliases>TeamsCommon20</Aliases>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

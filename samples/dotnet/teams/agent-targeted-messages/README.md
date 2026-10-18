@@ -90,13 +90,12 @@ Supported units include seconds (`seconds`, `secs`, `s`), minutes (`minutes`, `m
 
 Manage reminders with:
 
-- `my-reminders`
-- `cancel-reminder [id]`
-- `reminder-help`
-- `add-reaction [type]`
-- `remove-reaction [type]`
+- Slash commands: `my-reminders`, `cancel-reminder [id]`, `add-reaction [type]`, and `remove-reaction [type]`
+- Mention commands: `remind`
+- Slash or mention command: `reminder-help`
+- `help` is an alias for `reminder-help`
 
-The app manifest declares `supportsTargetedMessages` and preserves personal, team, and group-chat scopes. It also declares `my-reminders` as a slash command, `remind` as a mention command, and `reminder-help` for both command surfaces.
+The app manifest declares `supportsTargetedMessages` and preserves personal, team, and group-chat scopes. Its command lists expose `remind` for mentions, `my-reminders`, `cancel-reminder`, `add-reaction`, and `remove-reaction` for slash commands, and `reminder-help` for both command surfaces.
 
 ## Further reading
 

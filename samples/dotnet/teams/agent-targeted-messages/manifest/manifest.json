@@ -19,7 +19,7 @@
   },
   "description": {
     "short": "Targeted messaging sample for Teams with the Microsoft 365 Agents SDK.",
-    "full": "Sample demonstrating how to send targeted messages (visible only to specific users) in Microsoft Teams using the Microsoft 365 Agents SDK. Features reminder creation, listing, cancellation, and dismissal with Adaptive Cards."
+    "full": "Sample demonstrating how to send targeted messages (visible only to specific users) in Microsoft Teams using the Microsoft 365 Agents SDK. Features reminder creation, listing, cancellation, dismissal, snoozing, and reaction commands with Adaptive Cards."
   },
   "accentColor": "#FFFFFF",
   "bots": [
@@ -47,6 +47,9 @@
           "triggers": ["slash"],
           "commands": [
             { "title": "my-reminders", "description": "List active reminders." },
+            { "title": "cancel-reminder", "description": "Cancel a reminder." },
+            { "title": "add-reaction", "description": "Add a reaction to a message." },
+            { "title": "remove-reaction", "description": "Remove a reaction from a message." },
             { "title": "reminder-help", "description": "Show reminder help." }
           ]
         }
