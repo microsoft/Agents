@@ -126,7 +126,7 @@ dotnet run --launch-profile BotMeetings
 
 The agent listens on `http://localhost:3978`. Add the packaged app to a meeting, then start or end the meeting or have a participant join or leave to exercise the corresponding event.
 
-Meeting transcripts can take time to become available. The sample attempts to retrieve the newest VTT transcript through Microsoft Graph when it receives the meeting-end event and displays parsed speaker lines when the transcript is already available.
+Meeting transcripts can take time to become available. After a meeting-end event, the sample waits 30 seconds, then attempts to retrieve the newest VTT transcript through Microsoft Graph and displays parsed speaker lines when the transcript is available.
 
 ## Troubleshooting
 
