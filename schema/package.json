@@ -1,0 +1,11 @@
+{
+  "name": "agents-configuration-schema-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/configuration-schema.test.mjs"
+  },
+  "devDependencies": {
+    "ajv": "8.20.0"
+  }
+}
