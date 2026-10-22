@@ -124,14 +124,14 @@ downstream build/startup checks are outside Phase 1.
 
 The schema test toolchain is isolated in this folder so restoring it does not
 restore the larger root/sample development toolchain. It has one direct
-development dependency, Ajv, and its own npm lockfile. The root command is a wrapper.
+development dependency, Ajv, and its own npm lockfile.
 
 From the repository root in PowerShell:
 
 ```powershell
 npm --prefix schema ci --ignore-scripts
 if ($LASTEXITCODE -ne 0) { throw 'Schema test dependencies could not be restored.' }
-npm run test:configuration-schema
+npm --prefix schema test
 ```
 
 npm uses your configured registry and authentication settings. These dependencies
@@ -151,11 +151,10 @@ values.
 dependencies and runs the same checks without repository secrets, including on
 fork pull requests.
 
-## Ownership, versioning, and publication
+## Versioning and publication
 
-The specification owners in `.github/CODEOWNERS` own the schema, examples, tests,
-and validation workflow. Obtain review from the affected SDK owners before
-promoting a preview vocabulary to a stable contract.
+Obtain review from the affected SDK maintainers before promoting a preview
+vocabulary to a stable contract.
 
 Version the contract independently of SDK packages:
 
@@ -191,7 +190,7 @@ For step 6, the test harness accepts a local artifact override:
 ```powershell
 $env:AGENTS_CONFIGURATION_SCHEMA = (Resolve-Path $schemaFile).Path
 try {
-    npm run test:configuration-schema
+    npm --prefix schema test
     if ($LASTEXITCODE -ne 0) { throw 'Published schema failed the shared schema fixtures.' }
 } finally {
     Remove-Item Env:AGENTS_CONFIGURATION_SCHEMA
