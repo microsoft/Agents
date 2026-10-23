@@ -2,6 +2,7 @@
 
 |Name|Description|README|
 |----|----|----|
+|Production reference|Bounded Web Chat support intake with managed identity, Blob state, tests and operating guidance|[production-reference](production-reference/README.md)|
 |QuickStart/Empty Agent|Simplest agent|[quickstart](quickstart/README.md)|
 |Cards Agent|Agent that uses rich cards to enhance conversation design|[cards](cards/README.md)|
 |AutoSignIn|Simple OAuth agent using Graph|[auto-signin](auto-signin/README.md)|
