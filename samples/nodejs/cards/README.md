@@ -14,7 +14,7 @@ The agent supports these cards:
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org) version 20 or higher
+- [Node.js](https://nodejs.org) version 22 or higher
 - [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) for Azure Bot Service testing
 
 To check the installed Node.js version:

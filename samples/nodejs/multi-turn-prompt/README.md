@@ -4,7 +4,7 @@ This agent has been created with Agents SDK to show how to use the prompts class
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org) version 20 or higher
+- [Node.js](https://nodejs.org) version 22 or higher
 
     ```bash
     # determine node version

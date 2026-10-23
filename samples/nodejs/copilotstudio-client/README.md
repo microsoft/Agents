@@ -8,7 +8,7 @@ This is a sample to show how to use the `@microsoft/agents-copilotstudio-client`
 
 To set up this sample, you will need the following:
 
-1. [Node.js](https://nodejs.org) version 20 or higher
+1. [Node.js](https://nodejs.org) version 22 or higher
 
     ```bash
     # determine node version
