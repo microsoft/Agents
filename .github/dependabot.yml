@@ -27,7 +27,7 @@ updates:
   - package-ecosystem: "pip"
     directories:
       - "/samples/python/auto-signin"
-      - "/samples/python/azureai-streaming"
+      - "/samples/python/azure-ai-streaming"
       - "/samples/python/cards"
       - "/samples/python/copilotstudio-client"
       - "/samples/python/copilot-sdk"
@@ -48,6 +48,7 @@ updates:
     directories:
       - "/samples/dotnet/Agent Framework"
       - "/samples/dotnet/auto-signin"
+      - "/samples/dotnet/cards"
       - "/samples/dotnet/azure-ai-streaming"
       - "/samples/dotnet/copilotstudio-client"
       - "/samples/dotnet/copilot-sdk"

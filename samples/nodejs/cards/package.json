@@ -1,8 +1,8 @@
 {
-  "name": "node-cards-agent",
+  "name": "cards-agent",
   "version": "1.0.0",
   "private": true,
-  "description": "Agents cards agent sample",
+  "description": "Microsoft 365 Agents SDK cards sample",
   "author": "Microsoft",
   "license": "MIT",
   "main": "./lib/index.js",

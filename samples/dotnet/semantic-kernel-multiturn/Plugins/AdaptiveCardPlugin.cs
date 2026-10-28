@@ -2,32 +2,59 @@
 // Licensed under the MIT License.
 
 using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.ChatCompletion;
-using System.Threading.Tasks;
+using System;
+using System.ComponentModel;
+using System.Text.Json.Nodes;
 
 namespace SemanticKernelMultiturn.Plugins;
 
 public class AdaptiveCardPlugin
 {
-    private const string Instructions = """
-        When given data about the weather forecast for a given time and place, please generate an adaptive card
-        that displays the information in a visually appealing way. Make sure to only return the valid adaptive card
-        JSON string in the response.
-        """;
-
-    [KernelFunction]
-    public async Task<string> GetAdaptiveCardForData(Kernel kernel, string data)
+    [KernelFunction, Description("Create an Adaptive Card 1.5 for weather forecast data.")]
+    public JsonObject GetAdaptiveCardForData(
+        string location,
+        string date,
+        int temperatureC,
+        int temperatureF)
     {
-        // Create a chat history with the instructions as a system message and the data as a user message
-        ChatHistory chat = new(Instructions)
+        return new JsonObject
         {
-            new ChatMessageContent(AuthorRole.User, data)
+            ["type"] = "AdaptiveCard",
+            ["version"] = "1.5",
+            ["$schema"] = "http://adaptivecards.io/schemas/adaptive-card.json",
+            ["body"] = new JsonArray
+            {
+                new JsonObject
+                {
+                    ["type"] = "TextBlock",
+                    ["text"] = $"Weather forecast for {location}",
+                    ["weight"] = "Bolder",
+                    ["size"] = "Medium",
+                    ["wrap"] = true
+                },
+                new JsonObject
+                {
+                    ["type"] = "FactSet",
+                    ["facts"] = new JsonArray
+                    {
+                        new JsonObject { ["title"] = "Date", ["value"] = date },
+                        new JsonObject
+                        {
+                            ["title"] = "Temperature",
+                            ["value"] = $"{temperatureC} C / {temperatureF} F"
+                        }
+                    }
+                }
+            },
+            ["actions"] = new JsonArray
+            {
+                new JsonObject
+                {
+                    ["type"] = "Action.OpenUrl",
+                    ["title"] = "More details",
+                    ["url"] = $"https://www.msn.com/en-us/weather/forecast/in-{Uri.EscapeDataString(location)}"
+                }
+            }
         };
-
-        // Invoke the model to get a response
-        IChatCompletionService chatCompletion = kernel.GetRequiredService<IChatCompletionService>();
-        ChatMessageContent response = await chatCompletion.GetChatMessageContentAsync(chat);
-
-        return response.ToString();
     }
 }

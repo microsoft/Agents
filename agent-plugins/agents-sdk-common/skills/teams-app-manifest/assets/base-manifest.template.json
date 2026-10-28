@@ -1,0 +1,24 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v{{MANIFEST_VERSION}}/MicrosoftTeams.schema.json",
+  "manifestVersion": "{{MANIFEST_VERSION}}",
+  "version": "1.0.0",
+  "id": "${{TEAMS_APP_ID}}",
+  "developer": {
+    "name": "{{DEVELOPER_NAME}}",
+    "websiteUrl": "{{WEBSITE_URL}}",
+    "privacyUrl": "{{PRIVACY_URL}}",
+    "termsOfUseUrl": "{{TERMS_URL}}"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "{{APP_SHORT_NAME}}"
+  },
+  "description": {
+    "short": "{{APP_SHORT_DESCRIPTION}}",
+    "full": "{{APP_FULL_DESCRIPTION}}"
+  },
+  "accentColor": "#FFFFFF"
+}

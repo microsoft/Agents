@@ -23,6 +23,7 @@
   "dependencies": {
     "@microsoft/agents-hosting": "^1.7.2",
     "@microsoft/agents-hosting-express": "^1.7.2",
+    "@microsoft/agents-telemetry": "^1.7.2",
     "@opentelemetry/api": "1.9.1",
     "@opentelemetry/api-logs": "0.221.0",
     "@opentelemetry/exporter-trace-otlp-grpc": "0.221.0",

@@ -1,5 +1,5 @@
 {
-  "name": "node-weather-agent",
+  "name": "langchain-multiturn",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -15,10 +15,12 @@
   "type": "module",
   "description": "",
   "dependencies": {
-    "@langchain/langgraph": "^1.4.10",
-    "@langchain/openai": "^1.5.8",
+    "langchain": "^1.5.11",
+    "@langchain/langgraph": "^1.4.16",
+    "@langchain/openai": "^1.5.13",
     "@microsoft/agents-hosting-express": "^1.7.2",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "zod": "3.25.67"
   },
   "devDependencies": {
     "@microsoft/m365agentsplayground": "^0.2.28",

@@ -1,0 +1,76 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.22/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.22",
+  "version": "1.0.0",
+  "id": "${{BOT_ID}}",
+  "developer": {
+    "name": "Microsoft",
+    "websiteUrl": "https://www.microsoft.com",
+    "privacyUrl": "https://privacy.microsoft.com/privacystatement",
+    "termsOfUseUrl": "https://www.microsoft.com/servicesagreement"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "Wikipedia Search${{APP_NAME_SUFFIX}}",
+    "full": "Wikipedia Search Messaging Extension"
+  },
+  "description": {
+    "short": "Search Wikipedia and preview Wikipedia links in Teams.",
+    "full": "A Microsoft Teams messaging extension that searches Wikipedia and creates rich previews for Wikipedia links."
+  },
+  "accentColor": "#FFFFFF",
+  "bots": [
+    {
+      "botId": "${{BOT_ID}}",
+      "scopes": [
+        "personal",
+        "team",
+        "groupChat"
+      ],
+      "supportsFiles": false,
+      "isNotificationOnly": false
+    }
+  ],
+  "composeExtensions": [
+    {
+      "botId": "${{BOT_ID}}",
+      "canUpdateConfiguration": false,
+      "commands": [
+        {
+          "id": "wikipediaSearch",
+          "context": [
+            "compose",
+            "commandBox"
+          ],
+          "description": "Search Wikipedia articles",
+          "title": "Wikipedia Search",
+          "type": "query",
+          "parameters": [
+            {
+              "name": "searchQuery",
+              "title": "Search Query",
+              "description": "Your search query",
+              "inputType": "text"
+            }
+          ]
+        }
+      ],
+      "messageHandlers": [
+        {
+          "type": "link",
+          "value": {
+            "domains": [
+              "en.wikipedia.org"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "configurableTabs": [],
+  "staticTabs": [],
+  "validDomains": []
+}

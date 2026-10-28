@@ -8,18 +8,33 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OpenAI.Chat;
-using StreamingMessageAgent;
+using AzureAIStreaming;
 using System;
 using System.ClientModel;
 
 var builder = WebApplication.CreateBuilder(args);
 
+string GetRequiredSetting(string environmentVariable, string configurationPath)
+{
+    string? value = builder.Configuration[environmentVariable] ?? builder.Configuration[configurationPath];
+    if (string.IsNullOrWhiteSpace(value))
+    {
+        throw new InvalidOperationException($"Missing required configuration: {environmentVariable}");
+    }
+
+    return value;
+}
+
+string azureOpenAIEndpoint = GetRequiredSetting("AZURE_OPENAI_ENDPOINT", "AIServices:AzureOpenAI:Endpoint");
+string azureOpenAIApiKey = GetRequiredSetting("AZURE_OPENAI_API_KEY", "AIServices:AzureOpenAI:ApiKey");
+string azureOpenAIDeploymentName = GetRequiredSetting("AZURE_OPENAI_DEPLOYMENT_NAME", "AIServices:AzureOpenAI:DeploymentName");
+
 builder.Services.AddTransient<ChatClient>(sp =>
 {
     return new AzureOpenAIClient(
-            new Uri(builder.Configuration["AIServices:AzureOpenAI:Endpoint"]!),
-            new ApiKeyCredential(builder.Configuration["AIServices:AzureOpenAI:ApiKey"]!))
-    .GetChatClient(builder.Configuration["AIServices:AzureOpenAI:DeploymentName"]);
+            new Uri(azureOpenAIEndpoint),
+            new ApiKeyCredential(azureOpenAIApiKey))
+    .GetChatClient(azureOpenAIDeploymentName);
 });
 
 // Add the AgentApplication, which contains the logic for responding to

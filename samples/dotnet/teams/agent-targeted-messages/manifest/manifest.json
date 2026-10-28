@@ -1,0 +1,63 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.29/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.29",
+  "version": "1.0.0",
+  "id": "${{AAD_APP_CLIENT_ID}}",
+  "developer": {
+    "name": "Microsoft, Inc.",
+    "websiteUrl": "https://example.azurewebsites.net",
+    "privacyUrl": "https://example.azurewebsites.net/privacy",
+    "termsOfUseUrl": "https://example.azurewebsites.net/termsofuse"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "Agent Targeted Messages",
+    "full": "Agent Targeted Messages"
+  },
+  "description": {
+    "short": "Targeted messaging sample for Teams with the Microsoft 365 Agents SDK.",
+    "full": "Sample demonstrating how to send targeted messages (visible only to specific users) in Microsoft Teams using the Microsoft 365 Agents SDK. Features reminder creation, listing, cancellation, and dismissal with Adaptive Cards."
+  },
+  "accentColor": "#FFFFFF",
+  "bots": [
+    {
+      "botId": "${{AAD_APP_CLIENT_ID}}",
+      "scopes": [
+        "personal",
+        "team",
+        "groupChat"
+      ],
+      "supportsFiles": false,
+      "isNotificationOnly": false,
+      "supportsTargetedMessages": true,
+      "commandLists": [
+        {
+          "scopes": ["personal", "team", "groupChat"],
+          "triggers": ["mention"],
+          "commands": [
+            { "title": "remind", "description": "Create a reminder." },
+            { "title": "reminder-help", "description": "Show reminder help." }
+          ]
+        },
+        {
+          "scopes": ["personal", "team", "groupChat"],
+          "triggers": ["slash"],
+          "commands": [
+            { "title": "my-reminders", "description": "List active reminders." },
+            { "title": "reminder-help", "description": "Show reminder help." }
+          ]
+        }
+      ]
+    }
+  ],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": [
+    "<<BOT_DOMAIN>>"
+  ]
+}

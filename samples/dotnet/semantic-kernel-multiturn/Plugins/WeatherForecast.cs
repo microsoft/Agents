@@ -11,6 +11,11 @@ public class WeatherForecast
     public string? Date { get; set; }
 
     /// <summary>
+    /// The forecast location.
+    /// </summary>
+    public string? Location { get; set; }
+
+    /// <summary>
     /// The temperature in Celsius
     /// </summary>
     public int TemperatureC { get; set; }
@@ -18,5 +23,5 @@ public class WeatherForecast
     /// <summary>
     /// The temperature in Fahrenheit
     /// </summary>
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    public int TemperatureF => (int)System.Math.Round((TemperatureC * 9d / 5d) + 32d);
 }

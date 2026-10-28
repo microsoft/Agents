@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.8.*" />
+    <PackageReference Include="Microsoft.Agents.Extensions.MSTeams" Version="1.8.*" />
+    <PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.8.*" />
+    <PackageReference Include="Microsoft.Teams.Cards" Version="2.0.9" />
+  </ItemGroup>
+
+</Project>

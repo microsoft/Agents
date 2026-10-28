@@ -1,0 +1,68 @@
+[
+  {
+    "name": "officedev-microsoft-teams-samples-bot-meetings-dotnet",
+    "source": "officeDev",
+    "title": "Agent Meetings",
+    "shortDescription": "This sample demonstrates an agent that handles meeting events and transcripts in Microsoft Teams using .NET",
+    "url": "https://github.com/microsoft/Agents/tree/main/samples/dotnet/teams/bot-meetings",
+    "longDescription": [
+      "The agent showcases meeting start/end events, participant join/leave notifications, and meeting transcript retrieval"
+    ],
+    "creationDateTime": "2026-02-11",
+    "updateDateTime": "2026-02-11",
+    "products": [
+      "Teams"
+    ],
+    "metadata": [
+      {
+        "key": "TEAMS-SAMPLE-SOURCE",
+        "value": "OfficeDev"
+      },
+      {
+        "key": "TEAMS-SERVER-LANGUAGE",
+        "value": "csharp"
+      },
+      {
+        "key": "TEAMS-SERVER-PLATFORM",
+        "value": "netframework"
+      },
+      {
+        "key": "TEAMS-FEATURES",
+        "value": "bot,meeting"
+      }
+    ],
+    "thumbnails": [
+      {
+        "type": "image",
+        "order": 100,
+        "url": "https://raw.githubusercontent.com/microsoft/Agents/main/samples/dotnet/teams/bot-meetings/Images/bot-meetings.gif",
+        "alt": "Solution UX showing meeting events and transcript for a Teams agent"
+      }
+    ],
+    "authors": [
+      {
+        "gitHubAccount": "OfficeDev",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/6789362?s=200&v=4",
+        "name": "OfficeDev"
+      }
+    ],
+    "references": [
+      {
+        "name": "Teams developer documentation",
+        "url": "https://aka.ms/TeamsPlatformDocs"
+      },
+      {
+        "name": "Teams developer questions",
+        "url": "https://aka.ms/TeamsPlatformFeedback"
+      },
+      {
+        "name": "Teams development videos from Microsoft",
+        "url": "https://aka.ms/sample-ref-teams-vids-from-microsoft"
+      },
+      {
+        "name": "Teams development videos from the community",
+        "url": "https://aka.ms/community/videos/m365powerplatform"
+      }
+    ]
+  }
+]

@@ -1,69 +1,108 @@
-import { azure } from '@ai-sdk/azure'
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+import { createAzure } from '@ai-sdk/azure'
 import { Activity, ActivityTypes } from '@microsoft/agents-activity'
 import { AgentApplication, TurnContext, TurnState } from '@microsoft/agents-hosting'
 import { startServer } from '@microsoft/agents-hosting-express'
 import { streamText } from 'ai'
 
+const requiredEnvironmentVariable = (name: string): string => {
+  const value = process.env[name]
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${name}`)
+  }
+
+  return value
+}
+
+const azureOpenAIEndpoint = requiredEnvironmentVariable('AZURE_OPENAI_ENDPOINT').replace(/\/+$/, '')
+const azureOpenAIHostname = new URL(azureOpenAIEndpoint).hostname
+const azureOpenAIBaseURL = azureOpenAIHostname.endsWith('.services.ai.azure.com')
+  ? `${azureOpenAIEndpoint}/openai/v1`
+  : `${azureOpenAIEndpoint}/openai`
+const azureOpenAIProvider = createAzure({
+  baseURL: azureOpenAIBaseURL,
+  apiKey: requiredEnvironmentVariable('AZURE_OPENAI_API_KEY')
+})
+const deploymentName = requiredEnvironmentVariable('AZURE_OPENAI_DEPLOYMENT_NAME')
 const agent = new AgentApplication<TurnState>()
 
 agent.onConversationUpdate('membersAdded', async (context: TurnContext) => {
-  await context.sendActivity('Welcome to the Streaming sample, type **poem** to see the streaming feature in action.')
-})
+  const recipientId = context.activity.recipient?.id
+  const userJoined = context.activity.membersAdded?.some((member) => member.id !== recipientId)
 
-agent.onActivity('invoke', async (context: TurnContext, state: TurnState) => {
-  console.log('feedback', JSON.stringify(context.activity.value, null, 2))
-  const invokeResponse = Activity.fromObject({
-    type: ActivityTypes.InvokeResponse,
-    value: {
-      status: 200,
-    }
-  })
-  await context.sendActivity(invokeResponse)
-  await context.sendActivity('Thanks for submitting your feedback.')
-})
-
-agent.onMessage('poem', async (context: TurnContext, state: TurnState) => {
-  context.streamingResponse.setFeedbackLoop(true)
-  context.streamingResponse.setGeneratedByAILabel(true)
-  context.streamingResponse.setSensitivityLabel({ type: 'https://schema.org/Message', '@type': 'CreativeWork', name: 'Internal' })
-
-  await context.streamingResponse.queueInformativeUpdate('starting a poem...')
-
-  const { fullStream } = streamText({
-    model: azure(process.env.AZURE_OPENAI_DEPLOYMENT_NAME || 'gpt-4.1-mini'),
-    system: `
-            You are a creative assistant who has deeply studied Greek and Roman Gods, You also know all of the Percy Jackson Series
-            You write poems about the Greek Gods as they are depicted in the Percy Jackson books.
-            You format the poems in a way that is easy to read and understand
-            You break your poems into stanzas 
-            You format your poems in Markdown using double lines to separate stanzas
-            Invent 2 citations`,
-    prompt: 'Write a poem in no less than 500 words about the Greek God Apollo as depicted in the Percy Jackson books'
-  })
-
-  try {
-    for await (const part of fullStream) {
-      switch (part.type) {
-        case 'text-delta' : {
-          if (part.text.length > 0) {
-            await context.streamingResponse.queueTextChunk(part.text)
-          }
-          break
-        }
-        case 'error' : {
-          const error = part.error
-          throw new Error(`Error in streaming: ${error}`)
-          break
-        }
-      }
-    }
-  } catch (error) {
-    console.error('Error during streaming:', error)
-    await context.streamingResponse.queueTextChunk('An error occurred while generating the poem. Please try again later.')
-  } finally {
-    await context.streamingResponse.endStream()
-    console.log('Streaming completed or errored out.')
+  if (userJoined) {
+    await context.sendActivity("Say anything and I'll recite poetry.")
   }
 })
 
-startServer(agent)
+agent.addRoute(
+  async (context: TurnContext) => {
+    const value = context.activity.value
+    return context.activity.type === ActivityTypes.Invoke &&
+      context.activity.name === 'message/submitAction' &&
+      typeof value === 'object' &&
+      value !== null &&
+      'actionName' in value &&
+      value.actionName === 'feedback'
+  },
+  async (context: TurnContext) => {
+    const value = context.activity.value as { actionValue?: unknown }
+    console.log('Feedback received:', JSON.stringify(value.actionValue ?? value))
+
+    await context.sendActivity(Activity.fromObject({
+      type: ActivityTypes.InvokeResponse,
+      value: { status: 200 }
+    }))
+    await context.sendActivity('Thanks for submitting your feedback.')
+  },
+  true
+)
+
+agent.onActivity(ActivityTypes.Message, async (context: TurnContext) => {
+  context.streamingResponse.setFeedbackLoop(true)
+  context.streamingResponse.setGeneratedByAILabel(true)
+  context.streamingResponse.setSensitivityLabel({
+    type: 'https://schema.org/Message',
+    '@type': 'CreativeWork',
+    name: 'Internal'
+  })
+
+  await context.streamingResponse.queueInformativeUpdate('Hold on for an awesome poem about Apollo...')
+
+  try {
+    const { fullStream } = streamText({
+      model: azureOpenAIProvider(deploymentName),
+      system: `You are a creative assistant who has deeply studied Greek and Roman gods and the Percy Jackson series.
+You write poems about the Greek gods as they are depicted in the Percy Jackson books.
+You format the poems in a way that is easy to read and understand.
+You break your poems into stanzas.
+You format your poems in Markdown using blank lines to separate stanzas.`,
+      prompt: 'Write a poem of about 500 words about the Greek god Apollo as depicted in the Percy Jackson books.'
+    })
+
+    for await (const part of fullStream) {
+      if (part.type === 'text-delta' && part.text.length > 0) {
+        await context.streamingResponse.queueTextChunk(part.text)
+      } else if (part.type === 'error') {
+        throw part.error instanceof Error ? part.error : new Error(String(part.error))
+      }
+    }
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.info('Streaming was cancelled.')
+    } else {
+      console.error('Error during streaming:', error)
+      await context.streamingResponse.queueTextChunk('An error occurred while generating the poem. Please try again later.')
+    }
+  } finally {
+    await context.streamingResponse.endStream()
+  }
+})
+
+startServer(agent, {
+  beforeListen: (app) => {
+    app.get('/', (_request: unknown, response: { send: (body: string) => unknown }) => response.send('Azure AI Streaming Sample'))
+  }
+})

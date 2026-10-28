@@ -1,118 +1,85 @@
-﻿# Semantic Kernel multi-turn with weatherbot sample
+# Semantic Kernel multi-turn Weather Agent
 
-This is a sample of a simple Weather Forecast Agent that is hosted on an Asp.net core web service.  This Agent is configured to accept a request asking for information about a weather forecast and respond to the caller with an Adaptive Card.  This agent will handle multiple "turns" to get the required information from the user.
+This sample demonstrates a Microsoft 365 Agents SDK application that uses Semantic Kernel as its AI orchestrator. The agent maintains conversation history, asks follow-up questions for a missing date or location, retrieves a synthetic weather forecast, and returns an Adaptive Card.
 
-This Agent Sample is intended to introduce you the basics of integrating Semantic Kernel with the Microsoft 365 Agents SDK in order to build powerful Agents. It can also be used as a the base for a custom Agent that you choose to develop.
+The equivalent orchestrator samples are `semantic-kernel-multiturn` for Python and `langchain-multiturn` for JavaScript.
 
-***Note:*** This sample requires JSON output from the model which works best from newer versions of the model such as gpt-4o-mini.
+## What this sample demonstrates
+
+- Azure OpenAI or OpenAI chat completion
+- Semantic Kernel plugins for date/time, synthetic weather, and Adaptive Card creation
+- Multi-turn conversation history stored in Agents SDK conversation state
+- Informative progress updates through the Agents SDK streaming response
+- Validated structured model output
+- Adaptive Card 1.5 responses with Celsius and Fahrenheit temperatures
+
+The weather plugin intentionally returns a random temperature. Replace it with a weather service when adapting this sample for production.
 
 ## Prerequisites
 
-- [.Net](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) version 8.0
-- [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows)
-- [Microsoft 365 Agents Toolkit](https://github.com/OfficeDev/microsoft-365-agents-toolkit)
+- .NET 8 SDK or later
+- Microsoft Agents Playground
+- An Azure OpenAI deployment or OpenAI API key; `gpt-4o-mini` or later is recommended
 
-- You will need an Azure OpenAI or OpenAI resource using `gpt-40-mini`
- 
-- Configure OpenAI in appsettings
+## Configure the sample
 
-  ```json
-  "AIServices": {
-    "AzureOpenAI": {
-      "DeploymentName": "", // This is the Deployment (as opposed to model) Name of the Azure OpenAI model
-      "Endpoint": "", // This is the Endpoint of the Azure OpenAI model deployment
-      "ApiKey": "" // This is the API Key of the Azure OpenAI model deployment
-    },
-    "OpenAI": {
-      "ModelId": "", // This is the Model ID of the OpenAI model
-      "ApiKey": "" // This is the API Key of the OpenAI model
-    },
-    "UseAzureOpenAI": true // This is a flag to determine whether to use the Azure OpenAI model or the OpenAI model  
-  }
-  ```
+Configure one model provider in `appsettings.json`, environment variables, or .NET user secrets.
 
-## QuickestStart using Agent Toolkit
-1. If you haven't done so already, install the Agents Playground
- 
+Azure OpenAI:
+
+```json
+"AIServices": {
+  "AzureOpenAI": {
+    "DeploymentName": "gpt-4o-mini",
+    "Endpoint": "https://<resource>.openai.azure.com/",
+    "ApiKey": "<api-key>"
+  },
+  "UseAzureOpenAI": true
+}
+```
+
+OpenAI:
+
+```json
+"AIServices": {
+  "OpenAI": {
+    "ModelId": "gpt-4o-mini",
+    "ApiKey": "<api-key>"
+  },
+  "UseAzureOpenAI": false
+}
+```
+
+Do not commit secrets. For local development, prefer `dotnet user-secrets set` with the corresponding configuration key.
+
+## Run with Agents Playground
+
+1. Start the application with `dotnet run`.
+2. Start the Playground with `agentsplayground -e http://localhost:3978/api/messages`.
+3. Ask: `What will the weather be tomorrow in Seattle?`
+4. Continue with: `And next Friday?`
+
+## Run with Azure Bot Service
+
+1. Create and configure an [Azure Bot](https://aka.ms/AgentsSDK-CreateBot).
+2. Configure `TokenValidation` and `Connections.ServiceConnection` in `appsettings.json` for the bot identity.
+3. Host an anonymous development tunnel:
+
+   ```bash
+   devtunnel host -p 3978 --allow-anonymous
    ```
-   winget install agentsplayground
-   ```
-1. Start the Agent in VS or VS Code in debug
-1. Start Agents Playground.  At a command prompt: `agentsplayground`
-   - The tool will open a web browser showing the Microsoft 365 Agents Playgroun, ready to send messages to your agent. 
-1. Interact with the Agent via the browser
 
-## QuickStart using WebChat or Teams
+4. Set the Azure Bot messaging endpoint to `{tunnel-url}/api/messages`.
+5. Start the application and test it through Web Chat.
 
-- Overview of running and testing an Agent
-  - Provision an Azure Bot in your Azure Subscription
-  - Configure your Agent settings to use to desired authentication type
-  - Running an instance of the Agent app (either locally or deployed to Azure)
-  - Test in a client
+## Microsoft Teams and Microsoft 365
 
-1. Create an Azure Bot with one of these authentication types
-   - [SingleTenant, Client Secret](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/azure-bot-create-single-secret)
-   - [SingleTenant, Federated Credentials](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/azure-bot-create-federated-credentials) 
-   - [User Assigned Managed Identity](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/azure-bot-create-managed-identity)
-    
-   > Be sure to follow the **Next Steps** at the end of these docs to configure your agent settings.
+The `appManifest` directory contains the Teams manifest and icons. Replace `${{AAD_APP_CLIENT_ID}}` and `<<BOT_DOMAIN>>`, zip the contents of the directory, and upload the package as a custom app.
 
-   > **IMPORTANT:** If you want to run your agent locally via devtunnels, the only support auth type is ClientSecrets and Certificates
-
-1. Running the Agent
-   1. Running the Agent locally
-      - Requires a tunneling tool to allow for local development and debugging should you wish to do local development whilst connected to a external client such as Microsoft Teams.
-      - **For ClientSecret or Certificate authentication types only.**  Federated Credentials and Managed Identity will not work via a tunnel to a local agent and must be deployed to an App Service or container.
-      
-      1. Run `dev tunnels`. Please follow [Create and host a dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) and host the tunnel with anonymous user access command as shown below:
-
-         ```bash
-         devtunnel host -p 3978 --allow-anonymous
-         ```
-
-      1. On the Azure Bot, select **Settings**, then **Configuration**, and update the **Messaging endpoint** to `{tunnel-url}/api/messages`
-
-      1. Start the Agent in Visual Studio
-
-   1. Deploy Agent code to Azure
-      1. VS Publish works well for this.  But any tools used to deploy a web application will also work.
-      1. On the Azure Bot, select **Settings**, then **Configuration**, and update the **Messaging endpoint** to `https://{{appServiceDomain}}/api/messages`
-
-## Testing this agent with WebChat
-
-   1. Select **Test in WebChat** on the Azure Bot
-
-## Testing this Agent in Teams or M365
-
-1. Update the manifest.json
-   - Edit the `manifest.json` contained in the `/appManifest` folder
-     - Replace with your AppId (that was created above) *everywhere* you see the place holder string `<<AAD_APP_CLIENT_ID>>`
-     - Replace `<<BOT_DOMAIN>>` with your Agent url.  For example, the tunnel host name.
-   - Zip up the contents of the `/appManifest` folder to create a `manifest.zip`
-     - `manifest.json`
-     - `outline.png`
-     - `color.png`
-
-1. Your Azure Bot should have the **Microsoft Teams** channel added under **Channels**.
-
-1. Navigate to the Microsoft Admin Portal (MAC). Under **Settings** and **Integrated Apps,** select **Upload Custom App**.
-
-1. Select the `manifest.zip` created in the previous step. 
-
-1. After a short period of time, the agent shows up in Microsoft Teams and Microsoft 365 Copilot.
-
-## Enabling JWT token validation
-1. By default, token validation is disabled in Development mode.  This is determined by `AddAgentAuthorization` and the `forceEnable` argument.
-
-1. Updating appsettings and replace {{ClientId}} and {{TenantId}} with the values from your Azure Bot.
-   ```json
-   "TokenValidation": {
-     "Audiences": [
-       "{{ClientId}}"
-     ],
-     "TenantId": "{{TenantId}}"
-   },
-   ```
+Conversation history uses in-memory storage and is lost when the process restarts. Configure persistent Agents SDK storage for production.
 
 ## Further reading
-To learn more about building Agents, see [Microsoft 365 Agents SDK](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/).
+
+- [Microsoft 365 Agents SDK](https://github.com/microsoft/agents)
+- [Semantic Kernel](https://github.com/microsoft/semantic-kernel)
+- [Adaptive Cards](https://adaptivecards.io/)

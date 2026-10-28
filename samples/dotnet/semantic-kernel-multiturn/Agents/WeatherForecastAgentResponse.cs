@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.ComponentModel;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
 namespace SemanticKernelMultiturn.Agents;
@@ -22,6 +23,6 @@ public class WeatherForecastAgentResponse
     public WeatherForecastAgentResponseContentType ContentType { get; set; }
 
     [JsonPropertyName("content")]
-    [Description("The content of the response, may be plain text, or JSON based adaptive card but must be a string.")]
-    public string? Content { get; set; }
+    [Description("Plain text for Text responses or a JSON object for AdaptiveCard responses.")]
+    public JsonNode? Content { get; set; }
 }

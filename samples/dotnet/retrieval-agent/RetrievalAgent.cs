@@ -1,25 +1,26 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.Agents.Builder.App;
-using Microsoft.Agents.Builder.State;
 using Microsoft.Agents.Builder;
+using Microsoft.Agents.Builder.App;
+using Microsoft.Agents.Builder.App.UserAuth;
+using Microsoft.Agents.Builder.State;
+using Microsoft.Agents.Builder.UserAuth;
 using Microsoft.Agents.Core.Models;
-using System.Threading.Tasks;
+using RetrievalAgent.Services;
 using System.Threading;
-using RetrievalAgent.Agents;
-using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.SemanticKernel;
+using System.Threading.Tasks;
 
 namespace RetrievalAgent
 {
-    public class Retrieval: AgentApplication
+    public class Retrieval : AgentApplication
     {
-        private readonly Kernel _kernel;
+        private readonly IBuildGenieMessageRoute _messageRoute;
 
-        public Retrieval(AgentApplicationOptions options, Kernel kernel) : base (options)
+        public Retrieval(AgentApplicationOptions options, IBuildGenieMessageRoute messageRoute) : base(options)
         {
-            _kernel = kernel;
+            _messageRoute = messageRoute;
+            UserAuthorization.OnUserSignInFailure(OnUserSignInFailureAsync);
         }
 
         [MessageRoute]
@@ -27,31 +28,12 @@ namespace RetrievalAgent
         {
             await turnContext.SendActivityAsync(new Activity { Type = ActivityTypes.Typing }, cancellationToken);
 
-            var chatHistory = turnState.GetValue("conversation.chatHistory", () => new ChatHistory());
-            
-            RetrievalCompletionAgent retrievalAgent = new RetrievalCompletionAgent(_kernel, this);
-
-            // Invoke the RetrievalCompletionAgent to process the message
-            var forecastResponse = await retrievalAgent.InvokeAgentAsync(turnContext.Activity.Text, chatHistory);
-            if (forecastResponse == null)
-            {
-                await turnContext.SendActivityAsync(MessageFactory.Text("Sorry, I couldn't get the information you are looking for, at the moment."), cancellationToken);
-                return;
-            }
-
-            // Create a response message based on the response content type from the RetrievalCompletionAgent
-            IActivity response = forecastResponse.ContentType switch
-            {
-                RetrievalCompletionAgentResponseContentType.AdaptiveCard => MessageFactory.Attachment(new Attachment()
-                {
-                    ContentType = "application/vnd.microsoft.card.adaptive",
-                    Content = forecastResponse.Content,
-                }),
-                _ => MessageFactory.Text(forecastResponse.Content),
-            };
-
-            // Send the response message back to the user. 
-            await turnContext.SendActivityAsync(response, cancellationToken);
+            await _messageRoute.HandleAsync(
+                turnContext.Activity.Text ?? string.Empty,
+                _ => UserAuthorization.GetTurnTokenAsync(turnContext, "graph"),
+                (text, token) => turnContext.SendActivityAsync(MessageFactory.Text(text), token),
+                (activity, token) => turnContext.SendActivityAsync(activity, token),
+                cancellationToken);
         }
 
         [MembersAddedRoute]
@@ -61,10 +43,12 @@ namespace RetrievalAgent
             {
                 if (member.Id != turnContext.Activity.Recipient.Id)
                 {
-                    // welcome the user to the bot
-                    await turnContext.SendActivityAsync(MessageFactory.Text("Hello! I am Build Genie! I can help you prepare for Build Conference 2025!"), cancellationToken);
+                    await turnContext.SendActivityAsync(MessageFactory.Text("Hello! I am Build Genie. Ask me about Build 2025 sessions in the configured SharePoint site. I only search content you can access."), cancellationToken);
                 }
             }
         }
+
+        private static Task OnUserSignInFailureAsync(ITurnContext turnContext, ITurnState turnState, string handlerName, SignInResponse response, IActivity initiatingActivity, CancellationToken cancellationToken) =>
+            turnContext.SendActivityAsync(MessageFactory.Text(BuildGenieResponses.For(RetrievalStatus.NotSignedIn)), cancellationToken);
     }
 }

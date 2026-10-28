@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "StreamingMessageAgent": {
+    "AzureAIStreaming": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

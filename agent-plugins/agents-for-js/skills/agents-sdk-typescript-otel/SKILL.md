@@ -248,7 +248,6 @@ Standard environment variables to support:
 | `OTEL_TRACES_SAMPLER` | Trace sampling strategy |
 | `OTEL_TRACES_SAMPLER_ARG` | Sampling strategy argument |
 | `OTEL_METRIC_EXPORT_INTERVAL` | Metric export interval in milliseconds |
-| `AGENTS_TELEMETRY_DISABLED_SPAN_CATEGORIES` | Optional SDK span-category filter |
 
 Use deployment secrets for `OTEL_EXPORTER_OTLP_HEADERS` and Azure Monitor
 connection strings. Do not commit populated `.env` files.
@@ -341,25 +340,7 @@ message values to custom metrics. Use the standard application logger or the
 OpenTelemetry Logs API for operational messages, but keep sensitive content
 out of both.
 
-### 7. Control SDK span categories when needed
-
-All built-in categories are enabled by default. To reduce trace volume:
-
-```dotenv
-AGENTS_TELEMETRY_DISABLED_SPAN_CATEGORIES=STORAGE,AUTHORIZATION
-```
-
-Valid values are:
-
-- `STORAGE`
-- `AUTHENTICATION`
-- `AUTHORIZATION`
-- `DIALOGS`
-
-Disable a category only after confirming those spans are not needed for
-diagnosis, security auditing, or service-level objectives.
-
-### 8. Set up the Aspire Dashboard
+### 7. Set up the Aspire Dashboard
 
 Copy `assets/start-aspire-dashboard.ps1` from this skill into a local scripts
 directory and run:
@@ -382,7 +363,7 @@ stop the existing container:
 docker stop aspire-dashboard
 ```
 
-### 9. Validate end to end
+### 8. Validate end to end
 
 1. Run the project's existing build or type-check command.
 2. Start Aspire Dashboard and confirm its container remains running.
@@ -444,7 +425,6 @@ solely to add telemetry.
 | Process hangs during shutdown | Integrate OTel shutdown with the server's existing graceful shutdown |
 | Last spans or logs are absent | Await `sdk.shutdown()` before process exit |
 | High telemetry cost | Remove high-cardinality attributes and reduce trace sampling |
-| Some SDK spans are absent | Check `AGENTS_TELEMETRY_DISABLED_SPAN_CATEGORIES` |
 
 ## Contributing
 

@@ -1,133 +1,139 @@
-﻿# Proactive Sample
+# Proactive
 
-This is a sample of a simple Agent that is hosted on an Asp.net core web service.  This sample demonstrates the basics of a proactive conversation using in-code and Http triggers.
+This sample shows how an agent sends a message when no user activity starts the turn. A scheduler, webhook, or background job can use this pattern to notify an existing conversation.
+
+## Patterns demonstrated
+
+| Pattern | Command or endpoint |
+|---|---|
+| Store a conversation reference | `-s` |
+| Continue the current conversation | `-c` |
+| Continue a stored conversation | `-c <conversation-id>` |
+| Export conversation data | `-convo` |
+| Echo through a custom continuation activity | Any other message |
+| Send an activity to a stored conversation | `POST /proactive/sendActivity/{conversationId}` |
+| Continue from supplied conversation data | `POST /proactive/continue` |
 
 ## Prerequisites
 
-- [.Net](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) version 8.0
-- [dev tunnel](https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/get-started?tabs=windows)
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- An Azure subscription
+- An [Azure Bot](https://github.com/microsoft/Agents/blob/main/docs/HowTo/azurebot-create-single-secret.md) with a client ID, client secret, and tenant ID
+- [Dev tunnels](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started) for local channel testing
+- A tool that can send HTTP requests, such as `curl`
 
-## QuickStart using WebChat
+## Azure Bot configuration
 
-- Overview of running and testing an Agent
-  - Provision an Azure Bot in your Azure Subscription
-  - Configure your Agent settings to use to desired authentication type
-  - Running an instance of the Agent app (either locally or deployed to Azure)
-  - Test in a client
+1. Create an Azure Bot with one of these authentication types:
+   - [Single tenant and client secret](https://github.com/microsoft/Agents/blob/main/docs/HowTo/azurebot-create-single-secret.md)
+   - [Single tenant and federated credentials](https://github.com/microsoft/Agents/blob/main/docs/HowTo/azurebot-create-fic.md)
+   - [User-assigned managed identity](https://github.com/microsoft/Agents/blob/main/docs/HowTo/azurebot-create-msi.md)
+2. For local testing, start an anonymous tunnel:
 
-1. Create an Azure Bot with one of these authentication types
-   - [SingleTenant, Client Secret](https://github.com/microsoft/Agents/blob/main/docs/HowTo/azurebot-create-single-secret.md)
-   - [SingleTenant, Federated Credentials](https://github.com/microsoft/Agents/blob/main/docs/HowTo/azurebot-create-fic.md) 
-   - [User Assigned Managed Identity](https://github.com/microsoft/Agents/blob/main/docs/HowTo/azurebot-create-msi.md)
-
-1. Configuring the authentication connection in the Agent settings
-   > These instructions are for **SingleTenant, Client Secret**. For other auth type configuration, see [DotNet MSAL Authentication](https://github.com/microsoft/Agents/blob/main/docs/HowTo/MSALAuthConfigurationOptions.md).
-   1. Open the `appsettings.json` file in the root of the sample project.
-
-   1. Find the section labeled `Connections`,  it should appear similar to this:
-
-      ```json
-      "Connections": {
-        "ServiceConnection": {
-          "Settings": {
-            "AuthType": "ClientSecret", // this is the AuthType for the connection, valid values can be found in Microsoft.Agents.Authentication.Msal.Model.AuthTypes.  The default is ClientSecret.
-            "AuthorityEndpoint": "https://login.microsoftonline.com/{{TenantId}}",
-            "ClientId": "{{ClientId}}", // this is the Client ID used for the connection.
-            "ClientSecret": "{{ClientSecret}}", // this is the Client Secret used for the connection.
-            "Scopes": [
-              "https://api.botframework.com/.default"
-            ]
-          }
-        }
-      },
-      ```
-
-      1. Replace all **{{ClientId}}** with the AppId of the Azure Bot.
-      1. Replace all **{{TenantId}}** with the Tenant Id where your application is registered.
-      1. Set the **{{ClientSecret}}** to the Secret that was created on the App Registration.
-      
-      > Storing sensitive values in appsettings is not recommend.  Follow [AspNet Configuration](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-9.0) for best practices.
-
-1. Running the Agent
-   1. Running the Agent locally
-      - Requires a tunneling tool to allow for local development and debugging should you wish to do local development whilst connected to a external client such as Microsoft Teams.
-      - **For ClientSecret or Certificate authentication types only.**  Federated Credentials and Managed Identity will not work via a tunnel to a local agent and must be deployed to an App Service or container.
-      
-      1. Run `dev tunnels`. Please follow [Create and host a dev tunnel](https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/get-started?tabs=windows) and host the tunnel with anonymous user access command as shown below:
-
-         ```bash
-         devtunnel host -p 3978 --allow-anonymous
-         ```
-
-      1. On the Azure Bot, select **Settings**, then **Configuration**, and update the **Messaging endpoint** to `{tunnel-url}/api/messages`
-
-      1. Start the Agent in Visual Studio
-
-   1. Deploy Agent code to Azure
-      1. VS Publish works well for this.  But any tools used to deploy a web application will also work.
-      1. On the Azure Bot, select **Settings**, then **Configuration**, and update the **Messaging endpoint** to `https://{{appServiceDomain}}/api/messages`
-
-## Testing this agent with WebChat
-
-   1. Select **Test in WebChat** on the Azure Bot
-   2. Send and message proactively via an Http request
-      1. Send "-s"
-      1. Copy the returned conversation Id
-      1. POST to `http://localhost:3978/proactive/sendActivity/{conversationId}` with a body of
-         ```json
-         {
-           "type": "message",
-           "text": "Your job finished successfully."
-         }
-         ```
-      1. That message will be displayed in the chat
-   3. Send a proactive message from code
-      1. Send `-c {conversationId}`  
-      1. The chat will show the message "This is OnContinueConversation"
-         1. This was sent by the code in `ProactiveAgent`.  You can perform anything you would normaly do for that conversation in the handler.
-   4. Continue a conversation using Http and the Conversation data (not a stored conversation)
-      1. Send "-convo"
-      1. Copy the json sent to the chat
-      1. POST to `http://localhost:3978/proactive/continue` with a body of that JSON.  For example (something similar to this):
-         ```json
-         {
-            "reference": {
-              "activityId":"CCjfufUIRyLKQnP2VVlIBU-us|0000001",
-              "user": {
-                "id":"user-id"
-              },
-              "bot": {
-                "id": "bot-id",
-                "name": "bot-name"
-              },
-              "conversation": {
-                "id":"conversation-id"
-              },
-              "channelId":"webchat",
-              "serviceUrl":"​https://webchat.botframework.com/",
-              "locale":"en-US",
-              "requestId":"0HNL639LRRSPR:00000003"
-            },
-            "claims": {
-              "iss": "https://api.botframework.com",
-              "aud":"your-agent-clientid"
-            }
-         }
-         ```
-      1. You will see the message "This is OnContinueConversation" in the chat.  This is the same code that #3 above hit.
-
-## Enabling JWT token validation
-1. By default, token validation is disabled in Development mode.  This is determined by `AddAgentAuthorization` and the `forceEnable` argument.
-
-1. Updating appsettings and replace {{ClientId}} and {{TenantId}} with the values from your Azure Bot.
-   ```json
-   "TokenValidation": {
-     "Audiences": [
-       "{{ClientId}}"
-     ],
-     "TenantId": "{{TenantId}}"
-   },
+   ```bash
+   devtunnel host -p 3978 --allow-anonymous
    ```
 
+3. In the Azure Bot configuration, set the messaging endpoint to:
+
+   ```text
+   https://<tunnel-host>/api/messages
+   ```
+
+Federated credentials and managed identity do not work through a local tunnel. Deploy the agent when you use these authentication types.
+
+The `appManifest` directory contains a Microsoft Teams app manifest. Replace `AAD_APP_CLIENT_ID` and `BOT_DOMAIN` through your provisioning process before you package and upload it to Teams.
+
+## Local configuration
+
+Open `appsettings.json`. Replace:
+
+- `{{ClientId}}` with the Azure Bot client ID.
+- `{{ClientSecret}}` with the client secret.
+- `{{TenantId}}` with the tenant ID.
+- `{{CallerClientId}}` with the application ID permitted to call proactive HTTP routes outside Development.
+
+Do not store production secrets in this file. Use [.NET configuration providers](https://learn.microsoft.com/aspnet/core/fundamentals/configuration/) or a managed identity.
+
+## Install and run
+
+From the repository root:
+
+```bash
+dotnet run --project samples/dotnet/proactive
+```
+
+The agent listens on `http://localhost:3978`.
+
+## Test in Web Chat
+
+Open **Test in Web Chat** in the Azure Bot resource. Use these commands:
+
+1. Send `-s`. Save the returned conversation ID.
+2. Send `-c`. The agent sends `This is OnContinueConversation` from a proactive turn.
+3. Send `-c <conversation-id>`. The stored conversation gets the same message.
+4. Send `-convo`. Save the returned JSON for the continue endpoint.
+5. Send any other text. The agent echoes it from a proactive turn.
+
+## Test proactive HTTP routes
+
+Development mode does not require authentication for these routes.
+
+### Send an activity to a stored conversation
+
+First send `-s`. Then run:
+
+```bash
+curl -X POST "http://localhost:3978/proactive/sendActivity/<conversation-id>" \
+  -H "Content-Type: application/json" \
+  -d '{"type":"message","text":"Your job finished successfully."}'
+```
+
+The stored conversation receives the supplied activity.
+
+### Continue from conversation data
+
+Send `-convo`. Save the returned JSON as `conversation.json`. Then run:
+
+```bash
+curl -X POST "http://localhost:3978/proactive/continue" \
+  -H "Content-Type: application/json" \
+  --data-binary @conversation.json
+```
+
+The conversation receives `This is OnContinueConversation`.
+
+### HTTP responses
+
+| Status | Meaning |
+|---|---|
+| `200` | The activity was sent or the conversation was continued. |
+| `400` | The JSON or conversation data is invalid. |
+| `401` | The JWT is missing or invalid outside Development. |
+| `403` | The caller application ID is not allowed. |
+| `404` | The stored conversation does not exist. |
+| `500` | The adapter or channel operation failed. |
+
+## Authentication and caller authorization
+
+The proactive routes require JWT authentication outside Development. `TokenValidation:AllowedCallers` limits non-Azure Bot callers by application ID. Do not use `*` in production.
+
+For local testing, `launchSettings.json` sets the ASP.NET Core environment to Development. Do not use Development in a deployed service.
+
+## Production storage
+
+This sample uses `MemoryStorage`. Stored conversation references are lost after restart and are not shared across service instances. Use durable shared storage in production.
+
+Conversation references contain service and participant identifiers. Apply your data retention and access-control requirements.
+
+## Troubleshooting
+
+- **Conversation not found:** Send `-s` again. Memory storage was empty or the process restarted.
+- **401 response:** Verify the bearer token, Azure Bot client ID, tenant ID, and environment.
+- **403 response:** Add the caller application ID to `AllowedCallers`.
+- **No proactive message:** Verify the conversation is still valid and the channel service URL is reachable.
+
 ## Further reading
-To learn more about building Agents, see our [Microsoft 365 Agents SDK](https://github.com/microsoft/agents) repo.
+
+- [Proactive messages](https://learn.microsoft.com/azure/bot-service/bot-builder-howto-proactive-message)
+- [Microsoft 365 Agents SDK](https://github.com/microsoft/Agents)

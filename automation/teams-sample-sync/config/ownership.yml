@@ -1,0 +1,14 @@
+version: 1
+
+protectedPaths:
+  - manifest-evidence.md
+  - '**/manifest-evidence.md'
+
+outputDigestExcludes:
+  - bin/**
+  - obj/**
+  - '**/bin/**'
+  - '**/obj/**'
+  - .vs/**
+  - '*.user'
+  - '*.suo'

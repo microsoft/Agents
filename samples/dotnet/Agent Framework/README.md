@@ -251,7 +251,7 @@ The manifest currently registers the bot for `personal`, `team`, and `groupChat`
 
 #### Suggested Commands
 
-The `commandLists` section defines hint commands shown in the Teams compose box. Update the sample `Hi` command to reflect the agent's capabilities:
+The `commandLists` section defines the current-weather and five-day-forecast hints shown in the Teams compose box:
 
 ```json
 "commandLists": [

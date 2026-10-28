@@ -1,4 +1,5 @@
 pydantic
+python-dotenv
 semantic-kernel
 microsoft-agents-authentication-msal
 microsoft-agents-hosting-core

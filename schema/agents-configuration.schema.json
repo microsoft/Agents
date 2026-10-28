@@ -1,0 +1,240 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Preview configuration contract 0.1.0. Structural validation only; see README.md for runtime limitations and release identity.",
+  "title": "Microsoft 365 Agents SDK configuration",
+  "description": "Canonical configuration document vocabulary for connections, routing, host options, and user authorization. Schema validity does not imply support by any particular SDK or deployment readiness.",
+  "type": "object",
+  "properties": {
+    "connections": {
+      "description": "Named authentication connections.",
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/safeIdentifier"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/connectionDefinition"
+      }
+    },
+    "connectionsMap": {
+      "description": "Ordered rules mapping a service URL and optional audience to a named connection. Reference resolution and matching behavior are not checked by this schema.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/connectionMapItem"
+      }
+    },
+    "cloudAdapterOptions": {
+      "$ref": "#/$defs/cloudAdapterOptions"
+    },
+    "outboundHostValidator": {
+      "$ref": "#/$defs/outboundHostValidator"
+    },
+    "agentApplication": {
+      "$ref": "#/$defs/agentApplication"
+    }
+  },
+  "anyOf": [
+    {
+      "properties": {
+        "connections": true
+      },
+      "required": ["connections"]
+    },
+    {
+      "properties": {
+        "connectionsMap": true
+      },
+      "required": ["connectionsMap"]
+    }
+  ],
+  "additionalProperties": true,
+  "$defs": {
+    "safeIdentifier": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!(?:__[pP][rR][oO][tT][oO]__|[cC][oO][nN][sS][tT][rR][uU][cC][tT][oO][rR]|[pP][rR][oO][tT][oO][tT][yY][pP][eE])$).+$"
+    },
+    "nonemptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stringList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/nonemptyString"
+      }
+    },
+    "extensionValue": {
+      "description": "Provider-specific declarative setting. Acceptance does not establish runtime support.",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "$ref": "#/$defs/stringList"
+        }
+      ]
+    },
+    "connectionDefinition": {
+      "type": "object",
+      "properties": {
+        "settings": {
+          "$ref": "#/$defs/connectionSettings"
+        }
+      },
+      "required": ["settings"],
+      "additionalProperties": false
+    },
+    "connectionSettings": {
+      "description": "Known authentication settings plus provider-specific extension values. Credential completeness, provider selection, and SDK-specific support are not validated.",
+      "type": "object",
+      "properties": {
+        "authType": {
+          "description": "Authentication method or custom provider discriminator.",
+          "$ref": "#/$defs/nonemptyString"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "clientId": {
+          "type": "string"
+        },
+        "clientSecret": {
+          "description": "Secret value. This annotation does not redact validator output.",
+          "type": "string",
+          "writeOnly": true
+        },
+        "authorityEndpoint": {
+          "description": "Authority endpoint string; URI syntax and reachability are not checked.",
+          "type": "string"
+        },
+        "scopes": {
+          "$ref": "#/$defs/stringList"
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/extensionValue"
+      }
+    },
+    "connectionMapItem": {
+      "type": "object",
+      "properties": {
+        "serviceUrl": {
+          "description": "Service URL pattern, including '*' for a default route. Pattern semantics are runtime concerns.",
+          "$ref": "#/$defs/nonemptyString"
+        },
+        "audience": {
+          "$ref": "#/$defs/nonemptyString"
+        },
+        "connection": {
+          "description": "Named connection reference; existence and casing are not checked.",
+          "$ref": "#/$defs/nonemptyString"
+        }
+      },
+      "required": ["serviceUrl", "connection"],
+      "additionalProperties": false
+    },
+    "cloudAdapterOptions": {
+      "type": "object",
+      "properties": {
+        "emitStackTrace": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "outboundHostValidator": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "includeDefaultMicrosoftHosts": {
+          "type": "boolean"
+        },
+        "hosts": {
+          "description": "Host strings; hostname syntax and outbound access policy are not checked.",
+          "$ref": "#/$defs/stringList"
+        }
+      },
+      "additionalProperties": false
+    },
+    "agentApplication": {
+      "type": "object",
+      "properties": {
+        "userAuthorization": {
+          "$ref": "#/$defs/userAuthorization"
+        }
+      },
+      "additionalProperties": false
+    },
+    "userAuthorization": {
+      "type": "object",
+      "properties": {
+        "handlers": {
+          "type": "object",
+          "propertyNames": {
+            "$ref": "#/$defs/safeIdentifier"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/authorizationHandlerDefinition"
+          }
+        }
+      },
+      "required": ["handlers"],
+      "additionalProperties": false
+    },
+    "authorizationHandlerDefinition": {
+      "type": "object",
+      "properties": {
+        "settings": {
+          "$ref": "#/$defs/authorizationHandlerSettings"
+        }
+      },
+      "required": ["settings"],
+      "additionalProperties": false
+    },
+    "authorizationHandlerSettings": {
+      "description": "Basic declarative authorization settings plus provider-specific extension values. Handler construction, connection references, and runtime defaults are not validated.",
+      "type": "object",
+      "properties": {
+        "azureBotOAuthConnectionName": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "enableSso": {
+          "type": "boolean"
+        },
+        "scopes": {
+          "$ref": "#/$defs/stringList"
+        },
+        "oboConnectionName": {
+          "type": "string"
+        },
+        "oboScopes": {
+          "$ref": "#/$defs/stringList"
+        },
+        "invalidSignInRetryMax": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "invalidSignInRetryMessage": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/extensionValue"
+      }
+    }
+  }
+}

@@ -1,107 +1,81 @@
-# Cards-Agent
+# Cards Sample
 
-This is a sample of a simple Agent that is hosted on an Node.js web service with the Express framework.  This Agent is configured to show how to create an agent that uses rich cards to enhance your conversation design.
+This sample hosts a simple agent on a Node.js web service using Express. It demonstrates how to use rich cards to enhance a conversation.
+
+The agent supports these cards:
+
+1. Adaptive Card
+2. Animation Card
+3. Audio Card
+4. Hero Card
+5. Receipt Card
+6. Thumbnail Card
+7. Video Card
 
 ## Prerequisites
 
 - [Node.js](https://nodejs.org) version 20 or higher
+- [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) for Azure Bot Service testing
 
-    ```bash
-    # determine node version
-    node --version
-    ```
-
-## Running this sample
-
-1. Open this folder from your IDE or Terminal of preference
-1. Install dependencies
+To check the installed Node.js version:
 
 ```bash
-npm install
+node --version
 ```
 
-### Run in localhost, anonymous mode
+## Local setup
 
-1. Create the `.env` file (or rename env.TEMPLATE)
+1. Open this folder in your preferred IDE or terminal.
+1. Install dependencies:
 
-```bash
-cp env.TEMPLATE .env
-```
+   ```bash
+   npm install
+   ```
 
-1. Start the application
+1. Create `.env` from the template:
 
-```bash
-npm start
-```
+   ```bash
+   cp env.TEMPLATE .env
+   ```
 
-At this point you should see the message 
+1. Start the application:
 
-```text
-Server listening to port 3978 for appId debug undefined
-```
+   ```bash
+   npm start
+   ```
 
-The Agent is ready to accept messages.
+The agent listens on port 3978 and is ready to accept messages.
 
-### Interact with the Agent from the Teams App Test Tool
+### Test with the Teams App Test Tool
 
-To interact with the agent you need a chat client, during the install phase we have acquired the `teams-test-app-tool` than can be used to interact with your agent running in `localhost:3978`
-
-1. Start the test tool with 
+Start the test tool in another terminal:
 
 ```bash
 npm run test-tool
 ```
 
-The tool will open a web browser showing the Teams App Test Tool, ready to send messages to your agent.
-
-Alternatively you can run the next command to start the agent and the test tool with a single command (make sure you stop the agent started previously):
+The tool opens a browser connected to the agent at `localhost:3978`. Alternatively, start the agent and test tool together:
 
 ```bash
 npm test
 ```
 
-Refresh the browser to start a new conversation with the Cards agent.
+Refresh the browser to begin a new conversation. Select a card from the menu, send a number from `1` through `7`, or send `display card options` to show the menu again.
 
-You should see a message with the list of available cards in Agents:
-- Adaptive Card
-- Animation Card
-- Audio Card
-- Hero Card
-- Receipt Card
-- O365 Connector Card
-- Thumbnail Card
-- Video Card
+## Test with Azure Bot Service WebChat
 
-### Interact with the agent from WebChat UI using Azure Bot Service
-
-1. [Create an Azure Bot](https://aka.ms/AgentsSDK-CreateBot)
-   - Record the Application ID, the Tenant ID, and the Client Secret for use below
-  
-2. Configuring the token connection in the Agent settings
-    1. Open the `env.TEMPLATE` file in the root of the sample project, rename it to `.env` and configure the following values:
-      1. Set the **clientId** to the AppId of the agent identity.
-      2. Set the **clientSecret** to the Secret that was created for your identity.
-      3. Set the **tenantId** to the Tenant Id where your application is registered.
-
-3. Install the tool [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows)   
-4. Run `dev tunnels`. See [Create and host a dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) and host the tunnel with anonymous user access command as shown below:
+1. [Create an Azure Bot](https://aka.ms/AgentsSDK-CreateBot) and record its Application ID, Tenant ID, and client secret.
+1. Copy `env.TEMPLATE` to `.env` and configure `clientId`, `clientSecret`, and `tenantId`.
+1. Host a dev tunnel with anonymous tunnel access:
 
    ```bash
    devtunnel host -p 3978 --allow-anonymous
    ```
 
-5. Take note of the url shown after `Connect via browser:`
-
-6. On the Azure Bot, select **Settings**, then **Configuration**, and update the **Messaging endpoint** to `{tunnel-url}/api/messages`
-
-7. Start the Agent using `npm start`
-
-8. Select **Test in WebChat** on the Azure portal.
-
-### Deploy to Azure
-
-[TBD]
+1. In the Azure Bot resource, select **Settings**, then **Configuration**, and set the messaging endpoint to `{tunnel-url}/api/messages`.
+1. Start the agent with `npm start`.
+1. Select **Test in WebChat** in the Azure portal.
 
 ## Further reading
 
-To learn more about building  Agents, see our [Microsoft 365 Agents SDK](https://github.com/microsoft/agents) repo.
+To learn more about building agents, see the [Microsoft 365 Agents SDK](https://github.com/microsoft/agents) repository.

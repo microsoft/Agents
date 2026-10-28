@@ -326,6 +326,7 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+.venv/
 
 # Cake - Uncomment if you are using it
 # tools/**
@@ -397,4 +398,7 @@ static/
 devTools/
 node_modules/
 *.tsbuildinfo
+
+# Teams sample synchronization runtime artifacts
+.sync/
 

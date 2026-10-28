@@ -9,17 +9,21 @@ export class CardMessages {
     // In this code the web chat is accounted for with the 'title' parameter, but in other channels you may
     // need to provide a value for other parameters like 'text' or 'displayText'.
     const buttons = [
-      { type: ActionTypes.ImBack, title: '1. Adaptive Card', value: '1. Adaptive Card' },
-      { type: ActionTypes.ImBack, title: '2. Animation Card', value: '2. Animation Card' },
-      { type: ActionTypes.ImBack, title: '3. Audio Card', value: '3. Audio Card' },
-      { type: ActionTypes.ImBack, title: '4. Hero Card', value: '4. Hero Card' },
-      { type: ActionTypes.ImBack, title: '5. Receipt Card', value: '5. Receipt Card' },
-      { type: ActionTypes.ImBack, title: '6. Thumbnail Card', value: '6. Thumbnail Card' },
-      { type: ActionTypes.ImBack, title: '7. Video Card', value: '7. Video Card' },
+      { type: ActionTypes.ImBack, title: '1. Adaptive Card', value: '1' },
+      { type: ActionTypes.ImBack, title: '2. Animation Card', value: '2' },
+      { type: ActionTypes.ImBack, title: '3. Audio Card', value: '3' },
+      { type: ActionTypes.ImBack, title: '4. Hero Card', value: '4' },
+      { type: ActionTypes.ImBack, title: '5. Receipt Card', value: '5' },
+      { type: ActionTypes.ImBack, title: '6. Thumbnail Card', value: '6' },
+      { type: ActionTypes.ImBack, title: '7. Video Card', value: '7' }
     ]
 
-    const card = CardFactory.heroCard('', undefined,
-      buttons, { text: 'Select one of the following choices' })
+    const card = CardFactory.heroCard(
+      'Cards',
+      'Select one of the following choices',
+      undefined,
+      buttons
+    )
 
     await CardMessages.sendActivity(context, card)
   }
@@ -32,13 +36,20 @@ export class CardMessages {
 
   static async sendAnimationCard (context: TurnContext): Promise<void> {
     const card = CardFactory.animationCard(
-      'Microsoft Bot Framework',
+      'Microsoft 365 Agents SDK',
       [
         { url: 'https://i.giphy.com/Ki55RUbOV5njy.gif' }
       ],
       [],
       {
-        subtitle: 'Animation Card'
+        image: {
+          url: 'https://i.giphy.com/Ki55RUbOV5njy.gif',
+          alt: 'Cute Robot'
+        },
+        subtitle: 'Animation Card',
+        text: 'This is an example of an animation card using a gif.',
+        aspect: '16:9',
+        duration: 'PT2M'
       }
     )
 
@@ -48,7 +59,10 @@ export class CardMessages {
   static async sendAudioCard (context: TurnContext): Promise<void> {
     const card = CardFactory.audioCard(
       'I am your father',
-      ['https://www.mediacollege.com/downloads/sound-effects/star-wars/darthvader/darthvader_yourfather.wav'],
+      [{
+        url: 'https://www.mediacollege.com/downloads/sound-effects/star-wars/darthvader/darthvader_yourfather.wav',
+        profile: 'Darth Vader - I am your father'
+      }],
       CardFactory.actions([
         {
           type: ActionTypes.OpenUrl,
@@ -58,8 +72,13 @@ export class CardMessages {
       ]),
       {
         subtitle: 'Star Wars: Episode V - The Empire Strikes Back',
-        text: 'The Empire Strikes Back (also known as Star Wars: Episode V – The Empire Strikes Back) is a 1980 American epic space opera film directed by Irvin Kershner. Leigh Brackett and Lawrence Kasdan wrote the screenplay, with George Lucas writing the film\'s story and serving as executive producer. The second installment in the original Star Wars trilogy, it was produced by Gary Kurtz for Lucasfilm Ltd. and stars Mark Hamill, Harrison Ford, Carrie Fisher, Billy Dee Williams, Anthony Daniels, David Prowse, Kenny Baker, Peter Mayhew and Frank Oz.',
-        image: { url: 'https://upload.wikimedia.org/wikipedia/en/3/3c/SW_-_Empire_Strikes_Back.jpg' }
+        text: 'The Empire Strikes Back (also known as Star Wars: Episode V - The Empire Strikes Back) is a 1980 American epic space opera film directed by Irvin Kershner. Leigh Brackett and Lawrence Kasdan wrote the screenplay, with George Lucas writing the film\'s story and serving as executive producer. The second installment in the original Star Wars trilogy, it was produced by Gary Kurtz for Lucasfilm Ltd. and stars Mark Hamill, Harrison Ford, Carrie Fisher, Billy Dee Williams, Anthony Daniels, David Prowse, Kenny Baker, Peter Mayhew and Frank Oz.',
+        image: {
+          url: 'https://upload.wikimedia.org/wikipedia/en/3/3c/SW_-_Empire_Strikes_Back.jpg',
+          alt: 'The Empire Strikes Back'
+        },
+        aspect: '16:9',
+        duration: 'PT2M'
       }
     )
 
@@ -133,7 +152,7 @@ export class CardMessages {
         value: 'https://docs.microsoft.com/en-us/azure/bot-service/'
       }],
       {
-        subtitle: 'Your bots — wherever your users are talking.',
+        subtitle: 'Your bots - wherever your users are talking',
         text: 'Build and connect intelligent bots to interact with your users naturally wherever they are, from text/sms to Skype, Slack, Office 365 mail and other popular services.'
       }
     )
@@ -143,16 +162,16 @@ export class CardMessages {
 
   static async sendVideoCard (context: TurnContext) {
     const card = CardFactory.videoCard(
-      '2018 Imagine Cup World Championship Intro',
-      [{ url: 'https://sec.ch9.ms/ch9/783d/d57287a5-185f-4df9-aa08-fcab699a783d/IC18WorldChampionshipIntro2.mp4' }],
+      'M365 Copilot',
+      [{ url: 'https://youtu.be/zqH-HtQbaeU' }],
       [{
         type: ActionTypes.OpenUrl,
-        title: 'Lean More',
-        value: 'https://channel9.msdn.com/Events/Imagine-Cup/World-Finals-2018/2018-Imagine-Cup-World-Championship-Intro'
+        title: 'Learn More',
+        value: 'https://youtu.be/zqH-HtQbaeU'
       }],
       {
-        subtitle: 'by Microsoft',
-        text: 'Microsoft\'s Imagine Cup has empowered student developers around the world to create and innovate on the world stage for the past 16 years. These innovations will shape how we live, work and play.'
+        subtitle: 'by Microsoft Helps',
+        text: 'Copilot is a new way to interact with your data and applications using natural language. It is designed to help you get things done faster and more efficiently.'
       }
     )
 
