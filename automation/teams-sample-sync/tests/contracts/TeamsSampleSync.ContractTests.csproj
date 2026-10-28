@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <AgentsSdkTestVersion Condition="'$(AgentsSdkTestVersion)' == ''">1.8.*</AgentsSdkTestVersion>
+    <AgentsSdkTestVersion Condition="'$(AgentsSdkTestVersion)' == ''">1.9.*</AgentsSdkTestVersion>
   </PropertyGroup>
 
   <ItemGroup>
