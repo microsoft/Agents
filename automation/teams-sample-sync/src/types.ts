@@ -108,7 +108,6 @@ export type CheckStatus = 'passed' | 'failed' | 'skipped' | 'not-run'
 export interface ValidationCheck {
   status: CheckStatus
   errors: string[]
-  output?: string
 }
 export interface ValidationResult {
   version: 2
@@ -147,7 +146,7 @@ export interface SyncResult {
   outputDigest?: string
   state?: State
   validation?: ValidationResult
-  selfAudit?: string
+  summary?: string
   error?: string
   diagnostics: string[]
 }

@@ -17,6 +17,7 @@ validation alone does not prove capability coverage. Return a Markdown self-audi
 for every plan item and names the validation you ran. Start it with `## Self-audit`, then write
 `Outcome: changed` or `Outcome: no changes required` on its own line. Use the latter only after
 the complete plan has been verified and no selected-sample file needs modification.
+Add a one-sentence `Summary:` line describing the concrete sample changes for the handoff PR. Aim for about 200 characters, but include what is needed.
 
 If a required behavior cannot be implemented, explain the real blocker in the self-audit. Never
 claim validation passed when it did not. Do not edit workflow files, automation, skills,
