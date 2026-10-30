@@ -1,7 +1,8 @@
 # Agents SDK production-readiness matrix
 
 Use this matrix to decide which controls apply and what evidence changes a
-status. The production guide owns control details and rationale. This file owns
+status. [Prepare an agent for production on Microsoft Learn](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/production-ready-agent/production-ready-agent)
+is the authoritative guide for control details and rationale. This file owns
 assessment routing; it does not replace the guide.
 
 ## Status rules
