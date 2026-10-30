@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Slack_MCS_Bridge": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:3978"
+    }
+  }
+}
