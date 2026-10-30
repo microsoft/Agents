@@ -14,7 +14,7 @@ The sample uses the bot OAuth capabilities in [Azure Bot Service](https://docs.b
 
 - ## Prerequisites
 
--  [NodeJS](https://nodejs.org) version 20.0 or greater
+-  [NodeJS](https://nodejs.org) version 22 or greater
 -  [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) (for local development)
 
 ## Configure Azure Bot Service

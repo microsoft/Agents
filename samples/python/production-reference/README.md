@@ -18,8 +18,8 @@ opt-in SDK outbound validation, managed-identity Blob state, optimistic writes,
 256 KiB payload bounds, generic errors, probes, redacted application telemetry,
 shutdown cleanup, tests, Bicep and operator guidance. It is not production-certified.
 
-See [the Python guide](../../../docs/python/production-ready-agent.md),
-[shared contract](../../../docs/shared/production-readiness.md), and
+See [the Python production guide on Microsoft Learn](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/production-ready-agent/production-ready-agent?pivots=python)
+for shared controls and language-specific guidance, and use the
 [production skill](../../../agent-plugins/agents-for-python/skills/agents-sdk-to-prod/SKILL.md).
 Attachments, transcripts, delegated APIs, models, retrieval, tools, proactive
 messages and other channels are outside this reference's boundary.

@@ -11,7 +11,7 @@ The sample helps you:
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/en) version 20 or higher
+- [Node.js](https://nodejs.org/en) version 22 or higher
 - [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) (for local development)
 - [Docker](https://www.docker.com/) (to run the Aspire Dashboard for local telemetry visualization)
 

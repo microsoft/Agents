@@ -16,7 +16,7 @@ This sample shows how an agent sends a message when no user activity starts the 
 
 ## Prerequisites
 
-- [Node.js 20 or later](https://nodejs.org/)
+- [Node.js 22 or later](https://nodejs.org/)
 - An Azure subscription
 - An [Azure Bot](https://github.com/microsoft/Agents/blob/main/docs/HowTo/azurebot-create-single-secret.md) with a client ID, client secret, and tenant ID
 - [Dev tunnels](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started) for local channel testing
