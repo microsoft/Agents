@@ -19,23 +19,23 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.8.*" />
-		<PackageReference Include="Microsoft.Agents.Builder" Version="1.8.*" />
-		<PackageReference Include="Microsoft.Agents.Core" Version="1.8.*" />
-		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.8.*" />
-		<PackageReference Include="Microsoft.Agents.Storage" Version="1.8.*" />
+		<PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.9.*" />
+		<PackageReference Include="Microsoft.Agents.Builder" Version="1.9.*" />
+		<PackageReference Include="Microsoft.Agents.Core" Version="1.9.*" />
+		<PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.9.*" />
+		<PackageReference Include="Microsoft.Agents.Storage" Version="1.9.*" />
 
 		<!-- OpenTelemetry packages - versions managed centrally -->
-		<PackageReference Include="OpenTelemetry" Version="1.19.1" />
-		<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.19.1" />
-		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.19.0" />
-		<PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.19.0" />
-		<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.19.0" />
+		<PackageReference Include="OpenTelemetry" Version="1.20.1" />
+		<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.20.1" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.20.1" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.20.1" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.20.1" />
 		<!-- OpenTelemetry Exporters -->
-		<PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.19.1" />
-		<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.19.1" />
+		<PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.20.1" />
+		<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.20.1" />
 		<!-- Azure Monitor (Application Insights) Exporter -->
-		<PackageReference Include="Azure.Monitor.OpenTelemetry.Exporter" Version="1.9.0"/>
+		<PackageReference Include="Azure.Monitor.OpenTelemetry.Exporter" Version="1.10.0"/>
 
 	</ItemGroup>
 
