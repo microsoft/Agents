@@ -15,11 +15,11 @@
   "dependencies": {
     "@microsoft/agents-hosting-express": "1.9.1",
     "@microsoft/microsoft-graph-client": "^3.0.7",
-    "express": "^5.1.0"
+    "express": "^5.3.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
-    "globals": "^17.11.0",
+    "globals": "^17.13.0",
     "typescript": "^7.0.2"
   },
   "engines": {
