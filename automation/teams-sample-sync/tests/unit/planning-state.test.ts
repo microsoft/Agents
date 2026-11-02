@@ -95,6 +95,52 @@ function saveVerifiedState (root: string, entry: PlanSample): void {
 }
 
 describe('incremental planning with namespaced state', () => {
+  it('revalidates unchanged .NET sources when the supported SDK line or release tag changes', () => {
+    const { root, upstream } = fixture()
+    try {
+      const initial = createPlan(root, upstream, versions)
+      saveVerifiedState(root, initial.samples[id]!)
+      const unchanged = createPlan(root, upstream, versions)
+      assert.equal(unchanged.samples[id]!.status, 'unchanged')
+      assert.deepEqual(unchanged.matrix, [])
+
+      const newerLine = {
+        dotnet: {
+          ...versions.dotnet,
+          selectedAgentsSdkVersion: '1.9.*',
+          releaseTag: 'v1.9.7'
+        }
+      }
+      const lineUpdate = createPlan(root, upstream, newerLine)
+      assert.equal(lineUpdate.samples[id]!.sourceTree, initial.samples[id]!.sourceTree)
+      assert.equal(lineUpdate.samples[id]!.status, 'pending')
+      assert.deepEqual(lineUpdate.matrix.map((item) => item.id), [id])
+      assert.deepEqual(lineUpdate.samples[id]!.changedComponents, ['packagePolicy'])
+      saveVerifiedState(root, lineUpdate.samples[id]!)
+      assert.deepEqual(createPlan(root, upstream, newerLine).matrix, [])
+
+      const newerRelease = {
+        dotnet: {
+          ...newerLine.dotnet,
+          releaseTag: 'v1.9.8'
+        }
+      }
+      const releaseUpdate = createPlan(root, upstream, newerRelease)
+      assert.equal(releaseUpdate.samples[id]!.sourceTree, lineUpdate.samples[id]!.sourceTree)
+      assert.equal(releaseUpdate.samples[id]!.status, 'pending')
+      assert.deepEqual(releaseUpdate.matrix.map((item) => item.id), [id])
+      assert.deepEqual(releaseUpdate.samples[id]!.changedComponents, ['packagePolicy'])
+      saveVerifiedState(root, releaseUpdate.samples[id]!)
+      assert.equal(createPlan(root, upstream, newerRelease).samples[id]!.status, 'unchanged')
+      assert.deepEqual(createPlan(root, upstream, newerRelease).matrix, [])
+    } finally {
+      rmSync(root, {
+        recursive: true,
+        force: true
+      })
+    }
+  })
+
   it('plans same-name language variants independently and honors language selection', () => {
     const { root, upstream } = fixture()
     try {

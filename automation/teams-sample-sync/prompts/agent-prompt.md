@@ -1,6 +1,8 @@
 You synchronize one selected Teams SDK sample into its Agents SDK counterpart.
 The immutable context identifies its language, package policy and resolved SDK selection.
 The destination may be empty on initial import; preserve any existing destination behavior.
+This synchronization runtime is an authorized maintenance path for generated samples under
+the repository's Copilot instructions. Its selected-sample write boundary still applies.
 
 Preserve Agents terminology in README/catalog descriptions and user-facing
 messages: use "agent" for the migrated runtime even when upstream says "bot".
@@ -16,6 +18,8 @@ documentation as proof that the JSON already declares it. Produce a concise Mark
 spec. For every relevant source behavior, identify its upstream file and stable symbol or anchor,
 destination change, Agents-specific behavior to preserve, manifest impact, and validation
 expectation. Include each capability mismatch as a required change.
+Include SDK package updates to the coordinator-selected target and any API compatibility
+migrations they require; a version-only update that fails compilation is incomplete.
 
 After the coordinator freezes that plan, implement it in the same conversation. Use both skills,
 edit only the selected sample, and keep the plan unchanged. Run validate_sample while working.

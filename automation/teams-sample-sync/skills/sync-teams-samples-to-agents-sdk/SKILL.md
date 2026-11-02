@@ -14,6 +14,23 @@ a floor. Apply the selected migration skill's package conventions rather than
 copying the minimum into dependencies or imposing one language's version syntax
 on another. Initial imports may have an empty destination.
 
+Plan and implement SDK updates together with the compatibility migrations they require.
+"Keep current" means the newest supported selection under the coordinator's stable-release,
+supported-major and common-package rules, including JS package compatibility; it does not
+authorize arbitrary latest majors, prereleases, or unrelated third-party dependency upgrades.
+Treat compiler errors from selected SDK APIs as implementation work inside the selected sample.
+Preserve source, manifest, and contract behavior, including meeting timestamps/transcripts,
+task dialogs, message-extension previews, signed upload URLs, and targeted recipients.
+Do not restore obsolete API packages, downgrade below the selected target, remove features or
+handlers, weaken tests, or suppress diagnostics to obtain a passing result.
+
+For .NET shared helpers, the authoritative `AspNetExtensions.cs` comes from
+`microsoft/Agents-for-net` at `src/samples/Shared/AspNetExtensions.cs`. The configured canonical
+sample (`samples/dotnet/quickstart`) supplies a local synchronized copy, fingerprinted by the
+coordinator. Use that supplied input to maintain copies inside the selected sample as needed.
+Do not download an unpinned replacement or edit the canonical sample from this session.
+If the input is missing or needs refreshing for the selected SDK, report that prerequisite.
+
 Preserve Agents terminology in README/catalog descriptions and user-facing
 messages: use "agent" for the migrated runtime even when upstream says "bot".
 Keep platform names (Azure Bot), schema keys (`bots[]`, `botId`), and existing
@@ -46,3 +63,7 @@ evidence that every plan item was verified and that no selected-sample file need
 a required behavior cannot be implemented, state the actual blocker. Do not claim validation passed
 when it did not. The coordinator may request one repair for deterministic validation failures; keep
 the frozen plan unchanged during that repair.
+Run full validation again after repairs. Shared-harness incompatibility, missing canonical input,
+unavailable package feeds, and infrastructure failures must remain visible as blockers; they do
+not authorize protected-file edits or repeated repair attempts. An unsuccessful migration must
+not be reported as a successful sync or handed off as a validated candidate.

@@ -6,6 +6,29 @@ repository-write credential. The handoff job verifies the candidates, uploads th
 migration evidence, and creates an issue for Copilot cloud agent. Copilot owns the resulting
 implementation and PR, including its title, description, and readiness.
 
+Synchronization owns all maintenance under `samples/dotnet/teams`, including SDK versions,
+shared-helper copies, and compatibility repairs. The repository's
+[Copilot instructions](../../.github/copilot-instructions.md) apply to ordinary tasks and review;
+workflow-generated handoff issues with prepared patches and migration evidence authorize
+Copilot to complete this maintenance. Arbitrary issue assignment does not. Automation source
+and the shared contract harness outside those roots can still be maintained through ordinary
+tasks. This restriction does not extend to Node samples.
+
+The frozen migration plan includes the selected SDK update and required API migrations together.
+The coordinator selects the newest supported stable .NET line shared by required packages within
+the configured major, and freezes compatible exact JS package versions. Neither policy means
+arbitrary latest majors, prereleases, or unrelated dependency upgrades. The full selection is
+fingerprinted: a changed .NET release tag schedules revalidation even within the same selected
+line, while identical verified inputs and output remain unchanged. This does not guarantee
+detection of every independent NuGet package publication.
+
+The .NET helper's authoritative source is `microsoft/Agents-for-net` at
+`src/samples/Shared/AspNetExtensions.cs`. The configured canonical sample,
+`samples/dotnet/quickstart`, supplies the local synchronized copy and is fingerprinted as a
+migration input. Refreshing that input requires separate maintenance before synchronization;
+the migration session may only update helper copies inside its selected sample. It must report
+missing or incompatible canonical input rather than fetching an unpinned replacement.
+
 The workflow runs every Sunday at 00:00 UTC for all configured samples. Dispatch manual runs from
 the repository's default branch; other refs are skipped. Manual runs can select one
 language (`all`, `dotnet`, `js`), a sample or all samples, and publication. A named sample with
@@ -26,6 +49,11 @@ the session gets one reconciliation turn and another full validation pass. A con
 the sample.
 When verification finds that no selected-sample file needs a change, the published patch contains
 only synchronization state and is explicitly reported as **no changes required**.
+SDK API compiler errors must be repaired while preserving source, manifest, and contract behavior.
+Do not downgrade below the selected target, restore obsolete packages, remove capabilities,
+weaken tests, or suppress diagnostics to pass. Full validation follows implementation and repair.
+Persistent failures, shared-harness incompatibility, and infrastructure blockers prevent successful
+publication and verified-state advancement; they do not expand the agent's write permissions.
 
 The handoff job verifies every patch against the planned base and uploads one bundle containing
 `plan.json` and each sample's patch, migration plan, self-audit, source context, and result metadata.
@@ -37,6 +65,8 @@ workflow and artifact links, sample summaries, and short acceptance criteria. Co
 prepared migration as a starting point, makes any adjustments needed, validates its work, and
 creates a linked PR. The issue asks for a summary of each sample's changes (including no-change
 outcomes), additional adjustments and why, validation results, and remaining manual checks.
+The handoff explicitly carries synchronization ownership. After any adjustments, Copilot must
+rerun relevant full validation and keep unresolved failures visible and the PR not ready to merge.
 There is no post workflow, PR metadata rewrite, exact-patch PR gate, or automatic readiness step.
 
 Failed runs retain their diagnostic artifacts and can be rerun. Reruns reuse open issues when the
