@@ -6,7 +6,7 @@ This Agent Sample is intended to introduce you to the basic operation of the Mic
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org) version 20 or higher
+- [Node.js](https://nodejs.org) version 22 or higher
 
     ```bash
     # determine node version

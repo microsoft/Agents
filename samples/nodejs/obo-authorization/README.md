@@ -7,7 +7,7 @@ This Agent has been created using [Microsoft 365 Agents SDK](https://github.com/
 
 - ## Prerequisites
 
--  [NodeJS](https://nodejs.org) version 20.0 or greater
+-  [NodeJS](https://nodejs.org) version 22 or greater
 -  [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) (for local development)
 
 ## Configure Azure Bot Service

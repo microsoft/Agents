@@ -13,7 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@microsoft/agents-hosting-express": "^1.7.2",
+    "@microsoft/agents-hosting-express": "1.9.1",
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "adaptivecards-templating": "^2.3.1",
     "express": "^5.1.0"
@@ -21,5 +21,8 @@
   "devDependencies": {
     "@microsoft/microsoft-graph-types": "^2.43.1",
     "@microsoft/m365agentsplayground": "^0.2.28"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

@@ -15,9 +15,9 @@ scope decision. A question or review request is read-only.
 
 ## Sources
 
-1. Read `docs/python/production-ready-agent.md` in the Agents checkout, or
-   [the language guide](https://github.com/microsoft/Agents/blob/main/docs/python/production-ready-agent.md).
-   Follow its links to the shared controls. The guide is normative.
+1. Read [Prepare an agent for production on Microsoft Learn](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/production-ready-agent/production-ready-agent?pivots=python)
+   first, using the Python language selection. Treat the article and its
+   linked shared production controls as normative.
 2. Read [the packaged readiness matrix](references/readiness-matrix.md) for
    control IDs, statuses, applicability, dependencies and evidence rules.
 3. Inspect `samples/python/production-reference/`, or

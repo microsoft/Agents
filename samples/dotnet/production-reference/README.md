@@ -11,8 +11,8 @@ checks, opt-in outbound policy, managed-identity Blob state, payload limits,
 safe errors, probes, content-free telemetry, graceful hosting shutdown, tests,
 Bicep and operating guidance. Source controls do not certify a deployment.
 
-See [the .NET guide](../../../docs/dotnet/production-ready-agent.md),
-[shared contract](../../../docs/shared/production-readiness.md), and
+See [the .NET production guide on Microsoft Learn](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/production-ready-agent/production-ready-agent?pivots=dotnet)
+for shared controls and language-specific guidance, and use the
 [production skill](../../../agent-plugins/agents-for-net/skills/agents-sdk-to-prod/SKILL.md).
 Delegated APIs, attachments, transcripts, models, tools, retrieval and proactive
 messaging are outside this reference's boundary.

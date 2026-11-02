@@ -16,7 +16,7 @@ Compared to [quickstart](../quickstart/README.md), this sample:
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org) version 20 or higher
+- [Node.js](https://nodejs.org) version 22 or higher
 
     ```bash
     node --version
