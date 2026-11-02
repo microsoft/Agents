@@ -3421,7 +3421,7 @@ Span for signing out a user via Azure Bot Service.
 #### agents.activities.received
 
 **Type:** Counter  
-**Unit:** none
+**Unit:** activity
 
 **Description:** Total activities received — incremented once per `process_request` call, including non-POST and bad-JSON calls (where type and channel default to `"unknown"`).
 
@@ -3435,7 +3435,7 @@ Span for signing out a user via Azure Bot Service.
 #### agents.activities.sent
 
 **Type:** Counter  
-**Unit:** none
+**Unit:** activity
 
 **Description:** Total outbound activities sent.
 
@@ -3449,7 +3449,7 @@ Span for signing out a user via Azure Bot Service.
 #### agents.activities.updated
 
 **Type:** Counter  
-**Unit:** none
+**Unit:** activity
 
 **Description:** Total activity updates.
 
@@ -3462,7 +3462,7 @@ Span for signing out a user via Azure Bot Service.
 #### agents.activities.deleted
 
 **Type:** Counter  
-**Unit:** none
+**Unit:** activity
 
 **Description:** Total activity deletions.
 
