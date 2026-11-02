@@ -6,13 +6,15 @@ repository-write credential. The handoff job verifies the candidates, uploads th
 migration evidence, and creates an issue for Copilot cloud agent. Copilot owns the resulting
 implementation and PR, including its title, description, and readiness.
 
-Synchronization owns all maintenance under `samples/dotnet/teams`, including SDK versions,
-shared-helper copies, and compatibility repairs. The repository's
+Synchronization owns all maintenance of generated Teams samples in every language profile
+defined in `config/targets.yml`, currently under `samples/dotnet/teams` and
+`samples/nodejs/teams`. This includes SDK versions, lockfiles, shared-helper copies,
+and compatibility repairs, and applies to future language profiles. The repository's
 [Copilot instructions](../../.github/copilot-instructions.md) apply to ordinary tasks and review;
 workflow-generated handoff issues with prepared patches and migration evidence authorize
 Copilot to complete this maintenance. Arbitrary issue assignment does not. Automation source
 and the shared contract harness outside those roots can still be maintained through ordinary
-tasks. This restriction does not extend to Node samples.
+tasks. Samples outside the configured generated destination roots are not covered by this rule.
 
 The frozen migration plan includes the selected SDK update and required API migrations together.
 The coordinator selects the newest supported stable .NET line shared by required packages within

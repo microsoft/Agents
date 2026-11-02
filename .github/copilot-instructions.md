@@ -1,9 +1,12 @@
-# Generated .NET Teams samples
+# Generated Teams samples
 
-Synchronization owns maintenance under `samples/dotnet/teams/**`. Outside that process,
-do not change any files there, including implementations, project/package versions,
-`AspNetExtensions.cs`, tests, manifests, configuration, assets, documentation, formatting,
-cleanup, or dependency updates.
+Synchronization owns maintenance of generated Teams samples in every language.
+The language profiles in `automation/teams-sample-sync/config/targets.yml` define
+the managed destination roots, currently `samples/dotnet/teams/**` and
+`samples/nodejs/teams/**`. This rule also applies to future language profiles.
+Outside that process, do not change any files in those roots, including implementations,
+project/package versions, lockfiles, shared helpers such as `AspNetExtensions.cs`, tests,
+manifests, configuration, assets, documentation, formatting, cleanup, or dependency updates.
 
 The authorized maintenance path includes the synchronization runtime and Copilot tasks
 assigned through workflow-generated handoff issues with prepared patches and migration
