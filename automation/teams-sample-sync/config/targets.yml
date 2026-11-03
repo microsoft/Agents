@@ -6,7 +6,7 @@ upstream:
   root: samples/TeamsSDK
 
 destinationRoot: samples/dotnet/teams
-canonicalSample: samples/dotnet/quickstart
+canonicalSample: automation/teams-sample-sync/reference/dotnet
 migrationSkill: agent-plugins/agents-for-net/skills/teams-sdk-to-agents-sdk-dotnet-migration
 manifestSkill: agent-plugins/agents-sdk-common/skills/teams-app-manifest
 
