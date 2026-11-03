@@ -453,6 +453,10 @@ export async function checkManifest (
   } catch (error) {
     return [`Invalid manifest JSON: ${error instanceof Error ? error.message : String(error)}`]
   }
+  if (raw.includes('$' + '{{BOT_ID}}')) {
+    errors.push('Use the repository application client ID placeholder: $' + '{{AAD_APP_CLIENT_ID}}')
+  }
+
   for (const key of ['$schema', 'manifestVersion', 'version', 'id', 'name', 'description', 'icons']) {
     if (!(key in manifest)) {
       errors.push(`Manifest is missing ${key}`)
@@ -843,7 +847,7 @@ export async function validateSample (
             '--warnaserror',
             `-p:AgentsSdkTestVersion=${selectedAgentsSdkVersion}`,
             '--filter',
-            'Sample=' + sample,
+            '(Sample=' + sample + ')|(Category=TeamsHarness)',
           ],
           repo
         )
