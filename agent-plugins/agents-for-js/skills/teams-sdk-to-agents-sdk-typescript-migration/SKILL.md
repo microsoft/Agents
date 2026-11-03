@@ -190,3 +190,7 @@ evidence rather than omitting it or claiming the migration passed.
 
 Official source: <https://github.com/microsoft/Agents-for-js>. The installed
 selected package types and source are authoritative for the run's API surface.
+
+## Repository manifest identity convention
+
+For this repository, use `${{AAD_APP_CLIENT_ID}}` consistently for application client ID placeholders in the Teams manifest, including `id`, `bots[].botId` and `composeExtensions[].botId`. Preserve unrelated suffix and domain placeholders. Align setup documentation and provisioning substitutions. Keep source-derived sample identifiers; describe migrated runtimes as agents while preserving platform and schema names.

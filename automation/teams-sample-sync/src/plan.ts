@@ -7,7 +7,7 @@
 import path from 'node:path'
 import { protection, SyncError, targets } from './config.js'
 import { digestDirectory, git, hash, stable, tree } from './git.js'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync, statSync } from 'node:fs'
 import { readState } from './state.js'
 import { assertAgentsSdkVersionSelection } from './versions.js'
 import type { AgentsSdkVersionSelection, Plan, PlanSample } from './types.js'
@@ -19,6 +19,10 @@ export function createPlan (
   chosen?: string
 ): Plan {
   const configured = targets(repo)
+  const canonical = path.join(repo, configured.canonicalSample)
+  if (!existsSync(canonical) || !statSync(canonical).isDirectory()) {
+    throw new SyncError(`Missing migration input canonicalSample: ${configured.canonicalSample}; restore the maintained reference before planning`)
+  }
   assertAgentsSdkVersionSelection(agentsSdkVersion, configured.packagePolicy.minimumAgentsSdkVersion)
   const owner = protection(repo)
   const commit = git(upstream, ['rev-parse', 'HEAD']) as string

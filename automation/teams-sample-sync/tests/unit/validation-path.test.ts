@@ -15,7 +15,7 @@ import {
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..')
 const teamsAppIdPlaceholder = '$' + '{{TEAMS_APP_ID}}'
-const botIdPlaceholder = '$' + '{{BOT_ID}}'
+const botIdPlaceholder = '$' + '{{AAD_APP_CLIENT_ID}}'
 const namePlaceholder = '$' + '{{NAME}}'
 
 describe('sample validation', () => {
@@ -124,6 +124,8 @@ describe('sample validation', () => {
         cwd: sampleRoot,
       })
       assert.ok(commands.some((command) => command.args.includes(`-p:AgentsSdkTestVersion=${selectedVersion}`)))
+      const contracts = commands.find((command) => command.args[0] === 'test')!
+      assert.equal(contracts.args[contracts.args.indexOf('--filter') + 1], '(Sample=agent-targeted-messages)|(Category=TeamsHarness)')
       assert.equal(smokeProject, 'AgentTargetedMessages.csproj')
     } finally {
       rmSync(sampleRoot, { recursive: true, force: true })
