@@ -15,7 +15,7 @@ import {
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..')
 const teamsAppIdPlaceholder = '$' + '{{TEAMS_APP_ID}}'
-const botIdPlaceholder = '$' + '{{BOT_ID}}'
+const botIdPlaceholder = '$' + '{{AAD_APP_CLIENT_ID}}'
 const namePlaceholder = '$' + '{{NAME}}'
 
 describe('sample validation', () => {
