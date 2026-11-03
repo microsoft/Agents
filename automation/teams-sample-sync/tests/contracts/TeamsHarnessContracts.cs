@@ -12,7 +12,7 @@ namespace TeamsSampleSync.ContractTests;
 public partial class TeamsSampleContracts
 {
     [Fact]
-    [Trait("Sample", "bot-attachments")]
+    [Trait("Category", "TeamsHarness")]
     public async Task TeamsExtension_InitializesBeforeDispatchingAnInvokeAsync()
     {
         await using var host = CreateHost(services =>

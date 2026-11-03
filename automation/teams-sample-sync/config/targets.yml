@@ -17,8 +17,8 @@ validatorVersion: "5"
 profiles:
   dotnet:
     destinationRoot: samples/dotnet/teams
-    canonicalSample: samples/dotnet/quickstart
-    manifestAssets: samples/dotnet/quickstart/appManifest
+    canonicalSample: automation/teams-sample-sync/reference/dotnet
+    manifestAssets: automation/teams-sample-sync/reference/dotnet/appManifest
     migrationSkill: agent-plugins/agents-for-net/skills/teams-sdk-to-agents-sdk-dotnet-migration
 
     syncSkill: automation/teams-sample-sync/skills/sync-teams-samples-to-agents-sdk
