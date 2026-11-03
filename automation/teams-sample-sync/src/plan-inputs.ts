@@ -1,5 +1,5 @@
 /** Recomputable migration inputs bind each phase to the same policy and source. */
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync, statSync } from 'node:fs'
 import path from 'node:path'
 import { targetProtection, SyncError } from './config.js'
 import { digestDirectory, hash, stable } from './git.js'
@@ -16,6 +16,17 @@ export function migrationInputs (
 
   if (!target) {
     throw new SyncError(`Sample is not configured: ${sample}`)
+  }
+
+  for (const [name, relative] of Object.entries({
+    canonicalSample: configured.canonicalSample,
+    manifestAssets: configured.manifestAssets
+  })) {
+    const input = path.join(repo, relative)
+
+    if (!existsSync(input) || !statSync(input).isDirectory()) {
+      throw new SyncError(`Missing migration input ${name}: ${relative}; restore the maintained reference before planning`)
+    }
   }
 
   const owner = targetProtection(repo, configured)

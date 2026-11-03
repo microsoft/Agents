@@ -105,7 +105,7 @@ async function validateCode (input: CodeValidationInput): Promise<Record<string,
             '--warnaserror',
             `-p:AgentsSdkTestVersion=${selectedAgentsSdkVersion}`,
             '--filter',
-            'Sample=' + sample,
+            '(Sample=' + sample + ')|(Category=TeamsHarness)',
           ],
           repo
         )

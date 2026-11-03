@@ -26,7 +26,7 @@ detection of every independent NuGet package publication.
 
 The .NET helper's authoritative source is `microsoft/Agents-for-net` at
 `src/samples/Shared/AspNetExtensions.cs`. The configured canonical sample,
-`samples/dotnet/quickstart`, supplies the local synchronized copy and is fingerprinted as a
+`automation/teams-sample-sync/reference/dotnet`, supplies the local synchronized copy and is fingerprinted as a
 migration input. Refreshing that input requires separate maintenance before synchronization;
 the migration session may only update helper copies inside its selected sample. It must report
 missing or incompatible canonical input rather than fetching an unpinned replacement.

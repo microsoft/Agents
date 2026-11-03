@@ -26,7 +26,7 @@ handlers, weaken tests, or suppress diagnostics to obtain a passing result.
 
 For .NET shared helpers, the authoritative `AspNetExtensions.cs` comes from
 `microsoft/Agents-for-net` at `src/samples/Shared/AspNetExtensions.cs`. The configured canonical
-sample (`samples/dotnet/quickstart`) supplies a local synchronized copy, fingerprinted by the
+sample (`automation/teams-sample-sync/reference/dotnet`) supplies a local synchronized copy, fingerprinted by the
 coordinator. Use that supplied input to maintain copies inside the selected sample as needed.
 Do not download an unpinned replacement or edit the canonical sample from this session.
 If the input is missing or needs refreshing for the selected SDK, report that prerequisite.

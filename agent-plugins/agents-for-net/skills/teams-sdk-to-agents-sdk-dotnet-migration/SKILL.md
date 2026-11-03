@@ -110,7 +110,7 @@ do not copy 1.8 `Microsoft.Teams.Api.*` models or guess types in the Agents rout
 | `Microsoft.Teams.Apps.Activities`                | `Microsoft.Agents.Builder.App` (routing)         |
 | `Microsoft.Teams.Api.Activities`                 | `Microsoft.Agents.Core.Models`                   |
 | `Microsoft.Teams.Api` (activity/card models)     | `Microsoft.Agents.Core.Models`                   |
-| `Microsoft.Teams.Api` (Teams route payloads, SDK 1.9) | `Microsoft.Teams.Apps.Files`, `.TaskModules`, `.MessageExtensions`, `.Meetings`, `.Clients` � see the version-specific guide |
+| `Microsoft.Teams.Api` (Teams route payloads, SDK 1.9) | `Microsoft.Teams.Apps.Files`, `.TaskModules`, `.MessageExtensions`, `.Meetings`, `.Clients` — see the version-specific guide |
 | *(Teams-specific)* `Microsoft.Teams.Apps.Activities.Events` etc. | `Microsoft.Agents.Extensions.MSTeams.*` |
 
 ---
@@ -126,7 +126,7 @@ Create `agentsdk-<name>/dotnet/agentsdk-<name>/` mirroring the customer's source
 - `<Name>Agent.cs` — the `AgentApplication` subclass (Step 4).
 - `AspNetExtensions.cs` — **required.** `AddAgentAspNetAuthentication()` is *not* in any NuGet package;
   copy it verbatim from an Agents SDK sample
-  (`src/samples/EmptyAgent/AspNetExtensions.cs` in agents-for-net).
+  (`src/samples/Shared/AspNetExtensions.cs` in agents-for-net; automation supplies its pinned local copy under `automation/teams-sample-sync/reference/dotnet`).
 - `appsettings.json` — non-secret Agents SDK config (Step 5); keep local credentials in an ignored `appsettings.Development.json` or environment variables.
 - `Properties/launchSettings.json` — `applicationUrl: http://localhost:3978`.
 - `README.md` — explain the migrated Agents SDK application and its customer-specific setup.
@@ -498,3 +498,7 @@ selected sample; protected contracts and automation remain outside its write sco
 Use current full `validate_sample` evidence after the final change. Preserve Agents
 terminology even when upstream says "bot"; never weaken contracts to restore it.
 Report blocked behavior and remaining credentialed checks explicitly.
+
+## Repository manifest identity convention
+
+For this repository, use `${{AAD_APP_CLIENT_ID}}` consistently for application client ID placeholders in the Teams manifest, including `id`, `bots[].botId` and `composeExtensions[].botId`. Preserve unrelated suffix and domain placeholders. Align setup documentation and provisioning substitutions. Keep source-derived sample identifiers; describe migrated runtimes as agents while preserving platform and schema names.
