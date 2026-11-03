@@ -47,6 +47,7 @@ function fixture (): {
   configured.profiles = { dotnet: profile }
   profile.samples = { 'bot-cards': profile.samples['bot-cards']! }
   profile.canonicalSample = 'canonical'
+  profile.manifestAssets = 'assets'
   profile.migrationSkill = 'migration-skill'
   profile.syncSkill = 'sync-skill'
   profile.contractDirectory = 'contracts'
@@ -58,6 +59,8 @@ function fixture (): {
   write(root, 'automation/teams-sample-sync/package-lock.json', '{}')
   write(root, 'samples/dotnet/teams/bot-cards/Program.cs', 'destination')
   write(root, 'migration-skill/SKILL.md', 'Migration instructions')
+  write(root, 'canonical/Program.cs', 'reference')
+  write(root, 'assets/color.png', 'icon')
   const upstream = path.join(root, 'upstream')
   write(upstream, 'samples/TeamsSDK/bot-cards/dotnet/bot-cards/Program.cs', 'source')
   write(upstream, 'samples/TeamsSDK/node-only/nodejs/index.ts', 'node source')
@@ -178,6 +181,30 @@ describe('incremental planning with namespaced state', () => {
       const changed = createPlan(root, upstream, versions).samples[id]!
       assert.equal(changed.status, 'pending')
       assert.deepEqual(changed.changedComponents, ['migrationSkill'])
+    } finally {
+      rmSync(root, {
+        recursive: true,
+        force: true
+      })
+    }
+  })
+
+  it('invalidates plans on reference and icon edits, ignores former sample inputs, and rejects missing references', () => {
+    const { root, upstream } = fixture()
+    try {
+      const initial = createPlan(root, upstream, versions)
+      saveVerifiedState(root, initial.samples[id]!)
+      write(root, 'samples/dotnet/quickstart/Program.cs', 'unrelated quickstart')
+      write(root, 'samples/nodejs/proactive/appManifest/color.png', 'unrelated icon')
+      assert.deepEqual(createPlan(root, upstream, versions).matrix, [])
+      write(root, 'canonical/Program.cs', 'updated reference')
+      const changed = createPlan(root, upstream, versions)
+      assert.deepEqual(changed.samples[id]!.changedComponents, ['canonicalSample'])
+      saveVerifiedState(root, changed.samples[id]!)
+      write(root, 'assets/color.png', 'updated icon')
+      assert.deepEqual(createPlan(root, upstream, versions).samples[id]!.changedComponents, ['manifestAssets'])
+      rmSync(path.join(root, 'canonical'), { recursive: true })
+      assert.throws(() => createPlan(root, upstream, versions), /Missing migration input canonicalSample/)
     } finally {
       rmSync(root, {
         recursive: true,

@@ -8,10 +8,51 @@ import { describe, it } from 'node:test'
 import { checkManifest } from '../../src/manifest.js'
 
 const teamsAppIdPlaceholder = '$' + '{{TEAMS_APP_ID}}'
-const botIdPlaceholder = '$' + '{{BOT_ID}}'
+const botIdPlaceholder = '$' + '{{AAD_APP_CLIENT_ID}}'
 const namePlaceholder = '$' + '{{NAME}}'
 
 describe('manifest validation', () => {
+  it('rejects the legacy client ID variable while retaining unrelated placeholders', async () => {
+    const root = mkdtempSync(path.join(os.tmpdir(), 'teams-sync-identity-'))
+    try {
+      const packageRoot = path.join(root, 'manifest')
+      mkdirSync(packageRoot)
+      writeFileSync(path.join(packageRoot, 'color.png'), 'icon')
+      writeFileSync(path.join(packageRoot, 'outline.png'), 'icon')
+      const manifest = {
+        $schema: 'https://developer.microsoft.com/json-schemas/teams/v1.23/MicrosoftTeams.schema.json',
+        manifestVersion: '1.23',
+        version: '1.0.0',
+        id: '$' + '{{BOT_ID}}',
+        name: { short: '$' + '{{APP_NAME_SUFFIX}}' },
+        description: {
+          short: 'Sample',
+          full: 'Sample'
+        },
+        icons: {
+          color: 'color.png',
+          outline: 'outline.png'
+        },
+      }
+      const target = {
+        distribution: 'sample',
+        packageDirectory: 'manifest',
+        placeholderConvention: 'toolkit'
+      }
+      const file = path.join(packageRoot, 'manifest.json')
+      writeFileSync(file, JSON.stringify(manifest))
+      assert.ok((await checkManifest(root, target, async () => ({ type: 'object' }))).some((error) => error.includes('application client ID placeholder')))
+      manifest.id = '$' + '{{AAD_APP_CLIENT_ID}}'
+      writeFileSync(file, JSON.stringify(manifest))
+      assert.deepEqual(await checkManifest(root, target, async () => ({ type: 'object' })), [])
+    } finally {
+      rmSync(root, {
+        recursive: true,
+        force: true
+      })
+    }
+  })
+
   it('rejects manifest commands missing or inconsistent with explicit README claims', async () => {
     const sampleRoot = mkdtempSync(path.join(os.tmpdir(), 'teams-sync-manifest-'))
     try {

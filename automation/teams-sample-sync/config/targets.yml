@@ -17,8 +17,8 @@ validatorVersion: "5"
 profiles:
   dotnet:
     destinationRoot: samples/dotnet/teams
-    canonicalSample: samples/dotnet/quickstart
-    manifestAssets: samples/dotnet/quickstart/appManifest
+    canonicalSample: automation/teams-sample-sync/reference/dotnet
+    manifestAssets: automation/teams-sample-sync/reference/dotnet/appManifest
     migrationSkill: agent-plugins/agents-for-net/skills/teams-sdk-to-agents-sdk-dotnet-migration
 
     syncSkill: automation/teams-sample-sync/skills/sync-teams-samples-to-agents-sdk
@@ -89,8 +89,8 @@ profiles:
 
   js:
     destinationRoot: samples/nodejs/teams
-    canonicalSample: samples/nodejs/quickstart
-    manifestAssets: samples/nodejs/proactive/appManifest
+    canonicalSample: automation/teams-sample-sync/reference/nodejs
+    manifestAssets: automation/teams-sample-sync/reference/manifest-assets/nodejs
     migrationSkill: agent-plugins/agents-for-js/skills/teams-sdk-to-agents-sdk-typescript-migration
     syncSkill: automation/teams-sample-sync/skills/sync-teams-samples-to-agents-sdk
     contractDirectory: automation/teams-sample-sync/tests/js-contracts
