@@ -2,9 +2,12 @@
 // Licensed under the MIT License.
 import { startServer } from '@microsoft/agents-hosting-express'
 import {
-  TurnState, MemoryStorage, TurnContext, AgentApplication, AttachmentDownloader
-}
-  from '@microsoft/agents-hosting'
+  TurnState,
+  MemoryStorage,
+  TurnContext,
+  AgentApplication,
+  AttachmentDownloader
+} from '@microsoft/agents-hosting'
 import { ActivityTypes } from '@microsoft/agents-activity'
 
 // Create custom conversation state properties.  This is

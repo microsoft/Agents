@@ -27,7 +27,7 @@ profiles:
 
     packagePolicy:
       targetFramework: net10.0
-      minimumAgentsSdkVersion: "1.8"
+      minimumAgentsSdkVersion: "1.9"
 
     samples:
       agent-targeted-messages:

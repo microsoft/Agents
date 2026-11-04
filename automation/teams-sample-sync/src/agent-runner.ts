@@ -20,7 +20,6 @@ import {
   type PermissionRequestResult,
   type SessionConfig,
   type Tool,
-
 } from '@github/copilot-sdk'
 import { SyncError } from './config.js'
 import type { CopilotConfiguration, ObservedModel } from './types.js'
