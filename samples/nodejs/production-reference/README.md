@@ -13,7 +13,7 @@ This sample is a deployable reference, not a production certification. It captur
 - Azure Monitor OpenTelemetry export for built-in Agents SDK instrumentation and small application-specific spans and metrics.
 - App Service, Azure Bot, and Web Chat Bicep; deployment instructions; and operator runbook.
 
-Tools, proactive messages, attachment handling, transcripts, and other channels are intentionally excluded. See [the production guide](../../../docs/nodejs/production-ready-agent.md) before adding them.
+Tools, proactive messages, attachment handling, transcripts, and other channels are intentionally excluded. See [the production guide on Microsoft Learn](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/production-ready-agent/production-ready-agent?pivots=nodejs) before adding them.
 
 Use the guide to plan or review production requirements. Use this sample to inspect, run, or deploy the stated reference path. Use the AI skill when you want an AI coding agent to assess or harden a selected scenario and add its applicable feature-specific controls.
 
