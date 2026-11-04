@@ -4,13 +4,12 @@ These maintained production inputs supply startup guidance, the shared .NET auth
 
 ## Provenance
 
-Initial snapshot: southworks/Agents commit `7e367ce66552feb9c934a492615a841b40915a3f`:
 - `dotnet/`: code and configuration from `samples/dotnet/quickstart` (net8.0, Agents 1.8 baseline).
 - `nodejs/`: startup code and TypeScript settings from `samples/nodejs/quickstart` (Agents 1.9.1 baseline); playground tooling and lifecycle installs are omitted.
 - `dotnet/appManifest/`: icons from `samples/dotnet/quickstart/appManifest`.
 - `manifest-assets/nodejs/`: icons from `samples/nodejs/proactive/appManifest`.
 
-`AspNetExtensions.cs` last changed locally in commit `0e789f5dc59670612e0e03ca450b4bff42f837c4`. Its authoritative upstream location is https://github.com/microsoft/Agents-for-net/blob/main/src/samples/Shared/AspNetExtensions.cs ; an exact upstream revision has not been established. The pinned local snapshot above is the supplied evidence, not a claim that upstream main is immutable.
+`AspNetExtensions.cs` last changed locally in commit `0e789f5dc59670612e0e03ca450b4bff42f837c4`. Its authoritative upstream location is https://github.com/microsoft/Agents-for-net/blob/main/src/samples/Shared/AspNetExtensions.cs ; an exact upstream revision has not been established.
 
 Microsoft copyright and MIT licensing apply; source headers are retained. See the repository LICENSE.
 
