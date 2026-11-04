@@ -45,6 +45,7 @@ function fixture (): {
   const profile = configured.profiles.dotnet!
   configured.profiles = { dotnet: profile }
   profile.samples = { 'bot-cards': profile.samples['bot-cards']! }
+  profile.packagePolicy.minimumAgentsSdkVersion = '1.8'
   profile.canonicalSample = 'canonical'
   profile.manifestAssets = 'assets'
   profile.migrationSkill = 'migration-skill'

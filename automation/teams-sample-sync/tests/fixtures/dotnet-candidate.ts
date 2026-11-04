@@ -18,7 +18,7 @@ export const selected = {
 } as const
 export const versions = {
   dotnet: {
-    minimumAgentsSdkVersion: '1.8',
+    minimumAgentsSdkVersion: '1.9',
     selectedAgentsSdkVersion: '1.9.*',
     releaseTag: 'v1.9.7',
   }

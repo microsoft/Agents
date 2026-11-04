@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url'
 import { describe, it } from 'node:test'
 import { parse, stringify } from 'yaml'
 import { configuration, selectedLanguages, targets } from '../../src/config.js'
+import { assertSdkSelection } from '../../src/sdk-policy.js'
 import { artifactName, targetId } from '../../src/identity.js'
 import type { Configuration } from '../../src/types.js'
 
@@ -31,6 +32,21 @@ function withConfiguration (edit: (value: Configuration) => void, check: (root: 
 }
 
 describe('language profiles and target identity', () => {
+  it('keeps production .NET migrations on SDK 1.9 or newer', () => {
+    const configured = targets(repo, 'dotnet')
+    assert.equal(configured.packagePolicy.minimumAgentsSdkVersion, '1.9')
+    assert.throws(() => assertSdkSelection(configured, {
+      minimumAgentsSdkVersion: '1.9',
+      selectedAgentsSdkVersion: '1.8.*',
+      releaseTag: 'v1.8.77'
+    }), /incompatible/)
+    assert.doesNotThrow(() => assertSdkSelection(configured, {
+      minimumAgentsSdkVersion: '1.9',
+      selectedAgentsSdkVersion: '1.9.*',
+      releaseTag: 'v1.9.7'
+    }))
+  })
+
   it('resolves the .NET profile and qualified identity', () => {
     assert.deepEqual(selectedLanguages(repo), ['dotnet'])
     assert.equal(targets(repo).destinationRoot, 'samples/dotnet/teams')
