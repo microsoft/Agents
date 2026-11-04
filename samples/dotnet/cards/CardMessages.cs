@@ -48,6 +48,12 @@ internal static class CardMessages
 
     public static Task SendAnimationCardAsync(ITurnContext context, CancellationToken cancellationToken)
     {
+        if (context.Activity.ChannelId == Channels.Msteams)
+        {
+            // Teams does not support animation cards, add channel-specific logic if needed.
+            return context.SendActivityAsync(MessageFactory.CreateMessageActivity("Animation cards are not supported in Teams."), cancellationToken);
+        }
+
         AnimationCard card = new()
         {
             Title = "Microsoft 365 Agents SDK",
@@ -64,6 +70,12 @@ internal static class CardMessages
 
     public static Task SendAudioCardAsync(ITurnContext context, CancellationToken cancellationToken)
     {
+        if (context.Activity.ChannelId == Channels.Msteams)
+        {
+            // Teams does not support audio cards, add channel-specific logic if needed.
+            return context.SendActivityAsync(MessageFactory.CreateMessageActivity("Audio cards are not supported in Teams."), cancellationToken);
+        }
+
         AudioCard card = new()
         {
             Title = "I am your father",
@@ -175,6 +187,11 @@ internal static class CardMessages
 
     public static Task SendVideoCardAsync(ITurnContext context, CancellationToken cancellationToken)
     {
+        if (context.Activity.ChannelId == Channels.Msteams)
+        {
+            // Teams does not support video cards, add channel-specific logic if needed.
+            return context.SendActivityAsync(MessageFactory.CreateMessageActivity("Video cards are not supported in Teams."), cancellationToken);
+        }
         VideoCard card = new()
         {
             Title = "M365 Copilot",
