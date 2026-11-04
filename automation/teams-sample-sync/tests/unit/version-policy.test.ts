@@ -171,9 +171,9 @@ describe('Agents SDK release policy', () => {
         upstream,
         {
           dotnet: {
-            minimumAgentsSdkVersion: '1.8',
-            selectedAgentsSdkVersion: '1.8.*',
-            releaseTag: 'v1.8.77'
+            minimumAgentsSdkVersion: '1.9',
+            selectedAgentsSdkVersion: '1.9.*',
+            releaseTag: 'v1.9.7'
           },
         },
         sample, 'dotnet'
@@ -200,17 +200,17 @@ describe('Agents SDK release policy', () => {
         upstream,
         {
           dotnet: {
-            minimumAgentsSdkVersion: '1.8',
-            selectedAgentsSdkVersion: '1.9.*',
-            releaseTag: 'v1.9.7'
+            minimumAgentsSdkVersion: '1.9',
+            selectedAgentsSdkVersion: '1.10.*',
+            releaseTag: 'v1.10.1'
           },
         },
         sample, 'dotnet'
       )
 
       assert.equal(newer.version, 4)
-      assert.equal(newer.agentsSdkVersions.dotnet!.minimumAgentsSdkVersion, '1.8')
-      assert.equal(newer.agentsSdkVersions.dotnet!.selectedAgentsSdkVersion, '1.9.*')
+      assert.equal(newer.agentsSdkVersions.dotnet!.minimumAgentsSdkVersion, '1.9')
+      assert.equal(newer.agentsSdkVersions.dotnet!.selectedAgentsSdkVersion, '1.10.*')
       assert.notEqual(previous.samples[`dotnet--${sample}`]?.inputDigest, newer.samples[`dotnet--${sample}`]?.inputDigest)
       assert.notEqual(
         previous.samples[`dotnet--${sample}`]?.componentDigests?.packagePolicy,
