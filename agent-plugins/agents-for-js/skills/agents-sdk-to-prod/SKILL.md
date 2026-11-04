@@ -29,10 +29,9 @@ packages. It is not a general production-readiness skill.
 
 ## Sources
 
-1. Read the production guide first and treat it as normative. In a checkout of
-   `microsoft/Agents`, prefer
-   `docs/nodejs/production-ready-agent.md`; otherwise use
-   [the published guide](https://github.com/microsoft/Agents/blob/main/docs/nodejs/production-ready-agent.md).
+1. Read [Prepare an agent for production on Microsoft Learn](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/production-ready-agent/production-ready-agent?pivots=nodejs)
+   first, using the JavaScript/TypeScript language selection. Treat the article and its
+   linked shared production controls as normative.
 2. Read [the readiness matrix](references/readiness-matrix.md) for assessment,
    dependency, status, and evidence rules.
 3. Use `samples/nodejs/production-reference/` when it exists locally;
