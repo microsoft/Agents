@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Agents.Builder.Testing" Version="$(AgentsSdkTestVersion)" />
+    <PackageReference Include="Microsoft.Agents.Extensions.MSTeams" Version="$(AgentsSdkTestVersion)" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">

@@ -1,10 +1,14 @@
 import assert from 'node:assert/strict'
-import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import {
+  mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync
+} from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { describe, it } from 'node:test'
 import { ToolSet, type PermissionRequest, type SessionConfig } from '@github/copilot-sdk'
-import { CopilotAgentRunner, permissionFor, type SdkClient, type SdkSession } from '../../src/agent-runner.js'
+import {
+  CopilotAgentRunner, permissionFor, type SdkClient, type SdkSession
+} from '../../src/agent-runner.js'
 
 const write = (fileName: string): PermissionRequest => ({
   kind: 'write',
@@ -27,7 +31,10 @@ describe('Copilot agent runner', () => {
       )
       assert.equal(permissionFor(repo, 'sample', true, ['validate_sample'], write('outside.txt')).kind, 'reject')
     } finally {
-      rmSync(repo, { recursive: true, force: true })
+      rmSync(repo, {
+        recursive: true,
+        force: true
+      })
     }
   })
 
@@ -43,10 +50,14 @@ describe('Copilot agent runner', () => {
     const client: SdkClient = {
       start: async () => {},
       stop: async () => [],
-      getStatus: async () => ({ version: '1.0.83', protocolVersion: 1 }),
+      getStatus: async () => ({
+        version: '1.0.83',
+        protocolVersion: 1
+      }),
       getAuthStatus: async () => ({ isAuthenticated: true }),
       createSession: async (value) => {
         config = value
+
         return session
       },
     }
@@ -57,14 +68,22 @@ describe('Copilot agent runner', () => {
       const runner = new CopilotAgentRunner(
         repo,
         'sample',
-        { sdkVersion: '1.0.7', runtimeVersion: '1.0.83' },
+        {
+          sdkVersion: '1.0.7',
+          runtimeVersion: '1.0.83'
+        },
         path.join(repo, 'agent.log'),
         [],
         [],
         async () => client
       )
       const active = await runner.open([
-        { name: 'validate_sample', description: 'Validate', parameters: { type: 'object' }, handler: async () => ({}) },
+        {
+          name: 'validate_sample',
+          description: 'Validate',
+          parameters: { type: 'object' },
+          handler: async () => ({})
+        },
       ])
       assert.equal(config?.model, 'auto')
       assert.equal(config?.tools?.length, 1)
@@ -75,7 +94,10 @@ describe('Copilot agent runner', () => {
       await active.close()
       await runner.close()
     } finally {
-      rmSync(repo, { recursive: true, force: true })
+      rmSync(repo, {
+        recursive: true,
+        force: true
+      })
     }
   })
 
@@ -86,11 +108,13 @@ describe('Copilot agent runner', () => {
     const session = {
       on: (name: string, handler: (event: unknown) => void) => {
         handlers.set(name, handler)
+
         return () => {}
       },
       sendAndWait: async () => {
         handlers.get('assistant.message')?.({ data: { content: 'I am inspecting files.' } })
         handlers.get('assistant.message')?.({ data: { content: '## Migration plan\n- Ready' } })
+
         return { data: { content: '## Migration plan\n- Ready' } }
       },
       abort: async () => {},
@@ -99,7 +123,10 @@ describe('Copilot agent runner', () => {
     const client: SdkClient = {
       start: async () => {},
       stop: async () => [],
-      getStatus: async () => ({ version: '1.0.83', protocolVersion: 1 }),
+      getStatus: async () => ({
+        version: '1.0.83',
+        protocolVersion: 1
+      }),
       getAuthStatus: async () => ({ isAuthenticated: true }),
       createSession: async () => session,
     }
@@ -111,7 +138,10 @@ describe('Copilot agent runner', () => {
       const runner = new CopilotAgentRunner(
         repo,
         'sample',
-        { sdkVersion: '1.0.7', runtimeVersion: '1.0.83' },
+        {
+          sdkVersion: '1.0.7',
+          runtimeVersion: '1.0.83'
+        },
         logFile,
         [],
         [],
@@ -128,7 +158,10 @@ describe('Copilot agent runner', () => {
       await active.close()
       await runner.close()
     } finally {
-      rmSync(repo, { recursive: true, force: true })
+      rmSync(repo, {
+        recursive: true,
+        force: true
+      })
     }
   })
 })

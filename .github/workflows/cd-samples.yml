@@ -41,7 +41,7 @@ jobs:
               CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
             fi
           fi
-          
+
           # Check if any files are in samples folder
           HAS_SAMPLES=false
           while IFS= read -r file; do
@@ -50,8 +50,24 @@ jobs:
               break
             fi
           done <<< "$CHANGED_FILES"
-          
+
           echo "samples_changed=$HAS_SAMPLES" >> $GITHUB_OUTPUT
+
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install lint dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Run repository lint
+        run: npm run lint
 
   build-dotnet:
     needs: check_path
@@ -88,20 +104,25 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install Node dependencies
-        run: npm ci
-
-      - name: Run lint
-        run: npm run lint
+      - name: Install root build dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
 
       - name: Build all Node samples
         run: |
-          for dir in samples/nodejs/*/; do
+          # Only known sample depths; never execute nested fixtures or dependencies.
+          for dir in samples/nodejs/*/ samples/nodejs/teams/*/; do
             if [ -f "$dir/package.json" ]; then
               echo "::group::Building $dir"
               (cd "$dir" && npm ci && npm run build)
               echo "::endgroup::"
             fi
+          done
+
+      - name: Verify Teams sample contracts
+        run: |
+          for dir in samples/nodejs/teams/*/; do
+            sample=$(basename "$dir")
+            node "automation/teams-sample-sync/tests/js-contracts/$sample.test.mjs" "$dir"
           done
 
   build-python:
@@ -120,7 +141,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ matrix.python-version }}
 

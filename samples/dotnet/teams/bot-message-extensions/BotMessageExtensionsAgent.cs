@@ -16,10 +16,9 @@ using Microsoft.Agents.Extensions.MSTeams;
 using Microsoft.Agents.Extensions.MSTeams.App;
 using Microsoft.Agents.Extensions.MSTeams.MessageExtensions;
 using Microsoft.Extensions.Logging;
-using Microsoft.Teams.Api;
-using Microsoft.Teams.Api.Cards;
+using Microsoft.Teams.Apps.Schema;
 using Microsoft.Teams.Cards;
-using MsgExt = Microsoft.Teams.Api.MessageExtensions;
+using MsgExt = Microsoft.Teams.Apps.MessageExtensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using AdaptiveCard = Microsoft.Teams.Cards.AdaptiveCard;
@@ -32,17 +31,17 @@ public partial class BotMessageExtensionsAgent(
     IHttpClientFactory httpClientFactory) : AgentApplication(options)
 {
     [TeamsQueryRoute("wikipediaSearch")]
-    public async Task<MsgExt.Response> OnWikipediaSearchAsync(
+    public async Task<MsgExt.MessageExtensionResponse> OnWikipediaSearchAsync(
         ITeamsTurnContext turnContext,
         ITurnState turnState,
-        MsgExt.Query query,
+        MsgExt.MessageExtensionQuery query,
         CancellationToken cancellationToken)
     {
         string searchQuery = query.Parameters?.FirstOrDefault()?.Value?.ToString() ?? string.Empty;
 
         Logger.LogInformation("Query: command=wikipediaSearch, query={SearchQuery}", searchQuery);
 
-        List<MsgExt.Attachment> attachments = (await SearchWikipediaAsync(searchQuery, cancellationToken))
+        List<TeamsAttachment> attachments = (await SearchWikipediaAsync(searchQuery, cancellationToken))
             .Select(result =>
             {
                 string title = result["title"]?.ToString() ?? "No Title";
@@ -53,35 +52,35 @@ public partial class BotMessageExtensionsAgent(
 
         if (attachments.Count == 0)
         {
-            return new MsgExt.Response
+            return new MsgExt.MessageExtensionResponse
             {
-                ComposeExtension = new MsgExt.Result
+                ComposeExtension = new MsgExt.ComposeExtension
                 {
-                    Type = MsgExt.ResultType.Message,
+                    Type = MsgExt.MessageExtensionResponseTypes.Message,
                     Text = $"No results found for '{searchQuery}'"
                 }
             };
         }
 
-        return new MsgExt.Response
+        return new MsgExt.MessageExtensionResponse
         {
-            ComposeExtension = new MsgExt.Result
+            ComposeExtension = new MsgExt.ComposeExtension
             {
-                Type = MsgExt.ResultType.Result,
-                AttachmentLayout = Microsoft.Teams.Api.Attachment.Layout.List,
+                Type = MsgExt.MessageExtensionResponseTypes.Result,
+                AttachmentLayout = TeamsAttachmentLayouts.List,
                 Attachments = attachments
             }
         };
     }
 
     [TeamsQueryLinkRoute]
-    public Task<MsgExt.Response> OnQueryLinkAsync(
+    public Task<MsgExt.MessageExtensionResponse> OnQueryLinkAsync(
         ITeamsTurnContext turnContext,
         ITurnState turnState,
-        AppBasedQueryLink? query,
+        MsgExt.MessageExtensionQueryLink? query,
         CancellationToken cancellationToken)
     {
-        return Task.FromResult(CardResultResponse(CreateLinkPreviewCard(query?.Url ?? string.Empty)));
+        return Task.FromResult(CardResultResponse(CreateLinkPreviewCard(query?.Url?.ToString() ?? string.Empty)));
     }
 
     [TeamsMessageRoute(textRegex: "(?i)help", rank: 1)]
@@ -190,30 +189,38 @@ public partial class BotMessageExtensionsAgent(
         }
     }
 
-    private static MsgExt.Attachment CreateAttachment(AdaptiveCard card, string title, string text)
+    private static TeamsAttachment CreateAttachment(AdaptiveCard card, string title, string text)
     {
-        return new MsgExt.Attachment(ContentType.AdaptiveCard)
+        return new TeamsAttachment
         {
+            ContentType = AttachmentContentTypes.AdaptiveCard,
             Content = card,
-            Preview = new Microsoft.Teams.Api.Attachment(new Microsoft.Teams.Api.Cards.ThumbnailCard
+            Properties = new()
             {
-                Title = title,
-                Text = text
-            })
+                ["preview"] = new TeamsAttachment
+                {
+                    ContentType = AttachmentContentTypes.ThumbnailCard,
+                    Content = new ThumbnailCard { Title = title, Text = text }
+                }
+            }
         };
     }
 
-    private static MsgExt.Response CardResultResponse(AdaptiveCard card)
+    private static MsgExt.MessageExtensionResponse CardResultResponse(AdaptiveCard card)
     {
-        return new MsgExt.Response
+        return new MsgExt.MessageExtensionResponse
         {
-            ComposeExtension = new MsgExt.Result
+            ComposeExtension = new MsgExt.ComposeExtension
             {
-                Type = MsgExt.ResultType.Result,
-                AttachmentLayout = Microsoft.Teams.Api.Attachment.Layout.List,
+                Type = MsgExt.MessageExtensionResponseTypes.Result,
+                AttachmentLayout = TeamsAttachmentLayouts.List,
                 Attachments =
                 [
-                    new MsgExt.Attachment(ContentType.AdaptiveCard) { Content = card }
+                    new TeamsAttachment
+                    {
+                        ContentType = AttachmentContentTypes.AdaptiveCard,
+                        Content = card
+                    }
                 ]
             }
         };

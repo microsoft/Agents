@@ -15,7 +15,6 @@ using Microsoft.Agents.Builder.State;
 using Microsoft.Agents.Core.Models;
 using Microsoft.Agents.Extensions.MSTeams;
 using Microsoft.Agents.Extensions.MSTeams.App;
-using Microsoft.Teams.Api.Messages;
 using Microsoft.Teams.Cards;
 using Microsoft.Teams.Common;
 using AdaptiveCard = Microsoft.Teams.Cards.AdaptiveCard;
@@ -384,11 +383,11 @@ public partial class AgentTargetedMessagesAgent(
             return;
         }
 
-        await turnContext.Client.Conversations.Reactions.AddAsync(
+        await turnContext.Client.Conversations.AddReactionAsync(
             turnContext.Activity.Conversation.Id,
             turnContext.Activity.Id,
-            new ReactionType(reactionType),
-            cancellationToken);
+            reactionType,
+            cancellationToken: cancellationToken);
         await turnContext.SendActivityAsync(
             $"Added a **{reactionType}** reaction to your message!",
             cancellationToken: cancellationToken);
@@ -412,11 +411,11 @@ public partial class AgentTargetedMessagesAgent(
             return;
         }
 
-        await turnContext.Client.Conversations.Reactions.DeleteAsync(
+        await turnContext.Client.Conversations.DeleteReactionAsync(
             turnContext.Activity.Conversation.Id,
             turnContext.Activity.Id,
-            new ReactionType(reactionType),
-            cancellationToken);
+            reactionType,
+            cancellationToken: cancellationToken);
         await turnContext.SendActivityAsync(
             $"Removed the **{reactionType}** reaction from your message!",
             cancellationToken: cancellationToken);
@@ -663,7 +662,7 @@ public partial class AgentTargetedMessagesAgent(
         if (isTargeted)
         {
             activity.Recipient = CopyAccount(recipient);
-            await turnContext.SendTargetedActivityAsync(activity, cancellationToken);
+            await turnContext.SendTargetedActivityAsync(activity, activity.Recipient, cancellationToken);
         }
         else
         {

@@ -29,14 +29,7 @@ public partial class TeamsSampleContracts
     [Trait("Sample", "bot-cards")]
     public async Task BotCards_CardActions_ReturnsAdaptiveCardAsync()
     {
-        await using AgentTestHost host = AgentTestHost.Create(builder =>
-        {
-            builder.Services.AddSingleton<IStorage, MemoryStorage>();
-            builder.Services.AddHttpClient();
-            builder.Services.AddTransient<IAgent>(services =>
-                new BotCardsAgent(CreateOptions(services)));
-        });
-        host.Adapter.Conversation.ChannelId = Channels.Msteams;
+        await using var host = CreateHost(services => new BotCardsAgent(CreateOptions(services)));
 
         await host.CreateTestFlow()
             .Send("card actions")
@@ -53,14 +46,7 @@ public partial class TeamsSampleContracts
     [Trait("Sample", "bot-ai-messages")]
     public async Task BotAiMessages_UnknownText_ReturnsStableHelpAsync()
     {
-        await using AgentTestHost host = AgentTestHost.Create(builder =>
-        {
-            builder.Services.AddSingleton<IStorage, MemoryStorage>();
-            builder.Services.AddHttpClient();
-            builder.Services.AddTransient<IAgent>(services =>
-                new BotAiMessagesAgent(CreateOptions(services)));
-        });
-        host.Adapter.Conversation.ChannelId = Channels.Msteams;
+        await using var host = CreateHost(services => new BotAiMessagesAgent(CreateOptions(services)));
 
         await host.CreateTestFlow()
             .Send("unknown")
@@ -72,15 +58,25 @@ public partial class TeamsSampleContracts
     private static JObject Payload(object value) => JObject.Parse(
         System.Text.Json.JsonSerializer.Serialize(ProtocolJsonSerializer.ToJsonElements(value)));
 
-    private static AgentTestHost CreateHost(Func<IServiceProvider, IAgent> agentFactory)
+    private static AgentTestHost CreateHost(
+        Func<IServiceProvider, IAgent> agentFactory,
+        IHttpClientFactory? httpClients = null,
+        IHttpClientFactory? teamsHttpClients = null)
     {
         AgentTestHost host = AgentTestHost.Create(builder =>
         {
             builder.Services.AddSingleton<IStorage, MemoryStorage>();
             builder.Services.AddHttpClient();
+            if (httpClients != null)
+            {
+                builder.Services.AddSingleton(httpClients);
+            }
+
             builder.Services.AddTransient(agentFactory);
         });
         host.Adapter.Conversation.ChannelId = Channels.Msteams;
+        host.Adapter.Use(new TeamsTransportMiddleware(teamsHttpClients));
+
         return host;
     }
 
