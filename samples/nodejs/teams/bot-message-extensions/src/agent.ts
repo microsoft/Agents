@@ -6,7 +6,14 @@ import { TeamsAgentExtension } from '@microsoft/agents-hosting-extensions-msteam
 import { searchWikipedia, type Article } from './search.js'
 
 function articleAttachment (article: Article) {
-  const snippet = (article.snippet ?? '').replace(/<[^>]+>/g, '')
+  let snippet = article.snippet ?? ''
+  let previous: string
+  do {
+    previous = snippet
+    snippet = snippet.replace(/<[^>]+>/g, '')
+  } while (snippet !== previous)
+  // Incomplete tags must not leave markup delimiters in card text.
+  snippet = snippet.replace(/[<>]/g, '')
   const title = article.title || 'No Title'
   const url = `https://en.wikipedia.org/wiki/${encodeURIComponent(title.replace(/ /g, '_'))}`
   return {
