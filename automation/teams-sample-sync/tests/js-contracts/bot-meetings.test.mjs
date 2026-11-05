@@ -84,6 +84,16 @@ describe('bot-meetings', () => {
     assert.match(result.sent[0].attachments[0].content.body[3].text, /Transcript not available/)
   })
 
+  it('VTT parsing removes incomplete and nested markup while retaining speaker text', async () => {
+    const root = path.resolve(process.argv[2])
+    const { parseVtt } = await import(pathToFileURL(path.join(root, 'dist/transcripts.js')).href)
+    assert.equal(parseVtt('WEBVTT\n\n00:00:00.000 --> 00:00:02.000\n<v Alice><b>Hello</b> team</v>'), 'Alice: Hello team')
+    assert.equal(parseVtt('<script'), 'script')
+    assert.equal(parseVtt('<<script>alert(1)<</script>'), 'alert(1)')
+    assert.equal(parseVtt('<v <script>Hello</v>'), 'script: Hello')
+    assert.equal(parseVtt('one <> two > three <'), 'one  two  three')
+  })
+
   it('participant events retain roles and ignore agent-only events without an AAD ID', async () => {
     const harness = await sampleHarness()
     const event = {

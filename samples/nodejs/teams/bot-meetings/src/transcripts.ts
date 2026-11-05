@@ -12,7 +12,16 @@ export function parseVtt (vtt: string): string {
   return vtt.split(/\r?\n/)
     .map((line) => line.trim())
     .filter((line) => line && !line.startsWith('WEBVTT') && !line.includes('-->'))
-    .map((line) => line.replace(/<v ([^>]+)>/g, '$1: ').replace(/<[^>]+>/g, '').trim())
+    .map((line) => {
+      let text = line.replace(/<v ([^>]+)>/g, (_tag, speaker: string) => `${speaker.replace(/[<>]/g, '')}: `)
+      let previous: string
+      do {
+        previous = text
+        text = text.replace(/<[^>]+>/g, '')
+      } while (text !== previous)
+      // Incomplete tags and malformed speaker labels must remain plain text.
+      return text.replace(/[<>]/g, '').trim()
+    })
     .filter(Boolean)
     .join('\n')
 }
