@@ -60,6 +60,38 @@ describe('bot-message-extensions', () => {
     }
   })
 
+  it('search snippets remove incomplete and nested markup from cards and previews', async () => {
+    const cases = [
+      ['<b>Computing</b> history', 'Computing history'],
+      ['<script', 'script'],
+      ['<<script>alert(1)<</script>', 'alert(1)'],
+      ['one <> two > three <', 'one  two  three '],
+    ]
+    const harness = await sampleHarness({
+      searchWikipedia: async () => cases.map(([snippet]) => ({
+        title: 'Article',
+        snippet
+      })),
+    })
+    const result = await harness.turn({
+      type: 'invoke',
+      name: 'composeExtension/query',
+      value: {
+        commandId: 'wikipediaSearch',
+        parameters: [{
+          name: 'query',
+          value: 'test'
+        }]
+      },
+    })
+    const attachments = result.invoke.value.body.composeExtension.attachments
+    assert.equal(attachments.length, cases.length)
+    for (const [index, [, expected]] of cases.entries()) {
+      assert.equal(attachments[index].content.body[1].text, expected)
+      assert.equal(attachments[index].preview.content.text, expected)
+    }
+  })
+
   it('link unfurl returns the requested URL and help retains the compose instructions', async () => {
     const harness = await sampleHarness()
     const result = await harness.turn({
