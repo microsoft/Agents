@@ -20,7 +20,7 @@ messaging are outside this reference's boundary.
 ## SDK packages and local setup
 
 Install .NET 10. The sample uses the stable Microsoft.Agents NuGet packages
-`1.8.77`, the latest released version at the time this reference was updated.
+in the `1.9.*` version range. Restore selects the latest stable 1.9 patch.
 Restore installs the packages directly from NuGet; no SDK checkout is needed.
 
 ```powershell

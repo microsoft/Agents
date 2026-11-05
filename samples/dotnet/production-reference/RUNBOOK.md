@@ -1,7 +1,8 @@
 # .NET production reference operations
 
 Follow [the shared runbook](../../shared/production-reference/RUNBOOK.md).
-Record SDK package version `1.8.77` and deployment artifact hashes.
+Record resolved SDK package versions from the `1.9.*` range and deployment
+artifact hashes.
 Verify the versioned Blob provider after dependency updates.
 
 Check Kestrel request draining and telemetry flush at `ApplicationStopped` before

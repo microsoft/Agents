@@ -23,7 +23,8 @@ az deployment group create --resource-group <resource-group> --name <deployment-
 ```
 
 Preserve publish artifact hashes and resolved NuGet package versions with each
-deployment. The SDK baseline is the released Microsoft.Agents packages `1.8.77`.
+deployment. The SDK baseline is the released Microsoft.Agents packages in the
+`1.9.*` range.
 
 The language wrapper uses [shared infrastructure](../../shared/production-reference/infra/main.bicep).
 Choose globally unique names producing a valid storage account name (letters and
