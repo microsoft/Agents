@@ -109,7 +109,7 @@ describe('sample validation', () => {
                     packages.map((reference) => {
                       const name = /Include="([^"]+)"/.exec(reference)![1]!
 
-                      return [`${name}/${selectedVersion.replace('*', '77')}`, {}]
+                      return [`${name}/${selectedVersion.replaceAll('*', '77')}`, {}]
                     })
                   ),
                 },
