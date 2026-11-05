@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-import { ActionTypes, Activity, ActivityTypes, Attachment } from '@microsoft/agents-activity'
+import { ActionTypes, Activity, ActivityTypes, Attachment, Channels } from '@microsoft/agents-activity'
 import { CardFactory, TurnContext } from '@microsoft/agents-hosting'
 
 export class CardMessages {
@@ -35,54 +35,64 @@ export class CardMessages {
   }
 
   static async sendAnimationCard (context: TurnContext): Promise<void> {
-    const card = CardFactory.animationCard(
-      'Microsoft 365 Agents SDK',
-      [
-        { url: 'https://i.giphy.com/Ki55RUbOV5njy.gif' }
-      ],
-      [],
-      {
-        image: {
-          url: 'https://i.giphy.com/Ki55RUbOV5njy.gif',
-          alt: 'Cute Robot'
-        },
-        subtitle: 'Animation Card',
-        text: 'This is an example of an animation card using a gif.',
-        aspect: '16:9',
-        duration: 'PT2M'
-      }
-    )
+    if (context.activity.channelId == Channels.Msteams) {
+        // Teams does not support animation cards, add channel-specific logic if needed.
+        await context.sendActivity('Animation cards are not supported in Teams.')
+    } else {  
+      const card = CardFactory.animationCard(
+        'Microsoft 365 Agents SDK',
+        [
+          { url: 'https://i.giphy.com/Ki55RUbOV5njy.gif' }
+        ],
+        [],
+        {
+          image: {
+            url: 'https://i.giphy.com/Ki55RUbOV5njy.gif',
+            alt: 'Cute Robot'
+          },
+          subtitle: 'Animation Card',
+          text: 'This is an example of an animation card using a gif.',
+          aspect: '16:9',
+          duration: 'PT2M'
+        }
+      )
 
-    await CardMessages.sendActivity(context, card)
+      await CardMessages.sendActivity(context, card)
+    }
   }
 
   static async sendAudioCard (context: TurnContext): Promise<void> {
-    const card = CardFactory.audioCard(
-      'I am your father',
-      [{
-        url: 'https://www.mediacollege.com/downloads/sound-effects/star-wars/darthvader/darthvader_yourfather.wav',
-        profile: 'Darth Vader - I am your father'
-      }],
-      CardFactory.actions([
+    if (context.activity.channelId == Channels.Msteams) {
+        // Teams does not support audio cards, add channel-specific logic if needed.
+        await context.sendActivity('Audio cards are not supported in Teams.')
+    } else {
+      const card = CardFactory.audioCard(
+        'I am your father',
+        [{
+          url: 'https://www.mediacollege.com/downloads/sound-effects/star-wars/darthvader/darthvader_yourfather.wav',
+          profile: 'Darth Vader - I am your father'
+        }],
+        CardFactory.actions([
+          {
+            type: ActionTypes.OpenUrl,
+            title: 'Read more',
+            value: 'https://en.wikipedia.org/wiki/The_Empire_Strikes_Back'
+          }
+        ]),
         {
-          type: ActionTypes.OpenUrl,
-          title: 'Read more',
-          value: 'https://en.wikipedia.org/wiki/The_Empire_Strikes_Back'
+          subtitle: 'Star Wars: Episode V - The Empire Strikes Back',
+          text: 'The Empire Strikes Back (also known as Star Wars: Episode V - The Empire Strikes Back) is a 1980 American epic space opera film directed by Irvin Kershner. Leigh Brackett and Lawrence Kasdan wrote the screenplay, with George Lucas writing the film\'s story and serving as executive producer. The second installment in the original Star Wars trilogy, it was produced by Gary Kurtz for Lucasfilm Ltd. and stars Mark Hamill, Harrison Ford, Carrie Fisher, Billy Dee Williams, Anthony Daniels, David Prowse, Kenny Baker, Peter Mayhew and Frank Oz.',
+          image: {
+            url: 'https://upload.wikimedia.org/wikipedia/en/3/3c/SW_-_Empire_Strikes_Back.jpg',
+            alt: 'The Empire Strikes Back'
+          },
+          aspect: '16:9',
+          duration: 'PT2M'
         }
-      ]),
-      {
-        subtitle: 'Star Wars: Episode V - The Empire Strikes Back',
-        text: 'The Empire Strikes Back (also known as Star Wars: Episode V - The Empire Strikes Back) is a 1980 American epic space opera film directed by Irvin Kershner. Leigh Brackett and Lawrence Kasdan wrote the screenplay, with George Lucas writing the film\'s story and serving as executive producer. The second installment in the original Star Wars trilogy, it was produced by Gary Kurtz for Lucasfilm Ltd. and stars Mark Hamill, Harrison Ford, Carrie Fisher, Billy Dee Williams, Anthony Daniels, David Prowse, Kenny Baker, Peter Mayhew and Frank Oz.',
-        image: {
-          url: 'https://upload.wikimedia.org/wikipedia/en/3/3c/SW_-_Empire_Strikes_Back.jpg',
-          alt: 'The Empire Strikes Back'
-        },
-        aspect: '16:9',
-        duration: 'PT2M'
-      }
-    )
+      )
 
-    await CardMessages.sendActivity(context, card)
+      await CardMessages.sendActivity(context, card)
+    }
   }
 
   static async sendHeroCard (context: TurnContext): Promise<void> {
@@ -161,21 +171,26 @@ export class CardMessages {
   }
 
   static async sendVideoCard (context: TurnContext) {
-    const card = CardFactory.videoCard(
-      'M365 Copilot',
-      [{ url: 'https://youtu.be/zqH-HtQbaeU' }],
-      [{
-        type: ActionTypes.OpenUrl,
-        title: 'Learn More',
-        value: 'https://youtu.be/zqH-HtQbaeU'
-      }],
-      {
-        subtitle: 'by Microsoft Helps',
-        text: 'Copilot is a new way to interact with your data and applications using natural language. It is designed to help you get things done faster and more efficiently.'
-      }
-    )
+    if (context.activity.channelId == Channels.Msteams) {
+        // Teams does not support video cards, add channel-specific logic if needed.
+        return await context.sendActivity('Video cards are not supported in Teams.')
+    } else {
+      const card = CardFactory.videoCard(
+        'M365 Copilot',
+        [{ url: 'https://youtu.be/zqH-HtQbaeU' }],
+        [{
+          type: ActionTypes.OpenUrl,
+          title: 'Learn More',
+          value: 'https://youtu.be/zqH-HtQbaeU'
+        }],
+        {
+          subtitle: 'by Microsoft Helps',
+          text: 'Copilot is a new way to interact with your data and applications using natural language. It is designed to help you get things done faster and more efficiently.'
+        }
+      )
 
-    await CardMessages.sendActivity(context, card)
+      await CardMessages.sendActivity(context, card)
+    }
   }
 
   private static async sendActivity (context: TurnContext, card: Attachment): Promise<void> {
