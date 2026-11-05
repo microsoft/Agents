@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from microsoft_agents.activity import ActionTypes, Activity, ActivityTypes, Attachment
+from microsoft_agents.activity import ActionTypes, Activity, ActivityTypes, Attachment, Channels
 from microsoft_agents.hosting.core import CardFactory, TurnContext
 
 from microsoft_agents.activity import (
@@ -49,6 +49,11 @@ class CardMessages:
 
     @staticmethod
     async def send_animation_card(context: TurnContext):
+        if (context.activity.channel_id == Channels.msteams):
+            # Teams does not support animation cards, add channel-specific logic if needed.
+            await context.send_activity('Animation cards are not supported in Teams.')
+            return
+
         card = CardFactory.animation_card(
             AnimationCard(
                 title="Microsoft 365 Agents SDK",
@@ -66,6 +71,11 @@ class CardMessages:
 
     @staticmethod
     async def send_audio_card(context: TurnContext):
+        if (context.activity.channel_id == Channels.msteams):
+            # Teams does not support audio cards, add channel-specific logic if needed.
+            await context.send_activity('Audio cards are not supported in Teams.')
+            return
+
         card = CardFactory.audio_card(
             AudioCard(
                 title="I am your father",
@@ -180,6 +190,11 @@ class CardMessages:
 
     @staticmethod
     async def send_video_card(context):
+        if (context.activity.channel_id == Channels.msteams):
+            # Teams does not support video cards, add channel-specific logic if needed.
+            await context.send_activity('Video cards are not supported in Teams.')
+            return
+
         card = CardFactory.video_card(
             VideoCard(
                 title="M365 Copilot",
