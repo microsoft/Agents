@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict'
-import { existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import {
+  existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync
+} from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { describe, it } from 'node:test'
@@ -32,7 +34,10 @@ describe('Copilot SDK integration', () => {
       const runner = new CopilotAgentRunner(
         repo,
         'sample',
-        { sdkVersion: '1.0.7', runtimeVersion: '1.0.83' },
+        {
+          sdkVersion: '1.0.7',
+          runtimeVersion: '1.0.83'
+        },
         path.join(repo, 'agent.log'),
         [],
         [skill]
@@ -54,7 +59,10 @@ describe('Copilot SDK integration', () => {
       } finally {
         await active?.close()
         await runner.close()
-        rmSync(repo, { recursive: true, force: true })
+        rmSync(repo, {
+          recursive: true,
+          force: true
+        })
       }
     }
   )

@@ -18,13 +18,10 @@ using System.Threading.Tasks;
 using Action = Microsoft.Teams.Cards.Action;
 using AdaptiveCard = Microsoft.Teams.Cards.AdaptiveCard;
 using CoreAttachment = Microsoft.Agents.Core.Models.Attachment;
-using ContinueTask = Microsoft.Teams.Api.TaskModules.ContinueTask;
-using MessageTask = Microsoft.Teams.Api.TaskModules.MessageTask;
-using Request = Microsoft.Teams.Api.TaskModules.Request;
-using Size = Microsoft.Teams.Api.TaskModules.Size;
-using TaskAttachment = Microsoft.Teams.Api.Attachment;
-using TaskInfo = Microsoft.Teams.Api.TaskModules.TaskInfo;
-using TaskResponse = Microsoft.Teams.Api.TaskModules.Response;
+using Microsoft.Teams.Apps.TaskModules;
+using Request = Microsoft.Teams.Apps.TaskModules.TaskModuleRequest;
+using TaskAttachment = Microsoft.Teams.Apps.Schema.TeamsAttachment;
+using TaskResponse = Microsoft.Teams.Apps.TaskModules.TaskModuleResponse;
 
 namespace Microsoft.Teams.Samples.BotTaskModules;
 
@@ -114,7 +111,10 @@ public partial class BotTaskModulesAgent(
             $"Hi {name}, thanks for submitting! Your email is {email}",
             cancellationToken: cancellationToken);
 
-        return new TaskResponse(new MessageTask("Multi-step form completed!"));
+        return TaskResponse.CreateBuilder()
+            .WithType(TaskModuleResponseTypes.Message)
+            .WithMessage("Multi-step form completed!")
+            .Build().Body!;
     }
 
     [TeamsTaskSubmitRoute("custom_form", key: "submissiontype", rank: 30)]
@@ -131,7 +131,10 @@ public partial class BotTaskModulesAgent(
             $"Hi {name}, thanks for submitting! Your email is {email}",
             cancellationToken: cancellationToken);
 
-        return new TaskResponse(new MessageTask("Form submitted successfully"));
+        return TaskResponse.CreateBuilder()
+            .WithType(TaskModuleResponseTypes.Message)
+            .WithMessage("Form submitted successfully")
+            .Build().Body!;
     }
 
     [TeamsTaskSubmitRoute(rank: 100)]
@@ -147,7 +150,10 @@ public partial class BotTaskModulesAgent(
             $"You submitted: {userText}",
             cancellationToken: cancellationToken);
 
-        return new TaskResponse(new MessageTask("Thanks for submitting!"));
+        return TaskResponse.CreateBuilder()
+            .WithType(TaskModuleResponseTypes.Message)
+            .WithMessage("Thanks for submitting!")
+            .Build().Body!;
     }
 
     private static TaskResponse CreateAdaptiveCardTask()
@@ -171,21 +177,26 @@ public partial class BotTaskModulesAgent(
             "Adaptive Card: Inputs",
             400,
             200,
-            new TaskAttachment(ContentTypes.AdaptiveCard, content: dialogCard));
+            new TaskAttachment { ContentType = Microsoft.Teams.Apps.Schema.AttachmentContentTypes.AdaptiveCard, Content = dialogCard });
     }
 
     private TaskResponse CreateCustomFormTask()
     {
-        var taskInfo = new TaskInfo
+        return new TaskResponse
         {
-            Title = "Custom Form",
-            Width = new Union<int, Size>(510),
-            Height = new Union<int, Size>(450),
-            Url = $"{_botEndpoint}/customform",
-            FallbackUrl = $"{_botEndpoint}/customform"
+            Task = new Response
+            {
+                Type = TaskModuleResponseTypes.Continue,
+                Value = new
+                {
+                    title = "Custom Form",
+                    width = 510,
+                    height = 450,
+                    url = $"{_botEndpoint}/customform",
+                    fallbackUrl = $"{_botEndpoint}/customform"
+                }
+            }
         };
-
-        return new TaskResponse(new ContinueTask(taskInfo));
     }
 
     private static TaskResponse CreateMultiStepOneTask()
@@ -219,7 +230,7 @@ public partial class BotTaskModulesAgent(
             "Multi-step Form",
             400,
             300,
-            new TaskAttachment(ContentTypes.AdaptiveCard, content: stepOneCard));
+            new TaskAttachment { ContentType = Microsoft.Teams.Apps.Schema.AttachmentContentTypes.AdaptiveCard, Content = stepOneCard });
     }
 
     private static TaskResponse CreateMultiStepTwoTask(string name)
@@ -255,7 +266,7 @@ public partial class BotTaskModulesAgent(
             "Multi-step Form: Step 2",
             400,
             300,
-            new TaskAttachment(ContentTypes.AdaptiveCard, content: stepTwoCard));
+            new TaskAttachment { ContentType = Microsoft.Teams.Apps.Schema.AttachmentContentTypes.AdaptiveCard, Content = stepTwoCard });
     }
 
     private static Union<string, SubmitActionData> CreateSubmitData(
@@ -284,14 +295,12 @@ public partial class BotTaskModulesAgent(
         int height,
         TaskAttachment card)
     {
-        var taskInfo = new TaskInfo
-        {
-            Title = title,
-            Width = new Union<int, Size>(width),
-            Height = new Union<int, Size>(height),
-            Card = card
-        };
-
-        return new TaskResponse(new ContinueTask(taskInfo));
+        return TaskResponse.CreateBuilder()
+            .WithType(TaskModuleResponseTypes.Continue)
+            .WithTitle(title)
+            .WithWidth(width)
+            .WithHeight(height)
+            .WithCard(card)
+            .Build().Body!;
     }
 }

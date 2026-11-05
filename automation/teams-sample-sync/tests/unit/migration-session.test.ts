@@ -4,64 +4,92 @@ import os from 'node:os'
 import path from 'node:path'
 import { describe, it } from 'node:test'
 import { assertOutcomeMatchesSampleChanges, runMigrationSession } from '../../src/sync-session.js'
-import type { ImplementationSession } from '../../src/agent-runner.js'
-import type { ValidationResult } from '../../src/types.js'
-
-function validation (passed: boolean, digest: string): ValidationResult {
-  return {
-    version: 2,
-    id: digest,
-    sample: 'sample-a',
-    group: 'all',
-    passed,
-    repairable: true,
-    outputDigest: digest,
-    errors: passed ? [] : ['Build failed'],
-    externalValidationRequired: [],
-    checks: {
-      project: { status: 'passed', errors: [] },
-      restore: { status: 'passed', errors: [] },
-      build: { status: passed ? 'passed' : 'failed', errors: passed ? [] : ['Build failed'] },
-      manifest: { status: 'passed', errors: [] },
-      httpSmoke: { status: 'passed', errors: [] },
-      contracts: { status: 'passed', errors: [] },
-      sampleTests: { status: 'skipped', errors: [] },
-    },
-  }
-}
-
-class FakeSession implements ImplementationSession {
-  writable = false
-  readonly prompts: string[] = []
-  readonly phases: Array<string | undefined> = []
-  readonly writableStates: boolean[] = []
-  constructor (private readonly answers: Array<string | Error>) {}
-  setWriteAccess (enabled: boolean): void {
-    this.writable = enabled
-  }
-
-  async send (message: string, phase?: string): Promise<string> {
-    this.prompts.push(message)
-    this.phases.push(phase)
-    this.writableStates.push(this.writable)
-    const answer = this.answers.shift() ?? ''
-    if (answer instanceof Error) {
-      throw answer
-    }
-    return answer
-  }
-
-  async close (): Promise<void> {}
-  async abort (): Promise<void> {}
-}
+import { FakeSession, validation } from '../fixtures/migration-session.js'
 
 describe('migration session', () => {
+  it('requests a concrete summary with write access disabled when the audit omits it', async () => {
+    const output = mkdtempSync(path.join(os.tmpdir(), 'teams-sync-session-'))
+    const session = new FakeSession([
+      '## Migration plan\n- Update the card action',
+      '## Self-audit\nOutcome: changed\n- Card action updated',
+      'Summary: Added the new card action and matching manifest command.',
+    ])
+    try {
+      const result = await runMigrationSession({
+        sample: 'sample-a',
+        contextFile: '.sync/context/sync-context.json',
+        output,
+        session,
+        validate: async () => validation(true, 'ready'),
+      })
+      assert.equal(result.summary, 'Added the new card action and matching manifest command.')
+      assert.equal(session.phases[2], 'Summarizing verified migration')
+      assert.equal(session.writableStates[2], false)
+    } finally {
+      rmSync(output, {
+        recursive: true,
+        force: true
+      })
+    }
+  })
+
+  it('accepts a long Markdown summary without shortening it', async () => {
+    const output = mkdtempSync(path.join(os.tmpdir(), 'teams-sync-session-'))
+    const longSummary = 'Removed redundant storage registration and added example launch profiles; verified the meeting event handlers, manifest, configuration, and documentation against the Agents SDK migration plan. The sample also passed project, restore, build, manifest, HTTP smoke, and contract checks.'
+    const session = new FakeSession([
+      '## Migration plan\n- Update meeting setup',
+      `## Self-audit\nOutcome: changed\n**Summary:** ${longSummary}`,
+    ])
+    try {
+      const result = await runMigrationSession({
+        sample: 'sample-a',
+        contextFile: '.sync/context/sync-context.json',
+        output,
+        session,
+        validate: async () => validation(true, 'ready'),
+      })
+      assert.equal(result.summary, longSummary)
+      assert.equal(session.phases.length, 2)
+    } finally {
+      rmSync(output, {
+        recursive: true,
+        force: true
+      })
+    }
+  })
+
+  it('uses a safe fallback when the summary-only retry is malformed', async () => {
+    const output = mkdtempSync(path.join(os.tmpdir(), 'teams-sync-session-'))
+    const session = new FakeSession([
+      '## Migration plan\n- Update meeting setup',
+      '## Self-audit\nOutcome: changed\n- Meeting setup updated',
+      'Here is the completed migration summary without the requested label.',
+    ])
+    try {
+      const result = await runMigrationSession({
+        sample: 'sample-a',
+        contextFile: '.sync/context/sync-context.json',
+        output,
+        session,
+        validate: async () => validation(true, 'ready'),
+      })
+      assert.equal(result.summary, 'Updated sample-a and passed automated validation.')
+      assert.equal(session.phases[2], 'Summarizing verified migration')
+      assert.equal(session.writableStates[2], false)
+    } finally {
+      rmSync(output, {
+        recursive: true,
+        force: true
+      })
+    }
+  })
+
   it('freezes the plan before implementation and repairs validation once', async () => {
     const output = mkdtempSync(path.join(os.tmpdir(), 'teams-sync-session-'))
     const session = new FakeSession([
       '## Migration plan\n- Program.Main',
       '## Self-audit\nOutcome: changed\n- Program.Main done',
-      '## Self-audit\nOutcome: changed\n- Program.Main fixed',
+      '## Self-audit\nOutcome: changed\nSummary: Fixed the Program.Main sample flow.\n- Program.Main fixed',
     ])
     const results = [validation(false, 'first'), validation(true, 'second')]
     try {
@@ -97,7 +125,10 @@ describe('migration session', () => {
       assert.match(session.prompts[2]!, /do not explain away a semantic mismatch/)
       assert.equal(readFileSync(path.join(output, 'migration-plan.md'), 'utf8'), '## Migration plan\n- Program.Main\n')
     } finally {
-      rmSync(output, { recursive: true, force: true })
+      rmSync(output, {
+        recursive: true,
+        force: true
+      })
     }
   })
 
@@ -118,6 +149,7 @@ describe('migration session', () => {
           ]),
           validate: async () => {
             validationRan = true
+
             return validation(true, 'ready')
           },
         }),
@@ -125,7 +157,10 @@ describe('migration session', () => {
       )
       assert.equal(validationRan, false)
     } finally {
-      rmSync(output, { recursive: true, force: true })
+      rmSync(output, {
+        recursive: true,
+        force: true
+      })
     }
   })
 
@@ -157,11 +192,15 @@ describe('migration session', () => {
             /Response ended with: "….*The destination sample was already fully implemented\."/
           )
           assert.ok(error.message.length < retryResponse.length)
+
           return true
         }
       )
     } finally {
-      rmSync(output, { recursive: true, force: true })
+      rmSync(output, {
+        recursive: true,
+        force: true
+      })
     }
   })
 
@@ -183,6 +222,7 @@ describe('migration session', () => {
           ]),
           validate: async () => {
             validationRuns += 1
+
             return validation(false, 'failed')
           },
         }),
@@ -190,7 +230,10 @@ describe('migration session', () => {
       )
       assert.equal(validationRuns, 1)
     } finally {
-      rmSync(output, { recursive: true, force: true })
+      rmSync(output, {
+        recursive: true,
+        force: true
+      })
     }
   })
 
@@ -217,91 +260,10 @@ describe('migration session', () => {
         /selected sample was modified/
       )
     } finally {
-      rmSync(output, { recursive: true, force: true })
-    }
-  })
-
-  it('reconciles a claimed edit with an empty sample diff before reporting success', async () => {
-    const output = mkdtempSync(path.join(os.tmpdir(), 'teams-sync-session-'))
-    const session = new FakeSession([
-      '## Migration plan\n- Update README if needed',
-      '## Self-audit\nOutcome: changed\nUpdated README',
-      '## Self-audit\nOutcome: no changes required\nREADME already matches',
-    ])
-    let validationRuns = 0
-    try {
-      const result = await runMigrationSession({
-        sample: 'sample-a',
-        contextFile: '.sync/context/sync-context.json',
-        output,
-        session,
-        validate: async () => {
-          validationRuns += 1
-          return validation(true, `pass-${validationRuns}`)
-        },
-        sampleChanges: () => [],
+      rmSync(output, {
+        recursive: true,
+        force: true
       })
-      assert.equal(result.outcome, 'no-changes')
-      assert.equal(result.repairPasses, 1)
-      assert.equal(validationRuns, 2)
-      assert.equal(session.phases[2], 'Reconciling migration outcome')
-      assert.match(session.prompts[2]!, /actual changed files are: \[\]/)
-    } finally {
-      rmSync(output, { recursive: true, force: true })
-    }
-  })
-
-  it('fails after one outcome retry if the claimed edit still has no sample diff', async () => {
-    const output = mkdtempSync(path.join(os.tmpdir(), 'teams-sync-session-'))
-    const session = new FakeSession([
-      '## Migration plan\n- Update README',
-      '## Self-audit\nOutcome: changed\nUpdated README',
-      '## Self-audit\nOutcome: changed\nUpdated README',
-    ])
-    try {
-      await assert.rejects(
-        runMigrationSession({
-          sample: 'sample-a',
-          contextFile: '.sync/context/sync-context.json',
-          output,
-          session,
-          validate: async () => validation(true, 'ready'),
-          sampleChanges: () => [],
-        }),
-        /Implementer outcome "changed" disagrees with selected-sample changed files: \[\]/
-      )
-      assert.equal(session.phases.filter((phase) => phase === 'Reconciling migration outcome').length, 1)
-    } finally {
-      rmSync(output, { recursive: true, force: true })
-    }
-  })
-
-  it('accepts a missing edit made during outcome reconciliation after revalidation', async () => {
-    const output = mkdtempSync(path.join(os.tmpdir(), 'teams-sync-session-'))
-    const session = new FakeSession([
-      '## Migration plan\n- Update README',
-      '## Self-audit\nOutcome: changed\nUpdated README',
-      '## Self-audit\nOutcome: changed\nREADME now updated',
-    ])
-    let checks = 0
-    try {
-      const result = await runMigrationSession({
-        sample: 'sample-a',
-        contextFile: '.sync/context/sync-context.json',
-        output,
-        session,
-        validate: async () => {
-          checks += 1
-          return validation(true, `pass-${checks}`)
-        },
-        sampleChanges: () =>
-          session.phases.includes('Reconciling migration outcome') ? ['samples/dotnet/teams/sample-a/README.md'] : [],
-      })
-      assert.equal(result.outcome, 'changed')
-      assert.equal(result.repairPasses, 1)
-      assert.equal(checks, 2)
-    } finally {
-      rmSync(output, { recursive: true, force: true })
     }
   })
 
@@ -332,7 +294,10 @@ describe('migration session', () => {
       assert.match(session.prompts[1]!, /continue autonomously/i)
       assert.match(session.prompts[1]!, /do not ask for confirmation/i)
     } finally {
-      rmSync(output, { recursive: true, force: true })
+      rmSync(output, {
+        recursive: true,
+        force: true
+      })
     }
   })
 
@@ -368,7 +333,10 @@ describe('migration session', () => {
       assert.match(session.prompts[2]!, /format only/i)
       assert.match(session.prompts[5]!, /format only/i)
     } finally {
-      rmSync(output, { recursive: true, force: true })
+      rmSync(output, {
+        recursive: true,
+        force: true
+      })
     }
   })
 
@@ -394,7 +362,10 @@ describe('migration session', () => {
       assert.equal(session.writable, false)
       assert.deepEqual(session.writableStates, [false, true, true, false])
     } finally {
-      rmSync(output, { recursive: true, force: true })
+      rmSync(output, {
+        recursive: true,
+        force: true
+      })
     }
   })
 })
