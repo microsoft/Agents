@@ -35,7 +35,7 @@ export class CardMessages {
   }
 
   static async sendAnimationCard (context: TurnContext): Promise<void> {
-    if (context.activity.channelId == Channels.Msteams) {
+    if (context.activity.channelId === Channels.Msteams) {
         // Teams does not support animation cards, add channel-specific logic if needed.
         await context.sendActivity('Animation cards are not supported in Teams.')
     } else {  
@@ -62,7 +62,7 @@ export class CardMessages {
   }
 
   static async sendAudioCard (context: TurnContext): Promise<void> {
-    if (context.activity.channelId == Channels.Msteams) {
+    if (context.activity.channelId === Channels.Msteams) {
         // Teams does not support audio cards, add channel-specific logic if needed.
         await context.sendActivity('Audio cards are not supported in Teams.')
     } else {
@@ -171,7 +171,7 @@ export class CardMessages {
   }
 
   static async sendVideoCard (context: TurnContext) {
-    if (context.activity.channelId == Channels.Msteams) {
+    if (context.activity.channelId === Channels.Msteams) {
         // Teams does not support video cards, add channel-specific logic if needed.
         return await context.sendActivity('Video cards are not supported in Teams.')
     } else {
