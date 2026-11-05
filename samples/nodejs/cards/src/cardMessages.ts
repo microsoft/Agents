@@ -38,7 +38,7 @@ export class CardMessages {
     if (context.activity.channelId === Channels.Msteams) {
       // Teams does not support animation cards, add channel-specific logic if needed.
       await context.sendActivity('Animation cards are not supported in Teams.')
-    } else {  
+    } else {
       const card = CardFactory.animationCard(
         'Microsoft 365 Agents SDK',
         [
