@@ -48,6 +48,11 @@ internal static class CardMessages
 
     public static Task SendAnimationCardAsync(ITurnContext context, CancellationToken cancellationToken)
     {
+        if (!Channels.SupportsAnimationCard(context.Activity.ChannelId))
+        {
+            return context.SendActivityAsync(MessageFactory.CreateMessageActivity($"Animation cards are not supported in {context.Activity.ChannelId.Channel}."), cancellationToken);
+        }
+
         AnimationCard card = new()
         {
             Title = "Microsoft 365 Agents SDK",
@@ -64,6 +69,11 @@ internal static class CardMessages
 
     public static Task SendAudioCardAsync(ITurnContext context, CancellationToken cancellationToken)
     {
+        if (!Channels.SupportsAudioCard(context.Activity.ChannelId))
+        {
+            return context.SendActivityAsync(MessageFactory.CreateMessageActivity($"Audio cards are not supported in {context.Activity.ChannelId.Channel}."), cancellationToken);
+        }
+
         AudioCard card = new()
         {
             Title = "I am your father",
@@ -115,6 +125,10 @@ internal static class CardMessages
 
     public static Task SendReceiptCardAsync(ITurnContext context, CancellationToken cancellationToken)
     {
+        if (!Channels.SupportsReceiptCard(context.Activity.ChannelId))
+        {
+            return context.SendActivityAsync(MessageFactory.CreateMessageActivity($"Receipt cards are not supported in {context.Activity.ChannelId.Channel}."), cancellationToken);
+        }
         ReceiptCard card = new()
         {
             Title = "John Doe",
@@ -152,6 +166,10 @@ internal static class CardMessages
 
     public static Task SendThumbnailCardAsync(ITurnContext context, CancellationToken cancellationToken)
     {
+        if (!Channels.SupportsThumbnailCard(context.Activity.ChannelId))
+        {
+            return context.SendActivityAsync(MessageFactory.CreateMessageActivity($"Thumbnail cards are not supported in {context.Activity.ChannelId.Channel}."), cancellationToken);
+        }
         ThumbnailCard card = new()
         {
             Title = "Copilot Thumbnail Card",
@@ -175,6 +193,10 @@ internal static class CardMessages
 
     public static Task SendVideoCardAsync(ITurnContext context, CancellationToken cancellationToken)
     {
+        if (!Channels.SupportsVideoCard(context.Activity.ChannelId))
+        {
+            return context.SendActivityAsync(MessageFactory.CreateMessageActivity($"Video cards are not supported in {context.Activity.ChannelId.Channel}."), cancellationToken);
+        }
         VideoCard card = new()
         {
             Title = "M365 Copilot",
