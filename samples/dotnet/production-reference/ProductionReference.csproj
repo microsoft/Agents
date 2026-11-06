@@ -10,9 +10,9 @@
     <Content Remove="tests/**;.sdk/**;artifacts/**" />
     <Content Update="appsettings.Development.json" CopyToPublishDirectory="Never" />
     <None Remove=".sdk/**;artifacts/**" />
-    <PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.8.77" />
-    <PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.8.77" />
-    <PackageReference Include="Microsoft.Agents.Storage.Blobs" Version="1.8.77" />
+    <PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.9.*" />
+    <PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.9.*" />
+    <PackageReference Include="Microsoft.Agents.Storage.Blobs" Version="1.9.*" />
     <PackageReference Include="Azure.Identity" Version="1.21.0" />
     <PackageReference Include="Azure.Monitor.OpenTelemetry.Exporter" Version="1.9.0" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.19.1" />

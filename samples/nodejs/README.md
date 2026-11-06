@@ -20,3 +20,10 @@
 |Build Genie Retrieval Agent|Retrieves SharePoint content with the signed-in user's delegated permissions.|[Build Genie Retrieval Agent](retrieval-agent/README.md)|
 |Proactive|Sends messages to existing conversations from in-code and HTTP triggers|[proactive](proactive/README.md)|
 |Production Reference|Tier 3 Web Chat support issue-capture agent with durable state, App Service deployment, and operations guidance|[production-reference](production-reference/README.md)|
+|Teams targeted messages|Private reminders, snooze and reactions|[agent-targeted-messages](teams/agent-targeted-messages/README.md)|
+|Teams AI messages|AI labels, feedback, citations and sensitivity|[bot-ai-messages](teams/bot-ai-messages/README.md)|
+|Teams attachments|File consent, download and upload|[bot-attachments](teams/bot-attachments/README.md)|
+|Teams cards|Nested forms, actions and visibility|[bot-cards](teams/bot-cards/README.md)|
+|Teams meetings|Meeting/participant events and transcripts|[bot-meetings](teams/bot-meetings/README.md)|
+|Teams message extensions|Wikipedia search and link unfurling|[bot-message-extensions](teams/bot-message-extensions/README.md)|
+|Teams task modules|Cards, custom HTML forms and chained dialogs|[bot-task-modules](teams/bot-task-modules/README.md)|

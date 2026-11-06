@@ -1,4 +1,3 @@
-/** For Copilot Agents only: trusted migration-tool infrastructure. */
 /**
  * Defines the trusted custom tools available to the Copilot session.
  * Each tool rechecks the pinned upstream tree, frozen context, and selected-sample boundary before it
@@ -25,6 +24,7 @@ export interface ToolHost {
   contextDigest: string
   context: SyncContext
   configured: Targets
+  canValidateCode: () => boolean
   validationRuntime?: ValidationRuntime
   onValidation?: (validation: ValidationResult) => void
 }
@@ -35,12 +35,19 @@ export function guardCandidate (host: ToolHost): void {
   assertContext(host.contextRoot, host.contextDigest)
   assertUpstream(host.upstream, host.upstreamCommit, host.sourcePath, host.sourceTree)
 }
+
 export async function validateTool (host: ToolHost, group: 'code' | 'manifest' | 'all'): Promise<ValidationResult> {
+  if (group !== 'manifest' && !host.canValidateCode()) {
+    throw new SyncError('Code validation may prepare dependencies and is available only after the migration plan grants write access')
+  }
+
   if (activeValidation) {
     throw new SyncError('Validation is already running')
   }
+
   guardCandidate(host)
   activeValidation = true
+
   try {
     const validation = await validateSample(
       host.repo,
@@ -51,13 +58,18 @@ export async function validateTool (host: ToolHost, group: 'code' | 'manifest' |
       host.excludes,
       host.context.migration.selectedAgentsSdkVersion,
       host.validationRuntime,
-      group
+      group,
+      undefined,
+      host.context.migration
     )
     guardCandidate(host)
+
     if (validation.outputDigest !== digestDirectory(path.join(host.repo, host.sampleRoot), host.excludes)) {
       throw new SyncError('Validation returned a stale candidate digest')
     }
+
     host.onValidation?.(validation)
+
     return validation
   } finally {
     activeValidation = false
