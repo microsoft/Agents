@@ -48,10 +48,9 @@ internal static class CardMessages
 
     public static Task SendAnimationCardAsync(ITurnContext context, CancellationToken cancellationToken)
     {
-        if (context.Activity.ChannelId == Channels.Msteams)
+        if (!Channels.SupportsAnimationCard(context.Activity.ChannelId))
         {
-            // Teams does not support animation cards, add channel-specific logic if needed.
-            return context.SendActivityAsync(MessageFactory.CreateMessageActivity("Animation cards are not supported in Teams."), cancellationToken);
+            return context.SendActivityAsync(MessageFactory.CreateMessageActivity($"Animation cards are not supported in {context.Activity.ChannelId.Channel}."), cancellationToken);
         }
 
         AnimationCard card = new()
@@ -70,10 +69,9 @@ internal static class CardMessages
 
     public static Task SendAudioCardAsync(ITurnContext context, CancellationToken cancellationToken)
     {
-        if (context.Activity.ChannelId == Channels.Msteams)
+        if (!Channels.SupportsAudioCard(context.Activity.ChannelId))
         {
-            // Teams does not support audio cards, add channel-specific logic if needed.
-            return context.SendActivityAsync(MessageFactory.CreateMessageActivity("Audio cards are not supported in Teams."), cancellationToken);
+            return context.SendActivityAsync(MessageFactory.CreateMessageActivity($"Audio cards are not supported in {context.Activity.ChannelId.Channel}."), cancellationToken);
         }
 
         AudioCard card = new()
@@ -127,6 +125,10 @@ internal static class CardMessages
 
     public static Task SendReceiptCardAsync(ITurnContext context, CancellationToken cancellationToken)
     {
+        if (!Channels.SupportsReceiptCard(context.Activity.ChannelId))
+        {
+            return context.SendActivityAsync(MessageFactory.CreateMessageActivity($"Receipt cards are not supported in {context.Activity.ChannelId.Channel}."), cancellationToken);
+        }
         ReceiptCard card = new()
         {
             Title = "John Doe",
@@ -164,6 +166,10 @@ internal static class CardMessages
 
     public static Task SendThumbnailCardAsync(ITurnContext context, CancellationToken cancellationToken)
     {
+        if (!Channels.SupportsThumbnailCard(context.Activity.ChannelId))
+        {
+            return context.SendActivityAsync(MessageFactory.CreateMessageActivity($"Thumbnail cards are not supported in {context.Activity.ChannelId.Channel}."), cancellationToken);
+        }
         ThumbnailCard card = new()
         {
             Title = "Copilot Thumbnail Card",
@@ -187,10 +193,9 @@ internal static class CardMessages
 
     public static Task SendVideoCardAsync(ITurnContext context, CancellationToken cancellationToken)
     {
-        if (context.Activity.ChannelId == Channels.Msteams)
+        if (!Channels.SupportsVideoCard(context.Activity.ChannelId))
         {
-            // Teams does not support video cards, add channel-specific logic if needed.
-            return context.SendActivityAsync(MessageFactory.CreateMessageActivity("Video cards are not supported in Teams."), cancellationToken);
+            return context.SendActivityAsync(MessageFactory.CreateMessageActivity($"Video cards are not supported in {context.Activity.ChannelId.Channel}."), cancellationToken);
         }
         VideoCard card = new()
         {

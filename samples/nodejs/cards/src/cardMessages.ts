@@ -35,9 +35,9 @@ export class CardMessages {
   }
 
   static async sendAnimationCard (context: TurnContext): Promise<void> {
-    if (context.activity.channelId === Channels.Msteams) {
+    if (context.activity.channelIdChannel === Channels.Msteams) {
       // Teams does not support animation cards, add channel-specific logic if needed.
-      await context.sendActivity('Animation cards are not supported in Teams.')
+      await context.sendActivity(`Animation cards are not supported in ${context.activity.channelIdChannel}`)
     } else {
       const card = CardFactory.animationCard(
         'Microsoft 365 Agents SDK',
@@ -62,9 +62,9 @@ export class CardMessages {
   }
 
   static async sendAudioCard (context: TurnContext): Promise<void> {
-    if (context.activity.channelId === Channels.Msteams) {
+    if (context.activity.channelIdChannel === Channels.Msteams) {
       // Teams does not support audio cards, add channel-specific logic if needed.
-      await context.sendActivity('Audio cards are not supported in Teams.')
+      await context.sendActivity(`Audio cards are not supported in ${context.activity.channelIdChannel}`)
     } else {
       const card = CardFactory.audioCard(
         'I am your father',
@@ -112,44 +112,49 @@ export class CardMessages {
   }
 
   static async sendReceiptCard (context: TurnContext): Promise<void> {
-    const card = CardFactory.receiptCard({
-      title: 'John Doe',
-      facts: [
-        {
-          key: 'Order Number',
-          value: '1234'
-        },
-        {
-          key: 'Payment Method',
-          value: 'VISA 5555-****'
-        }
-      ],
-      items: [
-        {
-          title: 'Data Transfer',
-          price: '$38.45',
-          quantity: 368,
-          image: { url: 'https://github.com/amido/azure-vector-icons/raw/master/renders/traffic-manager.png' }
-        },
-        {
-          title: 'App Service',
-          price: '$45.00',
-          quantity: 720,
-          image: { url: 'https://github.com/amido/azure-vector-icons/raw/master/renders/cloud-service.png' }
-        }
-      ],
-      tax: '$7.50',
-      total: '$90.95',
-      buttons: CardFactory.actions([
-        {
-          type: ActionTypes.OpenUrl,
-          title: 'More information',
-          value: 'https://azure.microsoft.com/en-us/pricing/details/bot-service/'
-        }
-      ])
-    })
+    if (context.activity.channelIdChannel === Channels.Msteams) {
+      // Teams does not support receipt cards, add channel-specific logic if needed.
+      await context.sendActivity(`Receipt cards are not supported in ${context.activity.channelIdChannel}`)
+    } else {
+      const card = CardFactory.receiptCard({
+        title: 'John Doe',
+        facts: [
+          {
+            key: 'Order Number',
+            value: '1234'
+          },
+          {
+            key: 'Payment Method',
+            value: 'VISA 5555-****'
+          }
+        ],
+        items: [
+          {
+            title: 'Data Transfer',
+            price: '$38.45',
+            quantity: 368,
+            image: { url: 'https://github.com/amido/azure-vector-icons/raw/master/renders/traffic-manager.png' }
+          },
+          {
+            title: 'App Service',
+            price: '$45.00',
+            quantity: 720,
+            image: { url: 'https://github.com/amido/azure-vector-icons/raw/master/renders/cloud-service.png' }
+          }
+        ],
+        tax: '$7.50',
+        total: '$90.95',
+        buttons: CardFactory.actions([
+          {
+            type: ActionTypes.OpenUrl,
+            title: 'More information',
+            value: 'https://azure.microsoft.com/en-us/pricing/details/bot-service/'
+          }
+        ])
+      })
 
-    await CardMessages.sendActivity(context, card)
+      await CardMessages.sendActivity(context, card)
+    }
   }
 
   static async sendThumbnailCard (context: TurnContext) {
@@ -171,9 +176,9 @@ export class CardMessages {
   }
 
   static async sendVideoCard (context: TurnContext) {
-    if (context.activity.channelId === Channels.Msteams) {
+    if (context.activity.channelIdChannel === Channels.Msteams) {
       // Teams does not support video cards, add channel-specific logic if needed.
-      return await context.sendActivity('Video cards are not supported in Teams.')
+      await context.sendActivity(`Video cards are not supported in ${context.activity.channelIdChannel}`)
     } else {
       const card = CardFactory.videoCard(
         'M365 Copilot',

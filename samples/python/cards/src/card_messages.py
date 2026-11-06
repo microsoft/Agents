@@ -49,9 +49,8 @@ class CardMessages:
 
     @staticmethod
     async def send_animation_card(context: TurnContext):
-        if (context.activity.channel_id == Channels.msteams):
-            # Teams does not support animation cards, add channel-specific logic if needed.
-            await context.send_activity('Animation cards are not supported in Teams.')
+        if Channels.supports_animation_card(context.activity.channel_id) == False:
+            await context.send_activity(f"Animation cards are not supported in {context.activity.channel_id.channel}")
             return
 
         card = CardFactory.animation_card(
@@ -71,9 +70,8 @@ class CardMessages:
 
     @staticmethod
     async def send_audio_card(context: TurnContext):
-        if (context.activity.channel_id == Channels.msteams):
-            # Teams does not support audio cards, add channel-specific logic if needed.
-            await context.send_activity('Audio cards are not supported in Teams.')
+        if Channels.supports_audio_card(context.activity.channel_id) == False:
+            await context.send_activity(f"Audio cards are not supported in {context.activity.channel_id.channel}")
             return
 
         card = CardFactory.audio_card(
@@ -127,6 +125,10 @@ class CardMessages:
 
     @staticmethod
     async def send_receipt_card(context):
+        if Channels.supports_receipt_card(context.activity.channel_id) == False:
+            await context.send_activity(f"Receipt cards are not supported in {context.activity.channel_id.channel}")
+            return
+
         card = CardFactory.receipt_card(
             ReceiptCard(
                 title="John Doe",
@@ -167,6 +169,10 @@ class CardMessages:
 
     @staticmethod
     async def send_thumbnail_card(context):
+        if Channels.supports_thumbnail_card(context.activity.channel_id) == False:
+            await context.send_activity(f"Thumbnail cards are not supported in {context.activity.channel_id.channel}")
+            return
+
         card = CardFactory.thumbnail_card(
             ThumbnailCard(
                 title="Copilot Thumbnail Card",
@@ -190,9 +196,8 @@ class CardMessages:
 
     @staticmethod
     async def send_video_card(context):
-        if (context.activity.channel_id == Channels.msteams):
-            # Teams does not support video cards, add channel-specific logic if needed.
-            await context.send_activity('Video cards are not supported in Teams.')
+        if Channels.supports_video_card(context.activity.channel_id) == False:
+            await context.send_activity(f"Video cards are not supported in {context.activity.channel_id.channel}")
             return
 
         card = CardFactory.video_card(
