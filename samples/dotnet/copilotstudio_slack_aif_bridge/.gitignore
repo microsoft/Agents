@@ -1,0 +1,63 @@
+# .NET build and publish output
+[Bb]in/
+[Oo]bj/
+[Aa]rtifacts/
+[Dd]ebug/
+[Rr]elease/
+[Dd]ebugPublic/
+[Rr]eleases/
+[Pp]ublish/
+
+# NuGet packages (keep project and lock files)
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+
+# Test results and coverage
+[Tt]est[Rr]esults/
+[Cc]overage/
+*.coverage
+*.coveragexml
+
+# Visual Studio local state and user-specific settings
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.slnx.user
+*.rsuser
+*.sln.ide
+*.VC.db
+*.VC.VC.opendb
+*.opendb
+*.pidb
+*.svclog
+*.publishsettings
+
+# Visual Studio profiling
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# VS Code: keep shareable project configuration
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+.history/
+
+# Local environment overrides
+.env
+.env.*
+!.env.example
+!.env.sample
+appsettings.Local.json
+appsettings.*.Local.json
+.superpowers/*
+**/docs/superpowers/*
+

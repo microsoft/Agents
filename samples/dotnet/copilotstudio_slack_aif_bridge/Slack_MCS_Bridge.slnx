@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Slack_MCS_Bridge.csproj" />
+  <Project Path="tests\Slack_MCS_Bridge.Tests\Slack_MCS_Bridge.Tests.csproj" />
+</Solution>
