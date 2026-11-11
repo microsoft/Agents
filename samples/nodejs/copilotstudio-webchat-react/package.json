@@ -36,7 +36,7 @@
     "zone.js": "0.16.2"
   },
   "devDependencies": {
-    "@microsoft/aspire-cli": "13.4.6",
+    "@microsoft/aspire-cli": "13.6.5",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
     "esbuild": "^0.28.2"
