@@ -2,11 +2,12 @@
 
 |Name|Description|README|
 |----|----|----|
+|Production reference|Bounded Web Chat support intake with managed identity, Blob state, tests and operating guidance|[production-reference](production-reference/README.md)|
 |Quickstart|Simplest agent|N/A|
 |Auto Sign In|Simple OAuth agent using Graph and GitHub|[auto-signin](auto-signin/README.md)|
 |OBO Authorization|OBO flow to access a Copilot Studio Agent|[obo-authorization](obo-authorization/README.md)|
 |Semantic Kernel Integration|A weather agent built with Semantic Kernel|[semantic-kernel-multiturn](semantic-kernel-multiturn/README.md)|
-|Streaming Agent|Streams OpenAI responses|[azureai-streaming](azureai-streaming/README.md)|
+|Azure AI Streaming|Streams Azure OpenAI responses|[azure-ai-streaming](azure-ai-streaming/README.md)|
 |Copilot Studio Client|Console app to consume a Copilot Studio Agent|[copilotstudio-client](copilotstudio-client/README.md)|
 |Cards Agent|Agent that uses rich cards to enhance conversation design |[cards](cards/README.md)|
 |Copilot Studio Skill|Call the echo bot from a Copilot Studio skill |[copilotstudio-skill](copilotstudio-skill/README.md)|

@@ -1,0 +1,42 @@
+name: Validate configuration schema
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'schema/**'
+      - '.github/workflows/validate-configuration-schema.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'schema/**'
+      - '.github/workflows/validate-configuration-schema.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: schema/package-lock.json
+
+      - name: Install schema test dependencies
+        working-directory: schema
+        env:
+          NPM_CONFIG_REGISTRY: https://packagefeedproxy.microsoft.io/npm/
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Validate schema and fixtures
+        working-directory: schema
+        run: npm test

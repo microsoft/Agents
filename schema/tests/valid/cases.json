@@ -1,0 +1,97 @@
+[
+  {
+    "name": "empty named connections without deployment completeness",
+    "document": { "connections": {} }
+  },
+  {
+    "name": "routing-only document without resolving a dangling reference",
+    "document": {
+      "connectionsMap": [{ "serviceUrl": "*", "connection": "not-defined" }]
+    }
+  },
+  {
+    "name": "multiple named connections and ordered routes",
+    "document": {
+      "connections": {
+        "first": { "settings": { "authType": "CustomProvider" } },
+        "second": { "settings": {} }
+      },
+      "connectionsMap": [
+        { "serviceUrl": "https://example.com", "audience": "example", "connection": "second" },
+        { "serviceUrl": "*", "connection": "first" }
+      ]
+    }
+  },
+  {
+    "name": "unmodeled application root data alongside a core section",
+    "document": {
+      "connections": {},
+      "Logging": { "arbitrary": null },
+      "Connections": { "notValidatedAsCanonical": true }
+    }
+  },
+  {
+    "name": "provider settings without claiming runtime support",
+    "document": {
+      "connections": {
+        "custom": {
+          "settings": {
+            "providerString": "example",
+            "providerBoolean": false,
+            "providerInteger": 2,
+            "providerList": ["example"],
+            "unsupportedBySomeRuntime": true,
+            "clientSecret": "synthetic-test-value"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "multiple authorization handlers and handler extensions",
+    "document": {
+      "connections": {},
+      "agentApplication": {
+        "userAuthorization": {
+          "handlers": {
+            "first": { "settings": { "providerSetting": ["example"] } },
+            "second": { "settings": { "invalidSignInRetryMax": 0 } }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "names containing reserved words without equaling them",
+    "document": {
+      "connections": {
+        "prototypeConnection": { "settings": {} },
+        "customConstructor": { "settings": {} },
+        "protype": { "settings": {} }
+      }
+    }
+  },
+  {
+    "name": "optional host settings without injecting defaults",
+    "document": {
+      "connectionsMap": [],
+      "cloudAdapterOptions": {},
+      "outboundHostValidator": {},
+      "agentApplication": {}
+    }
+  },
+  {
+    "name": "endpoint strings without URI validation or interpolation",
+    "document": {
+      "connections": {
+        "example": {
+          "settings": {
+            "authorityEndpoint": "not-a-uri",
+            "clientSecret": "${NOT_EXPANDED}",
+            "scopes": []
+          }
+        }
+      }
+    }
+  }
+]

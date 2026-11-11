@@ -1,4 +1,7 @@
-from microsoft_agents.activity import ActionTypes, Activity, ActivityTypes, Attachment
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+from microsoft_agents.activity import ActionTypes, Activity, ActivityTypes, Attachment, Channels
 from microsoft_agents.hosting.core import CardFactory, TurnContext
 
 from microsoft_agents.activity import (
@@ -22,13 +25,13 @@ class CardMessages:
     @staticmethod
     async def send_intro_card(context: TurnContext):
         buttons = [
-            CardAction(type=ActionTypes.im_back, value="1", title="Adaptive Card"),
-            CardAction(type=ActionTypes.im_back, value="2", title="Animation Card"),
-            CardAction(type=ActionTypes.im_back, value="3", title="Audio Card"),
-            CardAction(type=ActionTypes.im_back, value="4", title="Hero Card"),
-            CardAction(type=ActionTypes.im_back, value="5", title="Receipt Card"),
-            CardAction(type=ActionTypes.im_back, value="6", title="Thumbnail Card"),
-            CardAction(type=ActionTypes.im_back, value="7", title="Video Card"),
+            CardAction(type=ActionTypes.im_back, value="1", title="1. Adaptive Card"),
+            CardAction(type=ActionTypes.im_back, value="2", title="2. Animation Card"),
+            CardAction(type=ActionTypes.im_back, value="3", title="3. Audio Card"),
+            CardAction(type=ActionTypes.im_back, value="4", title="4. Hero Card"),
+            CardAction(type=ActionTypes.im_back, value="5", title="5. Receipt Card"),
+            CardAction(type=ActionTypes.im_back, value="6", title="6. Thumbnail Card"),
+            CardAction(type=ActionTypes.im_back, value="7", title="7. Video Card"),
         ]
         card = CardFactory.hero_card(
             HeroCard(
@@ -46,9 +49,13 @@ class CardMessages:
 
     @staticmethod
     async def send_animation_card(context: TurnContext):
+        if Channels.supports_animation_card(context.activity.channel_id) == False:
+            await context.send_activity(f"Animation cards are not supported in {context.activity.channel_id.channel}")
+            return
+
         card = CardFactory.animation_card(
             AnimationCard(
-                title="Microsoft Agents Framework",
+                title="Microsoft 365 Agents SDK",
                 image=ThumbnailUrl(
                     url="https://i.giphy.com/Ki55RUbOV5njy.gif", alt="Cute Robot"
                 ),
@@ -63,6 +70,10 @@ class CardMessages:
 
     @staticmethod
     async def send_audio_card(context: TurnContext):
+        if Channels.supports_audio_card(context.activity.channel_id) == False:
+            await context.send_activity(f"Audio cards are not supported in {context.activity.channel_id.channel}")
+            return
+
         card = CardFactory.audio_card(
             AudioCard(
                 title="I am your father",
@@ -114,6 +125,10 @@ class CardMessages:
 
     @staticmethod
     async def send_receipt_card(context):
+        if Channels.supports_receipt_card(context.activity.channel_id) == False:
+            await context.send_activity(f"Receipt cards are not supported in {context.activity.channel_id.channel}")
+            return
+
         card = CardFactory.receipt_card(
             ReceiptCard(
                 title="John Doe",
@@ -154,6 +169,10 @@ class CardMessages:
 
     @staticmethod
     async def send_thumbnail_card(context):
+        if Channels.supports_thumbnail_card(context.activity.channel_id) == False:
+            await context.send_activity(f"Thumbnail cards are not supported in {context.activity.channel_id.channel}")
+            return
+
         card = CardFactory.thumbnail_card(
             ThumbnailCard(
                 title="Copilot Thumbnail Card",
@@ -177,6 +196,10 @@ class CardMessages:
 
     @staticmethod
     async def send_video_card(context):
+        if Channels.supports_video_card(context.activity.channel_id) == False:
+            await context.send_activity(f"Video cards are not supported in {context.activity.channel_id.channel}")
+            return
+
         card = CardFactory.video_card(
             VideoCard(
                 title="M365 Copilot",

@@ -1,0 +1,197 @@
+[
+  {
+    "name": "null root",
+    "document": null,
+    "expectedError": { "instancePath": "", "keyword": "type" }
+  },
+  {
+    "name": "array root",
+    "document": [],
+    "expectedError": { "instancePath": "", "keyword": "type" }
+  },
+  {
+    "name": "scalar root",
+    "document": "configuration",
+    "expectedError": { "instancePath": "", "keyword": "type" }
+  },
+  {
+    "name": "empty root",
+    "document": {},
+    "expectedError": { "instancePath": "", "keyword": "anyOf" }
+  },
+  {
+    "name": "unrelated root sections only",
+    "document": { "Logging": {} },
+    "expectedError": { "instancePath": "", "keyword": "anyOf" }
+  },
+  {
+    "name": "native-cased root sections only",
+    "document": { "Connections": {}, "CONNECTIONSMAP": [] },
+    "expectedError": { "instancePath": "", "keyword": "anyOf" }
+  },
+  {
+    "name": "connections array",
+    "document": { "connections": [] },
+    "expectedError": { "instancePath": "/connections", "keyword": "type" }
+  },
+  {
+    "name": "empty connection name",
+    "document": { "connections": { "": { "settings": {} } } },
+    "expectedError": { "instancePath": "/connections", "keyword": "propertyNames" }
+  },
+  {
+    "name": "prototype connection name",
+    "document": { "connections": { "__proto__": { "settings": {} } } },
+    "expectedError": { "instancePath": "/connections", "keyword": "propertyNames" }
+  },
+  {
+    "name": "case-varied constructor connection name",
+    "document": { "connections": { "Constructor": { "settings": {} } } },
+    "expectedError": { "instancePath": "/connections", "keyword": "propertyNames" }
+  },
+  {
+    "name": "connection missing settings",
+    "document": { "connections": { "example": {} } },
+    "expectedError": { "instancePath": "/connections/example", "keyword": "required" }
+  },
+  {
+    "name": "connection null settings",
+    "document": { "connections": { "example": { "settings": null } } },
+    "expectedError": { "instancePath": "/connections/example/settings", "keyword": "type" }
+  },
+  {
+    "name": "unknown connection field",
+    "document": { "connections": { "example": { "settings": {}, "assembly": "example" } } },
+    "expectedError": { "instancePath": "/connections/example", "keyword": "additionalProperties" }
+  },
+  {
+    "name": "known setting incorrect type",
+    "document": { "connections": { "example": { "settings": { "clientId": 42 } } } },
+    "expectedError": { "instancePath": "/connections/example/settings/clientId", "keyword": "type" }
+  },
+  {
+    "name": "null secret placeholder",
+    "document": { "connections": { "example": { "settings": { "clientSecret": null } } } },
+    "expectedError": { "instancePath": "/connections/example/settings/clientSecret", "keyword": "type" }
+  },
+  {
+    "name": "empty authentication discriminator",
+    "document": { "connections": { "example": { "settings": { "authType": "" } } } },
+    "expectedError": { "instancePath": "/connections/example/settings/authType", "keyword": "minLength" }
+  },
+  {
+    "name": "string instead of scope array",
+    "document": { "connections": { "example": { "settings": { "scopes": "User.Read" } } } },
+    "expectedError": { "instancePath": "/connections/example/settings/scopes", "keyword": "type" }
+  },
+  {
+    "name": "empty string list item",
+    "document": { "connections": { "example": { "settings": { "scopes": [""] } } } },
+    "expectedError": { "instancePath": "/connections/example/settings/scopes/0", "keyword": "minLength" }
+  },
+  {
+    "name": "object provider extension",
+    "document": { "connections": { "example": { "settings": { "custom": {} } } } },
+    "expectedError": { "instancePath": "/connections/example/settings/custom", "keyword": "oneOf" }
+  },
+  {
+    "name": "fractional provider extension",
+    "document": { "connections": { "example": { "settings": { "custom": 1.5 } } } },
+    "expectedError": { "instancePath": "/connections/example/settings/custom", "keyword": "oneOf" }
+  },
+  {
+    "name": "object routing map",
+    "document": { "connectionsMap": {} },
+    "expectedError": { "instancePath": "/connectionsMap", "keyword": "type" }
+  },
+  {
+    "name": "route missing service URL",
+    "document": { "connectionsMap": [{ "connection": "example" }] },
+    "expectedError": { "instancePath": "/connectionsMap/0", "keyword": "required" }
+  },
+  {
+    "name": "route missing connection",
+    "document": { "connectionsMap": [{ "serviceUrl": "*" }] },
+    "expectedError": { "instancePath": "/connectionsMap/0", "keyword": "required" }
+  },
+  {
+    "name": "empty route reference",
+    "document": { "connectionsMap": [{ "serviceUrl": "*", "connection": "" }] },
+    "expectedError": { "instancePath": "/connectionsMap/0/connection", "keyword": "minLength" }
+  },
+  {
+    "name": "unknown route field",
+    "document": { "connectionsMap": [{ "serviceUrl": "*", "connection": "example", "priority": 1 }] },
+    "expectedError": { "instancePath": "/connectionsMap/0", "keyword": "additionalProperties" }
+  },
+  {
+    "name": "string host boolean",
+    "document": { "connections": {}, "cloudAdapterOptions": { "emitStackTrace": "true" } },
+    "expectedError": { "instancePath": "/cloudAdapterOptions/emitStackTrace", "keyword": "type" }
+  },
+  {
+    "name": "unknown adapter option",
+    "document": { "connections": {}, "cloudAdapterOptions": { "unknown": false } },
+    "expectedError": { "instancePath": "/cloudAdapterOptions", "keyword": "additionalProperties" }
+  },
+  {
+    "name": "non-string host list item",
+    "document": { "connections": {}, "outboundHostValidator": { "hosts": [42] } },
+    "expectedError": { "instancePath": "/outboundHostValidator/hosts/0", "keyword": "type" }
+  },
+  {
+    "name": "unknown host validator field",
+    "document": { "connections": {}, "outboundHostValidator": { "unknown": true } },
+    "expectedError": { "instancePath": "/outboundHostValidator", "keyword": "additionalProperties" }
+  },
+  {
+    "name": "unknown application field",
+    "document": { "connections": {}, "agentApplication": { "unknown": true } },
+    "expectedError": { "instancePath": "/agentApplication", "keyword": "additionalProperties" }
+  },
+  {
+    "name": "authorization missing handlers",
+    "document": { "connections": {}, "agentApplication": { "userAuthorization": {} } },
+    "expectedError": { "instancePath": "/agentApplication/userAuthorization", "keyword": "required" }
+  },
+  {
+    "name": "unknown authorization field",
+    "document": { "connections": {}, "agentApplication": { "userAuthorization": { "handlers": {}, "autoSignIn": true } } },
+    "expectedError": { "instancePath": "/agentApplication/userAuthorization", "keyword": "additionalProperties" }
+  },
+  {
+    "name": "unsafe authorization handler name",
+    "document": { "connections": {}, "agentApplication": { "userAuthorization": { "handlers": { "Prototype": { "settings": {} } } } } },
+    "expectedError": { "instancePath": "/agentApplication/userAuthorization/handlers", "keyword": "propertyNames" }
+  },
+  {
+    "name": "handler missing settings",
+    "document": { "connections": {}, "agentApplication": { "userAuthorization": { "handlers": { "example": {} } } } },
+    "expectedError": { "instancePath": "/agentApplication/userAuthorization/handlers/example", "keyword": "required" }
+  },
+  {
+    "name": "unknown handler field",
+    "document": { "connections": {}, "agentApplication": { "userAuthorization": { "handlers": { "example": { "settings": {}, "type": "example" } } } } },
+    "expectedError": { "instancePath": "/agentApplication/userAuthorization/handlers/example", "keyword": "additionalProperties" }
+  },
+  {
+    "name": "negative retry count",
+    "document": { "connections": {}, "agentApplication": { "userAuthorization": { "handlers": { "example": { "settings": { "invalidSignInRetryMax": -1 } } } } } },
+    "expectedError": { "instancePath": "/agentApplication/userAuthorization/handlers/example/settings/invalidSignInRetryMax", "keyword": "minimum" }
+  },
+  {
+    "name": "fractional retry count",
+    "document": { "connections": {}, "agentApplication": { "userAuthorization": { "handlers": { "example": { "settings": { "invalidSignInRetryMax": 1.5 } } } } } },
+    "expectedError": { "instancePath": "/agentApplication/userAuthorization/handlers/example/settings/invalidSignInRetryMax", "keyword": "type" }
+  },
+  {
+    "name": "string authorization boolean",
+    "document": { "connections": {}, "agentApplication": { "userAuthorization": { "handlers": { "example": { "settings": { "enableSso": "true" } } } } } },
+    "expectedError": { "instancePath": "/agentApplication/userAuthorization/handlers/example/settings/enableSso", "keyword": "type" }
+  },
+  {
+    "name": "object handler extension",
+    "document": { "connections": {}, "agentApplication": { "userAuthorization": { "handlers": { "example": { "settings": { "custom": {} } } } } } },
+    "expectedError": { "instancePath": "/agentApplication/userAuthorization/handlers/example/settings/custom", "keyword": "oneOf" }
+  }
+]

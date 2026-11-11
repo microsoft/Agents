@@ -1,0 +1,14 @@
+name: Pull request Labeler trigger
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions: {}
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'microsoft'
+    steps:
+      - run: echo "Requesting API-only pull request labeling"

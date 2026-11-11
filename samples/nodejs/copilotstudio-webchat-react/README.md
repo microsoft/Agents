@@ -17,7 +17,7 @@ This sample is a ready-to-run example for integrating Copilot Studio agents with
 
 ## 1. Prerequisites
 
-1. [Node.js](https://nodejs.org) version 20 or higher  
+1. [Node.js](https://nodejs.org) version 22 or higher
    ```bash
    node --version
    ```
@@ -202,7 +202,7 @@ The Copilot Studio Client requires a user token to operate. This sample uses a u
 ### Common Issues
 
 **Build Errors:**
-- Ensure Node.js version 20+ is installed
+- Ensure Node.js version 22+ is installed
 - Run `npm install` to install all dependencies
 - Check that `settings.TEMPLATE.js` has been renamed to `settings.js`
 - Check that `settings.js` has valid configuration values

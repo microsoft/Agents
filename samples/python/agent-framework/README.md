@@ -12,7 +12,7 @@ This sample demonstrates a **Microsoft 365 Agents SDK** agent that uses the **Mi
 | **Weather Data** | Live weather via OpenWeatherMap API (current conditions + 5-day forecast) |
 | **Tool / Function Use** | `get_current_weather`, `get_weather_forecast`, and `get_date` registered as `@tool` decorated functions |
 | **Streaming Responses** | Server-sent streaming back to the client using `StreamingResponse` |
-| **Conversation History** | Per-conversation session management via Agent Framework sessions |
+| **Conversation History** | Serializable local Agent Framework sessions with a 10-message-group sliding window |
 | **Host / Transport** | aiohttp with `/api/messages` endpoint; compatible with Microsoft Agents Playground and M365 Teams / Copilot |
 
 ---
@@ -40,7 +40,7 @@ This sample demonstrates a **Microsoft 365 Agents SDK** agent that uses the **Mi
 ### 1.2 Deploy a Model
 
 1. In **Models + Endpoints**, select **+ Deploy model**.
-2. Search for **gpt-4o** (or your preferred model), select it, and click **Confirm**.
+2. Search for **gpt-4.1-mini**, select it, and click **Confirm**.
 3. Give the deployment a name — this becomes the **Model** value you will configure below.
 4. Once deployed, note:
    - **Target URI** — this is the **Endpoint** value.
@@ -57,22 +57,22 @@ This sample demonstrates a **Microsoft 365 Agents SDK** agent that uses the **Mi
 
 ## Step 3 — Configure the Agent
 
-1. [Create an Azure Bot](https://aka.ms/AgentsSDK-CreateBot)
-   - Record the Application ID, Tenant ID, and Client Secret.
-
-2. Open `env.TEMPLATE` in the root of this sample, rename it to `.env`, and fill in:
+1. Copy `env.TEMPLATE` to `.env` and fill in the Azure OpenAI and OpenWeather values. Anonymous access is enabled in the template so the local Playground works without a bot registration:
 
    ```bash
    CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTID=<your-app-id>
    CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTSECRET=<your-client-secret>
    CONNECTIONS__SERVICE_CONNECTION__SETTINGS__TENANTID=<your-tenant-id>
+   CONNECTIONS__SERVICE_CONNECTION__SETTINGS__ANONYMOUS_ALLOWED=true
 
    AZURE_OPENAI_ENDPOINT=<your-azure-openai-endpoint>
    AZURE_OPENAI_API_KEY=<your-azure-openai-api-key>
-   AZURE_OPENAI_MODEL=gpt-4o
+   AZURE_OPENAI_MODEL=gpt-4.1-mini
 
    OPEN_WEATHER_API_KEY=<your-openweather-api-key>
    ```
+
+   The three bot identity values can remain empty for local testing. For Teams or Copilot deployment, create an [Azure Bot](https://aka.ms/AgentsSDK-CreateBot), fill in those values, and set `ANONYMOUS_ALLOWED=false`.
 
 ---
 
@@ -122,9 +122,8 @@ This sample demonstrates a **Microsoft 365 Agents SDK** agent that uses the **Mi
 
 1. Install the playground: `winget install agentsplayground`
 2. Start the agent locally: `python -m src.main`
-3. Start the playground: `agentsplayground`
-4. In Agents Playground under the "Configure Authentication" menu provide the same values as from your `.env`
-5. Chat with the Weather Agent!
+3. Start the playground: `agentsplayground -e http://localhost:3978/api/messages`
+4. Chat with the Weather Agent—no Playground authentication is required while `ANONYMOUS_ALLOWED=true`.
 
 ---
 
@@ -151,5 +150,6 @@ agent-framework/
     └── tools/
         ├── __init__.py
         ├── date_time.py      # Current date/time tool
+        ├── progress.py       # Sends tool progress through the active turn
         └── weather_lookup.py # OpenWeatherMap weather tools
 ```

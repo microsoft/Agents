@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel;
 using SemanticKernelMultiturn;
+using System;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -18,9 +19,9 @@ builder.Services.AddKernel();
 if (builder.Configuration.GetSection("AIServices").GetValue<bool>("UseAzureOpenAI"))
 {
     builder.Services.AddAzureOpenAIChatCompletion(
-        deploymentName: builder.Configuration.GetSection("AIServices:AzureOpenAI").GetValue<string>("DeploymentName")!,
-        endpoint: builder.Configuration.GetSection("AIServices:AzureOpenAI").GetValue<string>("Endpoint")!,
-        apiKey: builder.Configuration.GetSection("AIServices:AzureOpenAI").GetValue<string>("ApiKey")!);
+        deploymentName: GetRequiredSetting(builder.Configuration, "AIServices:AzureOpenAI:DeploymentName"),
+        endpoint: GetRequiredSetting(builder.Configuration, "AIServices:AzureOpenAI:Endpoint"),
+        apiKey: GetRequiredSetting(builder.Configuration, "AIServices:AzureOpenAI:ApiKey"));
 
     //Use the Azure CLI (for local) or Managed Identity (for Azure running app) to authenticate to the Azure OpenAI service
     //credentials: new ChainedTokenCredential(
@@ -31,14 +32,14 @@ if (builder.Configuration.GetSection("AIServices").GetValue<bool>("UseAzureOpenA
 else
 {
     builder.Services.AddOpenAIChatCompletion(
-        modelId: builder.Configuration.GetSection("AIServices:OpenAI").GetValue<string>("ModelId")!,
-        apiKey: builder.Configuration.GetSection("AIServices:OpenAI").GetValue<string>("ApiKey")!);
+        modelId: GetRequiredSetting(builder.Configuration, "AIServices:OpenAI:ModelId"),
+        apiKey: GetRequiredSetting(builder.Configuration, "AIServices:OpenAI:ApiKey"));
 }
 
 // Add the AgentApplication, which contains the logic for responding to
 // user messages.
 builder.AddAgentDefaults()
-    .AddAgent<MyAgent>()
+    .AddAgent<WeatherAgent>()
     .AddAgentAuthorization(b => b.AddAgentAspNetAuthentication());
 
 // Register IStorage.  For development, MemoryStorage is suitable.
@@ -56,3 +57,11 @@ app.UseAgents();
 app.MapDefaultAgentEndpoints();
 
 app.Run();
+
+static string GetRequiredSetting(IConfiguration configuration, string key)
+{
+    string? value = configuration[key];
+    return !string.IsNullOrWhiteSpace(value)
+        ? value
+        : throw new InvalidOperationException($"{key} configuration is missing and required.");
+}

@@ -1,71 +1,62 @@
 # Cards Sample
 
-This is a sample of a simple Agent hosted on a Python web service. This serves as an example of how to create rich cards to enhance your conversation design.
+This sample hosts a simple agent on a Python web service. It demonstrates how to use rich cards to enhance a conversation.
+
+The agent supports these cards:
+
+1. Adaptive Card
+2. Animation Card
+3. Audio Card
+4. Hero Card
+5. Receipt Card
+6. Thumbnail Card
+7. Video Card
 
 ## Prerequisites
 
--  [Python](https://www.python.org/) version 3.10 or higher
--  [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) (for local development)
+- [Python](https://www.python.org/) version 3.10 or higher
+- [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) for Azure Bot Service testing
 
-## Local Setup
+## Local setup
 
-### Configuration
+1. Open this folder in your preferred IDE or terminal.
+1. Optionally create and activate a virtual environment.
+1. Install dependencies:
 
-1. [Create an Azure Bot](https://aka.ms/AgentsSDK-CreateBot)
-   - Record the Application ID, the Tenant ID, and the Client Secret for use below
-  
-1. Configuring the token connection in the Agent settings
-    1. Open the `env.TEMPLATE` file in the root of the sample project, rename it to `.env` and configure the following values:
-      1. Set the **CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTID** to the AppId of the bot identity.
-      2. Set the **CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTSECRET** to the Secret that was created for your identity. *This is the `Secret Value` shown in the AppRegistration*.
-      3. Set the **CONNECTIONS__SERVICE_CONNECTION__SETTINGS__TENANTID** to the Tenant Id where your application is registered.
- 
-1. Run `dev tunnels`. See [Create and host a dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) and host the tunnel with anonymous user access command as shown below:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+1. Create `.env` from the template and configure it as needed for your client:
+
+   ```bash
+   cp env.TEMPLATE .env
+   ```
+
+1. Start the application:
+
+   ```bash
+   python -m src.main
+   ```
+
+The agent listens at `http://localhost:3978` and is ready to accept messages. Select a card from the menu, send a number from `1` through `7`, or send `display card options` to show the menu again.
+
+## Test with Azure Bot Service WebChat
+
+1. [Create an Azure Bot](https://aka.ms/AgentsSDK-CreateBot) and record its Application ID, Tenant ID, and client secret.
+1. Copy `env.TEMPLATE` to `.env` and configure `CLIENTID`, `CLIENTSECRET`, and `TENANTID`.
+1. Host a dev tunnel with anonymous tunnel access:
 
    ```bash
    devtunnel host -p 3978 --allow-anonymous
    ```
 
-1. Take note of the url shown after `Connect via browser:`
-
-1. On the Azure Bot, select **Settings**, then **Configuration**, and update the **Messaging endpoint** to `{tunnel-url}/api/messages`
-
-### Running the Agent
-
-1. Start the Agent using `python -m src.main`
-
-1. Open this folder from your IDE or Terminal of preference
-1. (Optional but recommended) Set up virtual environment and activate it.
-1. Install dependencies
-
-```sh
-pip install -r requirements.txt
-```
-
-### Run in localhost, anonymous mode
-
-1. Start the application
-
-```sh
-python -m src.main
-```
-
-At this point you should see the message 
-
-```text
-======== Running on http://localhost:3978 ========
-```
-
-The agent is ready to accept messages.
-
-## Accessing the Agent
-
-### Using the Agent in WebChat
-
-1. Go to your Azure Bot Service resource in the Azure Portal and select **Test in WebChat**
+1. In the Azure Bot resource, select **Settings**, then **Configuration**, and set the messaging endpoint to `{tunnel-url}/api/messages`.
+1. Start the agent with `python -m src.main`.
+1. Select **Test in WebChat** in the Azure portal.
 
 ## Further reading
 
-To learn more about building Bots and Agents, see our [Microsoft 365 Agents SDK](https://github.com/microsoft/agents) repo.
+To learn more about building agents, see the [Microsoft 365 Agents SDK](https://github.com/microsoft/agents) repository.
 
-For more information on logging configuration, see the logging section in the Quickstart Agent sample README.
+For more information about logging configuration, see the logging section in the Quickstart Agent sample README.

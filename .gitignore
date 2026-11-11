@@ -399,3 +399,6 @@ devTools/
 node_modules/
 *.tsbuildinfo
 
+# Teams sample synchronization runtime artifacts
+.sync/
+

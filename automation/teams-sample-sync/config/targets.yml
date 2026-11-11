@@ -1,0 +1,163 @@
+version: 2
+
+upstream:
+  repository: OfficeDev/Microsoft-Teams-Samples
+  ref: main
+  root: samples/TeamsSDK
+
+manifestSkill: agent-plugins/agents-sdk-common/skills/teams-app-manifest
+
+copilot:
+  # 1.0.7 bundles a matching Copilot CLI runtime. Pin runtime compatibility, not a model catalog.
+  sdkVersion: "1.0.7"
+  runtimeVersion: "1.0.83"
+
+validatorVersion: "5"
+
+profiles:
+  dotnet:
+    destinationRoot: samples/dotnet/teams
+    canonicalSample: automation/teams-sample-sync/reference/dotnet
+    manifestAssets: automation/teams-sample-sync/reference/dotnet/appManifest
+    migrationSkill: agent-plugins/agents-for-net/skills/teams-sdk-to-agents-sdk-dotnet-migration
+
+    syncSkill: automation/teams-sample-sync/skills/sync-teams-samples-to-agents-sdk
+    contractDirectory: automation/teams-sample-sync/tests/contracts
+    outputDigestExcludes: []
+
+    packagePolicy:
+      targetFramework: net10.0
+      minimumAgentsSdkVersion: "1.9"
+
+    samples:
+      agent-targeted-messages:
+        source: agent-targeted-messages/dotnet/agent-targeted-messages
+        destination: agent-targeted-messages
+        manifest:
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: double-braces
+
+      bot-ai-messages:
+        source: bot-ai-messages/dotnet/bot-ai-messages
+        destination: bot-ai-messages
+        manifest:
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: double-braces
+
+      bot-attachments:
+        source: bot-attachments/dotnet/bot-attachments
+        destination: bot-attachments
+        manifest:
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: double-braces
+
+      bot-cards:
+        source: bot-cards/dotnet/bot-cards
+        destination: bot-cards
+        manifest:
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: double-braces
+
+      bot-meetings:
+        source: bot-meetings/dotnet/bot-meetings
+        destination: bot-meetings
+        manifest:
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: double-braces
+
+      bot-message-extensions:
+        source: bot-message-extensions/dotnet/bot-message-extensions
+        destination: bot-message-extensions
+        manifest:
+          expectedLinkDomains: [en.wikipedia.org]
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: toolkit
+
+      bot-task-modules:
+        source: bot-task-modules/dotnet/bot-task-modules
+        destination: bot-task-modules
+        manifest:
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: double-braces
+
+  js:
+    destinationRoot: samples/nodejs/teams
+    canonicalSample: automation/teams-sample-sync/reference/nodejs
+    manifestAssets: automation/teams-sample-sync/reference/manifest-assets/nodejs
+    migrationSkill: agent-plugins/agents-for-js/skills/teams-sdk-to-agents-sdk-typescript-migration
+    syncSkill: automation/teams-sample-sync/skills/sync-teams-samples-to-agents-sdk
+    contractDirectory: automation/teams-sample-sync/tests/js-contracts
+    outputDigestExcludes:
+      - node_modules/**
+      - dist/**
+      - coverage/**
+      - '*.tsbuildinfo'
+
+    packagePolicy:
+      nodeVersion: '24'
+      minimumAgentsSdkVersion: '1.9.1'
+
+    samples:
+      agent-targeted-messages:
+        source: agent-targeted-messages/nodejs/agent-targeted-messages
+        destination: agent-targeted-messages
+        manifest:
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: double-braces
+
+      bot-ai-messages:
+        source: bot-ai-messages/nodejs/bot-ai-messages
+        destination: bot-ai-messages
+        manifest:
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: double-braces
+
+      bot-attachments:
+        source: bot-attachments/nodejs/bot-attachments
+        destination: bot-attachments
+        manifest:
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: double-braces
+
+      bot-cards:
+        source: bot-cards/nodejs/bot-cards
+        destination: bot-cards
+        manifest:
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: double-braces
+
+      bot-meetings:
+        source: bot-meetings/nodejs/bot-meetings
+        destination: bot-meetings
+        manifest:
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: double-braces
+
+      bot-message-extensions:
+        source: bot-message-extensions/nodejs/bot-message-extensions
+        destination: bot-message-extensions
+        manifest:
+          expectedLinkDomains: [en.wikipedia.org]
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: double-braces
+
+      bot-task-modules:
+        source: bot-task-modules/nodejs/bot-task-modules
+        destination: bot-task-modules
+        manifest:
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: double-braces

@@ -77,18 +77,6 @@ the span, and rethrow the error.
 | `agents.copilot_client.subscribe_async.count` | Counter | operation |
 | `agents.copilot_client.subscribe_event.count` | Counter | events |
 
-## Span category filtering
-
-Set `AGENTS_TELEMETRY_DISABLED_SPAN_CATEGORIES` to a comma- or space-separated
-list containing:
-
-- `STORAGE`
-- `AUTHENTICATION`
-- `AUTHORIZATION`
-- `DIALOGS`
-
-All categories are enabled by default.
-
 ## Custom telemetry attributes
 
 Prefer bounded operational values:

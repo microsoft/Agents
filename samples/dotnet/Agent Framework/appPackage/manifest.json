@@ -14,12 +14,12 @@
     "outline": "outline.png"
   },
   "name": {
-    "short": "Agent_Demo1${{APP_NAME_SUFFIX}}",
-    "full": "full name for Agent_Demo1"
+    "short": "Weather Agent${{APP_NAME_SUFFIX}}",
+    "full": "Purrfect Weather Agent"
   },
   "description": {
-    "short": "Short description of Agent_Demo1",
-    "full": "Full description of Agent_Demo1"
+    "short": "Get current conditions and five-day weather forecasts.",
+    "full": "A cat-themed weather assistant that reports current conditions and five-day forecasts for cities."
   },
   "accentColor": "#FFFFFF",
   "bots": [
@@ -34,19 +34,22 @@
       "isNotificationOnly": false,
       "commandLists": [
         {
-          "scopes": [ "personal", "team", "groupChat" ],
+          "scopes": ["personal", "team", "groupChat"],
           "commands": [
             {
-              "title": "Hi",
-              "description": "Say hi to the bot."
+              "title": "Current weather",
+              "description": "Get the current weather for a city."
+            },
+            {
+              "title": "5-day forecast",
+              "description": "Get a five-day weather forecast for a city."
             }
           ]
         }
       ]
     }
   ],
-  "composeExtensions": [
-  ],
+  "composeExtensions": [],
   "configurableTabs": [],
   "staticTabs": [],
   "permissions": [

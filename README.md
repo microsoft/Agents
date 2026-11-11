@@ -62,6 +62,10 @@ automatically—no manual loading is needed. Run `/plugin` to verify installatio
 
 To learn more about the Agents SDK, you can read our official docs here: [Agents SDK Documentation](https://aka.ms/M365-Agents-SDK-Docs)
 
+The [configuration schema preview](schema/README.md) defines a canonical JSON
+document for structural validation in downstream projects. It does not establish
+runtime support or replace SDK-specific configuration loading.
+
 ## Related SDKs and Agent Platforms
 
 - **Semantic Kernel**. [Semantic Kernel](https://learn.microsoft.com/en-us/semantic-kernel/overview/)

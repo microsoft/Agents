@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 from os import environ
 from microsoft_agents.hosting.core import AgentApplication, AgentAuthConfiguration
 from microsoft_agents.hosting.aiohttp import (
@@ -27,6 +30,6 @@ def start_server(
     APP["adapter"] = agent_application.adapter
 
     try:
-        run_app(APP, host="localhost", port=environ.get("PORT", 3978))
+        run_app(APP, host="localhost", port=int(environ.get("PORT", 3978)))
     except Exception as error:
         raise error

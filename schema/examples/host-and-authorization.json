@@ -1,0 +1,51 @@
+{
+  "connections": {
+    "serviceConnection": {
+      "settings": {
+        "authType": "ClientSecret",
+        "tenantId": "00000000-0000-0000-0000-000000000000",
+        "clientId": "00000000-0000-0000-0000-000000000000",
+        "authorityEndpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000",
+        "scopes": ["https://api.botframework.com/.default"]
+      }
+    }
+  },
+  "connectionsMap": [
+    {
+      "serviceUrl": "*",
+      "connection": "serviceConnection"
+    }
+  ],
+  "cloudAdapterOptions": {
+    "emitStackTrace": false
+  },
+  "outboundHostValidator": {
+    "enabled": true,
+    "includeDefaultMicrosoftHosts": true,
+    "hosts": ["api.contoso.com"]
+  },
+  "agentApplication": {
+    "userAuthorization": {
+      "handlers": {
+        "graph": {
+          "settings": {
+            "azureBotOAuthConnectionName": "graph",
+            "title": "Sign in",
+            "text": "Sign in to continue.",
+            "enableSso": true,
+            "scopes": ["User.Read"],
+            "oboConnectionName": "serviceConnection",
+            "oboScopes": ["https://graph.microsoft.com/.default"],
+            "invalidSignInRetryMax": 0,
+            "invalidSignInRetryMessage": "Please try signing in again."
+          }
+        }
+      }
+    }
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information"
+    }
+  }
+}

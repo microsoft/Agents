@@ -1,8 +1,13 @@
 {
+  "name": "azure-ai-streaming",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Streams an Azure OpenAI response with the Microsoft 365 Agents SDK.",
+  "license": "MIT",
   "type": "module",
   "dependencies": {
     "@ai-sdk/azure": "^4.0.43",
-    "@microsoft/agents-hosting-express": "^1.7.2",
+    "@microsoft/agents-hosting-express": "1.9.1",
     "ai": "^7.0.66"
   },
   "scripts": {
@@ -14,5 +19,8 @@
   "devDependencies": {
     "@microsoft/m365agentsplayground": "^0.2.28",
     "typescript": "^7.0.2"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

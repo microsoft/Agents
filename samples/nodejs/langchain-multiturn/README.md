@@ -1,79 +1,75 @@
-﻿# LangChain multi-turn WeatherAgent
+# LangChain multi-turn Weather Agent
 
-This is a sample of a simple Agent that is hosted on an Node.js web service with the Express framework. This agent is configured to accept a request asking for information about a weather forecast and respond to the caller with an Adaptive Card.
+This sample demonstrates a Microsoft 365 Agents SDK application that uses LangChain and LangGraph as its AI orchestrator. The agent maintains conversation history, asks follow-up questions for a missing date or location, retrieves a synthetic weather forecast, and returns an Adaptive Card.
 
-This agent sample is intended to introduce you the basics of integrating LangChain with the Microsoft 365 Agents SDK in order to build powerful agents. It can also be used as a the base for a custom agent that you choose to develop.
+The equivalent orchestrator samples are `semantic-kernel-multiturn` for .NET and Python.
 
-***Note:*** This sample requires JSON output from the model which works best from newer versions of the model such as gpt-4o-mini.
+## What this sample demonstrates
+
+- Azure OpenAI or OpenAI chat completion
+- LangGraph tools for date/time, synthetic weather, and Adaptive Card creation
+- Multi-turn, per-conversation history using a LangGraph checkpointer
+- Informative progress updates through the Agents SDK streaming response
+- Structured output validated with Zod
+- Adaptive Card 1.5 responses with Celsius and Fahrenheit temperatures
+
+The weather tool intentionally returns a random temperature. Replace it with a weather service when adapting this sample for production.
 
 ## Prerequisites
 
-- NodeJS > 20.*
-- You will need an Azure OpenAI or OpenAI instance, with the preferred model of `gpt-4o-mini`.
+- Node.js 22 or later
+- Microsoft Agents Playground
+- An Azure OpenAI deployment or OpenAI API key; `gpt-4o-mini` or later is recommended
 
-## Running this sample
+## Configure the sample
 
-Create a `.env` file, based on the provided `env.TEMPLATE` and configure either the AzureOpenAI or OpenAI settings:
+Copy `env.TEMPLATE` to `.env`. Configure one model provider:
 
 ```env
+# Azure OpenAI
+USE_AZURE_OPENAI=true
 AZURE_OPENAI_API_INSTANCE_NAME=
-AZURE_OPENAI_API_DEPLOYMENT_NAME=
+AZURE_OPENAI_DEPLOYMENT_NAME=
 AZURE_OPENAI_API_KEY=
-AZURE_OPENAI_API_VERSION=
+AZURE_OPENAI_API_VERSION=2024-06-01
 
-OPENAI_MODEL=
+# OpenAI
+USE_AZURE_OPENAI=false
+OPENAI_MODEL_ID=gpt-4o-mini
 OPENAI_API_KEY=
-
-USE_AZURE_OPENAI_API=true
 ```
 
-## Getting Started with langchain-multiturn sample
+For Azure Bot Service, also configure the connection settings already present in `env.TEMPLATE`. They can remain empty for local Playground testing.
 
-### QuickStart using the Microsoft 365 Agents Playground
+## Run with Agents Playground
 
-1. Open the `langchain-multiturn` sample in Visual Studio Code
-1. Start the application with  `npm start`
-1. Start the test tool with `npm run test-tool`
+1. Install dependencies with `npm install`.
+2. Start the agent with `npm start`.
+3. In another terminal, start the Playground with `npm run test-tool`.
+4. Ask for a forecast, for example: `What will the weather be tomorrow in Seattle?`
+5. Continue with a follow-up such as: `And next Friday?`
 
-If all is working correctly, the Agents Playground tool should show you a web chat experience with the words **"Hello and Welcome! I'm here to help with all your weather forecast needs!"**, now you can interact with the agent asking forecast questions such as **tell me the weather forecast for today in NYC** 
+The service listens on `http://localhost:3978/api/messages` by default.
 
-### QuickStart using WebChat
+## Run with Azure Bot Service
 
-**To run the sample connected to Azure Bot Service, the following additional tools are required:**
-
-- Access to an Azure Subscription with access to preform the following tasks:
-    - Create and configure Entra ID Application Identities
-    - Create and configure an [Azure Bot Service](https://aka.ms/AgentsSDK-CreateBot) for your bot
-    - Create and configure an [Azure App Service](https://learn.microsoft.com/azure/app-service/) to deploy your bot on to.
-    - A tunneling tool to allow for local development and debugging should you wish to do local development whilst connected to a external client such as Microsoft Teams.
-
-
-1. [Create an Azure Bot](https://aka.ms/AgentsSDK-CreateBot)
-   - Record the Application ID, the Tenant ID, and the Client Secret for use below
-
-
-1. Configuring the token connection in the Agent settings
-   > The instructions for this sample are for a SingleTenant Azure Bot using ClientSecrets.  The token connection configuration will vary if a different type of Azure Bot was configured.
-
-   1. Update the `.env` file in the root of the sample project.
-
-```env
-tenantId=
-clientId=
-clientSecret=
-```
-   
-1. Run `dev tunnels`. Please follow [Create and host a dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) and host the tunnel with anonymous user access command as shown below:
+1. Create and configure an [Azure Bot](https://aka.ms/AgentsSDK-CreateBot).
+2. Fill in the client ID, client secret, and tenant ID connection settings in `.env`.
+3. Host an anonymous development tunnel:
 
    ```bash
    devtunnel host -p 3978 --allow-anonymous
    ```
 
-1. On the Azure Bot, select **Settings**, then **Configuration**, and update the **Messaging endpoint** to `{tunnel-url}/api/messages`
+4. Set the Azure Bot messaging endpoint to `{tunnel-url}/api/messages`.
+5. Start the agent with `npm start` and test it through Web Chat or a Microsoft 365 app package.
 
-1. Start the Agent with `npm start`
+The `appManifest` directory contains the Teams manifest and icons. Replace `${{AAD_APP_CLIENT_ID}}` and `<<BOT_DOMAIN>>`, zip the contents of the directory, and upload the package as a custom app.
 
-1. Go to Azure Bot Service `Test in WebChat` to start interacting with your bot.
+Conversation history uses in-memory storage and is lost when the process restarts. Use persistent Agents SDK and LangGraph storage for a production deployment.
 
 ## Further reading
-To learn more about building Bots and Agents, see our [Microsoft 365 Agents SDK](https://github.com/microsoft/agents) repo.
+
+- [Microsoft 365 Agents SDK](https://github.com/microsoft/agents)
+- [LangChain](https://js.langchain.com/)
+- [Adaptive Cards](https://adaptivecards.io/)

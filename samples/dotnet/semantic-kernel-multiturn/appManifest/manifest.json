@@ -14,12 +14,12 @@
     "outline": "outline.png"
   },
   "name": {
-    "short": "SK Multiturn Agent",
-    "full": "AgentSDK SemanticKernelMultiturn"
+    "short": "SDK Weather .NET",
+    "full": "Agents SDK Semantic Kernel Weather Agent for .NET"
   },
   "description": {
-    "short": "Sample demonstrating AgentSDK, Teams, and SemanticKernel",
-    "full": "Sample demonstrating AgentSDK, Teams, and SemanticKernel"
+    "short": "A multi-turn weather agent built with the Agents SDK and Semantic Kernel",
+    "full": "A sample multi-turn weather agent built with the Microsoft 365 Agents SDK and Semantic Kernel."
   },
   "accentColor": "#FFFFFF",
   "copilotAgents": {

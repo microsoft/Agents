@@ -1,79 +1,75 @@
-# Weather Prediction Agent
+# Semantic Kernel multi-turn Weather Agent
 
-This is a sample of a simple weather-forecasting Agent that is hosted on a Python web service. This Agent accepts a request asking for a weather forecast and responds to the users with an Adaptive Card.
+This sample demonstrates a Microsoft 365 Agents SDK application that uses Semantic Kernel as its AI orchestrator. The agent maintains conversation history, asks follow-up questions for a missing date or location, retrieves a synthetic weather forecast, and returns an Adaptive Card.
 
-This Agent Sample is intended to introduce you to the basics of integrating Semantic Kernel with the Microsoft 365 Agents SDK in order to build powerful Agents. It can also be used as the base for a custom Agent that you choose to develop.
+The equivalent orchestrator samples are `semantic-kernel-multiturn` for .NET and `langchain-multiturn` for JavaScript.
 
-***Note:*** This sample requires JSON output from the model which works best from newer versions of the model such as `gpt-4o-mini`.
+## What this sample demonstrates
+
+- Azure OpenAI or OpenAI chat completion
+- Semantic Kernel plugins for date/time, synthetic weather, and Adaptive Card creation
+- Multi-turn conversation history stored in Agents SDK conversation state
+- Informative progress updates through the Agents SDK streaming response
+- Structured output validated with Pydantic
+- Adaptive Card 1.5 responses with Celsius and Fahrenheit temperatures
+
+The weather plugin intentionally returns a random temperature. Replace it with a weather service when adapting this sample for production.
 
 ## Prerequisites
 
--  [Python](https://www.python.org/) version 3.10 or higher
--  [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) (for local development)
-- You will need an Azure OpenAI, with the preferred model of `gpt-4o-mini`.
+- Python 3.10 or later
+- Microsoft Agents Playground
+- An Azure OpenAI deployment or OpenAI API key; `gpt-4o-mini` or later is recommended
 
-## Local Setup
+## Configure the sample
 
-### Configure Azure Bot Service
+Copy `env.TEMPLATE` to `.env`. The connection values can remain empty for local Playground testing while `ANONYMOUS_ALLOWED=true`.
 
-1. [Create an Azure Bot](https://aka.ms/AgentsSDK-CreateBot)
-   - Record the Application ID, the Tenant ID, and the Client Secret for use below
+Configure one model provider:
 
-1. Configuring the token connection in the Agent settings
-    1. Open the `env.TEMPLATE` file in the root of the sample project, rename it to `.env` and configure the following values:
-      1. Set the **CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTID** to the AppId of the bot identity.
-      2. Set the **CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTSECRET** to the Secret that was created for your identity. *This is the `Secret Value` shown in the AppRegistration*.
-      3. Set the **CONNECTIONS__SERVICE_CONNECTION__SETTINGS__TENANTID** to the Tenant Id where your application is registered.
+```env
+# Azure OpenAI
+USE_AZURE_OPENAI=true
+AZURE_OPENAI_ENDPOINT=
+AZURE_OPENAI_API_VERSION=
+AZURE_OPENAI_API_KEY=
+AZURE_OPENAI_DEPLOYMENT_NAME=gpt-4o-mini
 
-1. Configure the Azure OpenAI settings in the Agent settings
-   1. Set **AZURE_OPENAI_API_VERSION** to an OpenAI API version such as ` 2025-01-01-preview`
-   1. Set **AZURE_OPENAI_ENDPOINT** to the endpoint for your Azure OpenAI instance. For example, if using an Azure AI Foundry named `testing`, the endpoint would be `https://endpoint.openai.azure.com/`
-   1. Set **AZURE_OPENAI_API_KEY** to the key.
+# OpenAI
+USE_AZURE_OPENAI=false
+OPENAI_MODEL_ID=gpt-4o-mini
+OPENAI_API_KEY=
+```
 
+## Run with Agents Playground
 
-1. Run `dev tunnels`. See [Create and host a dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) and host the tunnel with anonymous user access command as shown below:
+1. Create and activate a virtual environment.
+2. Install dependencies with `pip install -r requirements.txt`.
+3. Start the agent with `python -m src.main`.
+4. Start the Playground with `agentsplayground -e http://localhost:3978/api/messages`.
+5. Ask: `What will the weather be tomorrow in Seattle?`
+6. Continue with: `And next Friday?`
+
+## Run with Azure Bot Service
+
+1. Create and configure an [Azure Bot](https://aka.ms/AgentsSDK-CreateBot).
+2. Fill in the connection client ID, client secret, and tenant ID in `.env`.
+3. Set `CONNECTIONS__SERVICE_CONNECTION__SETTINGS__ANONYMOUS_ALLOWED=false`.
+4. Host an anonymous development tunnel:
 
    ```bash
    devtunnel host -p 3978 --allow-anonymous
    ```
 
-1. Take note of the url shown after `Connect via browser:`
+5. Set the Azure Bot messaging endpoint to `{tunnel-url}/api/messages`.
+6. Start the agent and test it through Web Chat or a Microsoft 365 app package.
 
-1. On the Azure Bot, select **Settings**, then **Configuration**, and update the **Messaging endpoint** to `{tunnel-url}/api/messages`
+The `appManifest` directory contains the Teams manifest and icons. Replace `${{AAD_APP_CLIENT_ID}}` and `<<BOT_DOMAIN>>`, zip the contents of the directory, and upload the package as a custom app.
 
-### Running the Agent
-
-1. Open this folder from your IDE or Terminal of preference
-1. (Optional but recommended) Set up virtual environment and activate it.
-1. Install dependencies
-
-```sh
-pip install -r requirements.txt
-```
-
-### Run in localhost, anonymous mode
-
-1. Start the application
-
-```sh
-python -m src.main
-```
-
-At this point you should see the message 
-
-```text
-======== Running on http://localhost:3978 ========
-```
-
-The agent is ready to accept messages.
-
-## Accessing the Agent
-
-### Using the Agent in WebChat
-
-1. Go to your Azure Bot Service resource in the Azure Portal and select **Test in WebChat**
+Conversation history uses in-memory storage and is lost when the process restarts. Configure persistent Agents SDK storage for production.
 
 ## Further reading
-To learn more about building Agents, see our [Microsoft 365 Agents SDK](https://github.com/microsoft/agents) repo.
 
-For more information on logging configuration, see the logging section in the Quickstart Agent sample README.
+- [Microsoft 365 Agents SDK](https://github.com/microsoft/agents)
+- [Semantic Kernel](https://github.com/microsoft/semantic-kernel)
+- [Adaptive Cards](https://adaptivecards.io/)

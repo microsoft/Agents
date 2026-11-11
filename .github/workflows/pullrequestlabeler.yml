@@ -1,11 +1,11 @@
 name: Pull request Labeler
 on:
-  pull_request_target:
+  # Keep privileged labeling on the default branch without checking out PR code.
+  workflow_run:
+    workflows: [Pull request Labeler trigger]
+    types: [requested]
 
-permissions:
-  contents: read
-  pull-requests: write
-  issues: write
+permissions: {}
 
 defaults:
   run:
@@ -14,17 +14,49 @@ defaults:
 jobs:
   Label:
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'microsoft'
+    if: github.repository_owner == 'microsoft' && github.event.workflow_run.event == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
+      - name: Find associated pull requests
+        id: pull-requests
+        env:
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          # Fork and bot runs can omit workflow_run.pull_requests.
+          $pages = gh api "repos/$env:GITHUB_REPOSITORY/pulls?state=open&per_page=100" --paginate --slurp | ConvertFrom-Json
+          if ($LASTEXITCODE -ne 0) { throw "Failed to find associated pull requests" }
+          $pullRequests = @($pages | ForEach-Object { $_ } | Where-Object {
+            $_.state -eq 'open' -and
+            $_.head.sha -eq $env:HEAD_SHA -and
+            $_.base.repo.full_name -eq $env:GITHUB_REPOSITORY
+          })
+          $forkNumbers = @($pullRequests | Where-Object { $_.head.repo.full_name -ne $env:GITHUB_REPOSITORY }).number
+          @(
+            "numbers<<EOF"
+            $pullRequests.number
+            "EOF"
+            "fork-numbers=$($forkNumbers -join ',')"
+          ) >> $env:GITHUB_OUTPUT
+
       - name: Label pull request
+        if: steps.pull-requests.outputs.numbers != ''
         uses: actions/labeler@bf12e9b00b37c5c0ca2b87b79b2daf7891dbda13 # v7.0.0
         with:
-            repo-token: '${{ secrets.GITHUB_TOKEN }}'
-            sync-labels: true
+          repo-token: ${{ github.token }}
+          sync-labels: true
+          pr-number: ${{ steps.pull-requests.outputs.numbers }}
 
       - name: Label community contribution
-        if: github.event.pull_request.head.repo.full_name != github.repository
+        if: steps.pull-requests.outputs.fork-numbers != ''
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBERS: ${{ steps.pull-requests.outputs.fork-numbers }}
         run: |
-          gh api /repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/labels  -f "labels[]=From Fork" -H "Accept: application/vnd.github.v3+json" -H "X-GitHub-Api-Version: 2022-11-28"
+          foreach ($number in ($env:PR_NUMBERS -split ',')) {
+            gh api "repos/$env:GITHUB_REPOSITORY/issues/$number/labels" -f "labels[]=From Fork" -H "Accept: application/vnd.github.v3+json" -H "X-GitHub-Api-Version: 2022-11-28" --silent
+            if ($LASTEXITCODE -ne 0) { throw "Failed to label community contribution $number" }
+          }
