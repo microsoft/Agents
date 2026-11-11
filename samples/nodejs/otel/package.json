@@ -16,7 +16,7 @@
     "agentsplayground": "agentsplayground"
   },
   "devDependencies": {
-    "@microsoft/aspire-cli": "13.4.6",
+    "@microsoft/aspire-cli": "13.6.5",
     "@microsoft/m365agentsplayground": "0.2.24",
     "typescript": "^7.0.2"
   },
