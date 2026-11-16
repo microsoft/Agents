@@ -1,0 +1,206 @@
+[
+    {
+        "type": "message",
+        "id": "1783968757041",
+        "timestamp": "2026-07-13T18:52:37.0587081\u002B00:00",
+        "localTimestamp": "2026-07-13T11:52:37.0587081-07:00",
+        "localTimezone": "America/Los_Angeles",
+        "serviceUrl": "https://smba.trafficmanager.net/amer/a30263b9-1caf-4db5-ab53-ed3850c0bd1f/",
+        "channelId": "msteams",
+        "from": {
+            "id": "29:10TKlQeWtfAlTuY7fY4ieTCA4ySgKQBwWon3ldyNNdwe8vAJtekoPKq_mtou_SjxKmuJZKRZ-57IOPtljhjUrEA",
+            "name": "Rodrigo Brand\u00E3o",
+            "aadObjectId": "0b1d77e6-17ed-4ffd-8798-f2fc214ce4ee",
+            "role": "user"
+        },
+        "conversation": {
+            "conversationType": "personal",
+            "tenantId": "a30263b9-1caf-4db5-ab53-ed3850c0bd1f",
+            "id": "a:1xk_NDeAsI56ZE7GcJsyeyg46qwePQ6raT4OnaeMIoJ6_-9Z8hGt_q35tw2M2raLXvwdGhK_y4fts_6kM8cbj6_R7OCsuxlSobvQAs_oR5Ep7iEWKS_yrBdZQd1ShJAcZ"
+        },
+        "recipient": {
+            "id": "28:a410e34a-3de4-4556-a8d3-331cda81a8da",
+            "name": "robrandao-bot"
+        },
+        "textFormat": "plain",
+        "membersAdded": [],
+        "membersRemoved": [],
+        "reactionsAdded": [],
+        "reactionsRemoved": [],
+        "locale": "en-US",
+        "text": "/me",
+        "attachments": [
+            {
+                "contentType": "text/html",
+                "content": "\u003Cp\u003E/me\u003C/p\u003E"
+            }
+        ],
+        "entities": [
+            {
+                "type": "clientInfo",
+                "locale": "en-US",
+                "country": "US",
+                "platform": "Web",
+                "timezone": "America/Los_Angeles"
+            }
+        ],
+        "channelData": {
+            "tenant": {
+                "id": "a30263b9-1caf-4db5-ab53-ed3850c0bd1f"
+            }
+        },
+        "listenFor": [],
+        "textHighlights": []
+    },
+    {
+        "type": "message",
+        "id": "g_f3e5149e-3687-4244-9fd0-43bb7fbf45dc",
+        "timestamp": "2026-07-13T18:52:39.6247546\u002B00:00",
+        "serviceUrl": "https://smba.trafficmanager.net/amer/a30263b9-1caf-4db5-ab53-ed3850c0bd1f/",
+        "channelId": "msteams",
+        "from": {
+            "id": "28:a410e34a-3de4-4556-a8d3-331cda81a8da",
+            "name": "robrandao-bot"
+        },
+        "conversation": {
+            "conversationType": "personal",
+            "tenantId": "a30263b9-1caf-4db5-ab53-ed3850c0bd1f",
+            "id": "a:1xk_NDeAsI56ZE7GcJsyeyg46qwePQ6raT4OnaeMIoJ6_-9Z8hGt_q35tw2M2raLXvwdGhK_y4fts_6kM8cbj6_R7OCsuxlSobvQAs_oR5Ep7iEWKS_yrBdZQd1ShJAcZ"
+        },
+        "recipient": {
+            "id": "29:10TKlQeWtfAlTuY7fY4ieTCA4ySgKQBwWon3ldyNNdwe8vAJtekoPKq_mtou_SjxKmuJZKRZ-57IOPtljhjUrEA",
+            "name": "Rodrigo Brand\u00E3o",
+            "aadObjectId": "0b1d77e6-17ed-4ffd-8798-f2fc214ce4ee",
+            "role": "user"
+        },
+        "membersAdded": [],
+        "membersRemoved": [],
+        "reactionsAdded": [],
+        "reactionsRemoved": [],
+        "locale": "en-US",
+        "inputHint": "acceptingInput",
+        "attachments": [
+            {
+                "contentType": "application/vnd.microsoft.card.oauth",
+                "content": {
+                    "text": "Please sign in and send the 6-digit code",
+                    "connectionName": "teams",
+                    "tokenExchangeResource": {
+                        "id": "bbef2139-f909-4905-9a3d-102f344b8547",
+                        "uri": "api://botid-7e1822f3-f8d1-463d-bc49-b0ec9dc61647",
+                        "providerId": "30dd229c-58e3-4a48-bdfd-91ec48eb906c"
+                    },
+                    "tokenPostResource": {
+                        "sasUrl": "https://token.botframework.com/api/sas/postToken?expiry=1783968819\u0026id=key2\u0026state=ae94b92ea4ae48c0bc6ec13aace5671d\u0026hmac=EJ2NO2q3idNUuSXqRNmMJqbpkxAw95IdhMyyZTYY%2f8Y%3d"
+                    },
+                    "buttons": [
+                        {
+                            "type": "signin",
+                            "title": "Sign in for /me",
+                            "text": "Please sign in and send the 6-digit code",
+                            "value": "https://token.botframework.com/api/oauth/signin?signin=ae94b92ea4ae48c0bc6ec13aace5671d"
+                        }
+                    ]
+                }
+            }
+        ],
+        "entities": [],
+        "channelData": {
+            "tenant": {
+                "id": "a30263b9-1caf-4db5-ab53-ed3850c0bd1f"
+            }
+        },
+        "replyToId": "1783968757041",
+        "listenFor": [],
+        "textHighlights": []
+    },
+    {
+        "type": "invoke",
+        "id": "f:9444ce26-5b7c-0b21-d048-9a8c4bb9bb92",
+        "timestamp": "2026-07-13T18:52:40.722\u002B00:00",
+        "localTimestamp": "2026-07-13T11:52:40.722-07:00",
+        "localTimezone": "America/Los_Angeles",
+        "serviceUrl": "https://smba.trafficmanager.net/amer/a30263b9-1caf-4db5-ab53-ed3850c0bd1f/",
+        "channelId": "msteams",
+        "from": {
+            "id": "29:10TKlQeWtfAlTuY7fY4ieTCA4ySgKQBwWon3ldyNNdwe8vAJtekoPKq_mtou_SjxKmuJZKRZ-57IOPtljhjUrEA",
+            "name": "Rodrigo Brand\u00E3o",
+            "aadObjectId": "0b1d77e6-17ed-4ffd-8798-f2fc214ce4ee",
+            "role": "user"
+        },
+        "conversation": {
+            "conversationType": "personal",
+            "tenantId": "a30263b9-1caf-4db5-ab53-ed3850c0bd1f",
+            "id": "a:1xk_NDeAsI56ZE7GcJsyeyg46qwePQ6raT4OnaeMIoJ6_-9Z8hGt_q35tw2M2raLXvwdGhK_y4fts_6kM8cbj6_R7OCsuxlSobvQAs_oR5Ep7iEWKS_yrBdZQd1ShJAcZ"
+        },
+        "recipient": {
+            "id": "28:a410e34a-3de4-4556-a8d3-331cda81a8da",
+            "name": "robrandao-bot"
+        },
+        "membersAdded": [],
+        "membersRemoved": [],
+        "reactionsAdded": [],
+        "reactionsRemoved": [],
+        "locale": "en-US",
+        "attachments": [],
+        "entities": [
+            {
+                "type": "clientInfo",
+                "locale": "en-US",
+                "country": "US",
+                "platform": "Web",
+                "timezone": "America/Los_Angeles"
+            }
+        ],
+        "channelData": {
+            "tenant": {
+                "id": "a30263b9-1caf-4db5-ab53-ed3850c0bd1f"
+            },
+            "source": {
+                "name": "message"
+            }
+        },
+        "value": {
+            "code": "resourcematchfailed",
+            "message": "Resource match failed"
+        },
+        "name": "signin/failure",
+        "listenFor": [],
+        "textHighlights": []
+    },
+    {
+        "type": "invokeResponse",
+        "id": "g_6c98473b-862f-4df3-8545-cab2d4aa3d05",
+        "timestamp": "2026-07-13T18:52:40.7214192\u002B00:00",
+        "serviceUrl": "https://smba.trafficmanager.net/amer/a30263b9-1caf-4db5-ab53-ed3850c0bd1f/",
+        "channelId": "msteams",
+        "from": {
+            "id": "28:a410e34a-3de4-4556-a8d3-331cda81a8da",
+            "name": "robrandao-bot"
+        },
+        "conversation": {
+            "conversationType": "personal",
+            "tenantId": "a30263b9-1caf-4db5-ab53-ed3850c0bd1f",
+            "id": "a:1xk_NDeAsI56ZE7GcJsyeyg46qwePQ6raT4OnaeMIoJ6_-9Z8hGt_q35tw2M2raLXvwdGhK_y4fts_6kM8cbj6_R7OCsuxlSobvQAs_oR5Ep7iEWKS_yrBdZQd1ShJAcZ"
+        },
+        "recipient": {
+            "id": "29:10TKlQeWtfAlTuY7fY4ieTCA4ySgKQBwWon3ldyNNdwe8vAJtekoPKq_mtou_SjxKmuJZKRZ-57IOPtljhjUrEA",
+            "name": "Rodrigo Brand\u00E3o",
+            "aadObjectId": "0b1d77e6-17ed-4ffd-8798-f2fc214ce4ee",
+            "role": "user"
+        },
+        "membersAdded": [],
+        "membersRemoved": [],
+        "reactionsAdded": [],
+        "reactionsRemoved": [],
+        "locale": "en-US",
+        "attachments": [],
+        "entities": [],
+        "replyToId": "f:9444ce26-5b7c-0b21-d048-9a8c4bb9bb92",
+        "value": {
+            "status": 200
+        },
+        "listenFor": [],
+        "textHighlights": []
+    }
+]

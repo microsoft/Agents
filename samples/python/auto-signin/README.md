@@ -13,7 +13,7 @@ This sample uses different routes, and some are configured to use an auth handle
 
 ## Prerequisites
 
--  [Python](https://www.python.org/) version 3.10 or higher
+-  [Python](https://www.python.org/) version 3.11 or higher
 -  [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) (for local development)
 
 ## Local Setup

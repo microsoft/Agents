@@ -26,8 +26,8 @@ messages and other channels are outside this reference's boundary.
 
 ## SDK packages and local setup
 
-Install Python 3.12. The sample uses the stable Microsoft Agents PyPI packages
-`1.8.0`, the latest released version at the time this reference was updated.
+Install Python 3.12. The sample targets the forthcoming Microsoft Agents PyPI
+release `1.10.0`. Install the dependencies after that release is published.
 Pip installs the published wheels directly; no SDK checkout or wheel build is needed.
 
 ```powershell

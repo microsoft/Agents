@@ -17,7 +17,7 @@ The weather plugin intentionally returns a random temperature. Replace it with a
 
 ## Prerequisites
 
-- Python 3.10 or later
+- Python 3.11 or later
 - Microsoft Agents Playground
 - An Azure OpenAI deployment or OpenAI API key; `gpt-4o-mini` or later is recommended
 

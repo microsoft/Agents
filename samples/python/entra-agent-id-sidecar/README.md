@@ -10,7 +10,7 @@ application permission or tenant-wide application-permission grant.
 
 ## Prerequisites
 
-- Python 3.10 or later
+- Python 3.11 or later
 - Docker Desktop with Docker Compose
 - [Dev Tunnels CLI](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started)
 - An Agent Identity Blueprint application

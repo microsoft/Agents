@@ -14,7 +14,7 @@ The agent supports these cards:
 
 ## Prerequisites
 
-- [Python](https://www.python.org/) version 3.10 or higher
+- [Python](https://www.python.org/) version 3.11 or higher
 - [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) for Azure Bot Service testing
 
 ## Local setup

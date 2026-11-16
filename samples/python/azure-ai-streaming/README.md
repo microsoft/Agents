@@ -4,7 +4,7 @@ This sample hosts a Microsoft 365 Agent on Python and aiohttp. Every message ask
 
 ## Prerequisites
 
-- [Python](https://www.python.org/) 3.10 or later
+- [Python](https://www.python.org/) 3.11 or later
 - An Azure OpenAI resource and model deployment
 - Agents Playground for local testing, or an Azure Bot resource for Web Chat
 

@@ -8,13 +8,13 @@ The standard harness currently supports delegated permissions only
 
 To set up this sample, you will need the following:
 
-1. [Python](https://www.python.org/) version 3.10 or higher
+1. [Python](https://www.python.org/) version 3.11 or higher
 2. An Agent Created in Microsoft Copilot Studio or access to an existing Agent.
 3. Ability to Create an Application Identity in Azure for a Public Client/Native App Registration Or access to an existing Public Client/Native App registration with the `CopilotStudio.Copilots.Invoke` API Permission assigned. 
 
 ## Prerequisites
 
-- [Python](https://www.python.org/) version 3.10 or higher
+- [Python](https://www.python.org/) version 3.11 or higher
 - [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) (for local development)
 - An Agent created in Microsoft CopilotStudio or access to an existing Agent.
 - Ability to create an Application Identity in Azure for a public client/native App Registration or access to an existing one with the `CopilotStudio.Copilots.Invoke` API permission assigned.

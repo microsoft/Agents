@@ -1,0 +1,55 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.22/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.22",
+  "version": "1.0.0",
+  "id": "7e1822f3-f8d1-463d-bc49-b0ec9dc61647",
+  "developer": {
+    "name": "Microsoft, Inc.",
+    "websiteUrl": "https://example.azurewebsites.net",
+    "privacyUrl": "https://example.azurewebsites.net/privacy",
+    "termsOfUseUrl": "https://example.azurewebsites.net/termsofuse"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "RB Teams Agent",
+    "full": "AgentSDK Automatic User Sign-in Authorization (OAuth)"
+  },
+  "description": {
+    "short": "RB Teams Agent",
+    "full": "This sample demonstrates how to integrate Azure AD authorization in an Agent with Single Sign-On (SSO) capabilities built with the AgentSDK"
+  },
+  "accentColor": "#FFFFFF",
+  "copilotAgents": {
+    "customEngineAgents": [
+      {
+        "id": "7e1822f3-f8d1-463d-bc49-b0ec9dc61647",
+        "type": "bot"
+      }
+    ]
+  },
+  "bots": [
+    {
+      "botId": "7e1822f3-f8d1-463d-bc49-b0ec9dc61647",
+      "scopes": [
+        "personal"
+      ],
+      "supportsFiles": false,
+      "isNotificationOnly": false
+    }
+  ],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": [
+    "token.botframework.com",
+    "72d7dj35-3978.usw2.devtunnels.ms"
+  ],
+  "webApplicationInfo": {
+    "id": "7e1822f3-f8d1-463d-bc49-b0ec9dc61647",
+    "resource": "api://botid-7e1822f3-f8d1-463d-bc49-b0ec9dc61647"
+  }
+}

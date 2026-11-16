@@ -21,7 +21,7 @@ This sample demonstrates a **Microsoft 365 Agents SDK** agent that uses the **Mi
 
 | Tool | Purpose |
 |---|---|
-| [Python](https://www.python.org/) 3.10+ | Build and run the agent |
+| [Python](https://www.python.org/) 3.11+ | Build and run the agent |
 | [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) | Expose local server for testing |
 | [Microsoft Agents Playground](https://learn.microsoft.com/microsoft-365/agents-sdk/test-with-toolkit-project) | Test the agent locally without a Teams deployment |
 | Azure subscription | Required to deploy an Azure OpenAI model |

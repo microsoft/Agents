@@ -8,7 +8,7 @@ This sample follows the Microsoft 365 Agents Python hosting pattern and shows ho
 
 ## Prerequisites
 
-- [Python](https://www.python.org/) 3.10 or higher
+- [Python](https://www.python.org/) 3.11 or higher
 - [dev tunnel](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started?tabs=windows) for local development
 - GitHub Copilot CLI installed globally
 - An Azure Bot / Microsoft 365 Agent registration with client ID, tenant ID, and client secret
