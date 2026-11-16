@@ -23,23 +23,14 @@ from microsoft_agents.hosting.core.app.proactive import Conversation
 load_dotenv()
 agents_sdk_config = load_configuration_from_env(environ)
 
-# Environment variables represent indexed values such as SCOPES__0 as a
-# dictionary. The connection configuration requires an ordered list.
-for connection in agents_sdk_config.get("CONNECTIONS", {}).values():
-    settings = connection.get("SETTINGS", {})
-    scopes = settings.get("SCOPES")
-    if isinstance(scopes, dict):
-        settings["SCOPES"] = [scopes[key] for key in sorted(scopes, key=int)]
-
 STORAGE = MemoryStorage()
-CONNECTION_MANAGER = MsalConnectionManager(**agents_sdk_config)
+CONNECTION_MANAGER = MsalConnectionManager(config=agents_sdk_config)
 ADAPTER = CloudAdapter(connection_manager=CONNECTION_MANAGER)
-AUTHORIZATION = Authorization(STORAGE, CONNECTION_MANAGER, **agents_sdk_config)
+AUTHORIZATION = Authorization(STORAGE, CONNECTION_MANAGER, config=agents_sdk_config)
 
 AGENT_APP = AgentApplication[TurnState](
     options=ApplicationOptions(
         storage=STORAGE,
-        adapter=ADAPTER,
         proactive=ProactiveOptions(storage=STORAGE),
     ),
     authorization=AUTHORIZATION,

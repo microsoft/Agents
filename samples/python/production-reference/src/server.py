@@ -38,7 +38,7 @@ def allowed_service_url(value, production):
         return False
 
 
-def create_server(config, storage, agent, auth, telemetry, cleanup=None):
+def create_server(config, storage, agent, adapter, sdk_config, telemetry, cleanup=None):
     @web.middleware
     async def safe_errors(request, handler):
         started = time.monotonic()
@@ -103,7 +103,7 @@ def create_server(config, storage, agent, auth, telemetry, cleanup=None):
     app = web.Application(
         client_max_size=PAYLOAD_LIMIT, middlewares=[safe_errors, message_security]
     )
-    app["agent_configuration"] = auth
+    app["agent_configuration"] = sdk_config
 
     async def live(request):
         return web.json_response({"status": "ok"})
@@ -120,7 +120,7 @@ def create_server(config, storage, agent, auth, telemetry, cleanup=None):
             return web.json_response({"status": "not ready"}, status=503)
 
     async def messages(request):
-        return await agent.adapter.process(request, agent)
+        return await adapter.process(request, agent)
 
     app.router.add_get("/health/live", live)
     app.router.add_get("/health/ready", ready)

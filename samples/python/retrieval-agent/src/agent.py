@@ -27,12 +27,12 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 configuration = load_configuration_from_env(environ)
 storage = MemoryStorage()
-connection_manager = MsalConnectionManager(**configuration)
+connection_manager = MsalConnectionManager(config=configuration)
 adapter = CloudAdapter(connection_manager=connection_manager)
-authorization = Authorization(storage, connection_manager, **configuration)
+authorization = Authorization(storage, connection_manager, config=configuration)
 get_retrieval_options()
 AGENT_APP = AgentApplication[TurnState](
-    storage=storage, adapter=adapter, authorization=authorization, **configuration
+    storage=storage, authorization=authorization
 )
 
 

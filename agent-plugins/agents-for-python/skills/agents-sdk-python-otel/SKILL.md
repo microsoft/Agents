@@ -306,14 +306,13 @@ TELEMETRY = configure_otel_providers(
 )
 
 # These imports must remain below provider initialization.
-from .agent import AGENT_APP, CONNECTION_MANAGER
+from .agent import ADAPTER, AGENT_APP, agents_sdk_config
 from .start_server import start_server
 
 start_server(
     agent_application=AGENT_APP,
-    auth_configuration=(
-        CONNECTION_MANAGER.get_default_connection_configuration()
-    ),
+    adapter=ADAPTER,
+    config=agents_sdk_config,
     telemetry=TELEMETRY,
 )
 ```
@@ -321,6 +320,15 @@ start_server(
 Do not move `microsoft_agents.hosting.core`,
 `microsoft_agents.hosting.aiohttp`, authentication, storage, connector, or
 agent-module imports above provider initialization.
+
+For SDK 1.10+, `agents_sdk_config` is the root `Configuration` returned by
+`load_configuration_from_env`. Reuse it with `MsalConnectionManager(config=...)`,
+`Authorization(..., config=...)`, and aiohttp's
+`app["agent_configuration"]`. Pass the adapter explicitly to the host; do not
+give it to `AgentApplication` or read `agent.adapter`. Do not use the deprecated
+default-connection configuration accessor or provider `.configuration`.
+Read provider settings from `.config`. Standard OTEL environment variables
+remain separate from the SDK configuration loader.
 
 ### 5. Instrument the libraries the app uses
 

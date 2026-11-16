@@ -117,7 +117,7 @@ On-behalf-of flow is not supported with the current authentication type: {auth_t
 This error is raised when the on-behalf-of flow is attempted with an authentication client type that doesn't support it. Currently, the SDK only supports OBO flow with `ConfidentialClientApplication`. If the authentication client is of an unsupported type, this error will be thrown. This validation occurs in the `acquire_token_on_behalf_of()` method after checking for Managed Identity.
 
 **Likely Fix:**
-Ensure you're using Confidential Client Application authentication (with client secret or certificate) when implementing on-behalf-of flows. Verify your authentication configuration is set to `AuthTypes.ClientSecret` or `AuthTypes.ClientCertificate`. Review your `AgentAuthConfiguration` to confirm the authentication type matches your intended flow.
+Ensure you're using Confidential Client Application authentication (with client secret or certificate) when implementing on-behalf-of flows. For Python, check `MsalConnectionSettings.auth_type` (or the provider's `.config.auth_type`) for `AuthTypes.client_secret` or `AuthTypes.certificate`.
 
 ---
 
@@ -128,7 +128,7 @@ Authentication Type Not Supported
 This error indicates that an unsupported or unrecognized authentication type was specified in the configuration. The SDK supports specific authentication types including client secret, client certificate, managed identity (system and user-assigned), and federated credentials. When an authentication type outside these supported options is provided, this error is raised.
 
 **Likely Fix:**
-Review your `AgentAuthConfiguration` and ensure the `AUTH_TYPE` is set to one of the supported values: `AuthTypes.ClientSecret`, `AuthTypes.ClientCertificate`, `AuthTypes.ManagedIdentitySystem`, `AuthTypes.ManagedIdentityUser`, or other officially supported types. Check the SDK documentation for the current list of supported authentication types and update your configuration accordingly.
+For Python, review `MsalConnectionSettings.auth_type` (or the provider's `.config.auth_type`). Supported values include `AuthTypes.client_secret`, `AuthTypes.certificate`, `AuthTypes.system_managed_identity`, and `AuthTypes.user_managed_identity`. Check the installed SDK for the complete list and the required fields for the selected type.
 
 ---
 
@@ -643,7 +643,7 @@ AppId cannot be empty or None.
 This error is raised when an operation requires the bot's application ID (client ID) but it's missing or empty. The app ID identifies your bot in the Microsoft ecosystem and is required for authentication, authorization, and routing. Many security and service communication operations depend on having a valid app ID.
 
 **Likely Fix:**
-Ensure your bot's application ID is properly configured in your `AgentAuthConfiguration`. The app ID should be set as `CLIENT_ID` in your configuration. Verify you've registered your bot in Azure and obtained the application ID. Check that environment variables or configuration files containing the app ID are being loaded correctly.
+For Python, ensure `MsalConnectionSettings.client_id` is configured, for example through `CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTID`. Load the root with `load_configuration_from_env` and pass it to `MsalConnectionManager(config=config)` and JWT hosting. Verify you've registered your bot in Azure and obtained the application ID.
 
 ---
 
@@ -773,7 +773,7 @@ Credentials are required for authentication.
 This error is raised when attempting authentication operations without providing valid credentials. Credentials may be a client secret, certificate, or other authentication mechanism depending on your configuration. Without credentials, the bot cannot authenticate itself to Azure services or the Bot Framework.
 
 **Likely Fix:**
-Ensure your bot's credentials are properly configured in `AgentAuthConfiguration`. For client secret authentication, verify `CLIENT_SECRET` is set. For certificate authentication, ensure the certificate is properly loaded. Check that environment variables or configuration files containing credentials are being loaded correctly. Verify credentials haven't expired or been rotated without updating your configuration.
+For Python, ensure credentials are configured in `MsalConnectionSettings`, available through the provider's `.config`. For client-secret authentication, verify `client_secret` is set; for certificate authentication, verify `cert_pfx_file`. Check that environment variables or configuration files containing credentials are loaded correctly and that credentials have not expired or rotated.
 
 ---
 

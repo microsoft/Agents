@@ -16,6 +16,8 @@ This sample shows how an agent sends a message when no user activity starts the 
 
 ## Prerequisites
 
+- Agents SDK 1.10.0 preview packages until the release is published; see the
+  [shared configuration guide](../README.md#sdk-110-configuration).
 - [Python 3.10 or later](https://www.python.org/downloads/)
 - An Azure subscription
 - An [Azure Bot](https://github.com/microsoft/Agents/blob/main/docs/HowTo/azurebot-create-single-secret.md) with a client ID, client secret, and tenant ID
@@ -47,6 +49,10 @@ Copy `env.TEMPLATE` to `.env`. Set:
 - `CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTSECRET`
 - `CONNECTIONS__SERVICE_CONNECTION__SETTINGS__TENANTID`
 - `CONNECTIONS__SERVICE_CONNECTION__SETTINGS__SCOPES__0=https://api.botframework.com/.default`
+
+The SDK binds indexed scopes directly. The sample shares the root configuration
+between connections, authorization, and JWT hosting without modifying it.
+Proactive operations receive the host-owned adapter explicitly.
 
 Keep `ENVIRONMENT=development` for local testing. `ALLOWED_CALLERS` is required outside Development. Set it to a comma-separated list of application IDs permitted to call proactive HTTP routes.
 

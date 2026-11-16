@@ -6,8 +6,12 @@ Select the intended Azure public-cloud subscription/tenant first.
 
 ## Build and provision
 
-From this sample directory, install the released packages and run the local
-checks in README.md, then build and provision:
+From this sample directory, install the SDK 1.10.0 packages and run the local
+checks in README.md, then build and provision. That SDK version is currently
+unreleased: preview validation requires a matching wheel set. Set
+`PIP_FIND_LINKS` to its directory so both installation and the packaging
+subprocess can resolve those wheels. Do not promote a preview validation
+artifact as a production-verified release.
 
 ```powershell
 .venv/Scripts/python -m pytest -q
@@ -27,7 +31,7 @@ when the selected traffic profile requires it.
 The template creates a Linux Python 3.12 App Service, user-assigned managed
 identity, Azure Bot Web Chat, private-access Blob container, Blob data role,
 Application Insights and Log Analytics. It sets `PORT=8000` and startup
-`python -m src.main`. Packaging downloads the released SDK wheels and all external
+`python -m src.main`. Packaging downloads the selected SDK wheels and all external
 dependencies for Linux Python 3.12, then includes those wheels and a hash-checked
 requirements file. Remote build installs with `--no-index --require-hashes` from
 that retained wheel set. Packaging fails if a compatible binary wheel is unavailable.

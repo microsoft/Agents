@@ -1,7 +1,7 @@
 python-dotenv
 aiohttp
 openai
-microsoft-agents-activity
-microsoft-agents-hosting-core
-microsoft-agents-hosting-aiohttp
-microsoft-agents-authentication-msal
+microsoft-agents-activity>=1.10.0,<2
+microsoft-agents-hosting-core>=1.10.0,<2
+microsoft-agents-hosting-aiohttp>=1.10.0,<2
+microsoft-agents-authentication-msal>=1.10.0,<2

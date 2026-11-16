@@ -27,7 +27,7 @@
       "name": "agents-for-python",
       "source": "./agent-plugins/agents-for-python",
       "description": "Skills for building agents with the Microsoft 365 Agents SDK for Python",
-      "version": "1.2.0"
+      "version": "1.2.1"
     }
   ]
 }

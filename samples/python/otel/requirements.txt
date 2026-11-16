@@ -1,9 +1,9 @@
 python-dotenv
 aiohttp
-microsoft-agents-hosting-aiohttp
-microsoft-agents-hosting-core
-microsoft-agents-authentication-msal
-microsoft-agents-activity
+microsoft-agents-hosting-aiohttp>=1.10.0,<2
+microsoft-agents-hosting-core>=1.10.0,<2
+microsoft-agents-authentication-msal>=1.10.0,<2
+microsoft-agents-activity>=1.10.0,<2
 opentelemetry-instrumentation-aiohttp-server
 opentelemetry-instrumentation-aiohttp-client
 opentelemetry-instrumentation-requests

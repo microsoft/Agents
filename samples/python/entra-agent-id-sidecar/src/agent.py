@@ -7,6 +7,7 @@ from os import environ
 
 from dotenv import load_dotenv
 from microsoft_agents.activity import Activity, ActivityTypes, load_configuration_from_env
+from microsoft_agents.activity.config import ignore_case
 from microsoft_agents.authentication.entra_auth_sidecar import SidecarAuth
 from microsoft_agents.hosting.aiohttp import CloudAdapter
 from microsoft_agents.hosting.core import (
@@ -23,24 +24,22 @@ from .caller_card import create_caller_card
 load_dotenv()
 
 agents_sdk_config = load_configuration_from_env(environ)
-if not agents_sdk_config["CONNECTIONS"]:
+if not agents_sdk_config.get(ignore_case("CONNECTIONS")):
     raise RuntimeError("Missing CONNECTIONS configuration in environment")
-if not agents_sdk_config["CONNECTIONSMAP"]:
+if not agents_sdk_config.get(ignore_case("CONNECTIONSMAP")):
     raise RuntimeError("Missing CONNECTIONSMAP configuration in environment")
 
 STORAGE = MemoryStorage()
 CONNECTION_MANAGER = ConnectionManager(
     provider_factory=SidecarAuth,
-    **agents_sdk_config,
+    config=agents_sdk_config,
 )
 SIDECAR_AUTH = CONNECTION_MANAGER.get_default_connection()
 ADAPTER = CloudAdapter(connection_manager=CONNECTION_MANAGER)
-AUTHORIZATION = Authorization(STORAGE, CONNECTION_MANAGER, **agents_sdk_config)
+AUTHORIZATION = Authorization(STORAGE, CONNECTION_MANAGER, config=agents_sdk_config)
 AGENT_APP = AgentApplication[TurnState](
     storage=STORAGE,
-    adapter=ADAPTER,
     authorization=AUTHORIZATION,
-    **agents_sdk_config,
 )
 
 USAGE = (

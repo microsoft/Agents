@@ -111,10 +111,22 @@ without losing the selected boundary, decisions, statuses, or next phase.
 
 - For aiohttp, use SDK JWT middleware/decorators exactly once on protected routes.
   Keep health endpoints outside authentication and explicitly protect new custom routes.
-- Set `AgentAuthConfiguration.validate_issuer=True`, require exact audience and
-  expiration, disable anonymous production access, and select the expected token
-  family, tenant and cloud. Authorize verified `claims_identity` caller claims for
-  trusted-app endpoints before adapter processing.
+- For SDK 1.10+, reuse the root `Configuration` from
+  `load_configuration_from_env` with connection managers and `Authorization`
+  through `config=`, and with aiohttp's `app["agent_configuration"]`.
+  Bind inbound policy with `TokenValidationConfig` and `JwtConnectionSettings`;
+  set `validate_issuer=True`, require exact audiences and expiration, disable
+  anonymous production access, and select the expected token family, tenant and
+  cloud. Explicit audiences prevent other connection client IDs from becoming
+  accepted audiences by default. Authorize verified `claims_identity` caller
+  claims for trusted-app endpoints before adapter processing.
+- Keep adapters host-owned and pass them explicitly; use `context.adapter`
+  during a turn. Avoid `AgentApplication(adapter=...)`, `agent.adapter`,
+  unpacked configuration kwargs, `AgentAuthConfiguration`, deprecated
+  default-connection configuration accessors, provider `.configuration`, and
+  `AuthHandler` construction. Use typed provider `.config` settings and
+  `AuthHandlerConfig` instead. Check installed SDK versions before migrating;
+  these configuration APIs require 1.10+.
 - Verify the issuers actually accepted by the installed SDK. Its trusted
   first-party Entra issuers can extend the configured issuer list. For the bounded
   public-cloud Bot Framework profile, additionally require the verified

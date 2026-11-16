@@ -26,9 +26,13 @@ messages and other channels are outside this reference's boundary.
 
 ## SDK packages and local setup
 
-Install Python 3.12. The sample uses the stable Microsoft Agents PyPI packages
-`1.8.0`, the latest released version at the time this reference was updated.
-Pip installs the published wheels directly; no SDK checkout or wheel build is needed.
+Install Python 3.12. The sample targets the upcoming Microsoft Agents packages
+`1.10.0`. Until publication, use matching preview packages from the SDK
+checkout/build; the pip commands below require those packages to be available.
+See the [shared configuration guide](../README.md#sdk-110-configuration).
+Validated application settings are used to construct one SDK root configuration
+for connections, authorization, and JWT middleware. The host owns the adapter;
+`AgentApplication` does not.
 
 ```powershell
 python -m venv .venv
@@ -61,7 +65,7 @@ an HTTPS Azure Blob service URL and telemetry configuration. Production rejects
 client secrets and storage connection strings. Only the user-assigned managed
 identity is used for production Blob access and channel replies.
 
-The released SDK provider does not check ETags; `src/storage.py` adds conditional
+The SDK Blob provider does not check ETags; `src/storage.py` adds conditional
 updates and create-only writes. Conflicts fail safely without replaying turns.
 The application saves state before acknowledging success. Local tests include
 synthetic JWT validation and HTTP rejection/probe checks; deployed recovery,

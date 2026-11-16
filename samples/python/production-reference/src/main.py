@@ -32,7 +32,7 @@ def main():
         )
     )
     telemetry = Telemetry(config.telemetry_connection_string if config.production else "")
-    agent, auth = create_agent(config, storage, telemetry)
+    agent, adapter, sdk_config = create_agent(config, storage, telemetry)
 
     async def cleanup(app):
         try:
@@ -43,7 +43,7 @@ def main():
             await telemetry.shutdown()
 
     web.run_app(
-        create_server(config, storage, agent, auth, telemetry, cleanup),
+        create_server(config, storage, agent, adapter, sdk_config, telemetry, cleanup),
         host="0.0.0.0",
         port=config.port,
         shutdown_timeout=30,

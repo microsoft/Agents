@@ -11,6 +11,7 @@ import pytest
 from aiohttp import web
 from cryptography.hazmat.primitives.asymmetric import rsa
 from microsoft_agents.hosting.core.authorization import ClaimsIdentity
+from microsoft_agents.hosting.core.authorization.jwt import TokenValidationConfig
 from microsoft_agents.hosting.core.storage import MemoryStorage
 from microsoft_agents.hosting.core import TurnContext
 from microsoft_agents.activity import Activity
@@ -33,6 +34,25 @@ def production_env():
         "Storage__ServiceUrl": "https://example.blob.core.windows.net",
         "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=33333333-3333-3333-3333-333333333333",
     }
+
+
+@pytest.mark.parametrize("production", [True, False])
+@pytest.mark.filterwarnings("error::DeprecationWarning")
+def test_agent_configuration_without_deprecated_apis(production):
+    config = load_config(
+        production_env()
+        if production
+        else {"APP_ENV": "development", "Storage__ConnectionString": "UseDevelopmentStorage=true"}
+    )
+    agent, adapter, sdk_config = create_agent(config, MemoryStorage(), Telemetry())
+    policy = TokenValidationConfig.from_config(sdk_config)
+    provider = agent.connection_manager.get_default_connection()
+    assert provider.config.client_id == (CLIENT_ID if production else None)
+    assert provider.config.auth_type == ("UserManagedIdentity" if production else "ClientSecret")
+    assert policy.anonymous_allowed is not production
+    assert policy.default_jwt_settings.validate_issuer is production
+    assert policy.audiences == ([CLIENT_ID] if production else [])
+    assert adapter is not None
 
 
 @pytest.mark.parametrize("key", list(production_env()))
@@ -107,10 +127,11 @@ async def make_client(aiohttp_client, storage=None, cleanup=None):
     config = load_config(production_env())
     telemetry = Telemetry()
     adapter = SimpleNamespace(process=AsyncMock(return_value=web.Response(status=202)))
-    agent = SimpleNamespace(adapter=adapter)
-    _, auth = create_agent(config, storage or MemoryStorage(), telemetry)
-    app = create_server(config, storage or MemoryStorage(), agent, auth, telemetry, cleanup)
-    return await aiohttp_client(app), adapter, auth
+    agent, _, sdk_config = create_agent(config, storage or MemoryStorage(), telemetry)
+    app = create_server(
+        config, storage or MemoryStorage(), agent, adapter, sdk_config, telemetry, cleanup
+    )
+    return await aiohttp_client(app), adapter, TokenValidationConfig.from_config(sdk_config)
 
 
 async def test_probes_and_authentication(aiohttp_client):
@@ -124,7 +145,8 @@ async def test_probes_and_authentication(aiohttp_client):
     assert response.status == 401
     assert await response.json() == {"error": "Request could not be processed."}
     adapter.process.assert_not_awaited()
-    assert auth.VALIDATE_ISSUER and not auth.ANONYMOUS_ALLOWED
+    assert auth.default_jwt_settings.validate_issuer and not auth.anonymous_allowed
+    assert auth.audiences == [CLIENT_ID]
 
 
 async def test_dependency_failure_keeps_liveness(aiohttp_client):
@@ -239,9 +261,9 @@ async def test_agent_recovers_state_across_instances():
     )
 
     async def turn(text):
-        agent, _ = create_agent(config, storage, Telemetry())
+        agent, adapter, _ = create_agent(config, storage, Telemetry())
         context = TurnContext(
-            agent.adapter,
+            adapter,
             Activity(
                 type="message",
                 channel_id="webchat",

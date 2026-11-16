@@ -13,7 +13,8 @@ from microsoft_agents.hosting.aiohttp import (
     jwt_authorization_decorator,
     start_agent_process,
 )
-from microsoft_agents.hosting.core import AgentApplication, AgentAuthConfiguration
+from microsoft_agents.activity.config import Configuration
+from microsoft_agents.hosting.core import AgentApplication
 from microsoft_agents.hosting.core.app.proactive import Conversation
 
 
@@ -46,7 +47,8 @@ async def _read_json(request: web.Request) -> dict[str, Any]:
 
 def create_app(
     agent_application: AgentApplication,
-    auth_configuration: AgentAuthConfiguration,
+    adapter: CloudAdapter,
+    config: Configuration,
 ) -> web.Application:
     is_development = _is_development()
     allowed_callers = _allowed_callers()
@@ -55,8 +57,6 @@ def create_app(
             "ALLOWED_CALLERS must contain at least one caller app ID "
             "outside Development."
         )
-
-    adapter: CloudAdapter = agent_application.adapter
 
     async def handle_root(_request: web.Request) -> web.Response:
         return web.json_response({"status": "ready", "sample": "proactive"})
@@ -160,7 +160,7 @@ def create_app(
     protected_continue = protect_proactive_route(handle_continue)
 
     app = web.Application()
-    app["agent_configuration"] = auth_configuration
+    app["agent_configuration"] = config
     app["agent_app"] = agent_application
     app["adapter"] = adapter
     app.router.add_get("/", handle_root)
@@ -174,10 +174,11 @@ def create_app(
 
 def start_server(
     agent_application: AgentApplication,
-    auth_configuration: AgentAuthConfiguration,
+    adapter: CloudAdapter,
+    config: Configuration,
 ) -> None:
     web.run_app(
-        create_app(agent_application, auth_configuration),
+        create_app(agent_application, adapter, config),
         host=environ.get("HOST", "localhost"),
         port=int(environ.get("PORT", "3978")),
     )

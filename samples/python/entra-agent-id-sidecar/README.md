@@ -10,6 +10,9 @@ application permission or tenant-wide application-permission grant.
 
 ## Prerequisites
 
+- Matching Agents SDK 1.10.0 preview packages until the release is published;
+  see the [shared configuration guide](../README.md#sdk-110-configuration).
+  The Docker build also requires these packages to be available to pip.
 - Python 3.10 or later
 - Docker Desktop with Docker Compose
 - [Dev Tunnels CLI](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started)
@@ -77,6 +80,10 @@ python -m src.main
 The application loads the Agents SDK connection settings from `.env`. Compose
 passes the same settings explicitly to the agent container; the Blueprint
 secret is passed only to the sidecar container.
+
+The connection manager receives the root configuration through `config=`, and
+binds `SidecarConnectionSettings` for the provider. JWT middleware receives that
+same root, not legacy default-connection settings. The adapter belongs to the host.
 
 ## Test inbound authentication locally
 
@@ -149,7 +156,7 @@ network boundary and never publish its port.
   `CONNECTIONS__SERVICE_CONNECTION__SETTINGS__*` and `CONNECTIONSMAP__*`
   values from `env.TEMPLATE` are present in `.env`.
 - **`ClientSecret is required`:** rebuild and confirm
-  `ConnectionManager(provider_factory=SidecarAuth)` is used.
+  `ConnectionManager(provider_factory=SidecarAuth, config=agents_sdk_config)` is used.
 - **BlueprintPrincipal missing:** create the mandatory BlueprintPrincipal
   before creating child Agent Identities.
 - **AADSTS7000215 names the child Agent Identity:** put the credential on the

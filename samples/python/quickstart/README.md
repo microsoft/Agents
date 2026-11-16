@@ -13,6 +13,11 @@ This Agent Sample is intended to introduce you to the basic operation of the Mic
 
 ### Configuration
 
+This sample requires the upcoming SDK 1.10.0. See the shared
+[configuration guide](../README.md#sdk-110-configuration) for preview availability,
+typed settings, and migration from deprecated APIs. `src/agent.py` loads one root
+configuration; `src/main.py` passes it and the adapter explicitly to the host.
+
 1. [Create an Azure Bot](https://aka.ms/AgentsSDK-CreateBot)
    - Record the Application ID, the Tenant ID, and the Client Secret for use below
   

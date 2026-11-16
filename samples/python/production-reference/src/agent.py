@@ -2,11 +2,12 @@
 # Licensed under the MIT License.
 
 from microsoft_agents.activity import ActivityTypes
+from microsoft_agents.activity.config import load_configuration_from_env
 from microsoft_agents.authentication.msal import MsalConnectionManager
 from microsoft_agents.hosting.aiohttp import CloudAdapter
 from microsoft_agents.hosting.core import (
     AgentApplication,
-    AgentAuthConfiguration,
+    Authorization,
     OutboundHostValidator,
 )
 from microsoft_agents.hosting.core.authorization import AuthTypes
@@ -15,25 +16,39 @@ from .issue_capture import advance_issue_capture
 
 
 def create_agent(config, storage, telemetry):
-    auth = AgentAuthConfiguration(
-        client_id=config.client_id or None,
-        tenant_id=config.tenant_id or None,
-        auth_type=AuthTypes.user_managed_identity if config.production else AuthTypes.client_secret,
-        client_secret=config.client_secret or None,
-        anonymous_allowed=not config.production,
-        validate_issuer=config.production,
-        issuers=["https://api.botframework.com"],
+    sdk_config = load_configuration_from_env(
+        {
+            "Connections": {
+                "SERVICE_CONNECTION": {
+                    "Settings": {
+                        "ClientId": config.client_id or None,
+                        "TenantId": config.tenant_id or None,
+                        "AuthType": (
+                            AuthTypes.user_managed_identity
+                            if config.production
+                            else AuthTypes.client_secret
+                        ),
+                        "ClientSecret": config.client_secret or None,
+                        "Anonymous_Allowed": not config.production,
+                        "Validate_Issuer": config.production,
+                        "Issuers": ["https://api.botframework.com"],
+                    }
+                }
+            },
+            "ConnectionsMap": [
+                {
+                    "ServiceUrl": "*",
+                    "Connection": "SERVICE_CONNECTION",
+                    "Audience": config.client_id,
+                }
+            ],
+            "TokenValidation": {
+                "Audiences": [config.client_id] if config.client_id else [],
+                "Anonymous_Allowed": not config.production,
+            },
+        }
     )
-    connections = MsalConnectionManager(
-        connections_configurations={"SERVICE_CONNECTION": auth},
-        connections_map=[
-            {
-                "SERVICEURL": "*",
-                "CONNECTION": "SERVICE_CONNECTION",
-                "AUDIENCE": config.client_id,
-            }
-        ],
-    )
+    connections = MsalConnectionManager(config=sdk_config)
     adapter = CloudAdapter(
         connection_manager=connections,
         host_validator=OutboundHostValidator(
@@ -43,9 +58,8 @@ def create_agent(config, storage, telemetry):
         ),
     )
     agent = AgentApplication(
-        adapter=adapter,
         storage=storage,
-        connection_manager=connections,
+        authorization=Authorization(storage, connections, config=sdk_config),
         start_typing_timer=False,
         remove_recipient_mention=False,
     )
@@ -93,4 +107,4 @@ def create_agent(config, storage, telemetry):
             "Sorry, the request could not be processed. Please try again later."
         )
 
-    return agent, auth
+    return agent, adapter, sdk_config

@@ -18,7 +18,7 @@ from microsoft_agents.hosting.aiohttp import (
 )
 from aiohttp.web import Request, Response, Application, run_app, static
 
-from .agent import AGENT_APP, CONNECTION_MANAGER
+from .agent import ADAPTER, AGENT_APP, agents_sdk_config
 
 
 async def entry_point(req: Request) -> Response:
@@ -39,9 +39,9 @@ APP.router.add_post("/messages", entry_point)
 
 APP_WRAPPER.add_subapp("/api", APP)
 
-APP["agent_configuration"] = CONNECTION_MANAGER.get_default_connection_configuration()
+APP["agent_configuration"] = agents_sdk_config
 APP["agent_app"] = AGENT_APP
-APP["adapter"] = AGENT_APP.adapter
+APP["adapter"] = ADAPTER
 
 try:
     run_app(APP_WRAPPER, host="localhost", port=environ.get("PORT", 3978))
