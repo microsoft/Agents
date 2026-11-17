@@ -21,17 +21,20 @@ The Microsoft 365 Agents SDK builds multichannel agents for Teams, Copilot Studi
 | `Microsoft.Agents.Builder` | Core: AgentApplication, ITurnContext, ITurnState |
 | `Microsoft.Agents.Core` | Models, activity types, channel accounts |
 | `Microsoft.Agents.Storage` | IStorage, MemoryStorage |
-| `Microsoft.Agents.Extensions.Teams` | Teams-specific models and extensions |
+| `Microsoft.Agents.Extensions.MSTeams` | Teams-specific models and AgentExtension |
+| `Microsoft.Agents.Extensions.A2A` | Agent-to-agent (A2A) protocol AgentExtension |
+| `Microsoft.Agents.Extensions.Slack` | Slack AgentExtension |
 | `Microsoft.Agents.Builder.Dialogs` | Dialog system (waterfall, prompts) |
-| `Microsoft.Agents.AI` | AI-specific features |
 
-**Minimal project requires only:** `Microsoft.Agents.Hosting.AspNetCore` + `Microsoft.Agents.Authentication.Msal`. The others are transitive dependencies pulled in automatically.
+**Minimal project requires only:** `Microsoft.Agents.Hosting.AspNetCore` + `Microsoft.Agents.Authentication.Msal`. Core builder, model, and memory-storage dependencies are transitive. Install optional AgentExtensions, dialogs, and persistent storage providers explicitly when needed.
 
 **Always use the latest non-beta (stable) version.** Do not use `--prerelease` unless specifically needed.
 
 Requires .NET 8+.
 
 ## Azure Resources Required
+
+For Teams and other Azure Bot Service channels:
 
 **Microsoft Entra App Registration**
 - `ClientId` — Application (client) ID
@@ -42,9 +45,11 @@ Requires .NET 8+.
 - Messaging endpoint: `https://<your-host>/api/messages`
 - Microsoft App ID must match `ClientId`
 
-Local dev: Set `TokenValidation:Enabled` to `false`. No Azure Bot needed until deployment.
+Anonymous local testing with Agents Playground does not require an Azure Bot. With the Quick Start hosting setup, authentication is disabled by default in the `Development` environment.
 
 ## Configuration (appsettings.json)
+
+See [Configure authentication in your agent (.NET)](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/configure-authentication-msal?pivots=dotnet) for MSAL credential types and configuration settings. Connection settings acquire outbound tokens; the `TokenValidation` section configures validation of inbound tokens.
 
 ### Single connection (most common)
 
@@ -69,7 +74,6 @@ Local dev: Set `TokenValidation:Enabled` to `false`. No Azure Bot needed until d
     }
   ],
   "TokenValidation": {
-    "Enabled": true,
     "Audiences": ["<appId>"],
     "TenantId": "<tenantId>"
   }
@@ -86,9 +90,6 @@ Local dev: Set `TokenValidation:Enabled` to `false`. No Azure Bot needed until d
         "ClientSecret": "<secret>"
       }
     }
-  },
-  "TokenValidation": {
-    "Enabled": false
   }
 }
 ```
@@ -172,46 +173,53 @@ Each entry maps a `ServiceUrl` pattern to a named connection. The first matching
 
 ### Available connection settings fields
 
-`AuthType`, `AuthorityEndpoint`, `ClientId`, `ClientSecret`, `TenantId`, `FederatedClientId`, `Scopes`, `CertificateSubject`, `CertificateThumbprint`
+`AuthType`, `AuthorityEndpoint`, `ClientId`, `ClientSecret`, `TenantId`, `FederatedClientId`, `FederatedTokenFile`, `Scopes`, `CertSubjectName`, `CertThumbprint`, `CertStoreName`
 
-### Local development (disable token validation)
+### Local development and inbound authentication
 
-Put in `appsettings.Development.json` (not `appsettings.json`):
+With the Quick Start setup, `AddAgentAuthorization` skips its authentication callback in `Development` and enables it in other environments. `MapDefaultAgentEndpoints` automatically applies the matching authorization requirement. Set `ASPNETCORE_ENVIRONMENT=Development` for anonymous local testing; no token-validation configuration switch is needed.
 
-```json
-{
-  "TokenValidation": {
-    "Enabled": false
-  }
-}
+To test authenticated requests locally, replace the authorization registration with:
+
+```csharp
+builder.AddAgentAuthorization(
+    b => b.AddAgentAspNetAuthentication(),
+    forceEnable: true);
 ```
+
+Supply valid `TokenValidation:Audiences`, `TokenValidation:TenantId`, and connection settings when authentication is enabled. Keep production outside `Development`; do not force anonymous access in a deployed agent.
 
 ## Quick Start
 
-**Prerequisite:** Copy [`AspNetExtensions.cs`](https://github.com/microsoft/Agents-for-net/blob/main/src/samples/Shared/AspNetExtensions.cs) into your project. This provides `AddAgentAspNetAuthentication` for JWT token validation.
+Use the current [`samples/dotnet/quickstart`](https://github.com/microsoft/Agents/tree/main/samples/dotnet/quickstart) as the startup reference.
+
+**Prerequisite:** Copy its [`AspNetExtensions.cs`](https://github.com/microsoft/Agents/blob/main/samples/dotnet/quickstart/AspNetExtensions.cs) into your project. This sample helper provides `AddAgentAspNetAuthentication` for JWT token validation.
 
 **Program.cs:**
 
 ```csharp
 using Microsoft.Agents.Hosting.AspNetCore;
 using Microsoft.Agents.Storage;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddHttpClient();
-builder.AddAgent<MyAgent>();
+builder.AddAgentDefaults()
+    .AddAgent<MyAgent>()
+    .AddAgentAuthorization(b => b.AddAgentAspNetAuthentication());
+
 builder.Services.AddSingleton<IStorage, MemoryStorage>();
-builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapAgentRootEndpoint();
-app.MapAgentApplicationEndpoints(requireAuth: !app.Environment.IsDevelopment());
+app.UseAgents();
+app.MapDefaultAgentEndpoints();
 
 app.Run();
 ```
+
+The explicit `MemoryStorage` registration matches the quickstart, but is optional: the SDK falls back to `MemoryStorage` if `IStorage` is not registered. Use a persistent provider for production (see [Storage](#storage)).
 
 **MyAgent.cs** — put the `AgentApplication` subclass in its own file (see [AgentApplication Patterns](#agentapplication-patterns) below for routing, state, and auth examples).
 
@@ -240,34 +248,24 @@ Run: `dotnet run`
 appsettings.Development.json
 ```
 
-**Teams app manifest (if targeting Teams):** Copy the `appManifest/` folder from [`Agents-for-net/src/samples/EmptyAgent/appManifest`](https://github.com/microsoft/Agents-for-net/tree/main/src/samples/EmptyAgent/appManifest) into your project. Then update `manifest.json`:
+**Teams app manifest (if targeting Teams):** Use the `teams-app-manifest` skill from `agents-sdk-common` to generate or validate a manifest against the agent's implemented Teams capabilities. For a starting example, copy [`quickstart/appManifest`](https://github.com/microsoft/Agents/tree/main/samples/dotnet/quickstart/appManifest), including the icons. Update `manifest.json`:
 - Replace all `${{AAD_APP_CLIENT_ID}}` with your bot's Client ID
 - Set `name.short` and `name.full` to your bot's display name
+- Replace `<<BOT_DOMAIN>>` with the agent's host name and update the app metadata and URLs
 
 ## Program.cs Structure
 
 ### Minimal setup
 
-```csharp
-using Microsoft.Agents.Hosting.AspNetCore;
-using Microsoft.Agents.Storage;
+Use the Quick Start `Program.cs` above. The responsibilities are:
 
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddHttpClient();
-builder.AddAgent<MyAgent>();
-builder.Services.AddSingleton<IStorage, MemoryStorage>();
-builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
-
-var app = builder.Build();
-
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapAgentRootEndpoint();
-app.MapAgentApplicationEndpoints(requireAuth: !app.Environment.IsDevelopment());
-
-app.Run();
-```
+| Call | Purpose |
+|---|---|
+| `AddAgentDefaults()` | Register the default HTTP client factory and MVC/authorization services |
+| `AddAgent<MyAgent>()` | Register the agent and its application options |
+| `AddAgentAuthorization(b => b.AddAgentAspNetAuthentication())` | Configure inbound JWT authentication outside Development by default |
+| `UseAgents()` | Add authentication and authorization middleware in the correct order |
+| `MapDefaultAgentEndpoints()` | Map `GET /` and agent message endpoints, applying the configured authorization requirement |
 
 ### With proactive messaging endpoints
 
@@ -275,15 +273,15 @@ app.Run();
 app.MapAgentProactiveEndpoints<MyAgent>(requireAuth: !app.Environment.IsDevelopment());
 ```
 
+Add this before `app.Run()`. If authentication is forced on in Development, also set `requireAuth: true` for these separately mapped proactive endpoints.
+
 ### With custom routes
 
 ```csharp
 var app = builder.Build();
 
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapAgentRootEndpoint();
-app.MapAgentApplicationEndpoints(requireAuth: !app.Environment.IsDevelopment());
+app.UseAgents();
+app.MapDefaultAgentEndpoints();
 app.MapGet("/health", () => Results.Json(new { ok = true }));
 
 app.Run();
@@ -305,12 +303,13 @@ public class MyAgent : AgentApplication
 - `builder.AddAgent<T>()` — registers the agent class. **Always required.**
 - Do **not** call `AddAgentApplicationOptions()` separately unless you have a specific reason — `AddAgent` handles it.
 
-### Important: MapAgentEndpoints vs MapAgentApplicationEndpoints
+### Important: Default vs manual endpoint mapping
 
-- `MapAgentApplicationEndpoints` — for `AgentApplication` subclasses (modern pattern)
+- Prefer `MapDefaultAgentEndpoints()` for `AgentApplication` subclasses with the hosting setup above.
+- `MapAgentRootEndpoint()` and `MapAgentApplicationEndpoints(requireAuth: ...)` remain available for manual endpoint/authentication control.
 - `MapAgentEndpoints` — for `ActivityHandler` / `TeamsActivityHandler` compat layer bots
 
-Using the wrong one causes runtime routing failures with no clear error.
+Do not use the compat-layer mapper for an `AgentApplication` subclass.
 
 ## Validating Your Configuration
 
@@ -335,14 +334,13 @@ Common errors:
 
 ```bash
 curl -s -o /dev/null -w "%{http_code}" \
-  -X POST http://localhost:3978/api/messages \
-  -H "Content-Type: application/json" \
-  -d '{}'
+  http://localhost:3978/
 ```
 
-- `401` — agent is running; JWT auth rejected the empty request (expected)
+- `200` — the root health endpoint is reachable; this does not prove message processing or authentication works
 - `000` or connection refused — agent is not running or wrong port
-- `200` — agent is running with auth disabled (local dev with `TokenValidation:Enabled = false`)
+
+An unauthenticated `POST /api/messages` should return `401` when endpoint authorization is enabled. An empty JSON object is not a valid test activity, so do not expect a successful message response from posting `{}` with anonymous access. Use Agents Playground to verify the complete message flow.
 
 ### 3. Validate an OAuth connection name
 
@@ -379,26 +377,61 @@ agentsplayground -c msteams \
 If the playground connects but messages don't get responses, add a fallback handler to confirm:
 
 ```csharp
-OnActivity(ActivityTypes.Message, async (ctx, state, ct) =>
+[MessageRoute(rank: RouteRank.Last)]
+public async Task OnMessageAsync(ITurnContext ctx, ITurnState state, CancellationToken ct)
 {
     await ctx.SendActivityAsync($"Echo: {ctx.Activity.Text}", cancellationToken: ct);
-}, rank: RouteRank.Last);
+}
 ```
 
 ## AgentApplication Patterns
 
-**Routing**
+### Route attributes
+
+Prefer route attributes from `Microsoft.Agents.Builder.App`. The SDK discovers the attributed handler methods; do not also register the same route in the constructor.
+
+| Attribute | Matches |
+|---|---|
+| `[MessageRoute("/cmd")]` | Exact command text (case-insensitive) |
+| `[MessageRoute(rank: RouteRank.Last)]` | Fallback for unmatched messages |
+| `[MembersAddedRoute]` | Members-added conversation updates |
+| `[ActivityRoute(ActivityTypes.Invoke)]` | Invoke activities |
+
+**MyAgent.cs** — the quickstart's welcome and echo behavior using route attributes:
+
 ```csharp
-OnMessage("/cmd", handler);                                         // exact command
-OnActivity(ActivityTypes.Message, handler, rank: RouteRank.Last);   // all messages (fallback)
-OnConversationUpdate(ConversationUpdateEvents.MembersAdded, handler);
-OnActivity(ActivityTypes.Invoke, handler);
+using Microsoft.Agents.Builder;
+using Microsoft.Agents.Builder.App;
+using Microsoft.Agents.Builder.State;
+using Microsoft.Agents.Core.Models;
+using System.Threading;
+using System.Threading.Tasks;
+
+public class MyAgent : AgentApplication
+{
+    public MyAgent(AgentApplicationOptions options) : base(options) { }
+
+    [MembersAddedRoute]
+    public async Task WelcomeAsync(ITurnContext ctx, ITurnState state, CancellationToken ct)
+    {
+        foreach (var member in ctx.Activity.MembersAdded)
+        {
+            if (member.Id != ctx.Activity.Recipient.Id)
+            {
+                await ctx.SendActivityAsync("Hello and welcome!", cancellationToken: ct);
+            }
+        }
+    }
+
+    [MessageRoute(rank: RouteRank.Last)]
+    public async Task OnMessageAsync(ITurnContext ctx, ITurnState state, CancellationToken ct)
+    {
+        await ctx.SendActivityAsync($"You said: {ctx.Activity.Text}", cancellationToken: ct);
+    }
+}
 ```
 
-**Per-route auth:**
-```csharp
-OnMessage("-me", OnMe, autoSignInHandlers: ["me"]);
-```
+**Per-route auth:** `[MessageRoute("-me", autoSignInHandlers: "me")]` requires the configured `"me"` user sign-in handler. Attribute handler names are a delimited string, not an array. See [Authorization](#authorization-user-token-flow) for a complete example.
 
 **TurnState** — dot-notation keys scoped to conversation/user/temp:
 ```csharp
@@ -407,13 +440,90 @@ state.SetValue("conversation.counter", count + 1);
 state.DeleteValue("conversation.counter");
 ```
 
-**Storage backends**
+## Storage
 
-| Backend | Use case |
-|---|---|
-| `MemoryStorage` | Local dev only — not persistent |
-| Cosmos DB (via `IStorage` impl) | Production |
-| Blob Storage (via `IStorage` impl) | Production |
+See [Use storage in your agent (C#)](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/storage?tabs=csharp).
+
+If `IStorage` is not registered, the SDK defaults to `MemoryStorage`. This is suitable for development and testing only: state is lost on restart and is not shared across instances. Register a persistent provider for production.
+
+| Provider | Package | Use case |
+|---|---|---|
+| `MemoryStorage` | `Microsoft.Agents.Storage` (transitive) | Local development and tests |
+| `CosmosDbPartitionedStorage` | `Microsoft.Agents.Storage.CosmosDb` | Durable, partitioned state in Azure Cosmos DB |
+| `BlobsStorage` | `Microsoft.Agents.Storage.Blobs` | Durable state in Azure Blob Storage |
+| Custom `IStorage` implementation | Application-defined | Other storage services |
+
+Choose one `IStorage` registration before `builder.Build()`. The following examples replace the quickstart's `MemoryStorage` registration; the `Storage` sections are application-defined configuration read explicitly by the code.
+
+### Azure Cosmos DB
+
+Install `Microsoft.Agents.Storage.CosmosDb`. Add non-secret settings to `appsettings.json`:
+
+```json
+{
+  "Storage": {
+    "CosmosDb": {
+      "CosmosDbEndpoint": "https://<account>.documents.azure.com:443/",
+      "DatabaseId": "agents",
+      "ContainerId": "state"
+    }
+  }
+}
+```
+
+In `Program.cs`:
+
+```csharp
+using Microsoft.Agents.Authentication;
+using Microsoft.Agents.Storage;
+using Microsoft.Agents.Storage.CosmosDb;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+builder.Services.AddSingleton<IStorage>(sp =>
+{
+    var options = builder.Configuration.GetSection("Storage:CosmosDb")
+        .Get<CosmosDbPartitionedStorageOptions>()!;
+    options.TokenCredential = sp.GetRequiredService<IConnections>()
+        .GetConnection("ServiceConnection").GetTokenCredential();
+    return new CosmosDbPartitionedStorage(options);
+});
+```
+
+### Azure Blob Storage
+
+Install `Microsoft.Agents.Storage.Blobs`. Add the container URI to `appsettings.json`:
+
+```json
+{
+  "Storage": {
+    "Blobs": {
+      "ContainerUri": "https://<account>.blob.core.windows.net/agent-state"
+    }
+  }
+}
+```
+
+In `Program.cs`:
+
+```csharp
+using Microsoft.Agents.Authentication;
+using Microsoft.Agents.Storage;
+using Microsoft.Agents.Storage.Blobs;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+
+builder.Services.AddSingleton<IStorage>(sp =>
+{
+    var credential = sp.GetRequiredService<IConnections>()
+        .GetConnection("ServiceConnection").GetTokenCredential();
+    return new BlobsStorage(
+        new Uri(builder.Configuration["Storage:Blobs:ContainerUri"]!),
+        credential);
+});
+```
+
+Both examples use the identity configured in `Connections:ServiceConnection`. Grant that identity the required data-plane access to the selected store; configuring a messaging connection alone does not grant storage access. Keep secrets out of committed configuration.
 
 ## Authorization (User Token Flow)
 
@@ -424,7 +534,7 @@ state.DeleteValue("conversation.counter");
   "AgentApplication": {
     "UserAuthorization": {
       "DefaultHandlerName": "graph",
-      "AutoSignin": true,
+      "AutoSignIn": false,
       "Handlers": {
         "graph": {
           "Settings": {
@@ -441,39 +551,44 @@ state.DeleteValue("conversation.counter");
 
 ### Code patterns
 
+Use route attributes for the protected command, sign-out command, and fallback. With `AutoSignIn: false` above, only routes declaring `autoSignInHandlers` start sign-in automatically; set it to `true` only when all turns should trigger sign-in through the default handler. User sign-in also requires the Azure Bot OAuth connection; anonymous Playground testing alone does not exercise that flow.
+
 ```csharp
+using Microsoft.Agents.Builder;
+using Microsoft.Agents.Builder.App;
+using Microsoft.Agents.Builder.State;
+using System.Threading;
+using System.Threading.Tasks;
+
 public class MyAgent : AgentApplication
 {
     public MyAgent(AgentApplicationOptions options) : base(options)
     {
-        // Handle sign-in failure
         UserAuthorization.OnUserSignInFailure(
             async (ctx, state, handler, response, activity, ct) =>
             {
                 await ctx.SendActivityAsync($"Sign-in failed: {response.Error?.Message}", cancellationToken: ct);
             });
-
-        // Protected route — requires sign-in via "graph" handler
-        OnMessage("-profile", OnProfileAsync, autoSignInHandlers: ["graph"]);
-
-        // Fallback message handler
-        OnActivity(ActivityTypes.Message, OnMessageAsync, rank: RouteRank.Last);
-
-        // Sign out
-        OnMessage("/logout", OnLogoutAsync);
     }
 
-    private async Task OnProfileAsync(ITurnContext ctx, ITurnState state, CancellationToken ct)
+    [MessageRoute("-profile", autoSignInHandlers: "graph")]
+    public async Task OnProfileAsync(ITurnContext ctx, ITurnState state, CancellationToken ct)
     {
-        // Token is guaranteed here — route won't run until user is signed in
-        string token = await UserAuthorization.GetTurnTokenAsync(ctx, "graph");
-        // Use token to call Graph API
+        string token = await UserAuthorization.GetTurnTokenAsync(ctx, "graph", ct);
+        // Use the token to call Graph; never log it or send it to the user.
     }
 
-    private async Task OnLogoutAsync(ITurnContext ctx, ITurnState state, CancellationToken ct)
+    [MessageRoute("/logout")]
+    public async Task OnLogoutAsync(ITurnContext ctx, ITurnState state, CancellationToken ct)
     {
         await UserAuthorization.SignOutUserAsync(ctx, state, cancellationToken: ct);
         await ctx.SendActivityAsync("Signed out.", cancellationToken: ct);
+    }
+
+    [MessageRoute(rank: RouteRank.Last)]
+    public async Task OnMessageAsync(ITurnContext ctx, ITurnState state, CancellationToken ct)
+    {
+        await ctx.SendActivityAsync($"Echo: {ctx.Activity.Text}", cancellationToken: ct);
     }
 }
 ```
@@ -494,7 +609,7 @@ string newToken = await UserAuthorization.ExchangeTurnTokenAsync(
   "AgentApplication": {
     "UserAuthorization": {
       "DefaultHandlerName": "auto",
-      "AutoSignin": true,
+      "AutoSignIn": false,
       "Handlers": {
         "auto": {
           "Settings": {
@@ -638,12 +753,10 @@ await ctx.StreamingResponse.EndStreamAsync(ct);
 ```csharp
 public class MyAgent : AgentApplication
 {
-    public MyAgent(AgentApplicationOptions options) : base(options)
-    {
-        OnActivity(ActivityTypes.Message, OnMessageAsync, rank: RouteRank.Last);
-    }
+    public MyAgent(AgentApplicationOptions options) : base(options) { }
 
-    private async Task OnMessageAsync(ITurnContext ctx, ITurnState state, CancellationToken ct)
+    [MessageRoute(rank: RouteRank.Last)]
+    public async Task OnMessageAsync(ITurnContext ctx, ITurnState state, CancellationToken ct)
     {
         // Store the conversation reference for later
         string convId = await Proactive.StoreConversationAsync(ctx, ct);
@@ -678,19 +791,12 @@ Monitor export, validation, and the local Aspire Dashboard.
 app.MapAgentEndpoints(requireAuth: false);
 
 // CORRECT — for AgentApplication subclasses
-app.MapAgentApplicationEndpoints(requireAuth: false);
+app.MapDefaultAgentEndpoints();
 ```
 
-**2. Missing IStorage registration**
+**2. Relying on MemoryStorage in production**
 
-```csharp
-// WRONG — no storage registered, runtime error
-builder.AddAgent<MyAgent>();
-
-// CORRECT — always register IStorage
-builder.AddAgent<MyAgent>();
-builder.Services.AddSingleton<IStorage, MemoryStorage>();
-```
+Omitting `IStorage` registration does not cause a registration error: the SDK defaults to `MemoryStorage`. That fallback is volatile and process-local. Register Cosmos DB, Blob Storage, or another persistent `IStorage` implementation for production; see [Storage](#storage).
 
 **3. Calling AddAgentApplicationOptions separately**
 
@@ -713,34 +819,31 @@ var reference = new ConversationReference { Bot = new ChannelAccount(appId) };
 var reference = new ConversationReference { Agent = new ChannelAccount(appId) };
 ```
 
-**5. Forgetting UseAuthentication/UseAuthorization**
+**5. Forgetting UseAgents**
 
 ```csharp
 // WRONG — auth middleware missing
 var app = builder.Build();
-app.MapAgentApplicationEndpoints(requireAuth: true);
+app.MapDefaultAgentEndpoints();
 
 // CORRECT
 var app = builder.Build();
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapAgentApplicationEndpoints(requireAuth: true);
+app.UseAgents();
+app.MapDefaultAgentEndpoints();
 ```
 
-**6. TokenValidation:Enabled left true for local dev**
+**6. Deploying with Development or anonymous authorization**
 
-If `TokenValidation:Enabled` is `true` with no valid credentials configured, every incoming request will be rejected with 401. Set to `false` for local anonymous development.
+`AddAgentAuthorization` enables authentication outside `Development` by default. Keep the authorization registration, use a production environment, and configure valid token audiences, tenant, and credentials. Use `forceEnable: true` when testing authenticated requests in Development. The `TokenValidation` section has no `Enabled` setting.
 
 **7. Missing AspNetExtensions.cs for AddAgentAspNetAuthentication**
 
-`AddAgentAspNetAuthentication` is NOT built into the SDK packages — it's a helper extension that must be copied into your project from the shared samples.
+`AddAgentAspNetAuthentication` is NOT built into the SDK packages — it's a helper extension that must be copied into your project from the quickstart sample. `AddAgentAuthorization` itself is provided by the hosting package.
 
 ```csharp
-// ERROR — CS1061: 'IServiceCollection' does not contain a definition for 'AddAgentAspNetAuthentication'
-builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
-
-// FIX — Copy AspNetExtensions.cs from the samples repo into your project:
-// https://github.com/microsoft/Agents-for-net/blob/main/src/samples/Shared/AspNetExtensions.cs
+// Copy AspNetExtensions.cs before using this callback:
+// https://github.com/microsoft/Agents/blob/main/samples/dotnet/quickstart/AspNetExtensions.cs
+builder.AddAgentAuthorization(b => b.AddAgentAspNetAuthentication());
 ```
 
 **8. Missing `Microsoft.Agents.Builder.State` using for ITurnState**
