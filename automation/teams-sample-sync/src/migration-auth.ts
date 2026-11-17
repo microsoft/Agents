@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 /** Retry only a rejected organization-billed planning request, before a plan exists. */
 import {
   cpSync, mkdirSync, mkdtempSync, renameSync, rmSync
