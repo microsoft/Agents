@@ -18,7 +18,7 @@
     "@microsoft/agents-hosting-directline-namedpipes": "1.9.1"
   },
   "devDependencies": {
-    "@types/node": "^22.20.5",
+    "@types/node": "^26.6.6",
     "typescript": "^7.0.2"
   },
   "keywords": [],

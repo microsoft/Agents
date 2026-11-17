@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+import { logs } from '@opentelemetry/api'
+import { logs as legacyLogs } from '@opentelemetry/api-logs'
 import { NodeSDK } from '@opentelemetry/sdk-node'
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc'
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-grpc'
@@ -20,7 +22,7 @@ import {
   ATTR_SERVICE_NAME,
   ATTR_SERVICE_VERSION,
 } from '@opentelemetry/semantic-conventions'
-import { AlwaysOnSampler, ParentBasedSampler, Sampler, SamplingDecision, SpanExporter } from '@opentelemetry/sdk-trace-base'
+import { AlwaysOnSampler, ParentBasedSampler, Sampler, SamplingDecision, SpanExporter } from '@opentelemetry/sdk-trace'
 import { hostname } from 'os'
 import { SpanNames } from '@microsoft/agents-telemetry'
 
@@ -62,7 +64,7 @@ const sdk = new NodeSDK({
     'telemetry.sdk.language': 'nodejs'
   }),
   traceExporter,
-  metricReader: new PeriodicExportingMetricReader({ exporter: metricExporter }),
+  metricReaders: [new PeriodicExportingMetricReader({ exporter: metricExporter })],
   logRecordProcessors: [
     new BatchLogRecordProcessor({ exporter: logExporter }),
   ],
@@ -73,6 +75,9 @@ const sdk = new NodeSDK({
 })
 
 sdk.start()
+
+// Agents SDK 1.9 still loads the standalone logs API.
+legacyLogs.setGlobalLoggerProvider(logs.getLoggerProvider())
 
 let isShuttingDown = false
 
