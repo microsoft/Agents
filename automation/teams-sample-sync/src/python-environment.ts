@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 /** Allocates validation-owned state and delegates bounded wheel installation. */
 import {
   mkdtempSync, readFileSync, rmSync, writeFileSync
