@@ -5,7 +5,7 @@
   "author": "Microsoft",
   "license": "MIT",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.15.0"
   },
   "workspaces": [
     "apphost"
@@ -21,13 +21,13 @@
     "@microsoft/agents-copilotstudio-client": "1.9.1",
     "@opentelemetry/api": "1.10.0",
     "@opentelemetry/context-zone": "3.0.0",
+    "@opentelemetry/core": "3.0.0",
     "@opentelemetry/exporter-trace-otlp-proto": "0.300.0",
     "@opentelemetry/instrumentation": "0.300.0",
     "@opentelemetry/instrumentation-document-load": "0.69.0",
     "@opentelemetry/instrumentation-fetch": "0.300.0",
     "@opentelemetry/resources": "3.0.0",
-    "@opentelemetry/sdk-trace-base": "2.12.0",
-    "@opentelemetry/sdk-trace-web": "2.12.0",
+    "@opentelemetry/sdk-trace": "3.0.0",
     "@opentelemetry/semantic-conventions": "1.44.0",
     "botframework-webchat": "4.19.2",
     "botframework-webchat-fluent-theme": "4.19.2",
