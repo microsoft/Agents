@@ -19,8 +19,33 @@ updates:
       - "/samples/nodejs/quickstart"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
     groups:
       npm-all:
+        applies-to: version-updates
+        patterns:
+          - "*"
+      npm-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directories:
+      - "/automation/teams-sample-sync"
+      - "/automation/teams-sample-sync/reference/nodejs"
+      - "/samples/nodejs/proactive"
+      - "/samples/nodejs/production-reference"
+      - "/samples/nodejs/retrieval-agent"
+      - "/schema"
+    schedule:
+      interval: "monthly"
+    # Group security fixes without enabling scheduled version updates.
+    open-pull-requests-limit: 0
+    groups:
+      npm-security-only:
+        applies-to: security-updates
         patterns:
           - "*"
 
@@ -39,8 +64,15 @@ updates:
       - "/samples/python/semantic-kernel-multiturn"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
     groups:
       pip-all:
+        applies-to: version-updates
+        patterns:
+          - "*"
+      pip-security:
+        applies-to: security-updates
         patterns:
           - "*"
 
@@ -66,8 +98,15 @@ updates:
       - "/samples/dotnet/slackagent"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
     groups:
       nuget-all:
+        applies-to: version-updates
+        patterns:
+          - "*"
+      nuget-security:
+        applies-to: security-updates
         patterns:
           - "*"
   - package-ecosystem: "github-actions"
