@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 """Cards parity through actual Agents/Teams SDK routing."""
 
 import unittest

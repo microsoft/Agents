@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 """HTTP hosting with public readiness and authenticated message processing."""
 
 import logging
