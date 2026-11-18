@@ -1,0 +1,59 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.29/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.29",
+  "version": "1.0.0",
+  "id": "${{AAD_APP_CLIENT_ID}}",
+  "developer": {
+    "name": "Microsoft, Inc.",
+    "websiteUrl": "https://example.com",
+    "privacyUrl": "https://example.com/privacy",
+    "termsOfUseUrl": "https://example.com/terms"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "Targeted Messages Agent",
+    "full": "Targeted Messages Agent"
+  },
+  "description": {
+    "short": "Targeted reminder agent for Microsoft Teams.",
+    "full": "A Microsoft 365 Agents SDK sample that sends private targeted reminders in Teams, with reminder cards and reactions."
+  },
+  "accentColor": "#FFFFFF",
+  "bots": [
+    {
+      "botId": "${{AAD_APP_CLIENT_ID}}",
+      "scopes": ["personal", "team", "groupChat"],
+      "supportsTargetedMessages": true,
+      "commandLists": [
+        {
+          "scopes": ["personal", "team", "groupChat"],
+          "triggers": ["mention"],
+          "commands": [
+            {"title": "remind", "description": "Create a reminder."},
+            {"title": "cancel-reminder", "description": "Cancel a reminder by ID."},
+            {"title": "add-reaction", "description": "Add a reaction to a message."},
+            {"title": "remove-reaction", "description": "Remove a reaction from a message."}
+          ]
+        },
+        {
+          "scopes": ["personal", "team", "groupChat"],
+          "triggers": ["slash"],
+          "commands": [
+            {"title": "my-reminders", "description": "List active reminders."}
+          ]
+        },
+        {
+          "scopes": ["personal", "team", "groupChat"],
+          "triggers": ["slash", "mention"],
+          "commands": [
+            {"title": "reminder-help", "description": "Show reminder help."}
+          ]
+        }
+      ]
+    }
+  ],
+  "validDomains": []
+}

@@ -184,7 +184,10 @@ public partial class AgentTargetedMessagesAgent(
         IActivity response = CreateCardActivity(
             CreateSnoozeConfirmationCard(reminder, snoozeMinutes),
             $"Snoozed for {snoozeMinutes} minutes");
-        response.MakeTargetedActivity(sender);
+        if (turnContext.Activity.Conversation?.ConversationType != "personal")
+        {
+            response.MakeTargetedActivity(sender);
+        }
         await turnContext.SendActivityAsync(response, cancellationToken);
 
         return AdaptiveCardInvokeResponseFactory.Message($"Snoozed for {snoozeMinutes} minutes!");
@@ -659,7 +662,7 @@ public partial class AgentTargetedMessagesAgent(
         ChannelAccount? recipient,
         CancellationToken cancellationToken)
     {
-        if (isTargeted)
+        if (isTargeted && turnContext.Activity.Conversation?.ConversationType != "personal")
         {
             activity.Recipient = CopyAccount(recipient);
             await turnContext.SendTargetedActivityAsync(activity, activity.Recipient, cancellationToken);
