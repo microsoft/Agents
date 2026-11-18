@@ -94,3 +94,7 @@ Provision the Azure Bot messaging endpoint as
 `https://<your-devtunnel-domain>/api/messages`. The sample manifest uses local
 sample identity placeholders; replace them and the dialog domain with the
 values for your app before packaging or distribution.
+
+The custom HTML dialog uses TeamsJS in the browser to initialize the Teams
+client context and submit dialog results. The Python Agents SDK handles the
+server-side activities; it does not replace this browser client library.

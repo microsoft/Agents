@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 """Authenticated aiohttp hosting for the Teams agent."""
 
 from os import environ

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 """Teams attachment consent and upload handlers for the Agents SDK."""
 
 import asyncio
