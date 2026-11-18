@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 """Meeting events preserve typed metadata, participants and transcript lifecycle."""
 
 import json
