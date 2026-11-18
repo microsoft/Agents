@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 /** Python validation composes trusted tooling behind the shared evidence interface. */
 import { readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
