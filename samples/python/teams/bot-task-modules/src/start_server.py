@@ -84,4 +84,3 @@ async def start_server() -> None:
         await asyncio.Event().wait()
     finally:
         await runner.cleanup()
-
