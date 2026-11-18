@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 from os import environ
 from microsoft_agents.hosting.core import AgentApplication, AgentAuthConfiguration
 from microsoft_agents.hosting.aiohttp import (
