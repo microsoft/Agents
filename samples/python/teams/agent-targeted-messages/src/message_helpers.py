@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 from typing import Any
 
 from microsoft_agents.activity import Activity, CardAction, SuggestedActions
