@@ -84,6 +84,6 @@ endpoint; Teams activity requests must use the authenticated `POST /api/messages
 
 To test in Teams, expose port 3978 using a dev tunnel with anonymous tunnel access, then
 set the Azure Bot messaging endpoint to `https://<your-tunnel-host>/api/messages`. Register
-the app with the same bot ID referenced by the `BOT_ID` manifest placeholder, package the
+the app with the same bot ID referenced by the `${{AAD_APP_CLIENT_ID}}` manifest placeholder, package the
 manifest with its two icons, and sideload it into the development tenant. Replace sample
 metadata and placeholders as appropriate before distributing the app.

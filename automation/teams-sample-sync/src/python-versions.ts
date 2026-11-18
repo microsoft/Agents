@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 /** Bounded bridge to the trusted PEP 440/508 SDK selection policy. */
 import { SyncError } from './errors.js'
 import { runPythonTool } from './python-tool.js'

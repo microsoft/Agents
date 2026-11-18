@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 """Run real Agents SDK dispatch with an in-memory outbound activity adapter."""
 
 from copy import deepcopy
