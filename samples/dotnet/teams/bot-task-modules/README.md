@@ -62,6 +62,10 @@ The agent listens on `http://localhost:3978`. Send any message to receive the ca
 
 Ensure the Azure Bot has the Microsoft Teams channel enabled, then upload a Teams app package whose bot ID is your client ID. The app needs a `personal` scope and your tunnel domain in `validDomains` so Teams can load the custom form.
 
+The custom HTML dialog uses TeamsJS in the browser to initialize the Teams
+client context and submit dialog results. The .NET Agents SDK handles the
+server-side activities; it does not replace this browser client library.
+
 ## Further reading
 
 - [Microsoft 365 Agents SDK](https://learn.microsoft.com/microsoft-365/agents-sdk/)
