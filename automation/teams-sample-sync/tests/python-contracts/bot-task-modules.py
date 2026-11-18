@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 """Dialog behavior and served assets through real SDK invokes and HTTP."""
 
 import unittest
