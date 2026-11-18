@@ -5,10 +5,14 @@ custom feedback in Microsoft Teams agent messages.
 
 ## Prerequisites
 
-- CPython 3.11.14 on Linux x86_64 (the `requirements.lock` was resolved and
-  validated for this runtime and platform)
+- Python 3.11.14 (the Windows launcher checks this version)
 - An Azure Bot registration with its application ID, tenant ID, and client secret
 - A Teams development environment and an HTTPS tunnel for local testing
+
+The synchronization pipeline resolves and validates `requirements.lock` for
+CPython 3.11.14 on Linux x86_64. This is the lock target, rather than a
+requirement to run the sample on Linux. Windows setup uses `requirements.txt`,
+as described below.
 
 ## Windows PowerShell setup
 
