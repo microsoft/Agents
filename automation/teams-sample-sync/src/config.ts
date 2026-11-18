@@ -149,8 +149,14 @@ function parseProfile (raw: unknown, name: Language): LanguageProfile {
 
   if (name === 'dotnet') {
     packagePolicy.targetFramework = text(policy.targetFramework, `${name}.targetFramework`)
-  } else {
+  } else if (name === 'js') {
     packagePolicy.nodeVersion = text(policy.nodeVersion, `${name}.nodeVersion`)
+  } else if (name === 'python') {
+    packagePolicy.pythonVersion = text(policy.pythonVersion, `${name}.pythonVersion`)
+
+    if (packagePolicy.pythonVersion !== '3.11.14') {
+      throw new SyncError('Python synchronization runtime must use Python 3.11.14')
+    }
   }
 
   const result: LanguageProfile = {

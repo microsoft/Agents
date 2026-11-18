@@ -12,11 +12,13 @@ import { prepareManifest } from '../../src/manifest.js'
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..')
 
 describe('maintained reference assets', () => {
-  for (const language of ['dotnet', 'js'] as const) {
+  for (const language of ['dotnet', 'js', 'python'] as const) {
     it(`supplies ${language} initial-import icons without overwriting destination assets`, () => {
       const root = mkdtempSync(path.join(os.tmpdir(), 'teams-reference-icons-'))
       try {
         const configured = targets(repo, language)
+        assert.ok(configured.canonicalSample.startsWith('automation/teams-sample-sync/reference/'))
+        assert.ok(configured.manifestAssets.startsWith('automation/teams-sample-sync/reference/'))
         const target = configured.samples['bot-cards']!.manifest
         const canonical = path.join(repo, configured.canonicalSample)
         const assets = path.join(repo, configured.manifestAssets)

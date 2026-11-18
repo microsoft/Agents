@@ -1,6 +1,8 @@
 /** Produces one isolated, verified migration candidate. */
 import type { Tool } from '@github/copilot-sdk'
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
+import {
+  appendFileSync, existsSync, mkdirSync, writeFileSync
+} from 'node:fs'
 import path from 'node:path'
 import { CopilotAgentRunner, type ImplementationSession, type SdkFactory } from './agent-runner.js'
 import { createContext } from './context.js'
@@ -18,6 +20,7 @@ import { prepareManifest, type ValidationRuntime } from './validate.js'
 import { assertMigrationInputs } from './plan-inputs.js'
 import { assertSdkSelection } from './sdk-policy.js'
 import { assertPublishableSamplePaths } from './guard.js'
+import { runValidationTool } from './validation-tool.js'
 import { language, sameTarget, targetId } from './identity.js'
 import { assertOutcomeMatchesSampleChanges, runMigrationSession } from './sync-session.js'
 import {
@@ -190,7 +193,10 @@ export async function migrateCandidate (
     )
     const session = await runner.open([
       tool('validate_sample', 'Run trusted validation for the selected sample.', schema, async (input) =>
-        validateTool(host, String((input as { group?: unknown }).group) as 'code' | 'manifest' | 'all')
+        runValidationTool(
+          () => validateTool(host, String((input as { group?: unknown }).group) as 'code' | 'manifest' | 'all'),
+          (message) => appendFileSync(agentLog, `\n[Validation tool failed] ${message}\n`, 'utf8')
+        )
       ),
     ])
     implementationSession = session

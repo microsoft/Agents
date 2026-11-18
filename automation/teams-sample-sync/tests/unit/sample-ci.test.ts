@@ -17,6 +17,6 @@ describe('sample-ci', () => {
     assert.match(script, /samples\/nodejs\/\*\/ samples\/nodejs\/teams\/\*\//)
     assert.doesNotMatch(script, /find |\*\*\/|node_modules/)
     assert.match(JSON.stringify(build.steps), /tests\/js-contracts/)
-    assert.deepEqual(Object.keys(configuration(repo).profiles), ['dotnet', 'js'])
+    assert.deepEqual(Object.keys(configuration(repo).profiles), ['dotnet', 'js', 'python'])
   })
 })

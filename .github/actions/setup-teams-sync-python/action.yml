@@ -1,0 +1,13 @@
+name: Set up trusted Teams synchronization Python
+description: Provision the pinned interpreter and hash-verified policy/resolver tools.
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      with:
+        python-version: '3.11.14'
+    - shell: bash
+      run: |
+        python -I -m venv "$RUNNER_TEMP/teams-python-tools"
+        "$RUNNER_TEMP/teams-python-tools/bin/python" -I -m pip install --isolated --index-url https://pypi.org/simple --only-binary=:all: --require-hashes -r "$GITHUB_WORKSPACE/automation/teams-sample-sync/scripts/python-tools-requirements.txt"
+        echo "TEAMS_SYNC_PYTHON=$RUNNER_TEMP/teams-python-tools/bin/python" >> "$GITHUB_ENV"

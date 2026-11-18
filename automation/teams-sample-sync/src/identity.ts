@@ -1,7 +1,7 @@
 /** Validated target identity shared by state, artifacts and matrix jobs. */
 import { SyncError } from './errors.js'
 
-export type Language = 'dotnet' | 'js'
+export type Language = 'dotnet' | 'js' | 'python'
 
 export interface TargetIdentity {
   language: Language
@@ -9,7 +9,7 @@ export interface TargetIdentity {
 }
 
 export function language (value: unknown): Language {
-  if (value !== 'dotnet' && value !== 'js') {
+  if (value !== 'dotnet' && value !== 'js' && value !== 'python') {
     throw new SyncError(`Unsupported language: ${String(value)}`)
   }
 
