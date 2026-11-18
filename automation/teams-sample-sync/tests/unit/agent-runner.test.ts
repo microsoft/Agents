@@ -30,6 +30,14 @@ describe('Copilot agent runner', () => {
         'approve-once'
       )
       assert.equal(permissionFor(repo, 'sample', true, ['validate_sample'], write('outside.txt')).kind, 'reject')
+      const read = (target: string): PermissionRequest => ({
+        kind: 'read',
+        path: target,
+        intention: 'Inspect initial import',
+      })
+      assert.equal(permissionFor(repo, 'sample', false, [], read('sample/src/missing.py')).kind, 'approve-once')
+      assert.equal(permissionFor(repo, 'sample', false, [], read('../outside/missing.py')).kind, 'reject')
+      assert.equal(permissionFor(repo, 'sample', false, [], read('.git/missing')).kind, 'reject')
     } finally {
       rmSync(repo, {
         recursive: true,
@@ -85,7 +93,21 @@ describe('Copilot agent runner', () => {
           handler: async () => ({})
         },
       ])
+      assert.ok(config?.onPermissionRequest)
+      const denied = await config.onPermissionRequest(write('outside.txt'), { sessionId: 'test' })
+      assert.equal(denied.kind, 'reject')
+      assert.match(readFileSync(path.join(repo, 'agent.log'), 'utf8'), /Permission denied.*frozen plan/)
       assert.equal(config?.model, 'auto')
+      assert.ok(config.systemMessage?.content?.includes(`Repository root: ${repo}`))
+      const toolOutput = config?.largeOutput?.outputDirectory
+      assert.ok(toolOutput)
+      assert.equal(path.relative(repo, toolOutput).startsWith('..'), false)
+      writeFileSync(path.join(toolOutput, 'validation.txt'), 'contract failure details')
+      assert.equal(permissionFor(repo, 'sample', false, [], {
+        kind: 'read',
+        path: path.join(toolOutput, 'validation.txt'),
+        intention: 'Read validation details'
+      }).kind, 'approve-once')
       assert.equal(config?.tools?.length, 1)
       assert.equal(config?.tools?.[0]?.name, 'validate_sample')
       const availableTools = config?.availableTools as ToolSet
@@ -154,6 +176,24 @@ describe('Copilot agent runner', () => {
       assert.equal(await active.send('Plan', 'Planning migration'), '## Migration plan\n- Ready')
       assert.equal(readFileSync(logFile, 'utf8'), 'I am inspecting files.\n\n## Migration plan\n- Ready')
       assert.deepEqual(status, ['[Copilot] Planning migration...\n', '[Copilot] Planning migration complete.\n'])
+      handlers.get('tool.execution_start')?.({
+        data: {
+          toolCallId: 'failed-create',
+          toolName: 'create'
+        }
+      })
+      handlers.get('tool.execution_complete')?.({
+        data: {
+          success: false,
+          toolCallId: 'failed-create',
+          result: 'not logged',
+          error: { message: 'Permission rejected ghp_fixtureSecret123' }
+        }
+      })
+      assert.match(readFileSync(logFile, 'utf8'), /Tool execution failed.*failed-create/)
+      assert.match(readFileSync(logFile, 'utf8'), /"tool":"create".*Permission rejected.*REDACTED/)
+      assert.doesNotMatch(readFileSync(logFile, 'utf8'), /ghp_fixtureSecret123/)
+      assert.doesNotMatch(readFileSync(logFile, 'utf8'), /not logged/)
 
       await active.close()
       await runner.close()
