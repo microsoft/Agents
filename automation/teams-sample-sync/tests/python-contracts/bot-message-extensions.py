@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 """Message-extension search, unfurl and fallback contracts through SDK invokes."""
 
 import json

@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 /** Fake external transports with real Python policy, filesystem and coordinator gates. */
 import { readFileSync } from 'node:fs'
 import path from 'node:path'

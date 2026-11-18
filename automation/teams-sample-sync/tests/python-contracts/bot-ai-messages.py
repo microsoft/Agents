@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 """AI message metadata and feedback through the real SDK route pipeline."""
 
 import json
