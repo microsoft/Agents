@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 /** Preserve useful validator errors across the Copilot custom-tool boundary. */
 import type { ToolResultObject } from '@github/copilot-sdk'
 import { diagnosticText } from './agent-runner.js'

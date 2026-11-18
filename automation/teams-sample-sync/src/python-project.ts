@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 /** Inspects Python project declarations and source without importing candidate code. */
 import { record, SyncError } from './config.js'
 import { runPythonTool, type PythonToolRuntime } from './python-tool.js'
