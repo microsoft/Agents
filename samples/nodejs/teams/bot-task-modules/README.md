@@ -26,3 +26,7 @@ node automation/teams-sample-sync/tests/js-contracts/bot-task-modules.test.mjs s
 ```
 
 Test all three dialog types, client-side form validation and returning submitted values in Teams. The form loads the Microsoft Teams JavaScript SDK from its official CDN.
+
+The custom HTML dialog uses TeamsJS in the browser to initialize the Teams
+client context and submit dialog results. The JavaScript Agents SDK handles the
+server-side activities; it does not replace this browser client library.
