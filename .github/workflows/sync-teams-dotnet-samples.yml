@@ -11,7 +11,7 @@ on:
         required: true
         type: choice
         default: all
-        options: [all, dotnet, js]
+        options: [all, dotnet, js, python]
       sample:
         description: Selected sample or all
         required: true
@@ -38,7 +38,7 @@ env:
 jobs:
   plan:
     if: (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # Python 3.11.14 has no Ubuntu 26.04 installer.
     permissions:
       contents: read
     outputs:
@@ -57,8 +57,10 @@ jobs:
           node-version: "24"
           cache: npm
           cache-dependency-path: automation/teams-sample-sync/package-lock.json
+      - uses: ./.github/actions/setup-teams-sync-python
       - run: npm ci --prefix "$SYNC_TOOL" && npm run build --prefix "$SYNC_TOOL"
       - name: Read upstream configuration
+        # Package policy helpers are also needed during planning, before migration.
         id: upstream
         run: |
           node --input-type=module <<'NODE'
@@ -105,7 +107,7 @@ jobs:
     name: migrate · ${{ matrix.language }}/${{ matrix.sample }}
     needs: plan
     if: needs.plan.outputs.matrix != '[]'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # Keep the pinned Python runtime available in every phase.
     permissions:
       contents: read
       copilot-requests: write
@@ -138,6 +140,7 @@ jobs:
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           dotnet-version: 10.0.x
+      - uses: ./.github/actions/setup-teams-sync-python
       - run: npm ci --prefix "$SYNC_TOOL" && npm run build --prefix "$SYNC_TOOL"
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
@@ -146,6 +149,7 @@ jobs:
       - name: Migrate and validate
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          TEAMS_SYNC_COPILOT_FALLBACK_TOKEN: ${{ secrets.COPILOT_ASSIGNMENT_TOKEN }}
           SYNC_SAMPLE: ${{ matrix.sample }}
           SYNC_LANGUAGE: ${{ matrix.language }}
           SYNC_ID: ${{ matrix.id }}
@@ -179,7 +183,7 @@ jobs:
     name: hand off coordinated sync
     needs: [plan, migrate]
     if: (github.event_name == 'schedule' || inputs.publish) && needs.plan.result == 'success' && needs.migrate.result == 'success' && needs.plan.outputs.matrix != '[]'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # Verification also invokes the pinned Python policy tools.
     permissions:
       contents: read
       actions: read
@@ -201,6 +205,7 @@ jobs:
           node-version: "24"
           cache: npm
           cache-dependency-path: automation/teams-sample-sync/package-lock.json
+      - uses: ./.github/actions/setup-teams-sync-python
       - run: npm ci --prefix "$SYNC_TOOL" && npm run build --prefix "$SYNC_TOOL"
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:

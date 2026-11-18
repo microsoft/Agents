@@ -13,6 +13,11 @@ resolved release line; for JS/TS, use its exact npm package map. The minimum is
 a floor. Apply the selected migration skill's package conventions rather than
 copying the minimum into dependencies or imposing one language's version syntax
 on another. Initial imports may have an empty destination.
+This implementation session runs inside the authorized synchronization runtime. Once its
+plan is frozen, create the selected sample's missing files and implement the migration.
+Do not wait for a handoff issue; producing validated output here is a prerequisite for
+that later handoff. Missing project files during initial validation are implementation
+work. Report exact tool rejections and correct requests within the allowed boundary.
 
 Plan and implement SDK updates together with the compatibility migrations they require.
 "Keep current" means the newest supported selection under the coordinator's stable-release,
@@ -48,6 +53,8 @@ Return a concise Markdown specification with an item for each relevant source be
 path and stable symbol, destination change, Agents-specific behavior to preserve, manifest impact,
 and validation expectation. Include every mismatch found during capability reconciliation. The
 coordinator freezes that plan before it grants write access.
+Read the selected profile's protected suite and map every behavior to its exact suite
+path and test method. Identify supplementary or manual checks for coverage gaps.
 
 After write access is granted, implement the frozen plan without editing it. The only CI tool is
 `validate_sample`; use `code` during implementation, `manifest` when editing the package, and

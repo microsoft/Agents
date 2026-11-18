@@ -129,7 +129,7 @@ jobs:
     needs: check_path
     if: ${{ needs.check_path.outputs.samples_changed == 'true' }}
     name: cd-samples-python
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # Preserve installer availability for the Python 3.10 minimum.
 
     strategy:
       matrix:
@@ -150,7 +150,35 @@ jobs:
           for dir in samples/python/*/; do
             if [ -f "$dir/requirements.txt" ]; then
               echo "::group::Building $dir"
-              (cd "$dir" && pip install -r requirements.txt && python -m compileall src/ -q)
+              sample=$(basename "$dir")
+              environment="$RUNNER_TEMP/python-$sample"
+              python -I -m venv "$environment"
+              (cd "$dir" && "$environment/bin/python" -I -m pip install -r requirements.txt && "$environment/bin/python" -I -m pip check && "$environment/bin/python" -I -m compileall src/ -q)
               echo "::endgroup::"
+            fi
+          done
+
+  build-python-teams:
+    needs: check_path
+    if: ${{ needs.check_path.outputs.samples_changed == 'true' }}
+    name: cd-samples-python-teams
+    runs-on: ubuntu-24.04 # Python 3.11.14 has no Ubuntu 26.04 installer.
+    strategy:
+      matrix:
+        python-version: ['3.11.14', '3.12']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install trusted Python validation tools
+        run: |
+          python -I -m venv "$RUNNER_TEMP/teams-python-tools"
+          "$RUNNER_TEMP/teams-python-tools/bin/python" -I -m pip install --isolated --index-url https://pypi.org/simple --only-binary=:all: --require-hashes -r automation/teams-sample-sync/scripts/python-tools-requirements.txt
+      - name: Validate nested Python Teams samples
+        run: |
+          for dir in samples/python/teams/*/; do
+            if [ -d "$dir" ]; then
+              "$RUNNER_TEMP/teams-python-tools/bin/python" -I automation/teams-sample-sync/scripts/python_sample_ci.py "$dir" automation/teams-sample-sync/tests/python-contracts
             fi
           done

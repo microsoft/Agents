@@ -9,6 +9,16 @@ import { record, targets } from '../../src/config.js'
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..')
 
 describe('workflow configuration', () => {
+  it('uses the automatic token first and supplies an optional migration fallback', () => {
+    const workflow = parse(readFileSync(path.join(repo, '.github/workflows/sync-teams-dotnet-samples.yml'), 'utf8'))
+    const step = workflow.jobs.migrate.steps.find((entry: { name?: string }) => entry.name === 'Migrate and validate')
+    // GitHub Actions expressions are intentionally literal strings.
+    // eslint-disable-next-line no-template-curly-in-string
+    assert.equal(step.env.GITHUB_TOKEN, '${{ github.token }}')
+    // eslint-disable-next-line no-template-curly-in-string
+    assert.equal(step.env.TEAMS_SYNC_COPILOT_FALLBACK_TOKEN, '${{ secrets.COPILOT_ASSIGNMENT_TOKEN }}')
+  })
+
   it('manual workflow choices match the configured samples', () => {
     const workflow = record(
       parse(readFileSync(path.join(repo, '.github/workflows/sync-teams-dotnet-samples.yml'), 'utf8')),

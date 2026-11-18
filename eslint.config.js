@@ -1,7 +1,7 @@
 import neostandard from 'neostandard'
 
 export default [
-  ...neostandard({ ts: true, ignores: ['node_modules', '**/dist/**'] }),
+  ...neostandard({ ts: true, ignores: ['node_modules', '**/dist/**', '.sync/**'] }),
   {
     files: ['automation/teams-sample-sync/**/*.{ts,mjs}'],
     rules: {
