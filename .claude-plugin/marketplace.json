@@ -15,7 +15,7 @@
       "name": "agents-for-js",
       "source": "./agent-plugins/agents-for-js",
       "description": "Skills for building agents with the Microsoft 365 Agents SDK for TypeScript/JavaScript",
-      "version": "1.3.0"
+      "version": "1.3.1"
     },
     {
       "name": "agents-for-net",
@@ -27,7 +27,7 @@
       "name": "agents-for-python",
       "source": "./agent-plugins/agents-for-python",
       "description": "Skills for building agents with the Microsoft 365 Agents SDK for Python",
-      "version": "1.2.0"
+      "version": "1.3.6"
     }
   ]
 }
