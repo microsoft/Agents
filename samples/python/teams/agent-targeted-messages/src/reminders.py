@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import asyncio
 from dataclasses import dataclass, field
 from typing import Any, Callable

@@ -86,7 +86,7 @@ readiness check, while message requests retain JWT authorization.
 
 The manifest uses the `personal`, `team`, and `groupChat` installation scopes
 used by the corresponding .NET and Node.js implementations of this same sample.
-Replace `${{BOT_ID}}` with the Teams-managed Azure Bot ID and
+Replace `${{AAD_APP_CLIENT_ID}}` with the Teams-managed Azure Bot ID and
 `${{APP_NAME_SUFFIX}}` with an optional app-name suffix before packaging.
 Package `manifest/manifest.json` with `color.png` and `outline.png` at the
 package root. The `wikipediaSearch` query command is titled **Wikipedia Search**

@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 /** Locate coordinator-owned tooling; never use a candidate-provided interpreter. */
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'

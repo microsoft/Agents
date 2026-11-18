@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 """Adaptive card payloads for meeting event responses."""
 
 from microsoft_agents.activity import Activity, ActivityTypes, Attachment
