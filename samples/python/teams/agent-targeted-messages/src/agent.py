@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import inspect
 import os
 import re
@@ -335,6 +338,81 @@ def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication
         targeted = bool(_read(activity.recipient, "is_targeted", False))
         await route_command(context, text.strip(), targeted, quoted_id)
 
+    async def cancel_card_reminder(context: Any, data: Any) -> str:
+        activity = context.activity
+        identifier = _read(data, "reminderId")
+        reminder = state.reminders.get(identifier) if identifier else None
+        user_id = _read(_read(activity, "from_property"), "id")
+        if reminder is None:
+            return "Reminder not found or already completed."
+        if user_id not in (reminder.creator_id, reminder.target_id):
+            return "You can only cancel reminders you created or are assigned to you."
+        scheduler.cancel(reminder.cancel)
+        state.reminders.pop(identifier, None)
+        return "Reminder cancelled!"
+
+    async def dismiss_card_reminder(context: Any, data: Any) -> str:
+        activity = context.activity
+        identifier = _read(data, "reminderId")
+        dismissed = state.reminders.get(identifier) if identifier else None
+        user_id = _read(_read(activity, "from_property"), "id")
+        if dismissed is None:
+            return "Reminder dismissed!"
+        if user_id not in (dismissed.creator_id, dismissed.target_id):
+            return "You can only dismiss reminders you created or are assigned to you."
+        scheduler.cancel(dismissed.cancel)
+        state.reminders.pop(identifier, None)
+        return "Reminder dismissed!"
+
+    async def snooze_card_reminder(context: Any, data: Any) -> str:
+        activity = context.activity
+        text = _read(data, "reminderText", "Snoozed reminder") or "Snoozed reminder"
+        raw_minutes = _read(data, "snoozeMinutes", "5")
+        if raw_minutes is None:
+            raw_minutes = "5"
+        try:
+            if isinstance(raw_minutes, bool) or not isinstance(raw_minutes, (str, int)):
+                raise ValueError("Snooze duration must be an integer.")
+            if isinstance(raw_minutes, str) and not re.fullmatch(r"\d+", raw_minutes.strip()):
+                raise ValueError("Snooze duration must be a nonnegative integer.")
+            minutes = int(raw_minutes)
+            if minutes < 0 or minutes * 60 > 2_147_483_647:
+                raise ValueError("Snooze duration is too large.")
+        except ValueError:
+            return "Invalid snooze duration."
+        activity_conversation = _read(activity, "conversation")
+        sender = _read(activity, "from_property")
+        state.sequence += 1
+        new_reminder = Reminder(
+            f"{int(now()) % 100000:05x}{state.sequence:04x}",
+            _read(activity_conversation, "id", "").split(";")[0],
+            _read(sender, "id", ""),
+            _read(sender, "name", "User"),
+            _read(sender, "id", ""),
+            _read(sender, "name", "User"),
+            text,
+            now() + minutes * 60,
+            service_url=_read(activity, "service_url", "") or "",
+            channel_id=_read(activity, "channel_id", "msteams") or "msteams",
+            conversation_type=_read(activity_conversation, "conversation_type", "") or "",
+        )
+        state.reminders[new_reminder.identifier] = new_reminder
+        new_reminder.cancel = scheduler.schedule(
+            lambda: continue_delivery(new_reminder), minutes * 60
+        )
+        card = _card(
+            [{"type": "TextBlock", "text": text, "wrap": True}],
+            [_action("Cancel", "cancel_reminder", {"action": "cancel_reminder", "reminderId": new_reminder.identifier})],
+        )
+        await context.send_activity(_activity(_targeted_payload(context, text=f"Snoozed for {minutes} minutes", card=card)))
+        return f"Snoozed for {minutes} minutes!"
+
+    card_actions = {
+        "cancel_reminder": cancel_card_reminder,
+        "dismiss_reminder": dismiss_card_reminder,
+        "snooze_reminder": snooze_card_reminder,
+    }
+
     @application.activity("invoke")
     async def on_invoke(context: Any, _state: TurnState) -> None:
         activity = context.activity
@@ -350,73 +428,8 @@ def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication
         elif name == "adaptiveCard/action":
             data = _read(_read(value, "action"), "data", {})
             action = _read(data, "action")
-            identifier = _read(data, "reminderId")
-            if action == "cancel_reminder":
-                reminder = state.reminders.get(identifier) if identifier else None
-                user_id = _read(_read(activity, "from_property"), "id")
-                if reminder is None:
-                    result = "Reminder not found or already completed."
-                elif user_id not in (reminder.creator_id, reminder.target_id):
-                    result = "You can only cancel reminders you created or are assigned to you."
-                else:
-                    scheduler.cancel(reminder.cancel)
-                    state.reminders.pop(identifier, None)
-                    result = "Reminder cancelled!"
-            elif action == "dismiss_reminder":
-                dismissed = state.reminders.get(identifier) if identifier else None
-                user_id = _read(_read(activity, "from_property"), "id")
-                if dismissed is None:
-                    result = "Reminder dismissed!"
-                elif user_id not in (dismissed.creator_id, dismissed.target_id):
-                    result = "You can only dismiss reminders you created or are assigned to you."
-                else:
-                    scheduler.cancel(dismissed.cancel)
-                    state.reminders.pop(identifier, None)
-                    result = "Reminder dismissed!"
-            elif action == "snooze_reminder":
-                text = _read(data, "reminderText", "Snoozed reminder") or "Snoozed reminder"
-                raw_minutes = _read(data, "snoozeMinutes", "5")
-                if raw_minutes is None:
-                    raw_minutes = "5"
-                try:
-                    if isinstance(raw_minutes, bool) or not isinstance(raw_minutes, (str, int)):
-                        raise ValueError("Snooze duration must be an integer.")
-                    if isinstance(raw_minutes, str) and not re.fullmatch(r"\d+", raw_minutes.strip()):
-                        raise ValueError("Snooze duration must be a nonnegative integer.")
-                    minutes = int(raw_minutes)
-                    if minutes < 0 or minutes * 60 > 2_147_483_647:
-                        raise ValueError("Snooze duration is too large.")
-                except ValueError:
-                    result = "Invalid snooze duration."
-                else:
-                    activity_conversation = _read(activity, "conversation")
-                    sender = _read(activity, "from_property")
-                    state.sequence += 1
-                    new_reminder = Reminder(
-                        f"{int(now()) % 100000:05x}{state.sequence:04x}",
-                        _read(activity_conversation, "id", "").split(";")[0],
-                        _read(sender, "id", ""),
-                        _read(sender, "name", "User"),
-                        _read(sender, "id", ""),
-                        _read(sender, "name", "User"),
-                        text,
-                        now() + minutes * 60,
-                        service_url=_read(activity, "service_url", "") or "",
-                        channel_id=_read(activity, "channel_id", "msteams") or "msteams",
-                        conversation_type=_read(activity_conversation, "conversation_type", "") or "",
-                    )
-                    state.reminders[new_reminder.identifier] = new_reminder
-                    new_reminder.cancel = scheduler.schedule(
-                        lambda: continue_delivery(new_reminder), minutes * 60
-                    )
-                    card = _card(
-                        [{"type": "TextBlock", "text": text, "wrap": True}],
-                        [_action("Cancel", "cancel_reminder", {"action": "cancel_reminder", "reminderId": new_reminder.identifier})],
-                    )
-                    await context.send_activity(_activity(_targeted_payload(context, text=f"Snoozed for {minutes} minutes", card=card)))
-                    result = f"Snoozed for {minutes} minutes!"
-            else:
-                result = "Unknown action."
+            handler = card_actions.get(action)
+            result = await handler(context, data) if handler else "Unknown action."
             await _send_invoke_response(
                 context,
                 {

@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 /** Runs repository-owned Python policies with isolated imports and bounded output. */
 import { spawnSync } from 'node:child_process'
 import path from 'node:path'

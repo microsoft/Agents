@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 param(
     [Parameter(Mandatory, Position = 0)]
     [ValidateSet('setup', 'run')]
