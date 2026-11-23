@@ -124,7 +124,7 @@ There is no inherent relationship between a .transcript file and criteria used f
 
 ### Custom storage
 
-In addition to the [.transcript format](#.transcript-file-format), many implementations will serialize Transcript-compatible Activities into storage specific to their application, such as a database or key-value store. The conventions and formats may be specific to this custom storage, but the resulting data is considered to be compatible with Transcript as long as it meets the non-serialization requirements imposed by this format. Of course, import to and export from custom storage is left to the implementer.
+In addition to the [.transcript format](#transcript-file-format), many implementations will serialize Transcript-compatible Activities into storage specific to their application, such as a database or key-value store. The conventions and formats may be specific to this custom storage, but the resulting data is considered to be compatible with Transcript as long as it meets the non-serialization requirements imposed by this format. Of course, import to and export from custom storage is left to the implementer.
 
 ### Attachments
 
