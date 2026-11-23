@@ -493,6 +493,19 @@ model Entity {
 }
 
 /**
+ * Product information identifying the product or sub-channel behind a channel id
+ * (entity type: "ProductInfo")
+ */
+model ProductInfo {
+  ...Entity;
+
+  /**
+   * Identifier of the product or sub-channel behind the channel id, for example "COPILOT"
+   */
+  id?: string;
+}
+
+/**
  * GeoCoordinates (entity type: "https://schema.org/GeoCoordinates")
  */
 model GeoCoordinates {
