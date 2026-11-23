@@ -1820,6 +1820,10 @@ The `error` field contains the reason the original [command activity](#command-a
 
 # Appendix I - Changes
 
+# 2026-11-21 - chopmob-cloud
+* Added the `ProductInfo` entity for the product or sub-channel behind a channel id
+* Added normative requirements A9266-A9267 for `ProductInfo`
+
 # 2025-02-05 - guhiriya@microsoft.com
 * Added Reserved Events for Media Streaming (`Media.Start`, `Media.Chunk`, `Media.End`)
 * Documented usage of existing `streaminfo` entity for media streaming (no schema changes)
@@ -1953,6 +1957,7 @@ Activity [entities](#entity) communicate extra metadata about the activity, such
 | clientInfo     | N/A                                     | Skype client info         |
 | streamInfo     | N/A                                     | Streaming text metadata   |
 | context        | N/A                                     | Screen and visual context metadata which can be used as Query context     |
+| ProductInfo    | N/A                                     | Product or sub-channel behind a channel id                                  |
 
 ### string and number
 
@@ -2239,6 +2244,37 @@ The context entity in an activity message can contain a `screenContext` object. 
   }
 ```
 
+
+### ProductInfo
+
+The `ProductInfo` entity identifies the product, or sub-channel, behind a channel id when one public channel fronts several distinct products. Channel providers such as Azure Communication Services and Microsoft 365 Teams group multiple products behind a single channel, so a receiver that must tell them apart reads this entity rather than the `channelId` alone.
+
+| Property | Type   | Required | Description                                                                             |
+|----------|--------|----------|-----------------------------------------------------------------------------------------|
+| `type`   | string | Yes      | Must be `"ProductInfo"`                                                                  |
+| `id`     | string | Yes      | Identifier of the product or sub-channel behind the channel id, for example `"COPILOT"`  |
+
+`A9266`: Senders SHOULD include the `ProductInfo` entity only when the product behind the channel id differs from the channel itself.
+
+`A9267`: Receivers MUST ignore a `ProductInfo` entity whose `id` value they do not understand.
+
+Properties may be added to this entity in a later revision. Senders SHOULD omit properties for which they have no value, and receivers MUST ignore properties they do not understand, as required for all entities.
+
+Example:
+```
+{
+  "type": "message",
+  "id": "1741193418370",
+  "channelId": "msteams",
+  "text": "Hello",
+  "entities": [
+    {
+      "type": "ProductInfo",
+      "id": "COPILOT"
+    }
+  ]
+}
+```
 
 # Appendix III - Protocols using the Invoke activity
 
