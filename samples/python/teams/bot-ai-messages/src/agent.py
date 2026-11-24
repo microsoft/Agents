@@ -5,18 +5,15 @@
 
 import json
 import logging
-from os import environ
 
-from dotenv import load_dotenv
-from microsoft_agents.activity import Activity, load_configuration_from_env
-from microsoft_agents.authentication.msal import MsalConnectionManager
-from microsoft_agents.hosting.aiohttp import CloudAdapter
+from microsoft_agents.activity import Activity
 from microsoft_agents.hosting.core import (
     AgentApplication,
     MemoryStorage,
     TurnContext,
     TurnState,
 )
+from microsoft_agents.hosting.core.authorization import Connections
 from microsoft_agents.hosting.msteams import TeamsAgentExtension
 
 logger = logging.getLogger(__name__)
@@ -116,21 +113,12 @@ async def _handle_feedback_fetch(context: TurnContext, _state: TurnState) -> Non
     await context.send_activity(_feedback_fetch_response())
 
 
-def create_agent(dependencies: dict | None = None) -> AgentApplication:
-    """Build an isolated Agents SDK app; injected transports support offline checks."""
-    load_dotenv()
-    options = dependencies or {}
-    configuration = load_configuration_from_env(environ)
-    connection_manager = options.get("connection_manager")
-    if connection_manager is None:
-        connection_manager = MsalConnectionManager(**configuration)
-    adapter = options.get("adapter")
-    if adapter is None:
-        adapter = CloudAdapter(connection_manager=connection_manager)
-
+def create_agent(
+    configuration: dict,
+    connection_manager: Connections,
+) -> AgentApplication:
     app = AgentApplication(
         storage=MemoryStorage(),
-        adapter=adapter,
         connection_manager=connection_manager,
         **configuration,
     )

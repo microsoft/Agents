@@ -1,8 +1,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import asyncio
-import os
+"""Serve the sample's public pages and authenticated Teams messages."""
+
+from os import environ
 from pathlib import Path
 
 from aiohttp import web
@@ -11,76 +12,68 @@ from microsoft_agents.activity import load_configuration_from_env
 from microsoft_agents.authentication.msal import MsalConnectionManager
 from microsoft_agents.hosting.aiohttp import (
     CloudAdapter,
-    jwt_authorization_middleware,
+    jwt_authorization_decorator,
     start_agent_process,
 )
-from microsoft_agents.hosting.core import (
-    AgentApplication,
-    AgentAuthConfiguration,
-)
+from microsoft_agents.hosting.core.authorization import AuthTypes
 
 from .agent import create_agent
 
 
-ROOT = Path(__file__).resolve().parent.parent
-load_dotenv(ROOT / ".env")
+async def readiness(_request: web.Request) -> web.Response:
+    return web.Response(text="Agent is ready")
 
 
-def create_server(
-    agent: AgentApplication | None = None,
-    auth_configuration: AgentAuthConfiguration | None = None,
-) -> web.Application:
-    server = web.Application()
-    message_api = web.Application(middlewares=[jwt_authorization_middleware])
-
-    async def readiness(_request: web.Request) -> web.Response:
-        return web.Response(text="Agent is ready")
-
-    async def process_message(request: web.Request) -> web.Response:
-        application: AgentApplication | None = server["agent_app"]
-        if application is None:
-            application = create_agent()
-            server["agent_app"] = application
-            message_api["agent_app"] = application
-            message_api["adapter"] = application.adapter
-        adapter: CloudAdapter = message_api["adapter"]
-        return await start_agent_process(request, application, adapter)
-
-    async def custom_form(_request: web.Request) -> web.FileResponse:
-        return web.FileResponse(ROOT / "pages" / "CustomForm" / "index.html")
-
-    server.router.add_get("/", readiness)
-    server.router.add_get("/customform", custom_form)
-    server["agent_app"] = agent
-    message_api.router.add_post("/messages", process_message)
-    message_api["agent_app"] = agent
-    message_api["adapter"] = agent.adapter if agent is not None else None
-    message_api["agent_configuration"] = auth_configuration
-    server.add_subapp("/api", message_api)
-    return server
+async def custom_form(_request: web.Request) -> web.FileResponse:
+    sample_root = Path(__file__).resolve().parents[1]
+    return web.FileResponse(sample_root / "pages" / "CustomForm" / "index.html")
 
 
-async def start_server() -> None:
-    required_settings = (
-        "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTID",
-        "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTSECRET",
-        "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__TENANTID",
+async def messages_unconfigured(_request: web.Request) -> web.Response:
+    raise web.HTTPServiceUnavailable(text="Agent connection settings are not configured.")
+
+
+def create_web_app() -> web.Application:
+    app = web.Application()
+    app.router.add_get("/", readiness)
+    app.router.add_get("/customform", custom_form)
+
+    configuration = load_configuration_from_env(environ)
+    connections = configuration.get("CONNECTIONS", {})
+    has_connection_settings = any(
+        any(connection.get("SETTINGS", {}).values())
+        for connection in connections.values()
     )
-    auth_configuration = None
-    agent = None
-    if all(os.getenv(setting) for setting in required_settings):
-        configuration = load_configuration_from_env(os.environ)
-        connection_manager = MsalConnectionManager(**configuration)
-        auth_configuration = (
-            connection_manager.get_default_connection_configuration()
-        )
-        agent = create_agent({"connection_manager": connection_manager})
-    server = create_server(agent, auth_configuration)
-    runner = web.AppRunner(server)
-    await runner.setup()
-    site = web.TCPSite(runner, host="0.0.0.0", port=int(os.getenv("PORT", "3978")))
-    await site.start()
-    try:
-        await asyncio.Event().wait()
-    finally:
-        await runner.cleanup()
+    if not has_connection_settings:
+        # Readiness is available before credentials are provisioned.
+        app.router.add_post("/api/messages", messages_unconfigured)
+        return app
+
+    connection_manager = MsalConnectionManager(**configuration)
+    auth_configuration = connection_manager.get_default_connection_configuration()
+    if auth_configuration.AUTH_TYPE == AuthTypes.client_secret and not (
+        auth_configuration.client_id
+        and auth_configuration.CLIENT_SECRET
+        and auth_configuration.tenant_id
+    ):
+        raise ValueError("Configure CLIENTID, CLIENTSECRET and TENANTID for SERVICE_CONNECTION.")
+
+    adapter = CloudAdapter(connection_manager=connection_manager)
+    agent = create_agent(configuration, connection_manager)
+
+    @jwt_authorization_decorator
+    async def messages(request: web.Request) -> web.StreamResponse:
+        return await start_agent_process(request, agent, adapter)
+
+    app["agent_configuration"] = auth_configuration
+    app.router.add_post("/api/messages", messages)
+    return app
+
+
+def start_server() -> None:
+    load_dotenv(Path(__file__).resolve().parents[1] / ".env")
+    web.run_app(
+        create_web_app(),
+        host="0.0.0.0",
+        port=int(environ.get("PORT", "3978")),
+    )

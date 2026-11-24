@@ -6,19 +6,15 @@
 import asyncio
 import logging
 from collections.abc import Awaitable, Callable
-from os import environ
 from typing import Any
 from uuid import uuid4
 
-from dotenv import load_dotenv
 from microsoft_agents.activity import (
     Activity,
     Attachment,
-    load_configuration_from_env,
 )
-from microsoft_agents.authentication.msal import MsalConnectionManager
-from microsoft_agents.hosting.aiohttp import CloudAdapter
 from microsoft_agents.hosting.core import AgentApplication, MemoryStorage, TurnContext
+from microsoft_agents.hosting.core.authorization import Connections
 from microsoft_agents.hosting.msteams import TeamsAgentExtension
 
 from .files import download_attachment, upload_to_onedrive
@@ -67,25 +63,17 @@ async def _download_attachment_or_none(
         return None
 
 
-def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication:
-    """Create one isolated application instance with optional offline services."""
-    load_dotenv()
-    supplied = dependencies or {}
-    connection_manager = supplied.get("connection_manager")
-    configuration = load_configuration_from_env(environ)
-    if connection_manager is None:
-        connection_manager = MsalConnectionManager(**configuration)
-
-    adapter = supplied.get("adapter")
-    if adapter is None:
-        adapter = CloudAdapter(connection_manager=connection_manager)
-
-    download = supplied.get("download", download_attachment)
-    upload = supplied.get("upload", upload_to_onedrive)
+def create_agent(
+    configuration: dict,
+    connection_manager: Connections,
+    *,
+    download: Callable[[str], Awaitable[bytes]] = download_attachment,
+    upload: Callable[[str, bytes], Awaitable[None]] = upload_to_onedrive,
+) -> AgentApplication:
     app = AgentApplication(
         storage=MemoryStorage(),
-        adapter=adapter,
         connection_manager=connection_manager,
+        **configuration,
     )
     teams = TeamsAgentExtension(app)
     pending_uploads: dict[str, bytes] = {}
@@ -188,6 +176,8 @@ def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication
                 await upload_in_continuation(continued_context, upload_info, content)
             except Exception:
                 logger.exception("File upload failed for %s", filename)
+
+        adapter = context.adapter
 
         async def run_upload() -> None:
             try:
