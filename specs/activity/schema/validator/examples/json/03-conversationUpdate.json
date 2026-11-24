@@ -1,0 +1,13 @@
+{
+  "type": "conversationUpdate",
+  "id": "conversation-update-1",
+  "timestamp": "2025-09-15T10:00:03.000Z",
+  "serviceUrl": "https://smba.trafficmanager.net/amer/",
+  "channelId": "msteams",
+  "from": { "id": "user-id-2", "name": "Jane Smith" },
+  "conversation": { "isGroup": true, "id": "conv-1", "name": "Project Discussion" },
+  "recipient": { "id": "bot-id-1", "name": "HelpBot" },
+  "membersAdded": [ { "id": "user-id-3", "name": "Sam Brown" } ],
+  "membersRemoved": [],
+  "topicName": "Project Discussion Kickoff"
+}
