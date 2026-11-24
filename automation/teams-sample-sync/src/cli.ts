@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /** Entry point for planning, migration and coordinated issue handoff. */
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { selectedLanguages, targets, SyncError } from './config.js'
 import { migrateCandidate } from './candidate.js'
+import { isolateAuthenticationFailure, withMigrationCredentialFallback } from './migration-auth.js'
 import {
   emitFailure,
   parseArgs,
@@ -54,7 +55,35 @@ export async function main (argv = process.argv.slice(2)): Promise<number> {
     }
 
     if (command === 'migrate') {
-      return migrateCandidate(repo, values)
+      const primary = process.env.GITHUB_TOKEN
+      const fallback = process.env.TEAMS_SYNC_COPILOT_FALLBACK_TOKEN
+      delete process.env.TEAMS_SYNC_COPILOT_FALLBACK_TOKEN
+      const output = resolveOption(required(values, 'output-directory'))
+
+      try {
+        return await withMigrationCredentialFallback(primary, fallback, async (token) => {
+          if (token === undefined) {
+            delete process.env.GITHUB_TOKEN
+          } else {
+            process.env.GITHUB_TOKEN = token
+          }
+
+          const code = await migrateCandidate(repo, values)
+          const result = readJson<{ error?: string }>(path.join(output, 'sync-result.json'))
+
+          return {
+            code,
+            ...result,
+            planningCompleted: existsSync(path.join(output, 'migration-plan.md')),
+          }
+        }, undefined, () => isolateAuthenticationFailure(output))
+      } finally {
+        if (primary === undefined) {
+          delete process.env.GITHUB_TOKEN
+        } else {
+          process.env.GITHUB_TOKEN = primary
+        }
+      }
     }
 
     if (command === 'prepare-handoff' || command === 'prepare-issue') {

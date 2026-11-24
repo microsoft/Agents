@@ -6,6 +6,8 @@
 import {
   appendFileSync,
   existsSync,
+  lstatSync,
+  mkdirSync,
   readFileSync,
   realpathSync
 } from 'node:fs'
@@ -57,6 +59,16 @@ export async function defaultSdkFactory (): Promise<SdkClient> {
   return new CopilotClient({ connection: RuntimeConnection.forStdio({ path: executable }) })
 }
 
+export function diagnosticText (value: string): string {
+  for (const [key, secret] of Object.entries(process.env)) {
+    if (/TOKEN|SECRET|PASSWORD|API_KEY/i.test(key) && secret) {
+      value = value.replaceAll(secret, '[REDACTED]')
+    }
+  }
+
+  return value.replace(/(?:github_pat_|gh[pousr]_)[A-Za-z0-9_]+/g, '[REDACTED]').slice(0, 2000)
+}
+
 export function permissionFor (
   repo: string,
   sampleRoot: string,
@@ -67,7 +79,26 @@ export function permissionFor (
   if (request.kind === 'read') {
     try {
       const root = realpathSync(repo)
-      const candidate = realpathSync(path.resolve(repo, request.path))
+      const requested = path.resolve(repo, request.path)
+      let ancestor = requested
+
+      while (!existsSync(ancestor)) {
+        if (lstatSync(ancestor, { throwIfNoEntry: false })?.isSymbolicLink()) {
+          return { kind: 'reject' }
+        }
+
+        const parent = path.dirname(ancestor)
+
+        if (parent === ancestor) {
+          return { kind: 'reject' }
+        }
+
+        ancestor = parent
+      }
+
+      // A missing bootstrap file should yield the tool's normal not-found result,
+      // not an authorization denial. Resolve its existing parent to retain symlink confinement.
+      const candidate = path.resolve(realpathSync(ancestor), path.relative(ancestor, requested))
       const relative = path.relative(root, candidate)
       const segments = relative.split(path.sep)
 
@@ -174,6 +205,22 @@ class PersistentImplementationSession implements ImplementationSession {
         })
       }
     })
+    const toolNames = new Map<string, string>()
+    session.on('tool.execution_start', (event) => {
+      toolNames.set(event.data.toolCallId, event.data.toolName)
+    })
+    session.on('tool.execution_complete', (event) => {
+      if (!event.data.success) {
+        // Record identifiers, not tool arguments or results that may contain credentials.
+        log.write(`[Tool execution failed] ${diagnosticText(JSON.stringify({
+          toolCallId: event.data.toolCallId,
+          tool: toolNames.get(event.data.toolCallId),
+          error: event.data.error,
+        }))}`)
+      }
+
+      toolNames.delete(event.data.toolCallId)
+    })
   }
 
   setWriteAccess (enabled: boolean): void {
@@ -247,6 +294,8 @@ export class CopilotAgentRunner {
     }
 
     const log = createCopilotLog((value) => appendFileSync(this.logFile, value, 'utf8'))
+    const toolOutput = path.join(this.repo, '.sync', 'tool-output', path.basename(path.dirname(this.logFile)))
+    mkdirSync(toolOutput, { recursive: true })
     const prompt = readFileSync(path.join(this.repo, 'automation/teams-sample-sync/prompts/agent-prompt.md'), 'utf8')
     const names = tools.map((tool) => tool.name)
     const availableTools = new ToolSet().addBuiltIn([
@@ -272,17 +321,24 @@ export class CopilotAgentRunner {
       skillDirectories: this.skillDirectories,
       systemMessage: {
         mode: 'append',
-        content: prompt
+        content: [
+          prompt,
+          `Repository root: ${this.repo}`,
+          'Resolve all .sync/, samples/, automation/ and agent-plugins/ paths from this root, not its parent.',
+        ].join('\n')
       },
       tools,
       availableTools,
       excludedTools: ['shell', 'bash', 'terminal'],
       enableConfigDiscovery: false,
+      largeOutput: { outputDirectory: toolOutput },
       hooks: {
         onPreToolUse: (input) => {
           this.guard()
 
           if (this.isWriteTool(input.toolName) && !active?.canWrite()) {
+            log.write(`[Tool denied] ${input.toolName}: migration plan is not frozen`)
+
             return {
               permissionDecision: 'deny',
               permissionDecisionReason: 'The migration plan is being drafted; do not edit before it is frozen.',
@@ -295,8 +351,26 @@ export class CopilotAgentRunner {
           this.guard()
         },
       },
-      onPermissionRequest: (request) =>
-        permissionFor(this.repo, this.sampleRoot, active?.canWrite() ?? false, names, request),
+      onPermissionRequest: (request) => {
+        const permission = permissionFor(this.repo, this.sampleRoot, active?.canWrite() ?? false, names, request)
+
+        if (permission.kind === 'reject') {
+          const reason = request.kind === 'read'
+            ? 'Read target is outside the repository, protected Git/Codex metadata, or cannot be resolved'
+            : request.kind === 'write'
+              ? 'Write requires a frozen plan, a selected-sample path, and no sandbox bypass'
+              : 'Request is outside the allowed tool or official URL policy'
+          const target = request.kind === 'read' ? request.path : request.kind === 'write' ? request.fileName : undefined
+          log.write(`[Permission denied] ${diagnosticText(JSON.stringify({
+ kind: request.kind,
+target,
+reason
+}))}`)
+          this.status(`[Copilot] Permission denied (${request.kind}): ${reason}. See agent-log.txt.\n`)
+        }
+
+        return permission
+      },
     })
     const active = new PersistentImplementationSession(raw, log, this.observed, this.status)
 
