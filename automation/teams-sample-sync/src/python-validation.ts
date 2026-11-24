@@ -46,7 +46,10 @@ export function createPythonValidation (tooling: PythonPolicyRuntime): LanguageV
       return checks
     }
 
-    const { selection, sampleRoot, runtime, repo } = input
+    const {
+      selection, sampleRoot, runtime, repo
+    } = input
+
     if (!selection) {
       throw new SyncError('Python validation requires the frozen SDK package selection')
     }
