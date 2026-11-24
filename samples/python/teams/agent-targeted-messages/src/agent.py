@@ -1,17 +1,19 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import inspect
-import os
 import re
 import time
-from typing import Any, Callable
+from collections.abc import Awaitable, Callable
 
-from dotenv import load_dotenv
-from microsoft_agents.activity import load_configuration_from_env
-from microsoft_agents.authentication.msal import MsalConnectionManager
-from microsoft_agents.hosting.aiohttp import CloudAdapter
-from microsoft_agents.hosting.core import AgentApplication, MemoryStorage, TurnState
+from microsoft_agents.activity import Activity, ChannelAccount
+from microsoft_agents.hosting.core import (
+    AgentApplication,
+    ChannelServiceAdapter,
+    MemoryStorage,
+    TurnContext,
+    TurnState,
+)
+from microsoft_agents.hosting.core.authorization import Connections
 from microsoft_agents.hosting.msteams import TeamsAgentExtension
 from src.message_helpers import (
     _action,
@@ -19,52 +21,64 @@ from src.message_helpers import (
     _card,
     _commands,
     _format_span,
-    _read,
+    is_targeted,
     _send_invoke_response,
     _targeted_payload,
 )
-from src.reminders import AgentState, Reminder, ReminderScheduler
+from src.reminders import AgentState, Reminder, ReminderScheduler, parse_reminder
 
-load_dotenv()
-
-TIME_PATTERN = re.compile(
-    r"in\s+(\d+)\s*(seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h)\b",
-    re.IGNORECASE,
-)
+MAX_DELAY_SECONDS = 2_147_483_647
 
 
-def _seconds(text: str) -> int | None:
-    match = TIME_PATTERN.search(text)
-    if match is None:
-        return None
-    amount = int(match.group(1))
-    unit = match.group(2).lower()
-    if unit.startswith(("second", "sec")) or unit == "s":
-        return amount
-    if unit.startswith(("minute", "min")) or unit == "m":
-        return amount * 60
-    return amount * 3600
+def _sender_id(activity: Activity) -> str | None:
+    return activity.from_property.id if activity.from_property else None
 
 
-def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication:
-    dependencies = dependencies or {}
-    configuration = load_configuration_from_env(os.environ)
-    manager = dependencies.get("connection_manager")
-    if manager is None:
-        manager = MsalConnectionManager(**configuration)
-    adapter = dependencies.get("adapter")
-    if adapter is None:
-        adapter = CloudAdapter(connection_manager=manager)
+def _reminder_from_activity(
+    activity: Activity,
+    *,
+    identifier: str,
+    target: ChannelAccount | None,
+    text: str,
+    due_time: float,
+) -> Reminder:
+    """Capture the conversation and accounts needed after the incoming turn ends."""
+    sender = activity.from_property or ChannelAccount()
+    conversation = activity.conversation
+    recipient = target if target is not None else sender
+    default_recipient_name = "User" if target is not None else "You"
+    return Reminder(
+        identifier=identifier,
+        conversation_id=(conversation.id or "").split(";")[0] if conversation else "",
+        target_id=recipient.id or "",
+        target_name=recipient.name or default_recipient_name,
+        creator_id=sender.id or "",
+        creator_name=sender.name or "You",
+        text=text,
+        due_time=due_time,
+        service_url=activity.service_url or "",
+        channel_id=activity.channel_id or "msteams",
+        conversation_type=(conversation.conversation_type or "") if conversation else "",
+    )
+
+
+def create_agent(
+    configuration: dict,
+    connection_manager: Connections,
+    *,
+    agent_id: str = "",
+    schedule: Callable[[Callable[[], Awaitable[None]], float], Callable[[], None]] | None = None,
+    now: Callable[[], float] = time.time,
+    reaction: Callable[[TurnContext, str, str | None, str], Awaitable[None]] | None = None,
+) -> AgentApplication:
     application = AgentApplication[TurnState](
-        storage=MemoryStorage(), adapter=adapter, connection_manager=manager
+        storage=MemoryStorage(), connection_manager=connection_manager, **configuration
     )
     teams = TeamsAgentExtension(application)
     state = AgentState()
-    scheduler = ReminderScheduler(state, dependencies.get("schedule"))
-    now: Callable[[], float] = dependencies.get("now", time.time)
-    reaction = dependencies.get("reaction")
+    scheduler = ReminderScheduler(state, schedule)
 
-    async def continue_delivery(reminder: Reminder) -> None:
+    async def continue_delivery(reminder: Reminder, adapter: ChannelServiceAdapter) -> None:
         if reminder.identifier not in state.reminders or state.closed:
             return
         try:
@@ -88,12 +102,6 @@ def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication
                     ),
                 ],
             )
-            agent_id = (
-                configuration.get("CONNECTIONS", {})
-                .get("SERVICE_CONNECTION", {})
-                .get("SETTINGS", {})
-                .get("CLIENTID", "")
-            )
             # The continuation's sender becomes the outgoing recipient, so the
             # reminder is addressed to its captured target user.
             continuation = _activity(
@@ -106,7 +114,7 @@ def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication
                     "recipient": {"id": agent_id or "agent"},
                 }
             )
-            async def deliver(turn_context: Any) -> None:
+            async def deliver(turn_context: TurnContext) -> None:
                 await turn_context.send_activity(_activity(_targeted_payload(turn_context, card=card)))
 
             await adapter.continue_conversation(agent_id, continuation, deliver)
@@ -115,56 +123,57 @@ def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication
         finally:
             state.reminders.pop(reminder.identifier, None)
 
-    async def set_reminder(context: Any, command: str, targeted: bool) -> None:
-        activity = context.activity
-        text = command.strip()
-        text = re.sub(r"^remind\b", "", text, flags=re.IGNORECASE).strip()
-        sender = _read(activity, "from_property")
-        sender_id = _read(sender, "id", "")
-        sender_name = _read(sender, "name", "You")
-        target_id, target_name = sender_id, sender_name
-        mentioned = None
-        mentioned_text = ""
-        for entity in _read(activity, "entities", []) or []:
-            if _read(entity, "type") == "mention":
-                person = _read(entity, "mentioned")
-                if _read(person, "id") != _read(activity.recipient, "id"):
-                    mentioned = person
-                    mentioned_text = _read(entity, "text", "") or ""
-                    break
-        if not re.match(r"^me(?:\s|,|$)", text, re.IGNORECASE) and mentioned:
-            target_id = _read(mentioned, "id", "")
-            target_name = _read(mentioned, "name", "User")
-        if mentioned_text:
-            text = text.replace(mentioned_text, "").strip()
-        text = re.sub(r"^me(?:\s|,|$)", "", text, flags=re.IGNORECASE).strip().lstrip(",").strip()
-        delay = _seconds(text)
-        if delay is None or delay > 2_147_483_647:
-            await context.send_activity("Could not parse time. Use `remind me in 5 minutes`.\n\nUse `reminder-help` for usage examples.")
-            return
-        reminder_text = TIME_PATTERN.sub("", text).strip().lstrip(",").strip()
-        reminder_text = re.sub(r"^(to|that)\s+", "", reminder_text, flags=re.IGNORECASE)
-        reminder_text = reminder_text or "You have a reminder!"
+    def schedule_reminder(
+        context: TurnContext,
+        text: str,
+        delay: int,
+        target: ChannelAccount | None = None,
+    ) -> Reminder:
+        current_time = now()
         state.sequence += 1
-        identifier = f"{int(now()) % 100000:05x}{state.sequence:04x}"
-        conversation_id = _read(activity.conversation, "id", "").split(";")[0]
-        reminder = Reminder(
-            identifier, conversation_id, target_id, target_name, sender_id,
-            sender_name, reminder_text, now() + delay,
-            service_url=_read(activity, "service_url", "") or "",
-            channel_id=_read(activity, "channel_id", "msteams") or "msteams",
-            conversation_type=_read(_read(activity, "conversation"), "conversation_type", "") or "",
+        identifier = f"{int(current_time) % 100000:05x}{state.sequence:04x}"
+        reminder = _reminder_from_activity(
+            context.activity,
+            identifier=identifier,
+            target=target,
+            text=text,
+            due_time=current_time + delay,
         )
+        adapter = context.adapter
         state.reminders[identifier] = reminder
-        reminder.cancel = scheduler.schedule(
-            lambda: continue_delivery(reminder), delay
+        reminder.cancel = scheduler.schedule(lambda: continue_delivery(reminder, adapter), delay)
+        return reminder
+
+    async def set_reminder(context: TurnContext, command: str) -> None:
+        activity = context.activity
+        bot_id = activity.recipient.id if activity.recipient else None
+        mention = next(
+            (
+                mention for mention in activity.get_mentions()
+                if mention.mentioned and mention.mentioned.id != bot_id
+            ),
+            None,
+        )
+        parsed = parse_reminder(command, mention.text if mention else None)
+        if parsed is None or parsed.delay > MAX_DELAY_SECONDS:
+            await context.send_activity(
+                "Could not parse time. Use `remind me in 5 minutes`.\n\n"
+                "Use `reminder-help` for usage examples."
+            )
+            return
+
+        target = mention.mentioned if mention and not parsed.for_self else None
+        reminder = schedule_reminder(context, parsed.text, parsed.delay, target)
+        identifier = reminder.identifier
+        recipient_name = (
+            "yourself" if reminder.creator_id == reminder.target_id else reminder.target_name
         )
         body = [
             {"type": "TextBlock", "text": "Reminder Set!", "weight": "Bolder", "size": "Medium", "color": "Good"},
             {"type": "FactSet", "facts": [
-                {"title": "Reminder:", "value": reminder_text},
-                {"title": "For:", "value": "yourself" if sender_id == target_id else target_name},
-                {"title": "In:", "value": _format_span(delay)},
+                {"title": "Reminder:", "value": parsed.text},
+                {"title": "For:", "value": recipient_name},
+                {"title": "In:", "value": _format_span(parsed.delay)},
                 {"title": "ID:", "value": identifier},
             ]},
             {"type": "TextBlock", "text": "This is a targeted message - only you can see this.", "size": "Small", "isSubtle": True, "wrap": True},
@@ -180,9 +189,8 @@ def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication
                 state.reminders.pop(identifier, None)
                 scheduler.cancel(reminder.cancel)
 
-    async def list_reminders(context: Any, targeted: bool) -> None:
-        activity = context.activity
-        user_id = _read(_read(activity, "from_property"), "id")
+    async def list_reminders(context: TurnContext) -> None:
+        user_id = _sender_id(context.activity)
         own = sorted(
             (item for item in state.reminders.values() if item.target_id == user_id or item.creator_id == user_id),
             key=lambda item: item.due_time,
@@ -196,12 +204,15 @@ def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication
             ])
             await context.send_activity(_activity(response))
             return
-        lines = [
-            f'- **{item.identifier}**: "{item.text}" for '
-            f'{"yourself" if item.creator_id == item.target_id else item.target_name} '
-            f'({"in " + _format_span(item.due_time - now()) if item.due_time > now() else "overdue"})'
-            for item in own
-        ]
+        current_time = now()
+        lines = []
+        for reminder in own:
+            recipient_name = (
+                "yourself" if reminder.creator_id == reminder.target_id else reminder.target_name
+            )
+            remaining = reminder.due_time - current_time
+            due = f"in {_format_span(remaining)}" if remaining > 0 else "overdue"
+            lines.append(f'- **{reminder.identifier}**: "{reminder.text}" for {recipient_name} ({due})')
         await context.send_activity(
             _activity(_targeted_payload(
                 context,
@@ -210,8 +221,8 @@ def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication
             ))
         )
 
-    async def cancel_reminder(context: Any, identifier: str) -> None:
-        user_id = _read(_read(context.activity, "from_property"), "id")
+    async def cancel_reminder(context: TurnContext, identifier: str) -> None:
+        user_id = _sender_id(context.activity)
         reminder = state.reminders.get(identifier)
         if reminder is None:
             message = f"Reminder **{identifier}** not found or already completed." if identifier else "Please specify a reminder ID. Use `my-reminders` to see your active reminders."
@@ -223,8 +234,8 @@ def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication
             message = f"Reminder **{identifier}** has been cancelled."
         await context.send_activity(_activity(_targeted_payload(context, text=message)))
 
-    async def show_help(context: Any) -> None:
-        user_id = _read(_read(context.activity, "from_property"), "id")
+    async def show_help(context: TurnContext) -> None:
+        user_id = _sender_id(context.activity)
         text = (
             "**Personal Reminder Agent - Help**\n\n"
             "**Set a Reminder:**\n"
@@ -250,7 +261,7 @@ def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication
         await context.send_activity(_activity(response))
 
     async def route_command(
-        context: Any,
+        context: TurnContext,
         command: str,
         targeted: bool,
         quoted_id: str | None = None,
@@ -260,9 +271,9 @@ def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication
         if lower in ("reminder-help", "help"):
             await show_help(context)
         elif lower.startswith("remind"):
-            await set_reminder(context, command, targeted)
+            await set_reminder(context, command)
         elif lower == "my-reminders":
-            await list_reminders(context, targeted)
+            await list_reminders(context)
         elif from_invoke:
             # Suggested-action invokes only share the first three commands.
             await context.send_activity(f"Executing: {command}")
@@ -274,7 +285,7 @@ def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication
             await handle_reaction(context, command, targeted, "delete", quoted_id)
         else:
             response = _targeted_payload(context, text="Use `reminder-help` to see available commands.")
-            response["suggestedActions"] = _commands(_read(_read(context.activity, "from_property"), "id"), [
+            response["suggestedActions"] = _commands(_sender_id(context.activity), [
                 ("Show help", "reminder-help"),
                 ("Remind me in 5 minutes test", "remind me in 5 minutes test"),
                 ("My reminders", "my-reminders"),
@@ -285,7 +296,7 @@ def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication
             await context.send_activity(_activity(response))
 
     async def handle_reaction(
-        context: Any,
+        context: TurnContext,
         command: str,
         targeted: bool,
         operation: str,
@@ -306,43 +317,40 @@ def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication
             )
             return
         # Quoted message, then reply target, then the incoming message.
-        message_id = quoted_id or _read(activity, "reply_to_id") or _read(activity, "id")
+        message_id = quoted_id or activity.reply_to_id or activity.id
         if reaction is not None:
             await reaction(context, operation, message_id, reaction_type)
         else:
             client = teams.get_teams_api_client(context)
-            if inspect.isawaitable(client):
-                client = await client
             method = client.reactions.add if operation == "add" else client.reactions.delete
-            await method(_read(activity.conversation, "id"), message_id, reaction_type)
+            conversation_id = activity.conversation.id if activity.conversation else None
+            await method(conversation_id, message_id, reaction_type)
         verb = "Added" if operation == "add" else "Removed"
         await context.send_activity(f"{verb} a **{reaction_type}** reaction to your message!")
 
     @application.activity("message")
-    async def on_message(context: Any, _state: TurnState) -> None:
+    async def on_message(context: TurnContext, _state: TurnState) -> None:
         activity = context.activity
-        raw_text = _read(activity, "text", "") or ""
-        if not raw_text:
+        text = activity.text or ""
+        if not text:
             return
-        text = raw_text
-        bot_id = _read(activity.recipient, "id", "")
-        for entity in _read(activity, "entities", []) or []:
-            if _read(entity, "type") == "mention" and _read(_read(entity, "mentioned"), "id") == bot_id:
-                mention_text = _read(entity, "text", "")
-                text = text.replace(mention_text, "")
+
+        bot_id = activity.recipient.id if activity.recipient else None
+        for mention in activity.get_mentions():
+            if mention.mentioned and mention.mentioned.id == bot_id and mention.text:
+                text = text.replace(mention.text, "")
+
         quoted_id = None
         quoted = re.search(r'<quoted\s+messageId="([^"]+)"\s*/>', text)
         if quoted:
             quoted_id = quoted.group(1)
             text = text.replace(quoted.group(0), "")
-        targeted = bool(_read(activity.recipient, "is_targeted", False))
-        await route_command(context, text.strip(), targeted, quoted_id)
+        await route_command(context, text.strip(), is_targeted(activity), quoted_id)
 
-    async def cancel_card_reminder(context: Any, data: Any) -> str:
-        activity = context.activity
-        identifier = _read(data, "reminderId")
-        reminder = state.reminders.get(identifier) if identifier else None
-        user_id = _read(_read(activity, "from_property"), "id")
+    async def cancel_card_reminder(context: TurnContext, data: dict) -> str:
+        identifier = data.get("reminderId")
+        reminder = state.reminders.get(identifier) if isinstance(identifier, str) else None
+        user_id = _sender_id(context.activity)
         if reminder is None:
             return "Reminder not found or already completed."
         if user_id not in (reminder.creator_id, reminder.target_id):
@@ -351,11 +359,10 @@ def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication
         state.reminders.pop(identifier, None)
         return "Reminder cancelled!"
 
-    async def dismiss_card_reminder(context: Any, data: Any) -> str:
-        activity = context.activity
-        identifier = _read(data, "reminderId")
-        dismissed = state.reminders.get(identifier) if identifier else None
-        user_id = _read(_read(activity, "from_property"), "id")
+    async def dismiss_card_reminder(context: TurnContext, data: dict) -> str:
+        identifier = data.get("reminderId")
+        dismissed = state.reminders.get(identifier) if isinstance(identifier, str) else None
+        user_id = _sender_id(context.activity)
         if dismissed is None:
             return "Reminder dismissed!"
         if user_id not in (dismissed.creator_id, dismissed.target_id):
@@ -364,41 +371,26 @@ def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication
         state.reminders.pop(identifier, None)
         return "Reminder dismissed!"
 
-    async def snooze_card_reminder(context: Any, data: Any) -> str:
-        activity = context.activity
-        text = _read(data, "reminderText", "Snoozed reminder") or "Snoozed reminder"
-        raw_minutes = _read(data, "snoozeMinutes", "5")
+    async def snooze_card_reminder(context: TurnContext, data: dict) -> str:
+        text = data.get("reminderText") or "Snoozed reminder"
+        raw_minutes = data.get("snoozeMinutes")
         if raw_minutes is None:
-            raw_minutes = "5"
-        try:
-            if isinstance(raw_minutes, bool) or not isinstance(raw_minutes, (str, int)):
-                raise ValueError("Snooze duration must be an integer.")
-            if isinstance(raw_minutes, str) and not re.fullmatch(r"\d+", raw_minutes.strip()):
-                raise ValueError("Snooze duration must be a nonnegative integer.")
-            minutes = int(raw_minutes)
-            if minutes < 0 or minutes * 60 > 2_147_483_647:
-                raise ValueError("Snooze duration is too large.")
-        except ValueError:
+            raw_minutes = 5
+        if isinstance(raw_minutes, str) and re.fullmatch(r"\d+", raw_minutes.strip()):
+            try:
+                raw_minutes = int(raw_minutes)
+            except ValueError:
+                return "Invalid snooze duration."
+        if (
+            type(raw_minutes) is not int
+            or raw_minutes < 0
+            or raw_minutes * 60 > MAX_DELAY_SECONDS
+        ):
             return "Invalid snooze duration."
-        activity_conversation = _read(activity, "conversation")
-        sender = _read(activity, "from_property")
-        state.sequence += 1
-        new_reminder = Reminder(
-            f"{int(now()) % 100000:05x}{state.sequence:04x}",
-            _read(activity_conversation, "id", "").split(";")[0],
-            _read(sender, "id", ""),
-            _read(sender, "name", "User"),
-            _read(sender, "id", ""),
-            _read(sender, "name", "User"),
-            text,
-            now() + minutes * 60,
-            service_url=_read(activity, "service_url", "") or "",
-            channel_id=_read(activity, "channel_id", "msteams") or "msteams",
-            conversation_type=_read(activity_conversation, "conversation_type", "") or "",
-        )
-        state.reminders[new_reminder.identifier] = new_reminder
-        new_reminder.cancel = scheduler.schedule(
-            lambda: continue_delivery(new_reminder), minutes * 60
+
+        minutes = raw_minutes
+        new_reminder = schedule_reminder(
+            context, text, minutes * 60, target=context.activity.from_property
         )
         card = _card(
             [{"type": "TextBlock", "text": text, "wrap": True}],
@@ -414,21 +406,23 @@ def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication
     }
 
     @application.activity("invoke")
-    async def on_invoke(context: Any, _state: TurnState) -> None:
+    async def on_invoke(context: TurnContext, _state: TurnState) -> None:
         activity = context.activity
-        name = _read(activity, "name", "")
-        value = _read(activity, "value", {})
+        name = activity.name
+        value = activity.value if isinstance(activity.value, dict) else {}
         if name == "suggestedActions/submit":
-            command = _read(value, "command")
-            if command:
+            command = value.get("command")
+            if isinstance(command, str) and command:
                 await route_command(context, command, False, from_invoke=True)
             else:
                 await context.send_activity("No command specified.")
             await _send_invoke_response(context)
         elif name == "adaptiveCard/action":
-            data = _read(_read(value, "action"), "data", {})
-            action = _read(data, "action")
-            handler = card_actions.get(action)
+            action = value.get("action")
+            data = action.get("data") if isinstance(action, dict) else None
+            data = data if isinstance(data, dict) else {}
+            action_name = data.get("action")
+            handler = card_actions.get(action_name) if isinstance(action_name, str) else None
             result = await handler(context, data) if handler else "Unknown action."
             await _send_invoke_response(
                 context,
@@ -440,18 +434,12 @@ def create_agent(dependencies: dict[str, Any] | None = None) -> AgentApplication
             )
 
     @application.activity("messageReaction")
-    async def on_reaction_event(context: Any, _state: TurnState) -> None:
+    async def on_reaction_event(context: TurnContext, _state: TurnState) -> None:
         activity = context.activity
-        for item in _read(activity, "reactions_added", []) or []:
-            user = _read(item, "user")
-            name = _read(user, "display_name", None) or "Someone"
-            kind = _read(item, "type", "unknown")
-            await context.send_activity(f"Thanks for the **{kind}** reaction, {name}!")
-        for item in _read(activity, "reactions_removed", []) or []:
-            user = _read(item, "user")
-            name = _read(user, "display_name", None) or "Someone"
-            kind = _read(item, "type", "unknown")
-            await context.send_activity(f"Noted! {name} removed their **{kind}** reaction.")
+        for reaction in activity.reactions_added or []:
+            await context.send_activity(f"Thanks for the **{reaction.type}** reaction, Someone!")
+        for reaction in activity.reactions_removed or []:
+            await context.send_activity(f"Noted! Someone removed their **{reaction.type}** reaction.")
 
     async def close_background_tasks() -> None:
         await scheduler.close()

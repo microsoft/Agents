@@ -4,18 +4,14 @@
 """Agents SDK application and Adaptive Card behavior."""
 
 from collections.abc import Mapping
-from os import environ
 
-from dotenv import load_dotenv
 from microsoft_agents.activity import (
     Activity,
     ActivityTypes,
-    load_configuration_from_env,
 )
 from microsoft_teams.api import AdaptiveCardActionMessageResponse
-from microsoft_agents.authentication.msal import MsalConnectionManager
-from microsoft_agents.hosting.aiohttp import CloudAdapter
 from microsoft_agents.hosting.core import AgentApplication, MemoryStorage, TurnContext
+from microsoft_agents.hosting.core.authorization import Connections
 from microsoft_agents.hosting.msteams import TeamsAgentExtension
 
 CARD_ACTIONS_COMMAND = "card actions"
@@ -146,23 +142,12 @@ async def handle_name_submission(
     return AdaptiveCardActionMessageResponse(value="Action processed successfully")
 
 
-def create_agent(dependencies: Mapping[str, object] | None = None) -> AgentApplication:
-    """Create one configured application, with optional offline transport overrides."""
-    load_dotenv()
-    configuration = load_configuration_from_env(environ)
-    supplied = dependencies or {}
-
-    connection_manager = supplied.get("connection_manager")
-    if connection_manager is None:
-        connection_manager = MsalConnectionManager(**configuration)
-
-    adapter = supplied.get("adapter")
-    if adapter is None:
-        adapter = CloudAdapter(connection_manager=connection_manager)
-
+def create_agent(
+    configuration: dict,
+    connection_manager: Connections,
+) -> AgentApplication:
     app = AgentApplication(
         storage=MemoryStorage(),
-        adapter=adapter,
         connection_manager=connection_manager,
         **configuration,
     )
