@@ -54,12 +54,15 @@ export async function withMigrationCredentialFallback (
   beforeRetry: () => (() => void) = () => () => {}
 ): Promise<number> {
   const result = await run(primary)
-  const policyRejected = result.code !== 0 && !result.planningCompleted &&
-    /get_model_list/.test(result.error ?? '') &&
-    /"status"\s*:\s*403/.test(result.error ?? '') &&
-    (result.error ?? '').includes('Allow use of Copilot CLI billed to the organization')
+  const planningError = result.error ?? ''
+  const failedBeforePlan = result.code !== 0 && !result.planningCompleted
+  const billingPolicyRejected =
+    failedBeforePlan &&
+    planningError.includes('get_model_list') &&
+    /"status"\s*:\s*403/.test(planningError) &&
+    planningError.includes('Allow use of Copilot CLI billed to the organization')
 
-  if (!policyRejected || !fallback || fallback === primary) {
+  if (!billingPolicyRejected || !fallback || fallback === primary) {
     return result.code
   }
 
