@@ -37,6 +37,7 @@ Skills for building agents with the Microsoft 365 Agents SDK for Python.
 | Skill | Activates when... |
 |-------|-------------------|
 | `agents-sdk-to-prod` | Assessing, hardening, deploying, or reviewing production readiness for Microsoft 365 Agents SDK Python code |
+| `teams-sdk-to-agents-sdk-python-migration` | Migrating a Python Teams SDK application to Agents SDK while preserving Teams routes and behavior |
 | `agents-sdk-python-otel` | Adding or troubleshooting OpenTelemetry traces, metrics, logs, OTLP exporters, Azure Monitor, sampling, or an Aspire Dashboard for an Agents SDK Python application |
 
 ---
