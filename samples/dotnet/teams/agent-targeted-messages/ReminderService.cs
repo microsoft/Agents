@@ -99,7 +99,10 @@ public sealed class ReminderService : BackgroundService
             {
                 IActivity activity = AgentTargetedMessagesAgent.CreateCardActivity(
                     AgentTargetedMessagesAgent.CreateDeliveryCard(reminder));
-                activity.MakeTargetedActivity(reminder.Target);
+                if (turnContext.Activity.Conversation?.ConversationType != "personal")
+                {
+                    activity.MakeTargetedActivity(reminder.Target);
+                }
                 await turnContext.SendActivityAsync(activity, ct);
             },
             cancellationToken: cancellationToken);

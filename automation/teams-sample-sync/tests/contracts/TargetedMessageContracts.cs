@@ -14,6 +14,25 @@ namespace TeamsSampleSync.ContractTests;
 
 public partial class TeamsSampleContracts
 {
+    [Theory]
+    [InlineData("personal", false)]
+    [InlineData("groupChat", true)]
+    [InlineData("channel", true)]
+    [Trait("Sample", "agent-targeted-messages")]
+    public async Task ReminderConfirmation_UsesTargetingOnlyInSharedConversations(string conversationType, bool expectedTargeted)
+    {
+        using var reminders = new ReminderService(NullLogger<ReminderService>.Instance);
+        await using var host = CreateHost(services => new AgentTargetedMessagesAgent(CreateOptions(services), reminders));
+        host.Adapter.Conversation.Conversation.ConversationType = conversationType;
+        host.Adapter.Conversation.Conversation.IsGroup = expectedTargeted;
+        await host.CreateTestFlow()
+            .Send(new Activity { Type = ActivityTypes.Message, Text = "reminder-help",
+                Conversation = new ConversationAccount { Id = "test-conversation", ConversationType = conversationType, IsGroup = expectedTargeted },
+                From = new ChannelAccount { Id = "requesting-user", Name = "Contract user" } })
+            .AssertReply(activity => Assert.Equal(expectedTargeted, activity.IsTargetedActivity()))
+            .StartTestAsync();
+    }
+
     [Fact]
     [Trait("Sample", "agent-targeted-messages")]
     public async Task CancelReminderAction_UsesSpecificInvokeRouteAsync()
