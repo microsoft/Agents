@@ -81,7 +81,7 @@ python -m src.main
 ```
 
 The root URL is a credential-free readiness check; Teams message requests remain
-protected by the Agents SDK authentication middleware. Package `manifest/manifest.json`
+protected by the Agents SDK route authorization decorator. Package `manifest/manifest.json`
 with `manifest/color.png` and `manifest/outline.png` at the package root before
 uploading the app to Teams. Replace the sample app ID placeholder before packaging.
 
@@ -94,6 +94,6 @@ These are ordinary message keywords, not slash or mention commands; the manifest
 therefore has no `bots[].commandLists` entries. The feedback card accepts a reaction
 and optional text. Other messages receive help listing these keywords.
 
-`src.agent.create_agent()` exposes an importable application factory, and importing
+`src.agent.create_agent(configuration, connection_manager)` exposes an importable application factory, and importing
 it does not start a server or contact Teams. Local protected checks inject offline
 connection and adapter dependencies while dispatching through the Agents SDK.
