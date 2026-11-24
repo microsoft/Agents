@@ -63,6 +63,7 @@ const networkFailure = new RegExp([
   'connection (?:refused|timed out)',
   'TLS handshake',
   'network is unreachable',
+  'getaddrinfo failed|NameResolutionError|SSLCertVerificationError|CERTIFICATE_VERIFY_FAILED',
   'EAI_AGAIN|ENOTFOUND|ECONNRESET|ETIMEDOUT|CERT_HAS_EXPIRED|UNABLE_TO_VERIFY_LEAF_SIGNATURE',
 ].join('|'), 'i')
 
