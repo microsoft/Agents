@@ -3,7 +3,7 @@
 Synchronization owns maintenance of generated Teams samples in every language.
 The language profiles in `automation/teams-sample-sync/config/targets.yml` define
 the managed destination roots, currently `samples/dotnet/teams/**` and
-`samples/nodejs/teams/**`. This rule also applies to future language profiles.
+`samples/nodejs/teams/**` and `samples/python/teams/**`. This rule also applies to future language profiles.
 Outside that process, do not change any files in those roots, including implementations,
 project/package versions, lockfiles, shared helpers such as `AspNetExtensions.cs`, tests,
 manifests, configuration, assets, documentation, formatting, cleanup, or dependency updates.
@@ -12,6 +12,10 @@ The authorized maintenance path includes the synchronization runtime and Copilot
 assigned through workflow-generated handoff issues with prepared patches and migration
 evidence. Assignment to an arbitrary issue does not grant this exception. Follow the
 synchronization instructions and validation requirements for the selected samples.
+The runtime's implementation session is itself authorized to create and migrate its selected
+destination after its plan is frozen. It does not need a handoff issue: that issue is created
+only after runtime implementation and independent validation succeed. This includes initial
+imports whose destination contains no project files yet.
 
 If an ordinary task needs a change or encounters a build failure in these roots, report
 the problem and identify the synchronization work needed. Reference an existing issue

@@ -41,9 +41,14 @@ describe('ci-coverage', () => {
       '.claude-plugin/marketplace.json',
       'samples/dotnet/teams/bot-cards/BotCardsAgent.cs',
       'samples/nodejs/teams/bot-cards/src/agent.ts',
+      'samples/python/teams/bot-cards/src/agent.py',
       'automation/teams-sample-sync/reference/dotnet/appManifest/color.png',
       'automation/teams-sample-sync/reference/nodejs/src/index.ts',
       'automation/teams-sample-sync/reference/manifest-assets/nodejs/color.png',
+      'automation/teams-sample-sync/reference/python/src/agent.py',
+      'automation/teams-sample-sync/reference/manifest-assets/python/color.png',
+      'automation/teams-sample-sync/tests/python-contracts/bot-cards.py',
+      '.github/actions/setup-teams-sync-python/action.yml',
       '.github/workflows/ci-teams-sample-sync.yml',
       '.github/workflows/sync-teams-dotnet-samples.yml',
       '.github/workflows/cd-samples.yml',
@@ -54,7 +59,7 @@ describe('ci-coverage', () => {
     for (const changed of relevantChanges) {
       assert.ok(patterns.some((pattern) => minimatch(changed, pattern, { dot: true })), changed)
     }
-    for (const unrelated of ['docs/unrelated.md', 'samples/dotnet/quickstart/Program.cs', 'samples/nodejs/quickstart/src/index.ts', 'samples/nodejs/proactive/appManifest/color.png']) {
+    for (const unrelated of ['docs/unrelated.md', 'samples/dotnet/quickstart/Program.cs', 'samples/nodejs/quickstart/src/index.ts', 'samples/nodejs/proactive/appManifest/color.png', 'samples/python/quickstart/src/agent.py', 'samples/python/proactive/appManifest/color.png']) {
       assert.equal(patterns.some((pattern) => minimatch(unrelated, pattern)), false, unrelated)
     }
     assert.deepEqual(automation.on.pull_request.branches, ['main'])
