@@ -1,0 +1,36 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.22/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.22",
+  "version": "1.0.0",
+  "id": "${{TEAMS_APP_ID}}",
+  "developer": {
+    "name": "Microsoft",
+    "websiteUrl": "https://example.com",
+    "privacyUrl": "https://example.com/privacy",
+    "termsOfUseUrl": "https://example.com/terms"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "Task Modules Agent",
+    "full": "Task Modules Agent for Microsoft Teams"
+  },
+  "description": {
+    "short": "Demonstrates task-module dialogs with an Agents SDK agent.",
+    "full": "An Agents SDK agent demonstrating Adaptive Card, custom HTML, and multi-step task module dialogs in Microsoft Teams."
+  },
+  "accentColor": "#FFFFFF",
+  "bots": [
+    {
+      "botId": "${{AAD_APP_CLIENT_ID}}",
+      "scopes": [
+        "personal"
+      ]
+    }
+  ],
+  "validDomains": [
+    "${{BOT_DOMAIN}}"
+  ]
+}
