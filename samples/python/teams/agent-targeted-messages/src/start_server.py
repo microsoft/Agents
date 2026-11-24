@@ -1,55 +1,80 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import os
-from typing import Callable
+"""Serve the sample's public pages and authenticated Teams messages."""
+
+from os import environ
+from pathlib import Path
 
 from aiohttp import web
+from dotenv import load_dotenv
+from microsoft_agents.activity import load_configuration_from_env
+from microsoft_agents.authentication.msal import MsalConnectionManager
 from microsoft_agents.hosting.aiohttp import (
-    jwt_authorization_middleware,
+    CloudAdapter,
+    jwt_authorization_decorator,
     start_agent_process,
 )
-from microsoft_agents.hosting.core import AgentApplication
+from microsoft_agents.hosting.core.authorization import AuthTypes
+
+from .agent import create_agent
 
 
-def start_server(agent_factory: Callable[[], AgentApplication]) -> None:
-    """Serve readiness without credentials; build the agent on first message request."""
+async def readiness(_request: web.Request) -> web.Response:
+    return web.Response(text="Agent is ready.")
 
-    @web.middleware
-    async def authorize(request: web.Request, handler):
-        # Only the readiness probe skips JWT validation; every other request
-        # (including /api/messages) is delegated to the SDK middleware.
-        if request.method == "GET" and request.path == "/":
-            return await handler(request)
-        if "agent_app" not in request.app:
-            try:
-                application = agent_factory()
-            except Exception as error:
-                raise web.HTTPServiceUnavailable(
-                    text="Agent connection settings are not configured."
-                ) from error
-            request.app["agent_app"] = application
-            request.app["adapter"] = application.adapter
-            request.app["agent_configuration"] = (
-                application.connection_manager.get_default_connection_configuration()
-            )
-        return await jwt_authorization_middleware(request, handler)
 
-    async def readiness(_request: web.Request) -> web.Response:
-        return web.Response(text="Agent is ready.")
+async def messages_unconfigured(_request: web.Request) -> web.Response:
+    raise web.HTTPServiceUnavailable(text="Agent connection settings are not configured.")
 
-    async def messages(request: web.Request) -> web.Response:
-        return await start_agent_process(
-            request, request.app["agent_app"], request.app["adapter"]
-        )
 
-    async def close_agent(app: web.Application) -> None:
-        application = app.get("agent_app")
-        if application is not None:
-            await application.close_background_tasks()
+def create_web_app() -> web.Application:
+    app = web.Application()
+    app.router.add_get("/", readiness)
 
-    host = web.Application(middlewares=[authorize])
-    host.router.add_get("/", readiness)
-    host.router.add_post("/api/messages", messages)
-    host.on_cleanup.append(close_agent)
-    web.run_app(host, host="localhost", port=int(os.environ.get("PORT", "3978")))
+    configuration = load_configuration_from_env(environ)
+    connections = configuration.get("CONNECTIONS", {})
+    has_connection_settings = any(
+        any(connection.get("SETTINGS", {}).values())
+        for connection in connections.values()
+    )
+    if not has_connection_settings:
+        # Readiness is available before credentials are provisioned.
+        app.router.add_post("/api/messages", messages_unconfigured)
+        return app
+
+    connection_manager = MsalConnectionManager(**configuration)
+    auth_configuration = connection_manager.get_default_connection_configuration()
+    if auth_configuration.AUTH_TYPE == AuthTypes.client_secret and not (
+        auth_configuration.client_id
+        and auth_configuration.CLIENT_SECRET
+        and auth_configuration.tenant_id
+    ):
+        raise ValueError("Configure CLIENTID, CLIENTSECRET and TENANTID for SERVICE_CONNECTION.")
+
+    adapter = CloudAdapter(connection_manager=connection_manager)
+    agent = create_agent(
+        configuration, connection_manager, agent_id=auth_configuration.client_id or ""
+    )
+
+    @jwt_authorization_decorator
+    async def messages(request: web.Request) -> web.StreamResponse:
+        return await start_agent_process(request, agent, adapter)
+
+    app["agent_configuration"] = auth_configuration
+    app.router.add_post("/api/messages", messages)
+
+    async def cleanup(_app: web.Application) -> None:
+        await agent.close_background_tasks()
+
+    app.on_cleanup.append(cleanup)
+    return app
+
+
+def start_server() -> None:
+    load_dotenv(Path(__file__).resolve().parents[1] / ".env")
+    web.run_app(
+        create_web_app(),
+        host="localhost",
+        port=int(environ.get("PORT", "3978")),
+    )

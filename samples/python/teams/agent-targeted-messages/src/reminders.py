@@ -2,8 +2,50 @@
 # Licensed under the MIT License.
 
 import asyncio
+import re
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from collections.abc import Awaitable, Callable
+
+
+TIME_PATTERN = re.compile(
+    r"in\s+(\d+)\s*(seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h)\b",
+    re.IGNORECASE,
+)
+SELF_PATTERN = re.compile(r"^me(?:\s|,|$)", re.IGNORECASE)
+
+
+@dataclass(frozen=True)
+class ReminderCommand:
+    text: str
+    delay: int
+    for_self: bool
+
+
+def parse_reminder(command: str, mention_text: str | None) -> ReminderCommand | None:
+    text = re.sub(r"^remind\b", "", command.strip(), flags=re.IGNORECASE).strip()
+    for_self = bool(SELF_PATTERN.match(text))
+    if mention_text:
+        text = text.replace(mention_text, "").strip()
+    text = SELF_PATTERN.sub("", text).strip().lstrip(",").strip()
+
+    match = TIME_PATTERN.search(text)
+    if match is None:
+        return None
+
+    try:
+        amount = int(match.group(1))
+    except ValueError:
+        return None
+
+    unit = match.group(2).lower()
+    if unit.startswith("m"):
+        amount *= 60
+    elif unit.startswith("h"):
+        amount *= 3600
+
+    description = TIME_PATTERN.sub("", text).strip().lstrip(",").strip()
+    description = re.sub(r"^(to|that)\s+", "", description, flags=re.IGNORECASE)
+    return ReminderCommand(description or "You have a reminder!", amount, for_self)
 
 
 @dataclass
@@ -35,13 +77,13 @@ class ReminderScheduler:
     def __init__(
         self,
         state: AgentState,
-        schedule: Callable[[Callable[[], Any], float], Callable[[], None]] | None = None,
+        schedule: Callable[[Callable[[], Awaitable[None]], float], Callable[[], None]] | None = None,
     ) -> None:
         self.state = state
         self.schedule_override = schedule
 
     def schedule(
-        self, callback: Callable[[], Any], delay: float
+        self, callback: Callable[[], Awaitable[None]], delay: float
     ) -> Callable[[], None]:
         cancel_holder: dict[str, Callable[[], None]] = {}
 
