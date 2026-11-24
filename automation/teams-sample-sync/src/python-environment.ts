@@ -33,30 +33,30 @@ export async function preparePythonEnvironment (
   packages: Record<string, string>
 ): Promise<PythonEnvironment> {
   const root = mkdtempSync(path.join(tmpdir(), 'teams-python-validation-'))
-  const request = path.join(root, 'request.json')
-  const result = path.join(root, 'result.json')
+  const requestPath = path.join(root, 'request.json')
+  const resultPath = path.join(root, 'result.json')
   const environmentRoot = path.join(root, 'environment')
   const dispose = (): void => rmSync(root, {
     recursive: true,
     force: true,
   })
-  writeFileSync(request, JSON.stringify({
-    requirements,
-    packages,
-    environmentRoot,
-  }))
-
   try {
+    writeFileSync(requestPath, JSON.stringify({
+      requirements,
+      packages,
+      environmentRoot,
+    }))
+
     const errors = await runtime.runCommand(tooling.interpreter, [
       '-I', path.join(tooling.repo, 'automation/teams-sample-sync/scripts/python_prepare.py'),
-      request, result,
+      requestPath, resultPath,
     ], tooling.repo)
 
     if (errors.length) {
       throw new PythonDependencyError(errors)
     }
 
-    const evidence = record(JSON.parse(readFileSync(result, 'utf8')), 'Python environment evidence')
+    const evidence = record(JSON.parse(readFileSync(resultPath, 'utf8')), 'Python environment evidence')
     const interpreter = path.join(environmentRoot, process.platform === 'win32' ? 'Scripts/python.exe' : 'bin/python')
     const expectedInterpreter = process.platform === 'win32' ? path.toNamespacedPath(interpreter) : interpreter
 
