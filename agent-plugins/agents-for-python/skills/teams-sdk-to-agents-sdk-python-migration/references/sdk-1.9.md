@@ -12,47 +12,37 @@ not guessed paths in the SDK GitHub repository.
 `connection_manager` property has no setter. An adapter alone is insufficient.
 
 ```python
-def create_agent(dependencies=None):
-    deps = dependencies or {}
-    manager = deps.get("connection_manager")
-    if manager is None:
-        manager = MsalConnectionManager(**configuration)
-    adapter = deps.get("adapter")
-    if adapter is None:
-        adapter = CloudAdapter(connection_manager=manager)
-    app = AgentApplication(
-        storage=MemoryStorage(), adapter=adapter, connection_manager=manager
+def create_agent(configuration, connection_manager):
+    return AgentApplication(
+        storage=MemoryStorage(),
+        connection_manager=connection_manager,
+        **configuration,
     )
-    teams = TeamsAgentExtension(app)
-    # Register handlers here and return app.
 ```
 
-Never use `deps.get("connection_manager", MsalConnectionManager(**configuration))`:
-Python evaluates the default constructor even when the injected manager exists.
-Never assign `app.connection_manager = ...`. Keep the chosen manager and adapter
-consistent across authorization, application construction and background continuation.
-The offline harness supplies a manager that rejects actual credential requests.
+The offline harness supplies a connection manager that rejects external credential
+requests. It gives each TurnContext an in-memory adapter. Keep the adapter in the
+host and pass it to `start_agent_process(request, agent, adapter)`. Capturing
+`context.adapter` lets background work continue a conversation after the turn ends.
+Both the AgentApplication `adapter=` constructor option and its `.adapter` property
+are deprecated in 1.9.0.
 
 ## Credential-free readiness, authenticated messages
 
-Do not construct an MSAL manager with absent configuration before the host can
-serve `GET /`. Create the credential-dependent agent lazily for message processing
-or use a supported explicit configuration. Retain the canonical JWT authorization
-for `/api/messages`; exposing readiness must not make message processing anonymous.
-If wrapping middleware to bypass readiness, match exactly `GET /` and delegate
-every other request to the SDK JWT middleware. Do not catch startup errors and
-silently substitute an unauthenticated message host.
+Load dotenv once before reading the process environment. When no connection
+settings are supplied, serve the public routes and return HTTP 503 from
+`POST /api/messages`. When settings are supplied, construct the connection
+manager at startup so invalid configuration fails with a useful error.
 
-`load_configuration_from_env` returns a nested dictionary, not an
-`AgentAuthConfiguration`. The SDK JWT middleware expects the typed object in
-`http_app["agent_configuration"]`; use the connection manager's
-`get_default_connection_configuration()` result, not the whole environment mapping.
-Passing a dictionary raises `AttributeError` on properties such as
-`ANONYMOUS_ALLOWED` and returns HTTP 500 even for anonymous messages.
-The protected smoke check now starts separate hosts to prove readiness without
-credentials and HTTP 401/403 rejection of anonymous activity with synthetic local
-configuration. Preserve that distinction and correct configuration errors rather
-than accepting HTTP 500 as proof of authorization.
+Use `connection_manager.get_default_connection_configuration()` to populate
+`app["agent_configuration"]` with the SDK's typed authorization configuration.
+Apply `jwt_authorization_decorator` to the message handler. The host can register
+readiness and dialog pages directly, and aiohttp's `web.run_app` handles startup
+and shutdown.
+
+The protected smoke check starts one host without credentials for readiness and
+another with synthetic credentials to verify that anonymous messages return
+HTTP 401 or 403.
 
 ## Literal feedback invoke registration
 

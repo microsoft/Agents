@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 """Inspect the supported requirements-based sample layout without importing it."""
 
 import importlib.util
@@ -18,16 +21,25 @@ REQUIREMENTS = trusted_module("python_requirements")
 SOURCE = trusted_module("python_source")
 
 
+def empty_capabilities(errors=()):
+    return {
+        "errors": list(errors),
+        "bot": False,
+        "composeExtensions": False,
+        "files": False,
+        "queryCommands": [],
+        "actionCommands": [],
+        "resourceSpecificPermissions": [],
+    }
+
+
 def inspect_project(root, packages):
     try:
         return inspect_valid_project(root, packages)
     except (OSError, ValueError, SyntaxError, RecursionError) as error:
         # Candidate defects are validation evidence so the coordinator can repair them.
-        return {"errors": [str(error)], "capabilities": {
-            "errors": [str(error)], "bot": False, "composeExtensions": False,
-            "files": False, "queryCommands": [], "actionCommands": [],
-            "resourceSpecificPermissions": [],
-        }}
+        errors = [str(error)]
+        return {"errors": errors, "capabilities": empty_capabilities(errors)}
 
 
 def inspect_valid_project(root, packages):
@@ -47,10 +59,7 @@ def inspect_valid_project(root, packages):
         requirements_file.read_text(encoding="utf-8"), packages
     )
     files = SOURCE.inspect_sources(root)
-    facts = {
-        "errors": [], "bot": False, "composeExtensions": False, "files": False,
-        "queryCommands": [], "actionCommands": [], "resourceSpecificPermissions": [],
-    }
+    facts = empty_capabilities()
     for file in files:
         observed = file["capabilities"]
         for name in ("errors", "queryCommands", "actionCommands", "resourceSpecificPermissions"):

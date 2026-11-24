@@ -61,7 +61,9 @@ Set the connection client ID, secret, and tenant ID in `.env`, then run:
 python -m src.main
 ```
 
-The agent listens on `http://localhost:3978`. Configure the Azure Bot messaging endpoint as `https://<your-tunnel>/api/messages` when connecting a Teams tenant. `GET /` is a readiness endpoint; message requests remain protected by the Agents SDK authorization middleware.
+The agent listens on `http://localhost:3978`. Configure the Azure Bot messaging endpoint as
+`https://<your-tunnel>/api/messages` when connecting a Teams tenant. `GET /` is a public
+readiness route. The Agents SDK checks JWT authorization on `POST /api/messages`.
 
 The lock file is resolved for Python 3.11.14 on Linux. Other operating systems require a separately resolved and validated lock.
 
