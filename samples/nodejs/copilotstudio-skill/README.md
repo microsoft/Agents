@@ -4,7 +4,7 @@ This sample shows how to create an Agent that can be consumed from CopilotStudio
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org) version 20 or higher
+- [Node.js](https://nodejs.org) version 22 or higher
 
     ```bash
     # determine node version

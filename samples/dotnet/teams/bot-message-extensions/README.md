@@ -60,7 +60,7 @@ The agent listens on `http://localhost:3978`.
 
 ## Configure the Teams app package
 
-The `manifest` directory contains the Teams manifest and icons. Replace `${{BOT_ID}}` with the Azure Bot client ID and `${{APP_NAME_SUFFIX}}` with an optional suffix, then package the three files in that directory into a ZIP archive.
+The `manifest` directory contains the Teams manifest and icons. Replace `${{AAD_APP_CLIENT_ID}}` with the Azure Bot client ID and `${{APP_NAME_SUFFIX}}` with an optional suffix, then package the three files in that directory into a ZIP archive.
 
 The manifest preserves the upstream message extension configuration:
 

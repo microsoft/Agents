@@ -1,10 +1,14 @@
-/** For Copilot Agents only: autonomous migration runtime infrastructure. */
 /**
  * Opens the persistent Copilot SDK session used for one selected sample.
  * It exposes read/search/skill tools during planning, enables edits only after the plan is frozen,
  * blocks shell tools, confines writes to the sample root, and records the full transcript as an artifact.
  */
-import { appendFileSync, existsSync, readFileSync, realpathSync } from 'node:fs'
+import {
+  appendFileSync,
+  existsSync,
+  readFileSync,
+  realpathSync
+} from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
@@ -21,24 +25,26 @@ import { SyncError } from './config.js'
 import type { CopilotConfiguration, ObservedModel } from './types.js'
 
 export interface ImplementationSession {
+  canWrite?: () => boolean
   send(message: string, phase?: string): Promise<string>
   setWriteAccess(enabled: boolean): void
   close(): Promise<void>
   abort(): Promise<void>
 }
+
 export type SdkSession = Pick<CopilotSession, 'sendAndWait' | 'on' | 'disconnect' | 'abort'>
-export type SdkClient = Pick<CopilotClient, 'start' | 'stop' | 'getStatus' | 'getAuthStatus'> & {
-  createSession(config: SessionConfig): Promise<SdkSession>
-}
+export type SdkClient = Pick<CopilotClient, 'start' | 'stop' | 'getStatus' | 'getAuthStatus'> & { createSession(config: SessionConfig): Promise<SdkSession> }
 export type SdkFactory = () => Promise<SdkClient>
 
 export function createCopilotLog (artifact: (value: string) => void) {
   let hasMessage = false
+
   return {
     write (value: string): void {
       if (hasMessage) {
         artifact('\n\n')
       }
+
       artifact(value)
       hasMessage = true
     },
@@ -47,6 +53,7 @@ export function createCopilotLog (artifact: (value: string) => void) {
 
 export async function defaultSdkFactory (): Promise<SdkClient> {
   const executable = fileURLToPath(import.meta.resolve(`@github/copilot-${process.platform}-${process.arch}`))
+
   return new CopilotClient({ connection: RuntimeConnection.forStdio({ path: executable }) })
 }
 
@@ -63,6 +70,7 @@ export function permissionFor (
       const candidate = realpathSync(path.resolve(repo, request.path))
       const relative = path.relative(root, candidate)
       const segments = relative.split(path.sep)
+
       return {
         kind:
           candidate === root ||
@@ -77,6 +85,7 @@ export function permissionFor (
       return { kind: 'reject' }
     }
   }
+
   if (request.kind === 'url') {
     try {
       const url = new URL(request.url)
@@ -89,6 +98,7 @@ export function permissionFor (
         'www.nuget.org',
         'api.nuget.org',
       ]
+
       return {
         kind:
           url.protocol === 'https:' && official.includes(url.hostname) && !url.username && !url.password
@@ -99,15 +109,19 @@ export function permissionFor (
       return { kind: 'reject' }
     }
   }
+
   if (request.kind === 'custom-tool') {
     return { kind: customTools.includes(request.toolName) ? 'approve-once' : 'reject' }
   }
+
   if (!writeEnabled || request.kind !== 'write' || request.requestSandboxBypass) {
     return { kind: 'reject' }
   }
+
   try {
     const root = realpathSync(path.join(repo, sampleRoot))
     const candidate = path.resolve(repo, request.fileName)
+
     if (
       path
         .relative(root, candidate)
@@ -116,15 +130,21 @@ export function permissionFor (
     ) {
       return { kind: 'reject' }
     }
+
     let ancestor = candidate
+
     while (!existsSync(ancestor)) {
       const parent = path.dirname(ancestor)
+
       if (parent === ancestor) {
         return { kind: 'reject' }
       }
+
       ancestor = parent
     }
+
     const resolved = path.resolve(realpathSync(ancestor), path.relative(ancestor, candidate))
+
     return { kind: resolved.startsWith(root + path.sep) ? 'approve-once' : 'reject' }
   } catch {
     return { kind: 'reject' }
@@ -141,13 +161,17 @@ class PersistentImplementationSession implements ImplementationSession {
   ) {
     session.on('assistant.message', (event) => {
       const data = event as { data?: { content?: unknown } }
+
       if (typeof data.data?.content === 'string') {
         log.write(data.data.content)
       }
     })
     session.on('assistant.usage', (event) => {
       if (event.data.model) {
-        observed.push({ model: event.data.model, reasoningEffort: event.data.reasoningEffort ?? 'unknown' })
+        observed.push({
+          model: event.data.model,
+          reasoningEffort: event.data.reasoningEffort ?? 'unknown'
+        })
       }
     })
   }
@@ -164,10 +188,13 @@ class PersistentImplementationSession implements ImplementationSession {
     if (phase) {
       this.status(`[Copilot] ${phase}...\n`)
     }
+
     const response = await this.session.sendAndWait({ prompt: message }, 30 * 60_000)
+
     if (phase) {
       this.status(`[Copilot] ${phase} complete.\n`)
     }
+
     return typeof response?.data.content === 'string' ? response.data.content.trim() : ''
   }
 
@@ -197,23 +224,28 @@ export class CopilotAgentRunner {
   async open (tools: Tool[] = []): Promise<ImplementationSession> {
     if (!this.client) {
       const client = await this.factory()
+
       try {
         await client.start()
         const status = await client.getStatus()
+
         if (status.version !== this.configuration.runtimeVersion) {
           throw new SyncError(
             `Copilot runtime version mismatch: expected ${this.configuration.runtimeVersion}, received ${status.version}`
           )
         }
+
         if (!(await client.getAuthStatus()).isAuthenticated) {
           throw new SyncError('Copilot runtime is not authenticated')
         }
+
         this.client = client
       } catch (error) {
         await client.stop().catch(() => {})
         throw error
       }
     }
+
     const log = createCopilotLog((value) => appendFileSync(this.logFile, value, 'utf8'))
     const prompt = readFileSync(path.join(this.repo, 'automation/teams-sample-sync/prompts/agent-prompt.md'), 'utf8')
     const names = tools.map((tool) => tool.name)
@@ -228,15 +260,20 @@ export class CopilotAgentRunner {
       'create',
       'str_replace_editor',
     ])
+
     for (const name of names) {
       availableTools.addCustom(name)
     }
+
     const raw = await this.client.createSession({
       // TODO: Set capi.autoTier to "balance" after https://github.com/github/copilot-sdk/issues/2559 is fixed.
       model: 'auto',
       workingDirectory: this.repo,
       skillDirectories: this.skillDirectories,
-      systemMessage: { mode: 'append', content: prompt },
+      systemMessage: {
+        mode: 'append',
+        content: prompt
+      },
       tools,
       availableTools,
       excludedTools: ['shell', 'bash', 'terminal'],
@@ -244,12 +281,14 @@ export class CopilotAgentRunner {
       hooks: {
         onPreToolUse: (input) => {
           this.guard()
+
           if (this.isWriteTool(input.toolName) && !active?.canWrite()) {
             return {
               permissionDecision: 'deny',
               permissionDecisionReason: 'The migration plan is being drafted; do not edit before it is frozen.',
             }
           }
+
           return undefined
         },
         onPostToolUse: () => {
@@ -260,6 +299,7 @@ export class CopilotAgentRunner {
         permissionFor(this.repo, this.sampleRoot, active?.canWrite() ?? false, names, request),
     })
     const active = new PersistentImplementationSession(raw, log, this.observed, this.status)
+
     return active
   }
 

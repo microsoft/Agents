@@ -2,6 +2,7 @@
 
 |Name|Description|README|
 |----|----|----|
+|Production reference|Bounded Web Chat support intake with managed identity, Blob state, tests and operating guidance|[production-reference](production-reference/README.md)|
 |Quickstart|Simplest agent|N/A|
 |Auto Sign In|Simple OAuth agent using Graph and GitHub|[auto-signin](auto-signin/README.md)|
 |OBO Authorization|OBO flow to access a Copilot Studio Agent|[obo-authorization](obo-authorization/README.md)|

@@ -1,6 +1,8 @@
 # Copilot Studio Client Console Sample
 
-*Please note - S2S is not currently supported for Copilot Studio. It is in active development, and once there is an ETA we will update this notice.*
+The Copilot Studio Client nows supports both Microsoft Copilot harness for delegated and application permissions. This update should be available worldwide by the end of October 2026
+
+The standard harness currently supports delegated permissions only
 
 ## Instructions - Setup
 

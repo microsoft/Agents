@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from microsoft_agents.activity import ActionTypes, Activity, ActivityTypes, Attachment
+from microsoft_agents.activity import ActionTypes, Activity, ActivityTypes, Attachment, Channels
 from microsoft_agents.hosting.core import CardFactory, TurnContext
 
 from microsoft_agents.activity import (
@@ -49,6 +49,10 @@ class CardMessages:
 
     @staticmethod
     async def send_animation_card(context: TurnContext):
+        if Channels.supports_animation_card(context.activity.channel_id) == False:
+            await context.send_activity(f"Animation cards are not supported in {context.activity.channel_id.channel}")
+            return
+
         card = CardFactory.animation_card(
             AnimationCard(
                 title="Microsoft 365 Agents SDK",
@@ -66,6 +70,10 @@ class CardMessages:
 
     @staticmethod
     async def send_audio_card(context: TurnContext):
+        if Channels.supports_audio_card(context.activity.channel_id) == False:
+            await context.send_activity(f"Audio cards are not supported in {context.activity.channel_id.channel}")
+            return
+
         card = CardFactory.audio_card(
             AudioCard(
                 title="I am your father",
@@ -117,6 +125,10 @@ class CardMessages:
 
     @staticmethod
     async def send_receipt_card(context):
+        if Channels.supports_receipt_card(context.activity.channel_id) == False:
+            await context.send_activity(f"Receipt cards are not supported in {context.activity.channel_id.channel}")
+            return
+
         card = CardFactory.receipt_card(
             ReceiptCard(
                 title="John Doe",
@@ -157,6 +169,10 @@ class CardMessages:
 
     @staticmethod
     async def send_thumbnail_card(context):
+        if Channels.supports_thumbnail_card(context.activity.channel_id) == False:
+            await context.send_activity(f"Thumbnail cards are not supported in {context.activity.channel_id.channel}")
+            return
+
         card = CardFactory.thumbnail_card(
             ThumbnailCard(
                 title="Copilot Thumbnail Card",
@@ -180,6 +196,10 @@ class CardMessages:
 
     @staticmethod
     async def send_video_card(context):
+        if Channels.supports_video_card(context.activity.channel_id) == False:
+            await context.send_activity(f"Video cards are not supported in {context.activity.channel_id.channel}")
+            return
+
         card = CardFactory.video_card(
             VideoCard(
                 title="M365 Copilot",

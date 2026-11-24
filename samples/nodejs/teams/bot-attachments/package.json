@@ -1,0 +1,25 @@
+{
+  "name": "agents-teams-bot-attachments",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "bot-attachments migrated to Microsoft 365 Agents SDK",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "start": "node --env-file-if-exists=.env dist/index.js"
+  },
+  "dependencies": {
+    "@microsoft/agents-activity": "1.9.1",
+    "@microsoft/agents-hosting": "1.9.1",
+    "@microsoft/agents-hosting-express": "1.9.1",
+    "@microsoft/agents-hosting-extensions-msteams": "1.9.1"
+  },
+  "devDependencies": {
+    "@types/express": "5.0.6",
+    "@types/node": "22.10.2",
+    "typescript": "7.0.2"
+  }
+}

@@ -1,0 +1,48 @@
+name: CI Teams sample sync
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'automation/teams-sample-sync/**'
+      - 'agent-plugins/**'
+      - '.claude-plugin/marketplace.json'
+      - 'samples/dotnet/teams/**'
+      - 'samples/nodejs/teams/**'
+      - '.github/workflows/ci-teams-sample-sync.yml'
+      - '.github/workflows/sync-teams-dotnet-samples.yml'
+      - '.github/workflows/cd-samples.yml'
+      - 'eslint.config.js'
+      - 'package.json'
+      - 'package-lock.json'
+
+permissions:
+  contents: read
+
+jobs:
+  automation:
+    name: teams-sync-tests
+    runs-on: ubuntu-latest
+    env:
+      TEAMS_SYNC_SDK_SMOKE: '0'
+    defaults:
+      run:
+        working-directory: automation/teams-sample-sync
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: automation/teams-sample-sync/package-lock.json
+      - name: Install automation dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Build automation
+        run: npm run build
+      - name: Typecheck and test automation
+        run: npm test

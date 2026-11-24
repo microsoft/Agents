@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import {
+  mkdirSync, mkdtempSync, rmSync, writeFileSync
+} from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -11,7 +13,11 @@ import { checkProject } from '../../src/validate.js'
 import { resolveAgentsSdkVersion, selectAgentsSdkVersion } from '../../src/versions.js'
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..')
-const release = { tag_name: 'v1.9.7', draft: false, prerelease: false }
+const release = {
+  tag_name: 'v1.9.7',
+  draft: false,
+  prerelease: false
+}
 
 function feeds (teamsVersions: string[]): Array<{ versions: string[] }> {
   return [
@@ -33,13 +39,23 @@ describe('Agents SDK release policy', () => {
     assert.deepEqual(
       selectAgentsSdkVersion(
         '1.8',
-        [{ ...release, tag_name: 'v2.0.0' }, { ...release, tag_name: 'v1.9.7-beta', prerelease: true }, release],
+        [{
+          ...release,
+          tag_name: 'v2.0.0'
+        }, {
+          ...release,
+          tag_name: 'v1.9.7-beta',
+          prerelease: true
+        }, release],
         feeds(['1.9.3'])
       ).selectedAgentsSdkVersion,
       '1.9.*'
     )
     assert.throws(
-      () => selectAgentsSdkVersion('1.8', [{ ...release, tag_name: 'v2.0.0' }], feeds(['1.9.3'])),
+      () => selectAgentsSdkVersion('1.8', [{
+        ...release,
+        tag_name: 'v2.0.0'
+      }], feeds(['1.9.3'])),
       /No stable Agents SDK release in major 1/
     )
     assert.throws(
@@ -67,6 +83,7 @@ describe('Agents SDK release policy', () => {
             url.includes(name)
           )
         ]
+
       return new Response(JSON.stringify(body), { status: 200 })
     }
     const selected = await resolveAgentsSdkVersion('1.8', request as typeof fetch)
@@ -125,7 +142,10 @@ describe('Agents SDK release policy', () => {
         3
       )
     } finally {
-      rmSync(sampleRoot, { recursive: true, force: true })
+      rmSync(sampleRoot, {
+        recursive: true,
+        force: true
+      })
     }
   })
 
@@ -150,33 +170,57 @@ describe('Agents SDK release policy', () => {
         repo,
         upstream,
         {
-          minimumAgentsSdkVersion: '1.8',
-          selectedAgentsSdkVersion: '1.8.*',
-          releaseTag: 'v1.8.77',
+          dotnet: {
+            minimumAgentsSdkVersion: '1.9',
+            selectedAgentsSdkVersion: '1.9.*',
+            releaseTag: 'v1.9.7'
+          },
         },
-        sample
+        sample, 'dotnet'
+      )
+      const metadata = path.join(upstream, 'metadata.git')
+      execFileSync(
+        'git',
+        ['-c', 'user.name=Sample Sync', '-c', 'user.email=sync@example.com', 'tag', '-am', 'Source release', 'v1.0'],
+        { cwd: upstream }
+      )
+      execFileSync('git', ['init', '--bare', '-q', metadata])
+      execFileSync('git', ['remote', 'add', 'origin', upstream], { cwd: metadata })
+      execFileSync('git', ['fetch', '--depth=1', 'origin', 'v1.0'], {
+        cwd: metadata,
+        stdio: 'pipe'
+      })
+      execFileSync('git', ['update-ref', 'HEAD', 'FETCH_HEAD^{commit}'], { cwd: metadata })
+      assert.deepEqual(
+        createPlan(repo, metadata, previous.agentsSdkVersions, sample, 'dotnet'),
+        previous
       )
       const newer = createPlan(
         repo,
         upstream,
         {
-          minimumAgentsSdkVersion: '1.8',
-          selectedAgentsSdkVersion: '1.9.*',
-          releaseTag: 'v1.9.7',
+          dotnet: {
+            minimumAgentsSdkVersion: '1.9',
+            selectedAgentsSdkVersion: '1.10.*',
+            releaseTag: 'v1.10.1'
+          },
         },
-        sample
+        sample, 'dotnet'
       )
 
-      assert.equal(newer.version, 3)
-      assert.equal(newer.agentsSdkVersion.minimumAgentsSdkVersion, '1.8')
-      assert.equal(newer.agentsSdkVersion.selectedAgentsSdkVersion, '1.9.*')
-      assert.notEqual(previous.samples[sample]?.inputDigest, newer.samples[sample]?.inputDigest)
+      assert.equal(newer.version, 4)
+      assert.equal(newer.agentsSdkVersions.dotnet!.minimumAgentsSdkVersion, '1.9')
+      assert.equal(newer.agentsSdkVersions.dotnet!.selectedAgentsSdkVersion, '1.10.*')
+      assert.notEqual(previous.samples[`dotnet--${sample}`]?.inputDigest, newer.samples[`dotnet--${sample}`]?.inputDigest)
       assert.notEqual(
-        previous.samples[sample]?.componentDigests?.packagePolicy,
-        newer.samples[sample]?.componentDigests?.packagePolicy
+        previous.samples[`dotnet--${sample}`]?.componentDigests?.packagePolicy,
+        newer.samples[`dotnet--${sample}`]?.componentDigests?.packagePolicy
       )
     } finally {
-      rmSync(upstream, { recursive: true, force: true })
+      rmSync(upstream, {
+        recursive: true,
+        force: true
+      })
     }
   })
 })

@@ -2,13 +2,15 @@
 
 This is a sample to show how to use the `@microsoft/agents-copilotstudio-client` package to talk to an Agent hosted in CopilotStudio.
 
-*Please note - S2S is not currently supported for Copilot Studio. It is in active development, and once there is an ETA we will update this notice.*
+The Copilot Studio Client nows supports both Microsoft Copilot harness for delegated and application permissions. This update should be available worldwide by the end of October 2026
+
+The standard harness currently supports delegated permissions only
 
 ## Prerequisite
 
 To set up this sample, you will need the following:
 
-1. [Node.js](https://nodejs.org) version 20 or higher
+1. [Node.js](https://nodejs.org) version 22 or higher
 
     ```bash
     # determine node version

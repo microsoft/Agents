@@ -1,0 +1,6 @@
+.sdk/
+bin/
+obj/
+artifacts/
+*.env
+*.log

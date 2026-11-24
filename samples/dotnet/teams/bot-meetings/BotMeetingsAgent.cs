@@ -15,10 +15,10 @@ using Microsoft.Agents.Builder.State;
 using Microsoft.Agents.Core.Models;
 using Microsoft.Agents.Extensions.MSTeams;
 using Microsoft.Agents.Extensions.MSTeams.Meetings;
-using Microsoft.Agents.Extensions.MSTeams.Models;
+using MeetingDetails = Microsoft.Teams.Apps.Clients.MeetingDetails;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Graph;
-using Microsoft.Teams.Api.Meetings;
+using Microsoft.Teams.Apps.Meetings;
 using Microsoft.Teams.Cards;
 
 namespace BotMeetings;
@@ -38,7 +38,7 @@ public partial class BotMeetingsAgent : AgentApplication
     public async Task OnMeetingParticipantsJoinAsync(
         ITeamsTurnContext turnContext,
         ITurnState turnState,
-        MeetingParticipantsEventDetails participants,
+        MeetingParticipantJoinValue participants,
         CancellationToken cancellationToken)
     {
         var participant = participants.Members.FirstOrDefault();
@@ -87,14 +87,14 @@ public partial class BotMeetingsAgent : AgentApplication
                 {
                     Wrap = true
                 },
-                new TextBlock($"**Start Time:** {meeting.ScheduledStartTime}")
+                new TextBlock($"**Start Time:** {MeetingMetadata.EventTime(turnContext.Activity.Value, "startTime")}")
                 {
                     Wrap = true
                 }
             ],
             Actions =
             [
-                new OpenUrlAction(meeting.JoinUrl)
+                new OpenUrlAction(meeting.JoinUrl?.ToString() ?? string.Empty)
                 {
                     Title = "Join Meeting"
                 }
@@ -111,9 +111,9 @@ public partial class BotMeetingsAgent : AgentApplication
         MeetingDetails meeting,
         CancellationToken cancellationToken)
     {
-        var meetingInfo = await turnContext.Client.Meetings.GetByIdAsync(meeting.Id);
-        string userId = meetingInfo?.Organizer?.AadObjectId ?? string.Empty;
-        string? graphMeetingId = meetingInfo?.Details?.MSGraphResourceId;
+        var meetingInfo = await MeetingMetadata.LoadAsync(turnContext, meeting.Id!, cancellationToken);
+        string userId = meetingInfo.OrganizerId;
+        string graphMeetingId = meetingInfo.GraphMeetingId;
 
         string transcript = string.Empty;
         if (_graphClient is not null &&
@@ -138,7 +138,7 @@ public partial class BotMeetingsAgent : AgentApplication
                 Weight = TextWeight.Bolder,
                 Size = TextSize.Large
             },
-            new TextBlock($"**End Time:** {meeting.ScheduledEndTime}")
+            new TextBlock($"**End Time:** {MeetingMetadata.EventTime(turnContext.Activity.Value, "endTime")}")
             {
                 Wrap = true
             },
@@ -178,7 +178,7 @@ public partial class BotMeetingsAgent : AgentApplication
     public async Task OnMeetingParticipantsLeaveAsync(
         ITeamsTurnContext turnContext,
         ITurnState turnState,
-        MeetingParticipantsEventDetails participants,
+        MeetingParticipantLeaveValue participants,
         CancellationToken cancellationToken)
     {
         string? member = participants.Members.FirstOrDefault()?.User?.Name;

@@ -17,7 +17,7 @@ The retrieval client owns token use, site validation, Microsoft Graph request co
 
 ## Prerequisites
 
-- Node.js 20 or later
+- Node.js 22 or later
 - An Azure subscription and an [Azure Bot](https://aka.ms/AgentsSDK-CreateBot)
 - A Microsoft 365 tenant with Copilot Retrieval API entitlement, a user who can sign in, and a SharePoint site that user can read
 - [Dev Tunnels](https://learn.microsoft.com/azure/developer/dev-tunnels/get-started) for Web Chat testing

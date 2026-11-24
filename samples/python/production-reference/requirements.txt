@@ -1,0 +1,10 @@
+microsoft-agents-activity==1.8.0
+microsoft-agents-hosting-core==1.8.0
+microsoft-agents-hosting-aiohttp==1.8.0
+microsoft-agents-authentication-msal==1.8.0
+microsoft-agents-storage-blob==1.8.0
+aiohttp>=3.12.14,<4
+azure-identity>=1.23.0,<2
+azure-monitor-opentelemetry>=1.8.0,<2
+
+python-dotenv>=1.0.1,<2

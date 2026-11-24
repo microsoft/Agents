@@ -9,9 +9,9 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.21.*" />
-    <PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.8.*" />
-    <PackageReference Include="Microsoft.Agents.Extensions.MSTeams" Version="1.8.*" />
-    <PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.8.*" />
+    <PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.9.*" />
+    <PackageReference Include="Microsoft.Agents.Extensions.MSTeams" Version="1.9.*" />
+    <PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.9.*" />
     <PackageReference Include="Microsoft.Graph" Version="6.5.*" />
     <PackageReference Include="Microsoft.Teams.Cards" Version="2.0.*" />
   </ItemGroup>
