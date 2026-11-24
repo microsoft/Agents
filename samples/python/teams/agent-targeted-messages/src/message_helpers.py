@@ -4,26 +4,13 @@
 from typing import Any
 
 from microsoft_agents.activity import Activity, CardAction, SuggestedActions
+from microsoft_agents.hosting.core import TurnContext
 
 
-_MISSING = object()
-
-
-def _read(value: Any, name: str, default: Any = None) -> Any:
-    """Read a field from a dict or SDK model, including camelCase extra fields."""
-    if value is None:
-        return default
-    if isinstance(value, dict):
-        return value.get(name, default)
-    found = getattr(value, name, _MISSING)
-    if found is not _MISSING and found is not None:
-        return found
-    if hasattr(value, "model_dump"):
-        dumped = value.model_dump(by_alias=True)
-        parts = name.split("_")
-        camel = parts[0] + "".join(part.title() for part in parts[1:])
-        return dumped.get(camel, dumped.get(name, default))
-    return default
+def is_targeted(activity: Activity) -> bool:
+    recipient = activity.recipient
+    # Teams marks the recipient of a slash-command message with this extra field.
+    return bool(recipient and recipient.properties.get("isTargeted"))
 
 
 def _activity(payload: dict[str, Any]) -> Activity:
@@ -31,20 +18,20 @@ def _activity(payload: dict[str, Any]) -> Activity:
 
 
 def _targeted_payload(
-    context: Any, *, text: str | None = None, card: dict[str, Any] | None = None
+    context: TurnContext, *, text: str | None = None, card: dict[str, Any] | None = None
 ) -> dict[str, Any]:
     activity = context.activity
-    sender = _read(activity, "from_property")
-    recipient_id = _read(sender, "id", "")
-    recipient_name = _read(sender, "name", "")
-    shared = _read(_read(activity, "conversation"), "conversation_type", "") != "personal"
+    sender = activity.from_property
+    recipient_id = (sender.id or "") if sender else ""
+    recipient_name = (sender.name or "") if sender else ""
+    conversation = activity.conversation
+    shared = not conversation or conversation.conversation_type != "personal"
     entities: list[dict[str, Any]] = (
         [{"type": "activityTreatment", "treatment": "targeted"}] if shared else []
     )
-    incoming_id = _read(activity, "id")
-    if shared and _read(_read(activity, "recipient"), "is_targeted", False) and incoming_id:
+    if shared and is_targeted(activity) and activity.id:
         entities.append(
-            {"type": "targetedMessageInfo", "targetedMessageId": incoming_id}
+            {"type": "targetedMessageInfo", "targetedMessageId": activity.id}
         )
     payload: dict[str, Any] = {
         "type": "message",
@@ -100,7 +87,7 @@ def _commands(user_id: str | None, entries: list[tuple[str, str]]) -> SuggestedA
 
 
 async def _send_invoke_response(
-    context: Any, body: dict[str, Any] | None = None
+    context: TurnContext, body: dict[str, Any] | None = None
 ) -> None:
     await context.send_activity(
         _activity(

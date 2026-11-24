@@ -37,28 +37,25 @@ It records the constructor, injection, readiness, invoke and Graph failures foun
 synchronization contracts, with source locations inside the released distributions.
 Do not guess repository directory layouts or release-tag URLs as substitutes for those APIs.
 
-Use the maintained Python reference configured by `canonicalSample` as the local hosting reference. Construct
-MemoryStorage, MsalConnectionManager, CloudAdapter, Authorization, and AgentApplication
-with compatible selected-version signatures and the existing connection configuration.
-Preserve authentication models and never embed secrets in code or manifest assets.
+Read the maintained Python reference configured by `canonicalSample` for layout and environment
+settings. Follow the selected SDK's hosting guidance when the reference uses older APIs.
+Preserve authentication models and keep secrets in environment settings.
 
-Expose an importable `create_agent` factory. Keep state and injected service dependencies
-inside each application instance. Put server startup behind an explicit entry point;
-importing application modules must not bind ports, create timers, or start network work.
-Provide explicit startup/cleanup for background tasks and pending uploads.
+Expose `create_agent(configuration, connection_manager)` returning an AgentApplication.
+Load the environment once in startup with `load_configuration_from_env`. Pass that SDK
+configuration and the connection manager directly to the factory. Name sample-specific
+service overrides as keyword-only arguments so the protected contracts can use offline services.
+Keep state inside each application instance. Put startup behind an explicit entry point so
+imports do not bind ports, create timers, or start network work.
 
-For synchronized samples, use `create_agent(dependencies=None)` returning AgentApplication.
-Accept a `connection_manager` entry in that dependency mapping so protected contracts can
-reject unexpected credential requests while exercising real SDK dispatch. Keep ordinary
-startup configuration as the default when that entry is absent.
-Accept an `adapter` override for offline outbound and proactive transport checks. Background
-upload/reminder work must use the configured adapter's supported continuation API, rather
-than sending through an expired incoming turn context.
+Construct the CloudAdapter in the HTTP host and pass it directly to `start_agent_process`.
+For background uploads and reminders, capture the incoming turn's adapter and use its
+continuation API after the turn ends. Track pending work and clean it up at shutdown.
 Dialog samples also accept an `endpoint` override for local protected checks. The released
 task-module selectors read `activity.value.data.verb`; preserve source action identifiers
 such as `adaptive_card`, `custom_form`, and `multi_step_form` in that field, and carry form
 values alongside the verb. Serve the source's `/customform` route and keep fallbackUrl aligned.
-Message-extension samples accept an async `search_wikipedia(query)` dependency; the default
+Message-extension samples accept an async `search(query)` override; the default
 implementation performs the real Wikipedia request. Keep SDK query dispatch and response
 serialization active when injecting the external search service. Register an explicit
 unknown-command fallback that returns the no-results envelope.
@@ -66,7 +63,7 @@ Keep the default helper as `src.wikipedia.search_wikipedia(query)` using `httpx`
 Validate JSON root/query/search shapes and handle HTTP/JSON failures by returning
 an empty list, preserving upstream's no-results behavior. Protected tests exercise
 the real helper through an HTTPX mock transport, alongside injected route tests.
-Attachment samples accept async `download(url)` and `upload(url, content)` dependencies.
+Attachment samples accept async `download(url)` and `upload(url, content)` overrides.
 Keep default HTTP helpers in `src/files.py` as async `download_attachment(url)` and
 `upload_to_onedrive(url, content)`. Preserve byte content, Content-Type, Content-Length,
 Content-Range and failure status handling; protected checks exercise actual local HTTP.
@@ -74,7 +71,7 @@ Expose `await app.wait_for_uploads()` to drain tracked background work in local 
 normal server shutdown must drain or cancel that same work. Transfer failures must be handled
 and cleared rather than escaping as unobserved background-task exceptions.
 Meeting samples accept async `meeting_info(context, id)`, `transcript(context, resource, user)`
-and `wait(seconds)` dependencies. Preserve a 30-second initial transcript delay followed by
+and `wait(seconds)` overrides. Preserve a 30-second initial transcript delay followed by
 10-second retries, with three attempts. Use ordinary async sleep by default; injected waits
 make protected routing checks deterministic. Keep default Graph transport separately testable.
 Keep `get_meeting_transcript(graph_client, resource_id, user_id)` and `parse_vtt(text)` in
@@ -88,9 +85,10 @@ returning a cancellation callable, and async `reaction(context, operation, messa
 The default scheduler uses asyncio and tracks cancellation. Expose idempotent
 `await app.close_background_tasks()` for server shutdown and protected test cleanup.
 
-For aiohttp, retain the authorization middleware, application configuration/adapter keys,
-and `POST /api/messages` processing through `start_agent_process`. Add a credential-free
-`GET /` readiness response without bypassing authentication for message requests.
+For aiohttp, set `app["agent_configuration"]` from the default service connection and
+apply `jwt_authorization_decorator` to `POST /api/messages`. Register `GET /` as a public
+readiness route. When connection settings are absent, keep public routes available and
+return 503 from the message route. Report incomplete connection settings during startup.
 Serve custom dialog pages at the URLs returned by dialog handlers.
 
 Canonical inputs are fingerprinted synchronization inputs. Copy needed hosting code only

@@ -57,7 +57,7 @@ class MessageExtensionContracts(unittest.IsolatedAsyncioTestCase):
         search = AsyncMock(return_value=[{
             "title": "Computer science", "snippet": "<b>Computing</b> history",
         }])
-        app = sample_application({"search_wikipedia": search})
+        app = sample_application({"search": search})
         extension = await query(app)
         search.assert_awaited_once_with("computers")
         self.assertEqual(extension["type"], "result")
@@ -71,7 +71,7 @@ class MessageExtensionContracts(unittest.IsolatedAsyncioTestCase):
 
     async def test_empty_results_and_unknown_commands_return_no_results(self):
         search = AsyncMock(return_value=[])
-        app = sample_application({"search_wikipedia": search})
+        app = sample_application({"search": search})
         for command in ("wikipediaSearch", "unknown-command"):
             with self.subTest(command=command):
                 extension = await query(app, command, "no matches")

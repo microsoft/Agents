@@ -1,9 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""Aiohttp hosting with public readiness and authenticated message processing."""
+"""Serve the sample's public pages and authenticated Teams messages."""
 
 from os import environ
+from pathlib import Path
 
 from aiohttp import web
 from dotenv import load_dotenv
@@ -14,71 +15,63 @@ from microsoft_agents.hosting.aiohttp import (
     jwt_authorization_decorator,
     start_agent_process,
 )
-from microsoft_agents.hosting.core import AgentApplication, AgentAuthConfiguration
 from microsoft_agents.hosting.core.authorization import AuthTypes
 
 from .agent import create_agent
 
 
+async def readiness(_request: web.Request) -> web.Response:
+    return web.json_response({"status": "ready", "agent": "attachments"})
+
+
+async def messages_unconfigured(_request: web.Request) -> web.Response:
+    raise web.HTTPServiceUnavailable(text="Agent connection settings are not configured.")
+
+
 def create_web_app() -> web.Application:
-    load_dotenv()
+    app = web.Application()
+    app.router.add_get("/", readiness)
+
     configuration = load_configuration_from_env(environ)
-    connection_manager: MsalConnectionManager | None = None
-    has_service_connection = any(
-        environ.get(key)
-        for key in (
-            "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTID",
-            "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTSECRET",
-            "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__TENANTID",
-        )
+    connections = configuration.get("CONNECTIONS", {})
+    has_connection_settings = any(
+        any(connection.get("SETTINGS", {}).values())
+        for connection in connections.values()
     )
-    if has_service_connection:
-        connection_manager = MsalConnectionManager(**configuration)
-        auth_configuration = (
-            connection_manager.get_default_connection_configuration()
-        )
-    else:
-        auth_configuration = AgentAuthConfiguration(
-            auth_type=AuthTypes.client_secret,
-            anonymous_allowed=False,
-            validate_issuer=True,
-            issuers=["https://api.botframework.com"],
-        )
-    state: dict[str, AgentApplication | None] = {"agent": None}
+    if not has_connection_settings:
+        # Readiness is available before credentials are provisioned.
+        app.router.add_post("/api/messages", messages_unconfigured)
+        return app
 
-    async def ready(_request: web.Request) -> web.Response:
-        return web.json_response({"status": "ready", "agent": "attachments"})
+    connection_manager = MsalConnectionManager(**configuration)
+    auth_configuration = connection_manager.get_default_connection_configuration()
+    if auth_configuration.AUTH_TYPE == AuthTypes.client_secret and not (
+        auth_configuration.client_id
+        and auth_configuration.CLIENT_SECRET
+        and auth_configuration.tenant_id
+    ):
+        raise ValueError("Configure CLIENTID, CLIENTSECRET and TENANTID for SERVICE_CONNECTION.")
 
-    async def messages(request: web.Request) -> web.Response:
-        agent = state["agent"]
-        if agent is None:
-            dependencies = (
-                {"connection_manager": connection_manager}
-                if connection_manager is not None
-                else None
-            )
-            agent = create_agent(dependencies)
-            state["agent"] = agent
-        adapter: CloudAdapter = agent.adapter
+    adapter = CloudAdapter(connection_manager=connection_manager)
+    agent = create_agent(configuration, connection_manager)
+
+    @jwt_authorization_decorator
+    async def messages(request: web.Request) -> web.StreamResponse:
         response = await start_agent_process(request, agent, adapter)
-        return response or web.Response(status=202)
+        return response if response is not None else web.Response(status=202)
 
-    async def cleanup(_application: web.Application) -> None:
-        agent = state["agent"]
-        if agent is not None:
-            await agent.wait_for_uploads()
+    app["agent_configuration"] = auth_configuration
+    app.router.add_post("/api/messages", messages)
 
-    application = web.Application()
-    application["agent_configuration"] = auth_configuration
-    application.router.add_get("/", ready)
-    application.router.add_post(
-        "/api/messages", jwt_authorization_decorator(messages)
-    )
-    application.on_cleanup.append(cleanup)
-    return application
+    async def cleanup(_app: web.Application) -> None:
+        await agent.wait_for_uploads()
+
+    app.on_cleanup.append(cleanup)
+    return app
 
 
 def start_server() -> None:
+    load_dotenv(Path(__file__).resolve().parents[1] / ".env")
     web.run_app(
         create_web_app(),
         host=environ.get("HOST", "localhost"),

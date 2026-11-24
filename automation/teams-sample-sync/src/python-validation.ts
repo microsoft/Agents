@@ -46,11 +46,12 @@ export function createPythonValidation (tooling: PythonPolicyRuntime): LanguageV
       return checks
     }
 
-    if (!input.selection) {
+    const { selection, sampleRoot, runtime, repo } = input
+    if (!selection) {
       throw new SyncError('Python validation requires the frozen SDK package selection')
     }
 
-    const errors = checkPythonProject(tooling, input.sampleRoot, input.selection)
+    const errors = checkPythonProject(tooling, sampleRoot, selection)
 
     if (!record('project', errors)) {
       skipRemaining('Requires a valid Python project')
@@ -61,8 +62,8 @@ export function createPythonValidation (tooling: PythonPolicyRuntime): LanguageV
     let environment: PythonEnvironment
 
     try {
-      environment = await preparePythonEnvironment(tooling, input.runtime,
-        readFileSync(path.join(input.sampleRoot, 'requirements.txt'), 'utf8'), input.selection.packages!)
+      const requirements = readFileSync(path.join(sampleRoot, 'requirements.txt'), 'utf8')
+      environment = await preparePythonEnvironment(tooling, runtime, requirements, selection.packages!)
     } catch (error) {
       if (!(error instanceof PythonDependencyError)) {
         throw error
@@ -75,12 +76,12 @@ export function createPythonValidation (tooling: PythonPolicyRuntime): LanguageV
     }
 
     try {
-      writeFileSync(path.join(input.sampleRoot, 'requirements.lock'), environment.lock)
+      writeFileSync(path.join(sampleRoot, 'requirements.lock'), environment.lock)
       record('restore', [])
       record('packages', [])
-      const script = path.join(input.repo, 'automation/teams-sample-sync/scripts/python_checks.py')
+      const script = path.join(repo, 'automation/teams-sample-sync/scripts/python_checks.py')
       const run = (mode: string, extra: string[] = []): Promise<string[]> => Promise.resolve(
-        input.runtime.runCommand(environment.interpreter, ['-I', '-B', script, mode, input.sampleRoot, ...extra], input.repo)
+        runtime.runCommand(environment.interpreter, ['-I', '-B', script, mode, sampleRoot, ...extra], repo)
       )
 
       for (const [check, mode] of [['build', 'compile'], ['import', 'import']] as const) {
@@ -91,7 +92,8 @@ export function createPythonValidation (tooling: PythonPolicyRuntime): LanguageV
         }
       }
 
-      record('contracts', await run('contracts', [path.join(input.repo, input.configured.contractDirectory, `${input.sample}.py`)]))
+      const contractPath = path.join(repo, input.configured.contractDirectory, `${input.sample}.py`)
+      record('contracts', await run('contracts', [contractPath]))
 
       if (input.group === 'all') {
         record('httpSmoke', await run('smoke'))

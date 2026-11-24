@@ -2,16 +2,8 @@
 # Licensed under the MIT License.
 
 import os
-from pathlib import Path
 
-from dotenv import load_dotenv
-from microsoft_agents.activity import (
-    Activity,
-    Attachment,
-    load_configuration_from_env,
-)
-from microsoft_agents.authentication.msal import MsalConnectionManager
-from microsoft_agents.hosting.aiohttp import CloudAdapter
+from microsoft_agents.activity import Activity, Attachment
 from microsoft_agents.hosting.core import (
     AgentApplication,
     Authorization,
@@ -19,11 +11,8 @@ from microsoft_agents.hosting.core import (
     TurnContext,
     TurnState,
 )
+from microsoft_agents.hosting.core.authorization import Connections
 from microsoft_agents.hosting.msteams import TeamsAgentExtension
-
-
-ROOT = Path(__file__).resolve().parent
-load_dotenv(ROOT / ".env")
 
 
 def _adaptive_card(content: dict) -> Attachment:
@@ -34,22 +23,17 @@ def _adaptive_card(content: dict) -> Attachment:
 
 
 def _invoke_data(context: TurnContext) -> dict:
-    activity_value = context.activity.value or {}
-    data = activity_value.get("data") or {}
+    activity_value = context.activity.value
+    data = activity_value.get("data") if isinstance(activity_value, dict) else None
     return data if isinstance(data, dict) else {}
 
 
-def create_agent(dependencies: dict | None = None) -> AgentApplication:
-    dependencies = dependencies or {}
-    configuration = load_configuration_from_env(os.environ)
-    connection_manager = dependencies.get("connection_manager")
-    if connection_manager is None:
-        connection_manager = MsalConnectionManager(**configuration)
-
-    adapter = dependencies.get("adapter")
-    if adapter is None:
-        adapter = CloudAdapter(connection_manager=connection_manager)
-
+def create_agent(
+    configuration: dict,
+    connection_manager: Connections,
+    *,
+    endpoint: str | None = None,
+) -> AgentApplication:
     storage = MemoryStorage()
     authorization = Authorization(
         storage,
@@ -58,14 +42,12 @@ def create_agent(dependencies: dict | None = None) -> AgentApplication:
     )
     app = AgentApplication[TurnState](
         storage=storage,
-        adapter=adapter,
         authorization=authorization,
         **configuration,
     )
     teams = TeamsAgentExtension(app)
-    endpoint = dependencies.get("endpoint") or os.getenv(
-        "BOT_ENDPOINT", "http://localhost:3978"
-    )
+    form_url = (endpoint or os.getenv("BOT_ENDPOINT", "http://localhost:3978")).rstrip("/") + "/customform"
+
     @app.activity("message")
     async def on_message(context: TurnContext, _state: TurnState) -> None:
         card = {
@@ -166,8 +148,8 @@ def create_agent(dependencies: dict | None = None) -> AgentApplication:
                     "title": "Custom Form",
                     "width": 510,
                     "height": 450,
-                    "url": f"{endpoint.rstrip('/')}/customform",
-                    "fallbackUrl": f"{endpoint.rstrip('/')}/customform",
+                    "url": form_url,
+                    "fallbackUrl": form_url,
                 },
             }
         }

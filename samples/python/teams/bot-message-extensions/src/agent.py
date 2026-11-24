@@ -3,16 +3,15 @@
 
 import logging
 import re
-from collections.abc import Mapping
-from os import environ
+from collections.abc import Awaitable, Callable, Mapping
 from typing import Any
 
-from dotenv import load_dotenv
-from microsoft_agents.activity import Activity, load_configuration_from_env
-from microsoft_agents.authentication.msal import MsalConnectionManager
-from microsoft_agents.hosting.aiohttp import CloudAdapter
-from microsoft_agents.hosting.core import AgentApplication, MemoryStorage, TurnState
+from microsoft_agents.activity import Activity
+from microsoft_agents.activity.teams import AppBasedLinkQuery
+from microsoft_agents.hosting.core import AgentApplication, MemoryStorage, TurnContext, TurnState
+from microsoft_agents.hosting.core.authorization import Connections
 from microsoft_agents.hosting.msteams import TeamsAgentExtension
+from microsoft_teams.api.models import MessagingExtensionQuery
 
 from src.wikipedia import search_wikipedia
 
@@ -20,18 +19,15 @@ logger = logging.getLogger(__name__)
 SEARCH_COMMAND_ID = "wikipediaSearch"
 
 
-def _read_field(value: Any, field: str, default: Any = None) -> Any:
-    if isinstance(value, Mapping):
-        return value.get(field, default)
-    return getattr(value, field, default)
-
-
-def _query_text(value: Any) -> str:
-    parameters = _read_field(value, "parameters", None) or []
-    if not parameters:
+def _unknown_query_text(value: object) -> str:
+    """Read a query when the SDK did not match it to a registered command."""
+    if not isinstance(value, dict):
+        return ""
+    parameters = value.get("parameters")
+    if not isinstance(parameters, list) or not parameters:
         return ""
     first_parameter = parameters[0]
-    return str(_read_field(first_parameter, "value", "") or "")
+    return str(first_parameter.get("value") or "") if isinstance(first_parameter, dict) else ""
 
 
 def _clean_snippet(snippet: str) -> str:
@@ -118,32 +114,25 @@ def _no_results(query: str) -> dict[str, Any]:
     }
 
 
-def create_agent(dependencies: Mapping[str, Any] | None = None) -> AgentApplication:
-    load_dotenv()
-    supplied = dependencies or {}
-    configuration = load_configuration_from_env(environ)
-    connection_manager = supplied.get("connection_manager")
-    if connection_manager is None:
-        connection_manager = MsalConnectionManager(**configuration)
-
-    adapter = supplied.get("adapter")
-    if adapter is None:
-        adapter = CloudAdapter(connection_manager=connection_manager)
-
-    search = supplied.get("search_wikipedia", search_wikipedia)
-    if not callable(search):
-        raise TypeError("search_wikipedia dependency must be callable")
-
+def create_agent(
+    configuration: dict,
+    connection_manager: Connections,
+    *,
+    search: Callable[[str], Awaitable[list[dict[str, Any]]]] = search_wikipedia,
+) -> AgentApplication:
     app = AgentApplication[TurnState](
         storage=MemoryStorage(),
-        adapter=adapter,
         connection_manager=connection_manager,
+        **configuration,
     )
     teams = TeamsAgentExtension(app)
 
     @teams.message_extensions.query(SEARCH_COMMAND_ID)
-    async def handle_query(context, _state, payload):
-        query = _query_text(payload)
+    async def handle_query(
+        _context: TurnContext, _state: TurnState, payload: MessagingExtensionQuery
+    ) -> dict:
+        parameters = payload.parameters or []
+        query = str(parameters[0].value or "") if parameters else ""
         if payload.command_id != SEARCH_COMMAND_ID:
             return _no_results(query)
 
@@ -157,8 +146,10 @@ def create_agent(dependencies: Mapping[str, Any] | None = None) -> AgentApplicat
         return _extension_result(attachments)
 
     @teams.message_extensions.query_link
-    async def handle_link(_context, _state, payload):
-        url = str(_read_field(payload, "url", "") or "")
+    async def handle_link(
+        _context: TurnContext, _state: TurnState, payload: AppBasedLinkQuery
+    ) -> dict:
+        url = payload.url or ""
         attachment = {
             "contentType": "application/vnd.microsoft.card.adaptive",
             "content": _link_preview(url),
@@ -166,7 +157,7 @@ def create_agent(dependencies: Mapping[str, Any] | None = None) -> AgentApplicat
         return _extension_result([attachment])
 
     @app.activity("message")
-    async def handle_message(context, _state):
+    async def handle_message(context: TurnContext, _state: TurnState) -> None:
         text = context.activity.text or ""
         if "help" in text.lower():
             await context.send_activity(
@@ -179,10 +170,10 @@ def create_agent(dependencies: Mapping[str, Any] | None = None) -> AgentApplicat
             )
 
     @app.invoke()
-    async def handle_unknown_invoke(context, _state):
+    async def handle_unknown_invoke(context: TurnContext, _state: TurnState) -> None:
         if context.activity.name != "composeExtension/query":
             return
-        query = _query_text(context.activity.value)
+        query = _unknown_query_text(context.activity.value)
         response = Activity(
             type="invokeResponse",
             value={"status": 200, "body": _no_results(query)},
