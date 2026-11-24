@@ -40,6 +40,7 @@ export async function preparePythonEnvironment (
     recursive: true,
     force: true,
   })
+
   try {
     writeFileSync(requestPath, JSON.stringify({
       requirements,
