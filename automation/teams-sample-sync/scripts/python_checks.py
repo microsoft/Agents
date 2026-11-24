@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 """Trusted candidate compilation/import and protected unittest execution."""
 
 import importlib
@@ -98,7 +101,8 @@ def reject_anonymous_message(base_url):
         raise ValueError(f"Python HTTP anonymous POST /api/messages returned {status}; expected 401 or 403")
 
 
-def check_http_process(root, authentication=False):
+def check_http_process(root, *, credentials):
+    """Start a sample and probe readiness with the supplied connection settings."""
     with socket.socket() as reservation:
         reservation.bind(("127.0.0.1", 0))
         port = reservation.getsockname()[1]
@@ -107,20 +111,19 @@ def check_http_process(root, authentication=False):
         if not key.upper().startswith(("CONNECTIONS__", "CONNECTIONSMAP__", "AGENTAPPLICATION__"))
     }
     environment["PORT"] = str(port)
-    if authentication:
-        # Exercise the configured authorization path without contacting an identity service.
-        environment.update(SYNTHETIC_AUTH)
+    environment.update(credentials)
     child = PROCESS.start_process(
         [sys.executable, "-I", "-B", str(Path(__file__).resolve()), "serve", str(root)],
         cwd=root, env=environment, stdin=subprocess.DEVNULL,
     )
+    base_url = f"http://127.0.0.1:{port}"
     try:
         deadline = time.monotonic() + 20
         while time.monotonic() < deadline:
             if child.poll() is not None:
                 raise ValueError("Python HTTP process exited before readiness")
             try:
-                with urlopen(f"http://127.0.0.1:{port}/", timeout=0.5) as response:
+                with urlopen(f"{base_url}/", timeout=0.5) as response:
                     if response.status == 200:
                         break
             except OSError:
@@ -128,8 +131,8 @@ def check_http_process(root, authentication=False):
             time.sleep(0.25)
         else:
             raise ValueError("Python HTTP GET / did not return 200")
-        if authentication:
-            reject_anonymous_message(f"http://127.0.0.1:{port}")
+        if credentials:
+            reject_anonymous_message(base_url)
     finally:
         PROCESS.stop_process(child)
 
@@ -138,8 +141,8 @@ def http_smoke(root):
     require_fresh_source(root)
     # The first host proves missing credentials do not break readiness. The second
     # proves configured JWT processing rejects anonymous messages, rather than 500.
-    check_http_process(root)
-    check_http_process(root, authentication=True)
+    check_http_process(root, credentials={})
+    check_http_process(root, credentials=SYNTHETIC_AUTH)
 
 
 if __name__ == "__main__":
