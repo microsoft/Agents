@@ -114,14 +114,11 @@ class OfflineConnections:
         raise AssertionError("Unexpected credential request in an offline contract")
 
 
-def sample_application(dependencies=None):
+def sample_application(overrides=None):
     module = importlib.import_module("src.agent")
-    supplied = {
-        "connection_manager": OfflineConnections(), "adapter": MemoryAdapter(),
-        **(dependencies or {}),
-    }
-    app = module.create_agent(supplied)
-    APPLICATION_ADAPTERS[app] = supplied["adapter"]
+    adapter = MemoryAdapter()
+    app = module.create_agent({}, OfflineConnections(), **(overrides or {}))
+    APPLICATION_ADAPTERS[app] = adapter
     return app
 
 
