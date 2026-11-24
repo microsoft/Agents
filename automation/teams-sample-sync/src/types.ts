@@ -26,6 +26,7 @@ export interface CopilotConfiguration {
 export interface PackagePolicy {
   targetFramework?: string
   nodeVersion?: string
+  pythonVersion?: string
   minimumAgentsSdkVersion: string
 }
 

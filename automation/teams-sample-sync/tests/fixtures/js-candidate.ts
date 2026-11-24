@@ -113,7 +113,7 @@ export function candidateFixture () {
     runHttpSmoke: async () => [],
     loadSchema: async () => ({ type: 'object' }),
   }
-  function sdkFactory (implement: () => void, changed: boolean): SdkFactory {
+  function sdkFactory (implement: () => void, changed: boolean | (() => boolean)): SdkFactory {
     let turns = 0
     const session: SdkSession = {
       on: (() => () => {}) as SdkSession['on'],
@@ -123,8 +123,9 @@ export function candidateFixture () {
           return { data: { content: '## Migration plan\nPreserve cards and package policy.' } } as Awaited<ReturnType<SdkSession['sendAndWait']>>
         }
         implement()
+        const outcomeChanged = typeof changed === 'function' ? changed() : changed
 
-        return { data: { content: `## Self-audit\nOutcome: ${changed ? 'changed' : 'no changes required'}\nSummary: Preserved upstream cards behavior.\nValidated the frozen plan.` } } as Awaited<ReturnType<SdkSession['sendAndWait']>>
+        return { data: { content: `## Self-audit\nOutcome: ${outcomeChanged ? 'changed' : 'no changes required'}\nSummary: Preserved upstream cards behavior.\nValidated the frozen plan.` } } as Awaited<ReturnType<SdkSession['sendAndWait']>>
       },
       abort: async () => {},
       disconnect: async () => {},

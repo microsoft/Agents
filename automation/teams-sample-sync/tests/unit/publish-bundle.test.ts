@@ -90,7 +90,7 @@ function writeResult (directory: string, value: SyncResult): void {
 }
 
 describe('coordinated publication gate', () => {
-  it('requires both same-name language variants before handing off a mixed run', () => {
+  it('requires all three same-name language variants before handing off a mixed run', () => {
     const directory = mkdtempSync(path.join(tmpdir(), 'teams-sync-mixed-results-'))
     try {
       const mixed = structuredClone(plan)
@@ -114,7 +114,47 @@ describe('coordinated publication gate', () => {
         errors: []
       }
       writeResult(directory, js)
-      assert.deepEqual(publishableResults(mixed, directory, baseSha).map((item) => item.language), ['dotnet', 'js'])
+      mixed.matrix.push({
+        language: 'python',
+        sample,
+        id: `python--${sample}`,
+        upstreamCommit
+      })
+      mixed.samples[`python--${sample}`] = {
+        ...plan.samples[`dotnet--${sample}`]!,
+        language: 'python',
+      }
+      assert.throws(() => publishableResults(mixed, directory, baseSha), /Missing migration result/)
+      const python = result(sample, {
+        language: 'python',
+        summary: 'Verified Python source and SDK routing.'
+      })
+      python.validation!.language = 'python'
+      python.validation!.checks.packages = {
+        status: 'passed',
+        errors: []
+      }
+      python.validation!.checks.import = {
+        status: 'passed',
+        errors: []
+      }
+      writeResult(directory, python)
+      const published = publishableResults(mixed, directory, baseSha)
+      assert.deepEqual(published.map((item) => item.language), ['dotnet', 'js', 'python'])
+      assert.equal(published[2]!.summary, python.summary)
+
+      writeResult(directory, {
+        ...python,
+        publishable: false,
+        status: 'failed'
+      })
+      assert.throws(() => publishableResults(mixed, directory, baseSha), /not publishable/)
+      writeResult(directory, python)
+      const staleValidation = structuredClone(python)
+      staleValidation.validation!.language = 'dotnet'
+      writeResult(directory, staleValidation)
+      assert.throws(() => publishableResults(mixed, directory, baseSha), /validation/i)
+      writeResult(directory, python)
       writeResult(directory, {
         ...js,
         publishable: false,

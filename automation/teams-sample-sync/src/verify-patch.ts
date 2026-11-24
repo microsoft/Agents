@@ -79,7 +79,8 @@ export function verifyPatch (repo: string, values: Record<string, string>): void
 
   assertSdkSelection(configured, context.migration)
   const {
-    canonicalSample: _canonicalSample, targetFramework: _targetFramework, nodeVersion: _nodeVersion, ...selection
+    canonicalSample: _canonicalSample, targetFramework: _targetFramework,
+    nodeVersion: _nodeVersion, pythonVersion: _pythonVersion, ...selection
   } = context.migration
   assertMigrationInputs(repo, configured, selection, result.sourceTree, result.componentDigests, sample)
 

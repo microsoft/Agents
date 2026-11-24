@@ -161,3 +161,75 @@ profiles:
           distribution: sample
           packageDirectory: manifest
           placeholderConvention: double-braces
+
+  python:
+    destinationRoot: samples/python/teams
+    canonicalSample: automation/teams-sample-sync/reference/python
+    manifestAssets: automation/teams-sample-sync/reference/manifest-assets/python
+    migrationSkill: agent-plugins/agents-for-python/skills/teams-sdk-to-agents-sdk-python-migration
+    syncSkill: automation/teams-sample-sync/skills/sync-teams-samples-to-agents-sdk
+    contractDirectory: automation/teams-sample-sync/tests/python-contracts
+    outputDigestExcludes:
+      - .venv/**
+      - venv/**
+      - "**/__pycache__/**"
+      - "**/*.pyc"
+      - .pytest_cache/**
+      - .coverage
+      - coverage/**
+      - htmlcov/**
+    packagePolicy:
+      pythonVersion: 3.11.14
+      minimumAgentsSdkVersion: 1.9.0
+    samples:
+      agent-targeted-messages:
+        source: agent-targeted-messages/python/agent-targeted-messages
+        destination: agent-targeted-messages
+        manifest:
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: double-braces
+      bot-ai-messages:
+        source: bot-ai-messages/python/bot-ai-messages
+        destination: bot-ai-messages
+        manifest:
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: double-braces
+      bot-attachments:
+        source: bot-attachments/python/bot-attachments
+        destination: bot-attachments
+        manifest:
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: double-braces
+      bot-cards:
+        source: bot-cards/python/bot-cards
+        destination: bot-cards
+        manifest:
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: double-braces
+      bot-meetings:
+        source: bot-meetings/python/bot-meetings
+        destination: bot-meetings
+        manifest:
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: double-braces
+      bot-message-extensions:
+        source: bot-message-extensions/python/bot-message-extensions
+        destination: bot-message-extensions
+        manifest:
+          expectedLinkDomains:
+            - en.wikipedia.org
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: double-braces
+      bot-task-modules:
+        source: bot-task-modules/python/bot-task-modules
+        destination: bot-task-modules
+        manifest:
+          distribution: sample
+          packageDirectory: manifest
+          placeholderConvention: double-braces

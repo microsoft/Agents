@@ -16,6 +16,10 @@ const js = {
   language: 'js',
   sample: 'bot-cards'
 } as const
+const python = {
+  language: 'python',
+  sample: 'bot-cards',
+} as const
 
 function state (): State {
   return {
@@ -51,6 +55,8 @@ describe('language-qualified verified state', () => {
         sourceTree: 'legacy-tree'
       })
       assert.equal(readPriorState(root, js), undefined)
+      assert.equal(readPriorState(root, python), undefined)
+      assert.equal(new Set([dotnet, js, python].map((target) => statePath(root, target))).size, 3)
       assert.notEqual(statePath(root, dotnet), statePath(root, js))
 
       const current = state()
@@ -63,6 +69,16 @@ describe('language-qualified verified state', () => {
         sourceTree: 'new-tree'
       })
       assert.equal(readState(root, js), undefined)
+      assert.equal(readState(root, python), undefined)
+
+      const pythonFile = statePath(root, python)
+      mkdirSync(path.dirname(pythonFile), { recursive: true })
+      writeFileSync(pythonFile, JSON.stringify({
+        ...current,
+        ...python
+      }))
+      assert.equal(readState(root, python)?.language, 'python')
+      assert.equal(readState(root, dotnet)?.language, 'dotnet')
     } finally {
       rmSync(root, {
         recursive: true,
