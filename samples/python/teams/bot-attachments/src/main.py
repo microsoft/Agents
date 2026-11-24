@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""Explicit application entry point."""
+"""Start the Teams sample."""
 
 from .start_server import start_server
 

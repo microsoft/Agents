@@ -5,14 +5,11 @@
 
 import asyncio
 import logging
-import os
-from collections.abc import Mapping
+from collections.abc import Awaitable, Callable, Mapping
 from typing import Any
 
-from microsoft_agents.activity import load_configuration_from_env
-from microsoft_agents.authentication.msal import MsalConnectionManager
-from microsoft_agents.hosting.aiohttp import CloudAdapter
-from microsoft_agents.hosting.core import AgentApplication, MemoryStorage
+from microsoft_agents.hosting.core import AgentApplication, MemoryStorage, TurnContext, TurnState
+from microsoft_agents.hosting.core.authorization import Connections
 from microsoft_agents.hosting.msteams import TeamsTurnContext
 
 from .cards import meeting_card
@@ -25,7 +22,8 @@ from .transcripts import (
 logger = logging.getLogger(__name__)
 
 
-def _read_field(value: Any, name: str) -> Any:
+def _teams_field(value: Any, name: str) -> Any:
+    """Read an event payload field from Teams JSON or a Teams API model."""
     if isinstance(value, Mapping):
         if name in value:
             return value[name]
@@ -48,52 +46,42 @@ def _read_field(value: Any, name: str) -> Any:
     )
 
 
-def _meeting_details(meeting: Any) -> Any:
-    return _read_field(meeting, "details")
-
-
 def _card_text(text: str, **properties: Any) -> dict:
     return {"type": "TextBlock", "text": text, "wrap": True, **properties}
 
 
 async def _get_meeting_info(
-    context: Any, meeting_id: str, app: AgentApplication
+    context: TurnContext, meeting_id: str, app: AgentApplication
 ) -> Any:
     teams_context = TeamsTurnContext(context, app)
     return await teams_context.api_client.meetings.get_by_id(meeting_id)
 
 
-def create_agent(dependencies: Mapping[str, Any] | None = None) -> AgentApplication:
-    """Create an isolated Teams agent with optional meeting service overrides."""
-    supplied = dependencies or {}
-    configuration = load_configuration_from_env(os.environ)
-    connection_manager = supplied.get("connection_manager")
-    if connection_manager is None:
-        connection_manager = MsalConnectionManager(**configuration)
-    adapter = supplied.get("adapter")
-    if adapter is None:
-        adapter = CloudAdapter(connection_manager=connection_manager)
-
+def create_agent(
+    configuration: dict,
+    connection_manager: Connections,
+    *,
+    meeting_info: Callable[[TurnContext, str], Awaitable[Any]] | None = None,
+    transcript: Callable[[TurnContext, str, str], Awaitable[str | None]] = default_transcript,
+    resolve_meeting: Callable[[TurnContext, str, str], Awaitable[str | None]] = default_resolve_meeting,
+    wait: Callable[[float], Awaitable[None]] = asyncio.sleep,
+) -> AgentApplication:
     app = AgentApplication(
         storage=MemoryStorage(),
-        adapter=adapter,
         connection_manager=connection_manager,
         **configuration,
     )
 
-    async def default_meeting_info(context: Any, meeting_id: str) -> Any:
+    async def default_meeting_info(context: TurnContext, meeting_id: str) -> Any:
         return await _get_meeting_info(context, meeting_id, app)
 
-    meeting_info = supplied.get("meeting_info") or default_meeting_info
-    transcript = supplied.get("transcript") or default_transcript
-    resolve_meeting = supplied.get("resolve_meeting") or default_resolve_meeting
-    wait = supplied.get("wait") or asyncio.sleep
+    fetch_meeting_info = meeting_info or default_meeting_info
 
-    async def on_meeting_start(context: Any, _state: Any) -> None:
+    async def on_meeting_start(context: TurnContext, _state: TurnState) -> None:
         event = context.activity.value
-        title = _read_field(event, "title") or ""
-        start_time = _read_field(event, "start_time") or ""
-        join_url = _read_field(event, "join_url") or ""
+        title = _teams_field(event, "title") or ""
+        start_time = _teams_field(event, "start_time") or ""
+        join_url = _teams_field(event, "join_url") or ""
         await context.send_activity(
             meeting_card(
                 [
@@ -115,62 +103,65 @@ def create_agent(dependencies: Mapping[str, Any] | None = None) -> AgentApplicat
             )
         )
 
-    async def on_meeting_end(context: Any, _state: Any) -> None:
-        channel_meeting = _read_field(
-            _read_field(context.activity, "channel_data"), "meeting"
-        )
-        meeting_id = _read_field(channel_meeting, "id")
+    async def wait_for_transcript(
+        context: TurnContext, resource_id: str, user_id: str, join_url: str
+    ) -> str:
+        # Graph can take time to publish a transcript after the meeting ends.
+        await wait(30)
+        for attempt in range(3):
+            if attempt:
+                await wait(10)
+
+            if not resource_id:
+                try:
+                    resource_id = await resolve_meeting(context, join_url, user_id) or ""
+                except Exception:
+                    logger.exception("Graph meeting lookup failed for organizer %s", user_id)
+                if not resource_id:
+                    continue
+
+            try:
+                transcript_text = await transcript(context, resource_id, user_id)
+            except Exception:
+                logger.exception(
+                    "Graph transcript retrieval failed for meeting resource %s", resource_id
+                )
+                continue
+            if transcript_text:
+                return transcript_text
+
+        return ""
+
+    async def on_meeting_end(context: TurnContext, _state: TurnState) -> None:
+        channel_meeting = _teams_field(context.activity.channel_data, "meeting")
+        meeting_id = _teams_field(channel_meeting, "id")
         meeting_data = None
         if meeting_id:
             try:
-                meeting_data = await meeting_info(context, meeting_id)
+                meeting_data = await fetch_meeting_info(context, meeting_id)
             except Exception:
                 logger.exception("Could not retrieve metadata for meeting %s", meeting_id)
 
-        channel_details = _meeting_details(channel_meeting)
-        info_details = _meeting_details(meeting_data)
+        channel_details = _teams_field(channel_meeting, "details")
+        info_details = _teams_field(meeting_data, "details")
         resource_id = (
-            _read_field(channel_details, "ms_graph_resource_id")
-            or _read_field(info_details, "ms_graph_resource_id")
+            _teams_field(channel_details, "ms_graph_resource_id")
+            or _teams_field(info_details, "ms_graph_resource_id")
             or ""
         )
-        organizer = _read_field(meeting_data, "organizer")
-        user_id = _read_field(organizer, "aad_object_id") or ""
+        organizer = _teams_field(meeting_data, "organizer")
+        user_id = _teams_field(organizer, "aad_object_id") or ""
         event = context.activity.value
         join_url = (
-            _read_field(info_details, "join_url")
-            or _read_field(channel_details, "join_url")
-            or _read_field(event, "join_url")
+            _teams_field(info_details, "join_url")
+            or _teams_field(channel_details, "join_url")
+            or _teams_field(event, "join_url")
             or ""
         )
 
         transcript_text = ""
         if user_id and (resource_id or (meeting_id and join_url)):
-            await wait(30)
-            for attempt in range(3):
-                if not resource_id:
-                    try:
-                        resource_id = (
-                            await resolve_meeting(context, join_url, user_id) or ""
-                        )
-                    except Exception:
-                        logger.exception(
-                            "Graph meeting lookup failed for organizer %s", user_id
-                        )
-                if resource_id:
-                    try:
-                        transcript_text = await transcript(
-                            context, resource_id, user_id
-                        )
-                    except Exception:
-                        logger.exception(
-                            "Graph transcript retrieval failed for meeting resource %s",
-                            resource_id,
-                        )
-                    if transcript_text:
-                        break
-                if attempt < 2:
-                    await wait(10)
+            transcript_text = await wait_for_transcript(context, resource_id, user_id, join_url)
 
         parsed_transcript = parse_vtt(transcript_text) if transcript_text else ""
         transcript_lines = (
@@ -178,7 +169,7 @@ def create_agent(dependencies: Mapping[str, Any] | None = None) -> AgentApplicat
             if parsed_transcript
             else [_card_text("Transcript not available for this meeting.")]
         )
-        end_time = _read_field(event, "end_time") or ""
+        end_time = _teams_field(event, "end_time") or ""
         await context.send_activity(
             meeting_card(
                 [
@@ -194,17 +185,17 @@ def create_agent(dependencies: Mapping[str, Any] | None = None) -> AgentApplicat
             )
         )
 
-    async def on_meeting_participant_join(context: Any, _state: Any) -> None:
+    async def on_meeting_participant_join(context: TurnContext, _state: TurnState) -> None:
         participant_event = context.activity.value
-        members = _read_field(participant_event, "members") or []
+        members = _teams_field(participant_event, "members") or []
         participant = members[0] if members else None
-        user = _read_field(participant, "user")
-        aad_object_id = _read_field(user, "aad_object_id")
+        user = _teams_field(participant, "user")
+        aad_object_id = _teams_field(user, "aad_object_id")
         if not aad_object_id:
             return
-        name = _read_field(user, "name") or "A participant"
-        meeting = _read_field(participant, "meeting")
-        role = _read_field(meeting, "role") or "a participant"
+        name = _teams_field(user, "name") or "A participant"
+        meeting = _teams_field(participant, "meeting")
+        role = _teams_field(meeting, "role") or "a participant"
         await context.send_activity(
             meeting_card(
                 [
@@ -216,14 +207,14 @@ def create_agent(dependencies: Mapping[str, Any] | None = None) -> AgentApplicat
             )
         )
 
-    async def on_meeting_participant_leave(context: Any, _state: Any) -> None:
+    async def on_meeting_participant_leave(context: TurnContext, _state: TurnState) -> None:
         participant_event = context.activity.value
-        members = _read_field(participant_event, "members") or []
+        members = _teams_field(participant_event, "members") or []
         participant = members[0] if members else None
-        user = _read_field(participant, "user")
-        if not _read_field(user, "aad_object_id"):
+        user = _teams_field(participant, "user")
+        if not _teams_field(user, "aad_object_id"):
             return
-        name = _read_field(user, "name") or "A participant"
+        name = _teams_field(user, "name") or "A participant"
         await context.send_activity(
             meeting_card(
                 [
@@ -243,7 +234,7 @@ def create_agent(dependencies: Mapping[str, Any] | None = None) -> AgentApplicat
     }
 
     @app.activity("event")
-    async def on_meeting_event(context: Any, state: Any) -> None:
+    async def on_meeting_event(context: TurnContext, state: TurnState) -> None:
         logger.info("Meeting event received: %s", context.activity.name)
         handler = handlers.get(context.activity.name or "")
         if handler is not None:
