@@ -1,15 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from dotenv import load_dotenv
+"""Start the Teams sample."""
 
-from src.start_server import run_server
-
-
-def main() -> None:
-    load_dotenv()
-    run_server()
+from .start_server import start_server
 
 
 if __name__ == "__main__":
-    main()
+    start_server()

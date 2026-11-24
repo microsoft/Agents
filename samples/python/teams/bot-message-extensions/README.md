@@ -95,8 +95,8 @@ mention command. Link previews are declared for `en.wikipedia.org`.
 
 ## Local behavior
 
-The `create_agent` factory accepts an optional async `search_wikipedia(query)`
-dependency for offline checks. The default helper queries the Wikipedia API.
+The `create_agent` factory accepts an optional async `search(query)`
+override for offline checks. The default helper queries the Wikipedia API.
 Local contracts exercise SDK message-extension routing without requiring
 external Wikipedia access or Teams credentials. Tenant authentication, package
 upload, compose search, and link unfurling require a configured test tenant.
