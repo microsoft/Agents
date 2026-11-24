@@ -1,0 +1,54 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.22/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.22",
+  "version": "1.0.0",
+  "id": "${{AAD_APP_CLIENT_ID}}",
+  "developer": {
+    "name": "Microsoft",
+    "websiteUrl": "https://example.com",
+    "privacyUrl": "https://example.com/privacy",
+    "termsOfUseUrl": "https://example.com/terms"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "Agent Cards"
+  },
+  "description": {
+    "short": "Adaptive Card sample for Teams.",
+    "full": "Demonstrates Adaptive Card actions and visibility controls in Microsoft Teams using the Microsoft 365 Agents SDK."
+  },
+  "accentColor": "#FFFFFF",
+  "bots": [
+    {
+      "botId": "${{AAD_APP_CLIENT_ID}}",
+      "scopes": [
+        "personal",
+        "team",
+        "groupChat"
+      ],
+      "commandLists": [
+        {
+          "scopes": [
+            "personal",
+            "team",
+            "groupChat"
+          ],
+          "commands": [
+            {
+              "title": "card actions",
+              "description": "Show a card demonstrating Adaptive Card actions."
+            },
+            {
+              "title": "toggle visibility",
+              "description": "Show a card demonstrating visibility toggling."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "validDomains": []
+}
