@@ -165,6 +165,7 @@ jobs:
     runs-on: ubuntu-24.04 # Python 3.11.14 has no Ubuntu 26.04 installer.
     strategy:
       matrix:
+        # Teams requires Python 3.11 or later. Use versions supported by the sample wheels.
         python-version: ['3.11.14', '3.12']
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -179,6 +180,8 @@ jobs:
         run: |
           for dir in samples/python/teams/*/; do
             if [ -d "$dir" ]; then
-              "$RUNNER_TEMP/teams-python-tools/bin/python" -I automation/teams-sample-sync/scripts/python_sample_ci.py "$dir" automation/teams-sample-sync/tests/python-contracts
+              "$RUNNER_TEMP/teams-python-tools/bin/python" -I \
+                automation/teams-sample-sync/scripts/python_sample_ci.py \
+                "$dir" automation/teams-sample-sync/tests/python-contracts
             fi
           done
