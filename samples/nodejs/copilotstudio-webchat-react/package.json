@@ -12,13 +12,13 @@
   ],
   "scripts": {
     "prebuild": "node scripts/ensure-settings.js",
-    "build": "esbuild src/index.tsx --bundle --platform=browser --target=esnext --outdir=public/dist --jsx=automatic",
+    "build": "esbuild src/index.tsx src/authRedirect.ts --bundle --platform=browser --target=esnext --outdir=public/dist --jsx=automatic",
     "start": "npm run build -- --watch=forever --serve=localhost:3000 --servedir=./public",
     "aspire": "aspire run"
   },
   "dependencies": {
     "@azure/msal-browser": "5.27.0",
-    "@microsoft/agents-copilotstudio-client": "1.9.1",
+    "@microsoft/agents-copilotstudio-client": "1.10.1",
     "@opentelemetry/api": "1.10.0",
     "@opentelemetry/context-zone": "3.0.0",
     "@opentelemetry/core": "3.0.0",

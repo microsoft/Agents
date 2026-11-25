@@ -17,5 +17,5 @@
       "outDir": "dist",
       "tsBuildInfoFile": "dist/.tsbuildinfo"
   },
-  "exclude": ["apphost"]
+  "exclude": ["apphost", "dist"]
 }
