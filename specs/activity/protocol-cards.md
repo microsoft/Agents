@@ -102,7 +102,7 @@ Cards include a flat list of name/value pairs, called fields. Fields may be prim
 
 ### Content-type
 
-Cards are identified by a MIME-compatible [[4](#References)] content-type. These content-types are not specified within the card itself; instead, these values accompany the card payload. In the [Activity Protocol Schema](../ActivityDefintion/protocol-activity.md) [[1](#References)] schema, cards are included within [attachments](../ActivityDefintion/protocol-activity.md#Attachment) alongside the corresponding [`contentType`](../ActivityDefintion/protocol-activity.md#Content-type) field. 
+Cards are identified by a MIME-compatible [[4](#References)] content-type. These content-types are not specified within the card itself; instead, these values accompany the card payload. In the [Activity Protocol Schema](./protocol-activity.md) [[1](#References)] schema, cards are included within [attachments](./protocol-activity.md#attachment) alongside the corresponding [`contentType`](./protocol-activity.md#content-type) field. 
 
 ### Transformations and display
 
@@ -130,7 +130,7 @@ Channels are recommended to make these rules simple.
 
 All cards include content (in the form of one or more fields) and an array of buttons, each of which is represented by an action. Some cards include an additional card action, the "tap action," describing the behavior when the user taps the card but not any of the buttons.
 
-All Activity Protocol Card types except Adaptive Cards include a `buttons` field, which contains zero or more buttons to be presented to a user. The type of the `buttons` field is an array of type [`cardAction`](../ActivityDefintion/protocol-activity.md#card-action), defined in the [Activity Protocol Schema](../ActivityDefintion/protocol-activity.md) schema [[1](#References)].
+All Activity Protocol Card types except Adaptive Cards include a `buttons` field, which contains zero or more buttons to be presented to a user. The type of the `buttons` field is an array of type [`cardAction`](./protocol-activity.md#card-action), defined in the [Activity Protocol Schema](./protocol-activity.md) schema [[1](#References)].
 
 `C4000`: Channels MAY define a minimum and maximum number of buttons to allow on each card type.
 
@@ -469,7 +469,7 @@ The `value` field contains the objective component of the fact. The value of the
 
 ## References
 
-1. [Activity Protocol Schema](../ActivityDefintion/protocol-activity.md)
+1. [Activity Protocol Schema](./protocol-activity.md)
 2. [Adaptive Cards](https://adaptivecards.io)
 3. [RFC 2119](https://tools.ietf.org/html/rfc2119)
 4. [MIME media types](https://www.iana.org/assignments/media-types/media-types.xhtml)
