@@ -6,7 +6,7 @@ This sample hosts a Microsoft 365 Agent on Node.js and Express. Every message as
 
 - [Node.js](https://nodejs.org/) 22 or later
 - An Azure OpenAI resource and model deployment
-- [Agents Playground](https://github.com/microsoft/m365-agents-toolkit) for local testing, or an Azure Bot resource for Web Chat
+- [Agents Playground](https://github.com/OfficeDev/microsoft-365-agents-toolkit) for local testing, or an Azure Bot resource for Web Chat
 
 ## Configure Azure OpenAI
 

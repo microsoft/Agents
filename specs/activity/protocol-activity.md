@@ -1616,7 +1616,7 @@ The `occurrence` field is optional. It gives the sender the ability to specify w
 
 ### Semantic action type
 
-The semantic action type represents a programmatic reference. It is used within the [`semanticAction`](#semantic-action) field in [message activities](#message-activity). Actions are defined and registered externally to this protocol, typically as part of the [Agent Manifest](../manifestdefinition/bot-manifest.md) [[13](#references)]. The action definition declares the ID for the action and associates it with named entities, each of which has a corresponding type. Senders are receivers of actions use these names and types to create and parse actions that conform to the action definition.
+The semantic action type represents a programmatic reference. It is used within the [`semanticAction`](#semantic-action) field in [message activities](#message-activity). Actions are defined and registered externally to this protocol, typically as part of the [Agent Manifest](../manifest/bot-manifest.md) [[13](#references)]. The action definition declares the ID for the action and associates it with named entities, each of which has a corresponding type. Senders are receivers of actions use these names and types to create and parse actions that conform to the action definition.
 
 Actions proceed through a lifecycle, described by the [`state`](#semantic-action-state) and [`id`](#semantic-action-id) fields.
 
