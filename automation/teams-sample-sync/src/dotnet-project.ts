@@ -57,9 +57,9 @@ export function checkProject (
   configured: Targets,
   selectedAgentsSdkVersion: string
 ): {
-    project?: string
-    errors: string[]
-  } {
+  project?: string
+  errors: string[]
+} {
   const errors: string[] = []
   const minimum = parseVersionLine(configured.packagePolicy.minimumAgentsSdkVersion)
   const selected = parseVersionLine(selectedAgentsSdkVersion)

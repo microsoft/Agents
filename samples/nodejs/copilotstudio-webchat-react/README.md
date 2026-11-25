@@ -197,6 +197,8 @@ Key packages used:
 
 The Copilot Studio Client requires a user token to operate. This sample uses a user-interactive flow to get the user token for the application ID created above.
 
+The sample uses the application origin as its redirect URI. When Microsoft Entra returns an OAuth response to that URL, the page loads the MSAL Browser v5 redirect bridge. The bridge returns the response to the main Web Chat window. Serve the redirect response without a `Cross-Origin-Opener-Policy` header. [MSAL redirect bridge documentation](https://learn.microsoft.com/en-us/entra/msal/javascript/browser/redirect-bridge)
+
 ## 10. Troubleshooting
 
 ### Common Issues

@@ -9,7 +9,16 @@
 
 <body>
     <div id="root"></div>
-    <script src="./dist/index.js"></script>
+    <script>
+        // Load only the MSAL bridge in the popup and silent-auth callback.
+        const authResponse = [window.location.hash, window.location.search].some(value => {
+            const params = new URLSearchParams(value.slice(1))
+            return params.has('state') && (params.has('code') || params.has('error'))
+        })
+        const entry = document.createElement('script')
+        entry.src = authResponse ? './dist/authRedirect.js' : './dist/index.js'
+        document.body.appendChild(entry)
+    </script>
 </body>
 
 </html>

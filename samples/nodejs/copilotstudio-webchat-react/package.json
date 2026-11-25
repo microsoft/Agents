@@ -5,40 +5,40 @@
   "author": "Microsoft",
   "license": "MIT",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.15.0"
   },
   "workspaces": [
     "apphost"
   ],
   "scripts": {
     "prebuild": "node scripts/ensure-settings.js",
-    "build": "esbuild src/index.tsx --bundle --platform=browser --target=esnext --outdir=public/dist --jsx=automatic",
+    "build": "esbuild src/index.tsx src/authRedirect.ts --bundle --platform=browser --target=esnext --outdir=public/dist --jsx=automatic",
     "start": "npm run build -- --watch=forever --serve=localhost:3000 --servedir=./public",
     "aspire": "aspire run"
   },
   "dependencies": {
-    "@azure/msal-browser": "4.13.1",
-    "@microsoft/agents-copilotstudio-client": "1.9.1",
-    "@opentelemetry/api": "1.9.1",
-    "@opentelemetry/context-zone": "2.10.0",
-    "@opentelemetry/exporter-trace-otlp-proto": "0.221.0",
-    "@opentelemetry/instrumentation": "0.221.0",
-    "@opentelemetry/instrumentation-document-load": "0.66.0",
-    "@opentelemetry/instrumentation-fetch": "0.221.0",
-    "@opentelemetry/resources": "2.10.0",
-    "@opentelemetry/sdk-trace-base": "2.10.0",
-    "@opentelemetry/sdk-trace-web": "2.10.0",
-    "@opentelemetry/semantic-conventions": "1.39.0",
-    "botframework-webchat": "4.19.1",
-    "botframework-webchat-fluent-theme": "4.19.1",
-    "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "zone.js": "0.16.2"
+    "@azure/msal-browser": "5.27.0",
+    "@microsoft/agents-copilotstudio-client": "1.10.1",
+    "@opentelemetry/api": "1.10.0",
+    "@opentelemetry/context-zone": "3.0.0",
+    "@opentelemetry/core": "3.0.0",
+    "@opentelemetry/exporter-trace-otlp-proto": "0.300.0",
+    "@opentelemetry/instrumentation": "0.300.0",
+    "@opentelemetry/instrumentation-document-load": "0.69.0",
+    "@opentelemetry/instrumentation-fetch": "0.300.0",
+    "@opentelemetry/resources": "3.0.0",
+    "@opentelemetry/sdk-trace": "3.0.0",
+    "@opentelemetry/semantic-conventions": "1.44.0",
+    "botframework-webchat": "4.19.2",
+    "botframework-webchat-fluent-theme": "4.19.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "zone.js": "0.16.3"
   },
   "devDependencies": {
-    "@microsoft/aspire-cli": "13.4.6",
-    "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.4",
+    "@microsoft/aspire-cli": "13.6.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "esbuild": "^0.28.2"
   }
 }

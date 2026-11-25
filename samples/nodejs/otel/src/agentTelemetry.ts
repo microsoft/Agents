@@ -1,8 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { metrics, trace } from '@opentelemetry/api'
-import { logs, SeverityNumber } from '@opentelemetry/api-logs'
+import { logs, metrics, SeverityNumber, trace } from '@opentelemetry/api'
 
 export class AgentTelemetry {
   public static serviceName = 'OTelAgent'

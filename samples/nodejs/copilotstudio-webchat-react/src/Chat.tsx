@@ -44,11 +44,11 @@ function Chat () {
   }, [])
   return connection
     ? (
-      <FluentThemeProvider>
-        <Composer directLine={connection}>
-          <BasicWebChat />
-        </Composer>
-      </FluentThemeProvider>
+        <FluentThemeProvider>
+          <Composer directLine={connection}>
+            <BasicWebChat />
+          </Composer>
+        </FluentThemeProvider>
       )
     : null
 }
